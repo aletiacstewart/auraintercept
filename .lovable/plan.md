@@ -1,49 +1,83 @@
+## Pre-Launch Readiness Fixes
 
-# Pre-Launch Automated Verification
+Five fixes before onboarding real clients. Item 5 is a quick verification (unread badge already exists in code — likely a data/route issue, not missing UI).
 
-Goal: automate what a machine can actually prove from your checklist. I'll produce a single markdown report at `/mnt/documents/pre-launch-report.md` with PASS / FAIL / MANUAL-ONLY per item, plus screenshots for the browser checks.
+---
 
-I won't ship any product code changes in this pass — only diagnostics. If a check fails, I'll list the offending file/query so a follow-up build turn can fix it.
+### 1. Onboarding checklist / Setup Progress
 
-## Part A — Tenant Isolation (Item 1)
+**Symptom:** New company sees "0 of 0 sections completed · 0%" on the Platform Dashboard.
 
-Static + DB analysis (no fake test tenant needed, and safer than one):
+**Root cause:** `DashboardSetupNav.tsx` and `SetupProgressBar.tsx` bail to a `sections.length === 0` empty state when the `companies` row fetch fails or `companyId` isn't hydrated yet. Both also mix "always-true" checks with "needs data" checks, so real progress numbers look wrong.
 
-1. **RLS coverage audit** — query `pg_policies` + `pg_class` for every table in the codebase's `<supabase-tables>` list. Flag any table that is (a) RLS-disabled, (b) has zero policies, or (c) has a `USING (true)` SELECT policy without a `company_id`/`user_id` scope.
-2. **GRANT audit** — for each public table, confirm no `anon` SELECT grant exists on tables that store tenant data (customers, appointments, leads, invoices, quotes, call_logs, sms_logs, etc.).
-3. **Security definer function audit** — list every `SECURITY DEFINER` function and flag any that return tenant rows without filtering by `auth.uid()` / caller's `company_id`.
-4. **Client-side leak scan** — ripgrep the frontend for `.from('<tenant-table>')` calls that don't chain `.eq('company_id', …)` and aren't already inside an RLS-protected read. Report suspicious call sites.
-5. **Cross-company access log check** — query `cross_company_access_logs` for anything unexpected in the last 30 days.
-6. **Platform Admin gate check** — grep routes/components for `platform_admin` guards; confirm `/dashboard/architecture`, `/design-preview`, `/cyber-sentry-mockup*`, `/calculators`, `/export-docs` are gated in router config, not just hidden in the sidebar.
+**Fix:**
+- Redefine the checklist as **6 first-run steps** every new company must complete, in order:
+  1. Business info (name, phone, address, hours)
+  2. Services / offerings (≥1 service row)
+  3. Communications (SignalWire phone connected OR email sender configured)
+  4. AI Operatives (≥1 `ai_agent_configs.is_enabled`)
+  5. Web Presence (smart website created)
+  6. Publish / Go Live (smart website `is_published` OR `public_app_url` set)
+- Rewrite `DashboardSetupNav.tsx` so it always renders those 6 steps even before data loads (skeleton), never "0 of 0".
+- Each chip links to the correct settings route and shows check when complete.
+- Fire `SETUP_PROGRESS_REFRESH_EVENT` from the relevant settings screens (verify existing dispatch points, add where missing).
+- Retire the redundant duplicate section calc in `SetupProgressBar.tsx` — collapse both widgets into a single source of truth (`useSetupProgress` hook) so the dashboard and settings header agree.
 
-Output: table of `{table, rls_enabled, policy_count, anon_grant, tenant_scoped, verdict}` + list of unscoped frontend queries + list of ungated admin routes.
+---
 
-## Part B — Code-Fix Regression Verification (Item 5)
+### 2. Clean signup state (no AuraIntercept / demo data bleed)
 
-Purely static — fast:
+Audit + patch:
+- **Signup path** (`SignUp.tsx` + `handle_new_user` + `seed-company` edge functions if any): confirm no INSERT into `services`, `faqs`, `smart_links`, `inventory_items`, `knowledge_documents` beyond the generic industry-pack seed. The `seed_default_smart_links` trigger inserts 5 empty smart-link *templates* (URLs blank) — that's fine; verify no live URLs.
+- Confirm `seed_industry_pack_kb_for_company` uses `industry_template_packs` (generic per-vertical content) — never Aura Intercept's own row.
+- Audit that no dropdown, "recent customers", or dashboard widget on a fresh account can select data outside `.eq('company_id', currentCompanyId)`. Reuse the tenant-scope grep from the prior pre-launch report to spot-check.
+- Customer Portal: verify the portal page loads company info via `get_company_public_info_by_id(currentCompanyId)` (not a hardcoded Aura Intercept fallback). If a default falls back to Aura Intercept anywhere, replace with the active company's own `contact_phone`/`contact_email`/`address`.
+- Confirm demo companies (`is_demo = true`) are excluded from every non-platform-admin query (dropdowns, reports, "all companies" lists in non-admin surfaces).
+- If any seed content is retained, prefix with `Example — ` and mark `is_example = true` (add column) so the UI can render it grayed with an "Edit or delete" hint.
 
-1. **Twilio → SignalWire** — `rg -i 'twilio'` across `src/`, `supabase/functions/`, `public/`, `.lovable/memory/`. Expected result: only historical mentions in memory/migration comments; zero references in live UI copy, edge functions, or config.
-2. **Sidebar duplication** — read `src/components/dashboard/DashboardSidebar.tsx` (and TechnicianDashboardLayout) and diff the nav item arrays for duplicate `path` entries per role. Snapshot render via Playwright on `/dashboard` at desktop width and count sidebar `<a>` elements per section.
-3. **Sticky sub-nav overlap** — Playwright: load Field Ops Console, Business Management Console, and Settings; scroll 400px; screenshot; check for computed `position: sticky` elements whose bounding box overlaps the first content card (`getBoundingClientRect` intersection test).
-4. **Job-count sync (HVAC Tech Ops vs Dispatch)** — read `useFieldOpsWorkflow.ts` and the Dispatch page; confirm both derive counts from the same query/hook. If they diverge, flag the two sources.
-5. **Calendar sync cards (CalDAV, ICS)** — Playwright load `/dashboard/integrations/calendar`; assert no card renders the string "not available" / "unavailable"; screenshot for visual confirmation.
+Deliverable: audit notes in `/mnt/documents/tenant-isolation-audit.md` + code fixes for anything found.
 
-## Part C — Marked MANUAL-ONLY in the report
+---
 
-These I can't meaningfully automate and will explicitly call out:
-- Item 2 (real-phone iOS Safari + Android Chrome PWA install) — Playwright mobile emulation is not the same as a real device install flow.
-- Item 3 (Privacy / Terms legal review) — I can confirm the pages exist and aren't lorem ipsum, but "reflects what the platform actually does" needs a human/lawyer.
-- Item 4 real signup flow — creating a live tenant + Stripe row via the automation would pollute prod data.
+### 3. Standardize empty states
 
-For Item 3 I *will* fetch `/privacy` and `/terms`, word-count them, and flag if either contains "lorem", "TODO", or is under ~500 words.
-For Item 4 I *will* read the signup edge function + `Auth.tsx` and confirm no demo-company `company_id` is seeded into new profiles, and that new companies start with empty `services`/`faqs`/`inventory_items`.
+Create `src/components/ui/EmptyState.tsx` with a single pattern: icon + title + subtitle + optional CTA. Then sweep:
+- `SmartWebsiteAnalytics.tsx` — Daily Traffic Trend + AI Engagement Trend: when the log arrays are empty, render `<EmptyState />` instead of a zero-line chart. Same for any hardcoded satisfaction % — swap for "No sessions yet".
+- `CalDAVSubscription.tsx` company variant already shows "Coming Soon" — confirm ICS card has parity (check `src/pages/integrations/CalendarIntegration.tsx`).
+- Ripgrep for `not available.*contact support`, `NaN%`, hardcoded percentages in analytics cards, and flat-zero recharts renders — replace each with `<EmptyState />`.
 
-## Deliverable
+---
 
-`/mnt/documents/pre-launch-report.md` with:
-- PASS/FAIL per checklist item
-- Concrete file:line references for any failure
-- Screenshots under `/mnt/documents/prelaunch-screens/`
-- A prioritized fix list at the bottom I can hand to a follow-up build turn
+### 4. Remove hardcoded tenant-specific references
 
-No product code is modified in this pass.
+Audit the surfaces that generate AI templates or content:
+- ElevenLabs voice agent prompt generator (find it — likely `src/pages/AskAuraConfig.tsx` or an edge function).
+- AI Content Profile defaults (`company_ai_content_profiles`).
+- Any system prompt in `supabase/functions/*` (there are ~30 matches for "Aura Intercept").
+- Filter matches into two buckets:
+  - **Legitimate** (platform-level branding — welcome emails from `ai@auraintercept.ai`, TCPA opt-in copy, signup page, footer) — leave alone.
+  - **Illegitimate** (any string used as a default for the *tenant's* company name, manager name, or contact info in generated content) — replace with `${company.name}`, `${company.contact_phone}`, etc. Placeholder previews shown before a company fills in data get grayed "e.g., Jane Smith" styling.
+- Also scan for literal "Charles Perez" and any other personal names appearing as defaults.
+
+Deliverable: audit notes + code fixes.
+
+---
+
+### 5. Notification bell unread indicator
+
+The bell component (`NotificationBell.tsx`) **already** renders a destructive badge with `unreadCount` when > 0. So the "no indicator ever" symptom is one of:
+- `useStaffNotifications` hook returns `unreadCount = 0` because no rows match the current user's `recipient_id`;
+- notifications aren't being written for the events listed (integration status, low inventory, escalations);
+- bell isn't mounted on the header the user is looking at.
+
+**Fix:**
+- Verify `NotificationBell` is mounted in `DashboardLayout` header for every role (spot-check).
+- Audit `staff_notifications` inserts — add missing ones for: A2P 10DLC status change, failed automation (edge function error), escalated customer issue, low inventory threshold, new signup (already present), integration disconnect. Add whichever are missing.
+- Confirm the `staff_notifications` RLS `SELECT` policy lets a company_admin see rows where `recipient_id = auth.uid()` OR `recipient_role` matches their role.
+- Add a small test insert path (dev-only button) so the badge can be smoke-tested during QA.
+
+---
+
+### Order of work
+
+1 → 2 → 4 → 3 → 5. Items 1 and 2 ship together so a fresh test company can be walked end-to-end (matches the manual verification checklist). No product behavior changes to billing, tier, or integrations — this pass is polish, isolation, and UX consistency only.
