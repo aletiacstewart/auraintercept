@@ -117,7 +117,7 @@
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 35% 14%;
-    --muted-foreground: 210 25% 65%;
+    --muted-foreground: 210 28% 74%;
 
     /* Accent: Neon Cyan */
     --accent: 189 100% 50%;
@@ -307,7 +307,7 @@
     --popover-foreground: 189 45% 95%;
 
     --muted: 210 30% 14%;
-    --muted-foreground: 210 25% 65%;
+    --muted-foreground: 210 28% 74%;
 
     --card: 210 35% 8%;
     --card-foreground: 189 45% 95%;
