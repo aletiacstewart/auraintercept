@@ -32,6 +32,8 @@ interface PageHeaderProps {
   pulse?: boolean;
   /** Show inline Ask Aura bar below the header */
   showAuraBar?: boolean;
+  /** Optional override for the inline Ask Aura bar placeholder text */
+  auraBarPlaceholder?: string;
 }
 
 const featureColorClasses: Record<FeatureColor, { bg: string; text: string; ringColor: string }> = {
@@ -61,7 +63,8 @@ export function PageHeader({
   className,
   featureColor,
   pulse = true,
-  showAuraBar = false
+  showAuraBar = false,
+  auraBarPlaceholder,
 }: PageHeaderProps) {
   const colorClasses = featureColor ? featureColorClasses[featureColor] : { bg: 'bg-accent/20', text: 'text-accent', ringColor: 'var(--accent)' };
   
