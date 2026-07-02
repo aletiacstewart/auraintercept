@@ -953,7 +953,7 @@ export function CompanyOnboardingForm({ token = null }: CompanyOnboardingFormPro
         </CardHeader>
         <CardContent className="space-y-6">
           {[
-            { key: 'twilio', name: 'Twilio', purpose: 'Voice calls & SMS messaging' },
+            { key: 'twilio', name: 'SignalWire', purpose: 'Voice calls & SMS messaging' },
             { key: 'elevenlabs', name: 'ElevenLabs', purpose: 'AI voice synthesis' },
             { key: 'resend', name: 'Resend', purpose: 'Email delivery' },
             { key: 'stripe', name: 'Stripe', purpose: 'Payment processing' },

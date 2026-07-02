@@ -122,9 +122,9 @@ export function TestCallDialog({ trigger }: TestCallDialogProps) {
 
       if (error) throw error;
       if (data?.error) {
-        // Check for Twilio trial account error
+        // Check for telephony trial-account "unverified number" error
         if (data?.details?.code === 21219) {
-          throw new Error('TWILIO_TRIAL_UNVERIFIED');
+          throw new Error('TELEPHONY_TRIAL_UNVERIFIED');
         }
         throw new Error(data.error);
       }
@@ -141,9 +141,9 @@ export function TestCallDialog({ trigger }: TestCallDialogProps) {
       console.error('Call error:', error);
       setCallStatus('failed');
       
-      if (error.message === 'TWILIO_TRIAL_UNVERIFIED') {
-        toast.error('Twilio Trial Account Limitation', {
-          description: 'Your Twilio account is in trial mode. You must verify this phone number in your Twilio Console before calling it.',
+      if (error.message === 'TELEPHONY_TRIAL_UNVERIFIED') {
+        toast.error('SignalWire Trial Number Not Verified', {
+          description: 'Your SignalWire account is in trial mode. Verify this phone number in your SignalWire console before calling it.',
           duration: 10000,
         });
       } else {

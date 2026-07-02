@@ -86,8 +86,8 @@ export const DEFAULT_MILESTONES: Omit<Milestone, 'isComplete'>[] = [
     icon: <MessageSquare className="h-4 w-4" />
   },
   { 
-    key: 'twilio', 
-    label: 'Connect Phone (Twilio)', 
+    key: 'twilio', // key retained for stored progress compatibility; label reflects current vendor
+    label: 'Connect Phone (SignalWire)', 
     description: 'Enable voice calls',
     targetDay: 5, 
     phase: 'setup', 
