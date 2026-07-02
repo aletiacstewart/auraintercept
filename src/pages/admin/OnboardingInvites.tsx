@@ -31,7 +31,7 @@ type SubmissionPayload = {
   signature: { signer_name?: string; signer_title?: string; signed_at?: string; ip?: string } | null;
 };
 
-export default function OnboardingInvites() {
+export default function OnboardingInvites({ embedded }: { embedded?: boolean } = {}) {
   const { toast } = useToast();
   const [rows, setRows] = useState<Invite[]>([]);
   const [loading, setLoading] = useState(true);
