@@ -1693,6 +1693,8 @@ const PlatformGuides: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+          </TabsContent>
+        </Tabs>
         </div>
       </PageContainer>
     </DashboardLayout>
