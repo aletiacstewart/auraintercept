@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import {
   Dialog,
@@ -92,6 +93,7 @@ export function EmployeeManagement() {
   const queryClient = useQueryClient();
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteJobRole, setInviteJobRole] = useState<JobType | ''>('');
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [serviceAssignmentEmployee, setServiceAssignmentEmployee] = useState<{
     id: string;
@@ -160,7 +162,7 @@ export function EmployeeManagement() {
 
   // Generate invite code mutation
   const generateCodeMutation = useMutation({
-    mutationFn: async (email: string) => {
+    mutationFn: async ({ email, jobRole }: { email: string; jobRole: JobType | '' }) => {
       if (!companyId) throw new Error('No company ID');
 
       const code = generateRegistrationCode();
@@ -172,9 +174,10 @@ export function EmployeeManagement() {
         .insert({
           company_id: companyId,
           code,
-          email: email || null,
+          email: email.trim().toLowerCase(),
+          job_role: jobRole || null,
           expires_at: expiresAt.toISOString(),
-        });
+        } as never);
 
       if (error) throw error;
       return code;
@@ -262,7 +265,12 @@ export function EmployeeManagement() {
   });
 
   const handleGenerateCode = () => {
-    generateCodeMutation.mutate(inviteEmail);
+    const trimmed = inviteEmail.trim();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      toast.error('A valid email address is required for the invite');
+      return;
+    }
+    generateCodeMutation.mutate({ email: trimmed, jobRole: inviteJobRole });
   };
 
   const handleCopyCode = () => {
@@ -275,6 +283,7 @@ export function EmployeeManagement() {
   const handleCloseDialog = () => {
     setInviteOpen(false);
     setInviteEmail('');
+    setInviteJobRole('');
     setGeneratedCode(null);
   };
 
@@ -320,22 +329,39 @@ export function EmployeeManagement() {
             {!generatedCode ? (
               <div className="space-y-4 pt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email Address (Optional)</Label>
+                  <Label htmlFor="email">Employee Email</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="employee@company.com"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
+                    required
                   />
                   <p className="text-xs text-muted-foreground">
-                    If provided, only this email can use the code
+                    Required — only this email will be able to claim the code.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="jobRole">Job Role (Optional)</Label>
+                  <Select value={inviteJobRole} onValueChange={(v) => setInviteJobRole(v as JobType)}>
+                    <SelectTrigger id="jobRole">
+                      <SelectValue placeholder="Assign a role at signup (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {JOB_TYPES.map((j) => (
+                        <SelectItem key={j.value} value={j.value}>{j.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Auto-applied when the employee signs up. You can change or add more later.
                   </p>
                 </div>
                 <Button
                   className="w-full"
                   onClick={handleGenerateCode}
-                  disabled={generateCodeMutation.isPending}
+                  disabled={generateCodeMutation.isPending || !inviteEmail.trim()}
                 >
                   {generateCodeMutation.isPending ? 'Generating...' : 'Generate Code'}
                 </Button>
