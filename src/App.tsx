@@ -86,6 +86,7 @@ import CRMIntegration from "./pages/integrations/CRMIntegration";
 // BusinessOpsHub merged into BusinessOperations
 import Help from "./pages/Help";
 import Architecture from "./pages/Architecture";
+import PlatformBrief from "./pages/dashboard/PlatformBrief";
 import Calculators from "./pages/Calculators";
 import ExportDocumentation from "./pages/ExportDocumentation";
 import VideoPromptsPage from "./pages/VideoPromptsPage";
