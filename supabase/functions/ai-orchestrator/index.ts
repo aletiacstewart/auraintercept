@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { verifyCronSecret } from "../_shared/cron-auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -172,7 +173,16 @@ serve(async (req) => {
         return await handleListAgents(supabase, companyId);
       
       case 'process_pending_events':
+      {
+        const cronAuth = await verifyCronSecret(req);
+        if (!cronAuth.ok) {
+          return new Response(JSON.stringify({ error: cronAuth.error }), {
+            status: cronAuth.status ?? 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
         return await handleProcessPendingEvents(supabase, companyId);
+      }
       
       case 'test_agent':
         return await handleTestAgent(supabase, companyId, agentType, payload);
