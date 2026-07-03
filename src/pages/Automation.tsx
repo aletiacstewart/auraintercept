@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { Bot, CheckCircle2, Clock, Info, ShieldAlert, X } from "lucide-react";
+import { Bot, CheckCircle2, ChevronDown, Clock, Info, ShieldAlert, X } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { PageContainer } from "@/components/ui/page-container";
 import { PageHeader } from "@/components/ui/page-header";
@@ -18,6 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { ActionPreview } from "@/components/automation/ActionPreview";
 import { listCoreAgents } from "@/lib/agentRegistry";
+import { cn } from "@/lib/utils";
 
 // Plain-English label overrides for the Automation surface (kept per
 // plain-english-labels-v1 memory). Anything not overridden falls back to the
@@ -94,6 +95,7 @@ export default function Automation() {
   const [pageSize, setPageSize] = useState(50);
   const [statusFilter, setStatusFilter] = useState("all");
   const [agentFilter, setAgentFilter] = useState<string>("all");
+  const [expandedAgentId, setExpandedAgentId] = useState<string | null>(null);
 
   const { data: settings, isLoading: settingsLoading } = useQuery({
     queryKey: ["agent-autonomy", companyId],
@@ -308,62 +310,75 @@ export default function Automation() {
             {settingsLoading ? (
               <Skeleton className="h-64 w-full" />
             ) : (
-              AGENTS.map((agent) => {
-                const d = drafts[agent.id];
-                if (!d) return null;
-                return (
-                  <Card key={agent.id}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between flex-wrap gap-2">
-                        <div>
-                          <CardTitle className="text-base">{agent.label}</CardTitle>
-                          <CardDescription>{agent.description}</CardDescription>
+              <div className="rounded-lg border divide-y bg-card">
+                {AGENTS.map((agent) => {
+                  const d = drafts[agent.id];
+                  if (!d) return null;
+                  const isExpanded = expandedAgentId === agent.id;
+                  return (
+                    <div key={agent.id}>
+                      <button
+                        type="button"
+                        className="w-full flex items-center justify-between gap-4 p-4 text-left hover:bg-muted/40 transition-colors"
+                        onClick={() => setExpandedAgentId(isExpanded ? null : agent.id)}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="font-medium truncate">{agent.label}</div>
+                          <div className="text-sm text-muted-foreground truncate">{agent.description}</div>
                         </div>
-                        <Badge variant="outline">{MODE_LABEL[d.mode]}</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
-                      <div>
-                        <Label className="text-xs">Mode</Label>
-                        <Select value={d.mode} onValueChange={(v) => updateDraft(agent.id, { mode: v as AutonomyRow["mode"] })}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="off">Off</SelectItem>
-                            <SelectItem value="suggest">Approval-first</SelectItem>
-                            <SelectItem value="auto_safe">Auto (safe only)</SelectItem>
-                            <SelectItem value="auto_all">Auto (everything)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label className="text-xs">Min confidence</Label>
-                        <Input
-                          type="number" min={0} max={1} step={0.05}
-                          value={d.confidence_threshold}
-                          onChange={(e) => updateDraft(agent.id, { confidence_threshold: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Max value / action ($)</Label>
-                        <Input
-                          type="number" min={0} step={10}
-                          value={d.max_value_usd}
-                          onChange={(e) => updateDraft(agent.id, { max_value_usd: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Daily auto cap</Label>
-                        <Input
-                          type="number" min={0} step={1}
-                          value={d.daily_action_cap}
-                          onChange={(e) => updateDraft(agent.id, { daily_action_cap: Number(e.target.value) })}
-                        />
-                      </div>
-                      <Button size="sm" onClick={() => saveAgent(agent.id)}>Save</Button>
-                    </CardContent>
-                  </Card>
-                );
-              })
+                        <div className="hidden md:flex items-center gap-4 text-xs text-muted-foreground shrink-0">
+                          <span>{MODE_LABEL[d.mode]}</span>
+                          <span>Conf {d.confidence_threshold}</span>
+                          <span>Cap ${d.max_value_usd}</span>
+                          <span>{d.daily_action_cap}/day</span>
+                        </div>
+                        <ChevronDown className={cn("w-4 h-4 transition-transform shrink-0", isExpanded && "rotate-180")} />
+                      </button>
+                      {isExpanded && (
+                        <div className="p-4 pt-4 border-t bg-muted/20 grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+                          <div>
+                            <Label className="text-xs">Mode</Label>
+                            <Select value={d.mode} onValueChange={(v) => updateDraft(agent.id, { mode: v as AutonomyRow["mode"] })}>
+                              <SelectTrigger><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="off">Off</SelectItem>
+                                <SelectItem value="suggest">Approval-first</SelectItem>
+                                <SelectItem value="auto_safe">Auto (safe only)</SelectItem>
+                                <SelectItem value="auto_all">Auto (everything)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label className="text-xs">Min confidence</Label>
+                            <Input
+                              type="number" min={0} max={1} step={0.05}
+                              value={d.confidence_threshold}
+                              onChange={(e) => updateDraft(agent.id, { confidence_threshold: Number(e.target.value) })}
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Max value / action ($)</Label>
+                            <Input
+                              type="number" min={0} step={10}
+                              value={d.max_value_usd}
+                              onChange={(e) => updateDraft(agent.id, { max_value_usd: Number(e.target.value) })}
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Daily auto cap</Label>
+                            <Input
+                              type="number" min={0} step={1}
+                              value={d.daily_action_cap}
+                              onChange={(e) => updateDraft(agent.id, { daily_action_cap: Number(e.target.value) })}
+                            />
+                          </div>
+                          <Button size="sm" onClick={() => saveAgent(agent.id)}>Save</Button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </TabsContent>
 
