@@ -23,6 +23,8 @@ import { AIContentProfileManager } from '@/components/knowledge/AIContentProfile
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 
 const CHANNEL_STATS_CONFIG = [
   { channel: 'Website', icon: Globe, key: 'website', color: 'text-cyan-400' },
@@ -73,10 +75,13 @@ export default function ContentEngineConsole() {
             description="Unified AI content generation for all marketing channels"
             featureColor="marketing"
             action={
-              <Badge variant="outline" className="border-primary/30 text-primary">
-                <Sparkles className="h-3 w-3 mr-1" />
-                Creative Agent
-              </Badge>
+              <div className="grid w-full min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:justify-end">
+                <HowToUseModal {...HOW_TO_USE.contentEngineConsole} />
+                <Badge variant="outline" className="border-primary/30 text-primary">
+                  <Sparkles className="h-3 w-3 mr-1" />
+                  Creative Agent
+                </Badge>
+              </div>
             }
           />
 
