@@ -3283,6 +3283,18 @@ const AGENT_TOOLS: Record<string, any[]> = {
   ],
 };
 
+// customer_journey = union of booking + followup + review tools.
+// The consolidated 10-operative model folded these three legacy agents into
+// one, but AGENT_TOOLS still had no customer_journey key — so the agent fell
+// through to a handoff-only default and couldn't actually execute anything.
+// Assigning after the object literal (rather than spreading inside it) is
+// intentional: the identifier isn't bound during its own initializer.
+AGENT_TOOLS.customer_journey = [
+  ...AGENT_TOOLS.booking,
+  ...AGENT_TOOLS.followup,
+  ...AGENT_TOOLS.review,
+];
+
 // Helper function to get brand tone modifier for AI communication style
 function getBrandToneModifier(brandTone: string | null): string {
   switch (brandTone) {
@@ -3996,6 +4008,10 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       quoting: 'business_finance',
       invoice: 'business_finance',
       inventory: 'business_finance',
+      // Legacy booking/followup/review aliases → customer_journey (full union)
+      booking: 'customer_journey',
+      followup: 'customer_journey',
+      review: 'customer_journey',
     };
     const toolKey = TOOL_KEY_MAP[agentType] || agentType;
     const tools = AGENT_TOOLS[toolKey] || [
