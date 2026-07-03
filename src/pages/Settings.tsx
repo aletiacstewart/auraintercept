@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
 import { Separator } from '@/components/ui/separator';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Settings as SettingsIcon, Mic, HardDrive, ArrowRight, Building2, MessageSquare, FileText, Megaphone, BarChart3 } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
 
@@ -112,24 +113,42 @@ export default function Settings() {
               </TabsList>
 
               {/* ── Company: Branding + Contact Info + App URL ── */}
-              <TabsContent value="company" className="space-y-8 mt-6">
-                <div>
-                  <h2 className="text-base font-semibold text-foreground mb-1">Branding</h2>
-                  <p className="text-sm text-muted-foreground mb-4">Logo, colors, and chat widget appearance</p>
-                  <BrandingSettings />
-                </div>
-                <Separator />
-                <div>
-                  <h2 className="text-base font-semibold text-foreground mb-1">Contact Info</h2>
-                  <p className="text-sm text-muted-foreground mb-4">Your business contact details shown to customers</p>
-                  <ContactInfoSettings />
-                </div>
-                <Separator />
-                <div>
-                  <h2 className="text-base font-semibold text-foreground mb-1">Public App URL</h2>
-                  <p className="text-sm text-muted-foreground mb-4">The URL your customers use to access their portal</p>
-                  <PublicAppUrlSettings />
-                </div>
+              <TabsContent value="company" className="mt-6">
+                <Accordion type="multiple" defaultValue={['branding']} className="space-y-4">
+                  <AccordionItem value="branding" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <div className="text-left">
+                        <div className="text-base font-semibold">Branding</div>
+                        <div className="text-sm text-muted-foreground font-normal">Logo, colors, and chat widget appearance</div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4">
+                      <BrandingSettings />
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="contact" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <div className="text-left">
+                        <div className="text-base font-semibold">Contact Info</div>
+                        <div className="text-sm text-muted-foreground font-normal">Your business contact details shown to customers</div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4">
+                      <ContactInfoSettings />
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="app-url" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <div className="text-left">
+                        <div className="text-base font-semibold">Public App URL</div>
+                        <div className="text-sm text-muted-foreground font-normal">The URL your customers use to access their portal</div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4">
+                      <PublicAppUrlSettings />
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </TabsContent>
 
               {/* ── Communications: Default Prefs + Reminders + Missed Calls ── */}
