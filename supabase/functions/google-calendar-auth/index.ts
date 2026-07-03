@@ -159,18 +159,27 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Parse state to get companyId and userId
-      let stateData;
-      try {
-        stateData = JSON.parse(atob(state));
-      } catch {
+      // Validate the state nonce by looking it up server-side. The value received on
+      // the callback MUST match a still-valid, unconsumed record we issued during the
+      // `authorize` step. Prevents an attacker from forging a state parameter that
+      // links their Google account to a victim company.
+      const nonceClient = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+      const { data: nonceRow } = await nonceClient
+        .from('oauth_state_nonces')
+        .select('id, provider, company_id, user_id, consumed_at, expires_at')
+        .eq('nonce', state)
+        .eq('provider', 'google_calendar')
+        .maybeSingle();
+
+      if (!nonceRow || nonceRow.consumed_at || new Date(nonceRow.expires_at) < new Date()) {
         return new Response(
-          createCallbackHtml(false, 'Invalid state parameter'),
+          createCallbackHtml(false, 'Invalid or expired state parameter'),
           { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
         );
       }
-
-      const { companyId, userId } = stateData;
+      await nonceClient.from('oauth_state_nonces').update({ consumed_at: new Date().toISOString() }).eq('id', nonceRow.id);
+      const companyId = nonceRow.company_id;
+      const userId = nonceRow.user_id;
 
       // Exchange code for tokens
       const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
@@ -267,11 +276,21 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Create state parameter with companyId and userId
-      const state = btoa(JSON.stringify({
-        companyId: profile.company_id,
-        userId: user.id,
-      }));
+      // Persist a single-use state nonce server-side and only pass the opaque id to Google.
+      const state = crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '');
+      const { error: nonceErr } = await supabase.from('oauth_state_nonces').insert({
+        nonce: state,
+        provider: 'google_calendar',
+        company_id: profile.company_id,
+        user_id: user.id,
+      });
+      if (nonceErr) {
+        console.error('Failed to persist OAuth state nonce:', nonceErr);
+        return new Response(
+          JSON.stringify({ error: 'Failed to start OAuth' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
 
       const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
       authUrl.searchParams.set('client_id', GOOGLE_CLIENT_ID!);
