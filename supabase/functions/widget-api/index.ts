@@ -820,14 +820,29 @@ GUIDELINES:
             
             const techId = args.technician_id || techs?.[0]?.id;
             if (techId && args.appointment_id) {
-              const { error: assignError } = await supabase
-                .from('job_assignments')
-                .update({ employee_id: techId, status: 'assigned', assigned_at: new Date().toISOString() })
-                .eq('appointment_id', args.appointment_id);
-              
-              result = assignError 
-                ? JSON.stringify({ success: false, error: 'Failed to assign technician' })
-                : JSON.stringify({ success: true, technician_name: techs?.[0]?.full_name, message: 'Technician assigned' });
+              // Verify the appointment belongs to this company BEFORE mutating job_assignments.
+              // Without this scope check, an AI-parsed appointment_id could reference another
+              // tenant's row and — because the service role client bypasses RLS — reassign it.
+              const { data: apptRow } = await supabase
+                .from('appointments')
+                .select('id')
+                .eq('id', args.appointment_id)
+                .eq('company_id', company.id)
+                .maybeSingle();
+
+              if (!apptRow) {
+                result = JSON.stringify({ success: false, error: 'Appointment not found for this company' });
+              } else {
+                const { error: assignError } = await supabase
+                  .from('job_assignments')
+                  .update({ employee_id: techId, status: 'assigned', assigned_at: new Date().toISOString() })
+                  .eq('appointment_id', args.appointment_id)
+                  .eq('company_id', company.id);
+
+                result = assignError
+                  ? JSON.stringify({ success: false, error: 'Failed to assign technician' })
+                  : JSON.stringify({ success: true, technician_name: techs?.[0]?.full_name, message: 'Technician assigned' });
+              }
             } else {
               result = JSON.stringify({ success: false, error: 'No technician available' });
             }
