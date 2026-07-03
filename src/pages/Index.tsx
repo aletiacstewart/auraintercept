@@ -930,7 +930,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">AI Voice Synthesis</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own ElevenLabs account · billed directly by ElevenLabs</p>
                 <p className="text-[10px] text-white">Free 15 min/mo · Starter $5 · Creator $22 · Pro $99 · pay-as-you-go available</p>
-                <p className="text-[10px] text-white">Valid credit card required on your ElevenLabs account · all tiers</p>
+                
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
