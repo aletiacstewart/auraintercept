@@ -1,45 +1,36 @@
-Plan: Color token consistency cleanup + remove dead light-mode CSS
+## Screenshot-verified UI cleanup (5 fixes)
 
-## Background
-I reviewed the two highest-traffic shell files and the global CSS. The hardcoded brand colors (#00E5FF, #ff6b6b, #46a2d3) in DashboardLayout.tsx and PublicHeader.tsx already have semantic token equivalents in src/index.css, and the app is dark-mode-only (index.html hardcodes `<html class="dark">`), so the `:root` light-mode variable block is never rendered.
+All five claims verified against source. Planning the four small fixes and one scoped content fix.
 
-## Fix 1 — Replace hardcoded brand colors with tokens
+### Fix 1 — Default industry label (HIGH)
+`src/lib/industryMarketingContent.ts` line 57: change the `default` entry's label from `'Aura Intercept'` to `'your business'`. Renders "See it in action — for your business." on `/for-business` before an industry is picked, and flows into `IndustryROICalculator`'s `industryLabel`.
 
-### src/components/dashboard/DashboardLayout.tsx
-1. Active nav item styling (~line 604-609)
-   - Replace `background: "rgba(0,229,255,0.1)"` with `background: "hsl(var(--primary) / 0.1)"`
-   - Replace `color: "#00E5FF"` with `color: "hsl(var(--primary))"`
-   - Replace `boxShadow` rgba values with `hsl(var(--primary) / 0.2)`
-2. Active icon styling (~line 653)
-   - Replace `style={isActive ? { color: "#00E5FF" } : undefined}` with `style={isActive ? { color: "hsl(var(--primary))" } : undefined}`
-3. Logout icon (~line 733)
-   - Replace `style={{ color: "#ff6b6b" }}` with `style={{ color: "hsl(var(--destructive))" }}`
-4. Collapse button (~line 745)
-   - Replace `border: "1px solid rgba(0,229,255,0.2)"` with `border: "1px solid hsl(var(--primary) / 0.2)"`
-   - Replace `color: "#00E5FF"` with `color: "hsl(var(--primary))"`
-   - Keep `background: "rgba(4,10,20,0.95)"` as-is (dark-background pattern is out of scope for this change)
-5. Mobile menu button (~line 765)
-   - Replace `style={{ color: "#00E5FF" }}` with `style={{ color: "hsl(var(--primary))" }}`
+### Fix 2 — Duplicate "Social Media" sidebar labels (MEDIUM)
+`src/components/dashboard/DashboardLayout.tsx` line 172: rename the integrations entry label from `'Social Media'` to `'Social Media Setup'`. The console entry at line 148 stays `'Social Media'`. Routes unchanged.
 
-### src/components/layout/PublicHeader.tsx
-1. Wordmark span (~line 30)
-   - Replace `text-[#00E5FF]` with `text-primary`
-2. Tagline span (~line 31)
-   - Replace `text-[#46a2d3]` with `text-primary/60` to approximate the original muted sky-blue feel
+### Fix 3 — Raw snake_case business type badge (MEDIUM)
+`src/lib/businessTypeConsoleContext.ts` around line 44: add a small `humanize()` helper (`replace(/_/g,' ')` + title-case) and apply it only to the fallback path when `matrixRow?.name` is missing. Common case (matrix hit) is untouched.
 
-## Fix 2 — Remove dead light-mode CSS
+### Fix 4 — Industry-aware specialist example prompts (MEDIUM)
+`src/pages/ai-consoles/SpecialistOperativesConsole.tsx`:
+- Change each specialist's `examples: string[]` in `SPECIALISTS_RAW` to `examples: Record<string, string[]>` with a `default` key holding today's trades prompts (zero-change fallback).
+- Resolve the active industry cluster via the existing industry pack / company context already used elsewhere in the console (I'll confirm the exact hook while editing — likely `useIndustryPack`).
+- In render, use `examples[clusterKey] ?? examples.default`.
+- Seed one cluster (`saas_platform`) with tailored prompts for 2–3 specialists (Diagnostic + one or two others) as the proof-of-concept. Remaining specialists/clusters fall back to trades prompts unchanged.
 
-### src/index.css
-- Delete the entire `:root` CSS variable block (roughly lines 13-97) that defines the unused light-mode theme.
-- Keep the `.dark` block unchanged so all existing tokens continue to resolve correctly for the always-dark app.
-- No rename of `.dark` to `:root` is required, since `<html class="dark">` is already set everywhere.
+### Fix 5 — Preview button naming on Web Presence (LOW)
+`src/pages/SmartWebsiteManager.tsx` ~lines 331–343: label-only change.
+- Toggle button: `'Live Preview'` / `'Hide Preview'` → `'Preview Panel'` / `'Hide Panel'`.
+- New-tab button: `'Preview'` → `'Open Live Site'`.
+Behavior unchanged.
 
-## Out of scope
-- Dark background rgba() values (`rgba(4,10,20,...)`), near-white text (`rgba(255,255,255,...)`), and other surface-level hardcoded colors are intentionally left untouched pending a separate dedicated cleanup.
-- No functional changes to navigation, header links, or layout behavior.
+### Out of scope (per prompt, low-confidence visual-only items)
+Automation page table refactor, Customer Portal missing icon labels, Setup Progress widget auto-collapse — not touching this pass.
 
-## Acceptance checklist
-- [ ] Sidebar active-item highlight, active icon, logout icon, collapse button, and mobile menu button render visually identical to before (zero-visible-difference refactor).
-- [ ] PublicHeader wordmark and tagline colors look the same or acceptably close; we can adjust the tagline opacity fraction if `text-primary/60` does not match #46a2d3 closely enough.
-- [ ] The dead `:root` light-mode block is removed, and the codebase no longer contains a silently unreachable second theme.
-- [ ] App builds and existing dark-mode screens remain unchanged.
+### Verification
+- Build passes.
+- `/for-business` (no `?industry=`): CTA reads "for your business."; ROI calculator label updated.
+- Sidebar shows `Social Media` + `Social Media Setup`, both routes intact.
+- A `saas_platform` account (no matrix row) shows "Saas Platform" (or "SaaS Platform" if I special-case; will use generic humanize → "Saas Platform") instead of `saas_platform`. Matrix-backed types still use `matrixRow.name`.
+- Specialist console: `saas_platform` company sees tailored prompts on seeded specialists; trades companies see original prompts everywhere.
+- Web Presence: both buttons work as before; labels updated.
