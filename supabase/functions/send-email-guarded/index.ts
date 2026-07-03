@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { sendGuardedEmail } from '../_shared/email-guard.ts';
+import { authorizeInternalRequest } from '../_shared/internal-auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,7 +15,7 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const {
       companyId = null, to, from, subject, html, text,
-      template, priority = 'normal',
+      template, priority: requestedPriority = 'normal',
     } = body ?? {};
 
     if (!to || !subject || !html) {
@@ -22,6 +23,22 @@ Deno.serve(async (req) => {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    if (!companyId) {
+      return new Response(JSON.stringify({ error: 'companyId is required' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const authResult = await authorizeInternalRequest(req, companyId);
+    if (!authResult.ok) {
+      return new Response(JSON.stringify({ error: authResult.error }), {
+        status: authResult.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Only genuine service-role callers may request the cap-bypassing "critical" priority.
+    const priority = authResult.ctx.isService ? requestedPriority : 'normal';
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
