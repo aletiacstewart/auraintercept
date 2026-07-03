@@ -4008,6 +4008,10 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       quoting: 'business_finance',
       invoice: 'business_finance',
       inventory: 'business_finance',
+      // Legacy booking/followup/review aliases → customer_journey (full union)
+      booking: 'customer_journey',
+      followup: 'customer_journey',
+      review: 'customer_journey',
     };
     const toolKey = TOOL_KEY_MAP[agentType] || agentType;
     const tools = AGENT_TOOLS[toolKey] || [
