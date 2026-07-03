@@ -1,38 +1,81 @@
+# Console UX & Nav IA Fixes — Review + Plan
 
-## Review of Claude's recommendations
+Reviewed all 5 of Claude's recommendations against the current codebase. All are accurate and safe. Recommend implementing 1–4 as specified, and doing **only the plumbing** portion of 5 (interface + fallback wiring) without seeding half-finished per-industry copy.
 
-The diagnosis is **correct**. `AGENT_DEFINITIONS` in `src/pages/AgentDetailPage.tsx` still uses the pre-consolidation 24-granular-agent keys (booking, followup, review, route, eta, checkin, quoting, invoice, inventory, campaign, lead, insights, forecast, revenue, performance, creative, social_content, social_scheduler, social_analytics). The hub (`AIAgentsHub.tsx`) navigates using the canonical operative IDs — `customer_journey`, `outreach`, `creative_content`, `business_finance`, `field_navigation`, `analytics_intelligence` — none of which exist in the definitions map, so those 6 operative cards + all 14 specialist cards route to "Agent Not Found." Only `triage`, `dispatch`, `admin`, `web_presence` survived because their keys are unchanged.
+---
 
-Legacy settings rows are safe: `useAIAgentOrchestrator.ts` (line 190–200) already merges old `agent_type` values via `normalizeAgentName`, so any settings previously saved under `booking.*`, `inventory.*`, etc. will surface under the new consolidated key without a data migration.
+## Fix 1 — Missing "How to Use" modals (3 consoles)
 
-### Judgment calls — my take
+Add three entries to `src/lib/howToUseContent.ts` following the existing shape used by `analyticsConsole` / `fieldOpsConsole`:
+- `specialistOperativesConsole`
+- `contentEngineConsole`
+- `videoConsole`
 
-1. **Drop `PLATFORM_ADMIN_ONLY_AGENTS = ['inventory']`.** Correct. `AIAgentsHub.tsx` (line 279) already gates `business_finance` from non-platform-admins via `HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN`, so the detail-page gate is redundant *for now* — but the hub gate also currently hides `business_finance` from company_admins. Removing the detail-page restriction alone won't expose it because they can't reach the card. The real question is whether `business_finance` should be visible to company_admins at all; that's outside this fix. **Recommendation: remove the detail-page restriction as proposed**, and flag the hub-visibility question separately.
+Then wire `<HowToUseModal {...HOW_TO_USE.xxx} />` into the `PageHeader` action slot of:
+- `src/pages/ai-consoles/SpecialistOperativesConsole.tsx`
+- `src/pages/ContentEngineConsole.tsx`
+- `src/pages/VideoConsole.tsx`
 
-2. **`creative_content` written fresh rather than concatenated.** Reasonable — mechanically merging 4 overlapping definitions produces a form nobody wants to fill out. Approving the editorial rewrite.
+## Fix 2 — Contextual "Manage Agents" deep-links
 
-## Plan
+Update the `onClick` in each console's Manage Agents button:
 
-### Edit `src/pages/AgentDetailPage.tsx`
+| File | New target |
+|---|---|
+| `FieldOpsConsole.tsx` | `/dashboard/ai-agents/field_navigation` |
+| `ai-consoles/SocialMediaConsole.tsx` | `/dashboard/ai-agents/creative_content` |
+| `MarketingSalesConsole.tsx` | `/dashboard/ai-agents/outreach` |
+| `BusinessManagementConsole.tsx` | `/dashboard/ai-agents/business_finance` |
+| `AnalyticsConsole.tsx` | `/dashboard/ai-agents/analytics_intelligence` |
+| `ai-consoles/CustomerPortalConsole.tsx` | `/dashboard/ai-agents/triage` |
 
-1. **Replace `AGENT_DEFINITIONS`** — keep the 4 working keys (`triage`, `dispatch`, `admin`, `web_presence`) verbatim; delete the 19 stale keys; add the 6 merged operative keys and 14 specialist keys from Claude's prompt (24 total). Add any missing lucide-react icon imports (`MessageCircleHeart`, etc.) to the top-of-file import block.
+Leave `SpecialistOperativesConsole` untouched (it *is* the specialist browser).
 
-2. **Remove `PLATFORM_ADMIN_ONLY_AGENTS = ['inventory']`** and the `isRestrictedAgent` check that consumes it (line 645). Nothing else references it.
+Note: this depends on the prior AgentDetailPage fix (already shipped) — the six target IDs all exist in the rebuilt `AGENT_DEFINITIONS`, so no additional detail-page work needed. **However `triage` should be double-checked** — it wasn't in the operatives list I rebuilt. If it isn't a live definition key, either add it or point Customer Portal at `customer_journey` instead. Will verify during build and choose the correct target then.
 
-### Not touched
+## Fix 3 — Title mismatch
 
-- `useAIAgentOrchestrator.ts` — legacy-name merging already handles surfacing old settings under new keys.
-- `AIAgentsHub.tsx` — hub already uses canonical IDs; no change needed.
-- `AgentTestConsole.tsx` / `AgentEventLog.tsx` — consume `agentId` directly, unaffected by the definitions map.
-- No DB migration; no edge functions.
+`BusinessManagementConsole.tsx` currently titles the page **"Business Operations"** while the sidebar calls it **"Business Management"**. Align on **"Business Management"** (matches sidebar + tier/marketing copy). One-line change to the `PageHeader title` prop.
 
-### Flagged, not fixed here
+## Fix 4 — Generalize the hardcoded restaurants hide-rule
 
-- `outreach` (24 fields) and `analytics_intelligence` (18 fields) will render as long flat forms. Follow-up: group into collapsible sections inside `AgentSettingsPanel.tsx`.
-- Whether `business_finance` should be visible to company_admins in the hub (currently platform-admin-only via `HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN`).
+- Extend `ProfileLabelOverrides` in `src/lib/industryProfiles.ts` with `hiddenNavHrefs?: string[]`.
+- On the restaurant profile spec(s), add `hiddenNavHrefs: ['/dashboard/appointments']`.
+- In `DashboardLayout.tsx`, replace:
+  ```
+  if (industryPack?.industry_id === 'restaurants' && item.href === '/dashboard/appointments') return false;
+  ```
+  with:
+  ```
+  if (!isPlatformAdmin && profileSpec?.labelOverrides.hiddenNavHrefs?.includes(item.href)) return false;
+  ```
+- Leave the `saas_platform` "Operations Map" relabel as-is per Claude's own note — it's a one-off for the flagship tenant, not a generalizable rule.
 
-### Acceptance
+## Fix 5 — Adaptive console titling (plumbing only)
 
-- All 10 operative cards + all 14 specialist cards open a real settings page.
-- Companies with legacy settings rows see their old values pre-filled under the new consolidated keys (via existing orchestrator merge).
-- `business_finance` opens normally for a platform_admin; hub visibility rules unchanged.
+**Recommendation: do the plumbing, skip the seed copy.**
+
+Extend `IndustryServiceConsoleConfig` in `src/lib/industryAgentMap.ts` with optional fields:
+```
+businessMgmtTitle?: string;
+businessMgmtDescription?: string;
+marketingConsoleTitle?: string;
+marketingConsoleDescription?: string;
+```
+
+Wire `BusinessManagementConsole.tsx` and `MarketingSalesConsole.tsx` to read from `serviceConfig` with fallback to today's generic copy (same pattern `FieldOpsConsole.tsx` already uses).
+
+**Do NOT seed the "Transaction Management" / "Back of House" values in this pass.** Rationale: authoring per-cluster copy for 6 consoles × N clusters is a content decision that deserves its own dedicated pass with the same care that already went into `workerConsoleTitle`. Landing partial copy for two industries now sets an inconsistent precedent (why real estate and restaurants but not beauty, repair, outdoor?). The plumbing lets a future pass drop copy in as a pure data change with zero code risk.
+
+If you'd rather seed the two examples now to validate the mechanism end-to-end, say so and I'll include them.
+
+---
+
+## Acceptance
+
+Same as Claude's checklist, with one adjustment for Fix 5: the two consoles read from `serviceConfig` and fall back cleanly when no override is set — no seeded per-industry copy landed yet.
+
+## Judgment calls flagged
+
+1. **Customer Portal → `triage`**: verify this operative key exists before shipping; otherwise use `customer_journey`.
+2. **Fix 5 seed copy**: skipping in this pass. Confirm or override.

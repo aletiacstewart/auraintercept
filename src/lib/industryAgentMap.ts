@@ -135,6 +135,15 @@ export interface IndustryServiceConsoleConfig {
   /** Optional sidebar label for the dispatch/admin sub-item under the
    * Field Ops group. Defaults to "Dispatch View" when unset. */
   dispatchSubItemLabel?: string;
+  /** Optional per-industry title for the Business Management console.
+   * Falls back to the console's generic default when unset. */
+  businessMgmtTitle?: string;
+  /** Optional per-industry description for the Business Management console. */
+  businessMgmtDescription?: string;
+  /** Optional per-industry title for the Outreach & Sales / Marketing console. */
+  marketingConsoleTitle?: string;
+  /** Optional per-industry description for the Outreach & Sales / Marketing console. */
+  marketingConsoleDescription?: string;
 }
 
 type PartialConfig = Partial<Omit<IndustryServiceConsoleConfig, 'quickActions' | 'tabs' | 'operatives' | 'statusLabels' | 'selectorText' | 'specialistShow'>> & {

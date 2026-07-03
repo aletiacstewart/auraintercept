@@ -45,6 +45,8 @@ import {
   type IndustrySpecialistOperative,
 } from '@/lib/subscriptionAgentConfig';
 import { cn } from '@/lib/utils';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 
 type SpecialistDef = {
   id: IndustrySpecialistOperative;
@@ -357,9 +359,12 @@ export default function SpecialistOperativesConsole() {
               </Badge>
             }
             action={
-              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/ai-agents')} className="w-full sm:w-auto">
-                <span className="truncate">Manage Operatives</span>
-              </Button>
+              <div className="grid w-full min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
+                <HowToUseModal {...HOW_TO_USE.specialistOperativesConsole} />
+                <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/ai-agents')} className="w-full sm:w-auto">
+                  <span className="truncate">Manage Operatives</span>
+                </Button>
+              </div>
             }
           />
 

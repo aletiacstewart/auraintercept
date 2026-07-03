@@ -78,7 +78,7 @@ export default function FieldOpsConsole() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigate('/dashboard/ai-agents')}
+                        onClick={() => navigate('/dashboard/ai-agents/field_navigation')}
                         className="w-full sm:w-auto"
                       >
                         <Cpu className="h-3.5 w-3.5 mr-1.5" />

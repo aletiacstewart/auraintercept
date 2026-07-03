@@ -9,6 +9,7 @@ import { useCompanyProfile } from '@/hooks/useCompanyProfile';
 import { navItemAllowedByProfile } from '@/lib/profileConsoleMap';
 import { getNavLabels, getPageHeader } from '@/lib/industryNavLabels';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
+import { isNavHrefHiddenForIndustry } from '@/lib/industryNavVisibility';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -397,13 +398,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         ) {
           return false;
         }
-        // Restaurants do not use the in-app reservation system — Aura only
-        // sends Smart Links via voice/chat. Hide the Schedule/Reservations
-        // route for restaurant company admins and employees.
+        // Per-industry sidebar hides. Driven by data in
+        // `industryNavVisibility.ts` so adding a new vertical is a one-line
+        // change, not a new branch here. Platform admin still sees the
+        // route so the surface can be inspected.
         if (
           !isPlatformAdmin &&
-          industryPack?.industry_id === 'restaurants' &&
-          item.href === '/dashboard/appointments'
+          isNavHrefHiddenForIndustry(industryPack?.industry_id, item.href)
         ) {
           return false;
         }

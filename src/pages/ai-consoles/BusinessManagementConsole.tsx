@@ -18,6 +18,7 @@ import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { useRunWorkflowChain } from '@/hooks/useRunWorkflowChain';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { BusinessTypeContextStrip } from '@/components/marketing/BusinessTypeContextStrip';
 import { getBusinessWorkflows } from '@/lib/industryWorkflows';
@@ -29,6 +30,11 @@ export default function BusinessManagementConsole() {
   const { submitQuery } = useAuraCommand();
   const { run: runChain } = useRunWorkflowChain();
   const { pack } = useIndustryPack();
+  const serviceConfig = useMemo(() => getIndustryServiceConsoleConfig(pack), [pack]);
+  const consoleTitle = serviceConfig.businessMgmtTitle ?? 'Business Management';
+  const consoleDescription =
+    serviceConfig.businessMgmtDescription ??
+    'One place for quotes, invoices, inventory, employees, and customer records.';
   // Workflow chains are derived from the company's industry pack so terminology
   // (Showing vs Job, Buyer vs Customer) and the chain set match the vertical.
   const businessWorkflows = useMemo(() => getBusinessWorkflows(pack), [pack]);
@@ -51,8 +57,8 @@ export default function BusinessManagementConsole() {
             <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={Briefcase}
-              title="Business Operations"
-              description="One place for quotes, invoices, inventory, employees, and customer records."
+              title={consoleTitle}
+              description={consoleDescription}
               featureColor="platform"
               showAuraBar
               badge={<ValueBadge label="Automates 60-70% of admin tasks" />}
@@ -65,7 +71,7 @@ export default function BusinessManagementConsole() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigate('/dashboard/ai-agents')}
+                        onClick={() => navigate('/dashboard/ai-agents/business_finance')}
                         className="w-full sm:w-auto"
                       >
                         <Cpu className="h-3.5 w-3.5 mr-1.5" />

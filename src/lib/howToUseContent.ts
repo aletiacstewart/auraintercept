@@ -327,4 +327,65 @@ export const HOW_TO_USE: Record<string, Content> = {
     example:
       'A customer chats in. Reception qualifies, hands to Booking which schedules, hands to Dispatch which assigns the tech, hands to Field Ops for check-in. You see the entire chain in the Hub timeline.',
   },
+
+  specialistOperativesConsole: {
+    title: 'Specialist Operatives',
+    runsAutomatically: [
+      'Surfaces industry-specific specialists (diagnostics, permits, listings, menus, reviews) tuned to your industry pack.',
+      'Feeds specialist responses with your knowledge base and terminology.',
+      'Hides specialists that don\'t apply to your industry so the roster stays focused.',
+    ],
+    whenYouStepIn: [
+      'Testing a prompt before customers or technicians see it in the wild.',
+      'Sanity-checking answers on a new specialist you just unlocked.',
+    ],
+    steps: [
+      'Pick a specialist tab that matches the task (Diagnostic, Permit & Code, Listing Writer, etc.).',
+      'Click one of the example prompts on the right or type your own.',
+      'Review the answer — every reply is grounded in your industry pack.',
+    ],
+    example:
+      'A roofing admin opens Insurance Claim, drops in three storm-damage photos and the loss date, and gets a claim-ready summary in 20 seconds — ready to forward to the carrier.',
+  },
+
+  contentEngineConsole: {
+    title: 'Content Engine',
+    runsAutomatically: [
+      'Generates copy, images, and captions across website, social, email, blog, and SMS from one prompt.',
+      'Keeps every channel on-brand using your Brand Voice profile.',
+      'Tracks how many pieces each channel has generated so you can spot gaps.',
+    ],
+    whenYouStepIn: [
+      'Setting or updating your Brand Voice profile.',
+      'Approving a piece before it publishes.',
+      'Scheduling a campaign from the calendar view.',
+    ],
+    steps: [
+      'Open Brand Voice and confirm tone, audience, and do-not-say words.',
+      'Go to Generate, pick channels, and describe what you want.',
+      'Review, tweak, and publish or schedule from the calendar.',
+    ],
+    example:
+      'Type "spring tune-up promo, $89, book by April 30" — the engine drafts a website banner, three social posts with images, an SMS blast, and a blog post in under a minute. You approve all five in one pass.',
+  },
+
+  videoConsole: {
+    title: 'Video Console',
+    runsAutomatically: [
+      'Spins up a private Jitsi meeting room on demand — no accounts, no downloads for guests.',
+      'Logs every session to Call History with the meeting URL and appointment link.',
+      'Marks the linked appointment as in-progress the moment you open the room.',
+    ],
+    whenYouStepIn: [
+      'Starting a video consult with a customer or prospect.',
+      'Joining a meeting hosted elsewhere (Zoom, Meet, Jitsi) by pasting the link.',
+    ],
+    steps: [
+      'Click New for a fresh room ID, or reuse a memorable one.',
+      'Copy the meeting URL and share it via SMS, email, or the customer portal.',
+      'Click Open meeting room to launch — the session is logged automatically.',
+    ],
+    example:
+      'A prospect wants a same-day estimate walkthrough. You spin up a room, text the link, jump on together, share the quote screen, and the whole session shows up in Call History with the appointment attached.',
+  },
 };
