@@ -69,7 +69,7 @@ import ContentEngineConsole from "./pages/ContentEngineConsole";
 import Widget from "./pages/Widget";
 import CallHistory from "./pages/CallHistory";
 import Analytics from "./pages/Analytics";
-import CustomerPortal from "./pages/CustomerPortal";
+import AppointmentLookup from "./pages/AppointmentLookup";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import Subscription from "./pages/Subscription";
 import SubscriptionAnalytics from "./pages/SubscriptionAnalytics";
@@ -306,7 +306,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/customer-portal/:companySlug" element={<CustomerCompanyPortal />} />
                 
                 {/* Legacy Customer Routes */}
-                <Route path="/appointment" element={<CustomerPortal />} />
+                <Route path="/appointment" element={<AppointmentLookup />} />
                 <Route path="/customer-dashboard" element={<CustomerDashboard />} />
                 <Route path="/chat/:companySlug" element={<PublicChat />} />
                 <Route path="/book/:companySlug" element={<PublicBooking />} />

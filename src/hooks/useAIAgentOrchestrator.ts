@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { normalizeAgentName } from '@/lib/subscriptionAgentConfig';
 import { PROFILE_SPECS, getProfileSpec, ProfileKey } from '@/lib/industryProfiles';
 import { getProfileForBusinessType } from '@/lib/businessTypeProfileMap';
+import { AGENT_REGISTRY } from '@/lib/agentRegistry';
 
 /**
  * Granular AgentId (from PROFILE_SPECS.agentsAlwaysOn) → consolidated
@@ -90,43 +91,16 @@ export interface AgentEvent {
   created_at: string;
 }
 
-// Default agent definitions - 10 consolidated operative groups representing 24 Smart AI Agents
-// IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
-const DEFAULT_AGENTS: AgentInfo[] = [
-  // Customer Portal (2 agents)
-  { type: 'triage', name: 'AI Receptionist', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
-  { type: 'customer_journey', name: 'Customer Journey Agent', category: 'customer_engagement', phase: 2, is_enabled: false, settings: {} },
-  // Field Operations (2 agents)
-  { type: 'dispatch', name: 'Dispatch/GPS Console', category: 'field_operations', phase: 1, is_enabled: false, settings: {} },
-  { type: 'field_navigation', name: 'Field Navigation Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
-  // Business Operations (2 agents)
-  { type: 'admin', name: 'Admin Agent', category: 'business_operations', phase: 1, is_enabled: false, settings: {} },
-  { type: 'business_finance', name: 'Business Finance Agent', category: 'business_operations', phase: 2, is_enabled: false, settings: {} },
-  // Outreach & Sales (1 merged agent)
-  { type: 'outreach', name: 'Outreach Agent', category: 'marketing_sales', phase: 1, is_enabled: false, settings: {} },
-  // Social Media & Creative (1 merged agent)
-  { type: 'creative_content', name: 'Creative Content Agent', category: 'social_media', phase: 1, is_enabled: false, settings: {} },
-  // Creative & Web Presence (1 agent)
-  { type: 'web_presence', name: 'Web Presence Agent', category: 'creative_web_presence', phase: 2, is_enabled: false, settings: {} },
-  // Analytics & Reports (1 unified agent)
-  { type: 'analytics_intelligence', name: 'Analytics Intelligence Agent', category: 'analytics_reports', phase: 1, is_enabled: false, settings: {} },
-  // Industry Specialist Operatives (4) — auto-activated by industry pack on ALL plans
-  { type: 'diagnostic', name: 'Diagnostic Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'permit_code', name: 'Permit & Code Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'site_survey', name: 'Site Survey & Quote Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'insurance_claim', name: 'Insurance Claim Specialist', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  // Booking-vertical specialists — auto-activated by industry pack
-  { type: 'listing_writer', name: 'Listing Writer', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'offer_drafter', name: 'Offer Drafter', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'comp_analyst', name: 'Comp Analyst', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'style_consultant', name: 'Style Consultant', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'loyalty_coach', name: 'Loyalty Coach', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'menu_writer', name: 'Menu Writer', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'reservation_optimizer', name: 'Reservation Optimizer', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'task_triager', name: 'Task Triager', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'calendar_optimizer', name: 'Calendar Optimizer', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-  { type: 'review_responder', name: 'Review Responder', category: 'industry_specialist', phase: 3, is_enabled: false, settings: {} },
-];
+// Default agent definitions — derived from AGENT_REGISTRY (single source of truth).
+// Add / rename / recategorize agents in src/lib/agentRegistry.ts.
+const DEFAULT_AGENTS: AgentInfo[] = Object.values(AGENT_REGISTRY).map((entry) => ({
+  type: entry.type,
+  name: entry.name,
+  category: entry.category,
+  phase: entry.phase,
+  is_enabled: false,
+  settings: {},
+}));
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
   return agentList.reduce((acc, agent) => {

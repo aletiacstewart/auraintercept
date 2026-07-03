@@ -17,19 +17,32 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { ActionPreview } from "@/components/automation/ActionPreview";
+import { listCoreAgents } from "@/lib/agentRegistry";
 
-const AGENTS: { id: string; label: string; description: string }[] = [
-  { id: "triage", label: "Front Desk (Triage)", description: "Greets callers, answers FAQs, routes requests." },
-  { id: "customer_journey", label: "Customer Journey", description: "Books appointments, reminders, follow-ups, reviews." },
-  { id: "outreach", label: "Outreach & Sales", description: "Quote nudges, re-engagement, lead drip." },
-  { id: "creative_content", label: "Creative Content", description: "Drafts social, blog, and campaign content." },
-  { id: "web_presence", label: "Web Presence", description: "Updates site content, FAQs, knowledge base." },
-  { id: "dispatch", label: "Dispatch", description: "Assigns jobs to technicians by skill, load, proximity." },
-  { id: "field_navigation", label: "Field Navigation", description: "Route, ETA, on-the-way SMS, check-in." },
-  { id: "business_finance", label: "Business & Finance", description: "Invoices, payments, collections, reporting." },
-  { id: "analytics_intelligence", label: "Analytics Intelligence", description: "KPIs, anomaly alerts, forecasts." },
-  { id: "admin", label: "Admin Assistant", description: "Internal tasks, scheduling, ops housekeeping." },
-];
+// Plain-English label overrides for the Automation surface (kept per
+// plain-english-labels-v1 memory). Anything not overridden falls back to the
+// registry's canonical name.
+const AUTOMATION_LABEL_OVERRIDES: Record<string, { label?: string; description?: string }> = {
+  triage:                 { label: "Front Desk (Triage)",  description: "Greets callers, answers FAQs, routes requests." },
+  customer_journey:       { label: "Customer Journey",     description: "Books appointments, reminders, follow-ups, reviews." },
+  outreach:               { label: "Outreach & Sales",     description: "Quote nudges, re-engagement, lead drip." },
+  creative_content:       { label: "Creative Content",     description: "Drafts social, blog, and campaign content." },
+  web_presence:           { label: "Web Presence",         description: "Updates site content, FAQs, knowledge base." },
+  dispatch:               { label: "Dispatch",             description: "Assigns jobs to technicians by skill, load, proximity." },
+  field_navigation:       { label: "Field Navigation",     description: "Route, ETA, on-the-way SMS, check-in." },
+  business_finance:       { label: "Business & Finance",   description: "Invoices, payments, collections, reporting." },
+  analytics_intelligence: { label: "Analytics Intelligence", description: "KPIs, anomaly alerts, forecasts." },
+  admin:                  { label: "Admin Assistant",      description: "Internal tasks, scheduling, ops housekeeping." },
+};
+
+const AGENTS: { id: string; label: string; description: string }[] = listCoreAgents().map((entry) => {
+  const o = AUTOMATION_LABEL_OVERRIDES[entry.type] ?? {};
+  return {
+    id: entry.type,
+    label: o.label ?? entry.name,
+    description: o.description ?? entry.description,
+  };
+});
 
 const MODE_LABEL: Record<string, string> = {
   off: "Off",

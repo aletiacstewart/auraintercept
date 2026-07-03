@@ -62,7 +62,7 @@ interface Appointment {
   } | null;
 }
 
-export default function CustomerPortal() {
+export default function AppointmentLookup() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   
