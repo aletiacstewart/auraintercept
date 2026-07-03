@@ -1,54 +1,37 @@
-## Security Hardening — Round 1 (final plan)
+## Goal
+Close the unauthenticated cross-tenant action-execution hole in `supabase/functions/agent-action-executor/index.ts`. Every path (`propose`, `approve`, `reject`) must verify the caller's JWT and confirm they belong to the target `company_id` (platform_admin bypasses).
 
-Confirmed with you:
-- **Meta App Secret:** not configured. FIX 3 will be **scaffolded inactive** — helper file + wiring committed, but if `META_APP_SECRET` env var is missing the function logs a warning and continues (same pattern as `signalwire-signature.ts`). Nothing breaks. When you're ready to activate, add the secret and it turns on automatically.
-- **`/talk-to-aura`:** stays public and functional. `elevenlabs-tts` keeps `verify_jwt = false`.
+## Approach
+Use the existing `supabase/functions/_shared/internal-auth.ts` helper (already used elsewhere) rather than re-implementing auth inline. It handles:
+- Bearer JWT verification via `getClaims`
+- Service-role bearer fast-path (real server-to-server, replaces the fictional `X-Internal-Token` comment)
+- Resolves `userId`, `companyId`, `roles`
+- Optional `requiredCompanyId` enforcement with platform_admin bypass
 
----
+## Changes
 
-### FIX 2 — Dedupe `elevenlabs-tts` config
-- Remove the FIRST `[functions.elevenlabs-tts]` block (`verify_jwt = true`) from `supabase/config.toml`.
-- Keep the SECOND block (`verify_jwt = false`) so `/talk-to-aura` keeps working.
-- Add lightweight abuse guard inside `elevenlabs-tts/index.ts`: simple per-IP in-memory rate limit (e.g. 20 req / 60s) + reject empty/whitespace text (already have 4000-char cap).
+### 1. `supabase/functions/agent-action-executor/index.ts`
+- Remove misleading top-of-file comment about `X-Internal-Token`.
+- Import `authorizeInternalRequest` from `../_shared/internal-auth.ts`.
+- **Propose path**: parse body first to get `company_id`, then call `authorizeInternalRequest(req, body.company_id)`. Return its 401/403 response on failure. Service-role callers pass through (needed if orchestrator functions ever call this internally).
+- **Approve path**: load the existing action row → call `authorizeInternalRequest(req, existing.company_id)` → then run `applyAction`. Additionally require `roles` includes `company_admin` OR `platform_admin` OR `service_role`.
+- **Reject path**: same as approve — load row first for `company_id`, authorize with company scope, require `company_admin`/`platform_admin`/`service_role`.
 
-### FIX 1 — Lock down 8 cron-only functions
-- Generate `CRON_SECRET` via `generate_secret`.
-- Add `supabase/functions/_shared/cron-auth.ts` with `verifyCronSecret(req)` (checks `x-cron-secret` header against `Deno.env.get("CRON_SECRET")`, fails closed).
-- Insert the check at the top of each handler (after CORS preflight):
-  - `monthly-digest`, `quarterly-digest`, `weekly-digest`
-  - `trial-reminders`, `cost-alerts`, `cron-health-check`
-  - `appointment-reminders`, `lead-follow-up-reminders` (added — touch PII, currently unprotected)
-- Migration that unschedules and re-registers those 8 cron jobs with the `x-cron-secret` header hardcoded in the SQL (same pattern already used for the anon key — Postgres GUC route isn't reliable on Lovable Cloud). The secret value in the migration will match `CRON_SECRET`.
+### Role-gate decision (open question)
+Claude's plan requires `company_admin` for approve/reject. I recommend **same-company match only** (any authenticated same-company user), because non-admin staff use `PendingAuraDraftsPanel`. **Need user confirmation** — see question below the plan.
 
-### FIX 3 — Meta webhook signature verification (scaffolded, inactive)
-- Add `supabase/functions/_shared/meta-webhook-signature.ts` mirroring `signalwire-signature.ts`: HMAC-SHA256 with `META_APP_SECRET`, timing-safe compare against `X-Hub-Signature-256`.
-- Wire into `social-webhook/index.ts` POST branch, after reading the raw body.
-- Guard behavior: if `META_APP_SECRET` is unset → log `[social-webhook] META_APP_SECRET not set — signature check skipped` and continue (so nothing breaks today). When you later add the secret, verification turns on and mismatches return 401.
+### 2. No frontend changes
+All existing callers (`PendingAuraDraftsPanel.tsx`, `Automation.tsx`, `useRunWorkflowChain.ts`) invoke via `supabase.functions.invoke(...)`, which auto-attaches the user JWT. No client changes needed.
 
-### FIX 4 — `config.toml` cleanup (scoped)
-- Remove only the 7 confirmed stale `[functions.*]` blocks: `create-demo-accounts`, `create-demo-customer`, `create-demo-employee`, `create-demo-trial`, `crm-adapter`, `send-walkthrough-demo`, `tts`.
-- **Skip** adding entries for the 21 undocumented functions — they default to `verify_jwt = true` (secure); adding entries adds risk without benefit for this round.
+### 3. No config changes
+Function already deploys with `verify_jwt = false` (required so we can hand-authorize with `getClaims` and support the service-role bypass). Leave as-is.
 
-### FIX 6 — `package.json` hygiene
-- Move `vitest`, `jsdom`, `@testing-library/react`, `@testing-library/jest-dom` from `dependencies` to `devDependencies`.
+## Acceptance
+- Unauthenticated `propose` → 401.
+- Same-company `propose`/`approve`/`reject` → works as before.
+- Cross-company `propose`/`approve`/`reject` (Company A user targeting Company B) → 403, no DB writes.
+- Existing dashboard flows (`PendingAuraDraftsPanel`, `Automation`, `useRunWorkflowChain`) unaffected for legitimate same-company use.
+- Service-role bearer (from other edge functions, if ever added) still works.
 
-### FIX 5 — SKIPPED
-Pure UI refactor of 3 install pages. No security or functional benefit. Bundle later if desired.
-
----
-
-### Deliverables
-- 2 new shared files: `_shared/cron-auth.ts`, `_shared/meta-webhook-signature.ts`
-- 9 edge function edits: 8 cron functions + `social-webhook` + `elevenlabs-tts`
-- 1 migration: re-register 8 cron jobs with `x-cron-secret` header
-- 1 `config.toml` edit (remove 8 blocks — 7 stale + 1 duplicate)
-- 1 `package.json` edit
-- 1 new secret: `CRON_SECRET` (auto-generated)
-
-### After deploy — verification
-- `curl` each of the 8 cron functions with no `x-cron-secret` → expect `401`.
-- Watch `cron.job_run_details` after next scheduled run → expect success.
-- `elevenlabs-tts` still callable from `/talk-to-aura` with no auth.
-- `social-webhook` still accepts Meta events (signature check inactive until secret added).
-
-Approve to switch to build mode.
+## Question before I build
+Approve/reject role gate: **(A)** any authenticated same-company user (my recommendation, matches current UX), or **(B)** `company_admin`+ only (Claude's proposal, stricter)?
