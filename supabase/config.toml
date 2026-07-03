@@ -126,12 +126,6 @@ verify_jwt = true
 [functions.calendar-feed]
 verify_jwt = false
 
-[functions.create-demo-customer]
-verify_jwt = true
-
-[functions.create-demo-employee]
-verify_jwt = true
-
 [functions.reset-user-password]
 verify_jwt = true
 

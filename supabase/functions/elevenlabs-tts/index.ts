@@ -9,6 +9,33 @@ const corsHeaders = {
 const DEFAULT_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // Sarah
 const MAX_TEXT_LEN = 4000;
 
+// Lightweight per-IP rate limit — this endpoint is intentionally public
+// (unauthenticated /talk-to-aura page uses it), so cap request volume to
+// protect the metered ElevenLabs quota. Sliding 60s window, per-IP.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 20;
+const rateLimitBuckets = new Map<string, number[]>();
+
+function getClientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for") || "";
+  const first = fwd.split(",")[0]?.trim();
+  return first || req.headers.get("cf-connecting-ip") || "unknown";
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const bucket = (rateLimitBuckets.get(ip) ?? []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW_MS,
+  );
+  if (bucket.length >= RATE_LIMIT_MAX) {
+    rateLimitBuckets.set(ip, bucket);
+    return true;
+  }
+  bucket.push(now);
+  rateLimitBuckets.set(ip, bucket);
+  return false;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -17,6 +44,14 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  const ip = getClientIp(req);
+  if (isRateLimited(ip)) {
+    return new Response(JSON.stringify({ error: "rate_limited" }), {
+      status: 429,
+      headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" },
     });
   }
 
