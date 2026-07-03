@@ -1,40 +1,45 @@
-# Wire Contact form + Audit PDF into `landing-capture-lead`
+Plan: Color token consistency cleanup + remove dead light-mode CSS
 
-Both claims verified: `Contact.tsx` only `console.log`s; `AuditResults.tsx` streams the PDF with zero capture. `landing-capture-lead` exists.
+## Background
+I reviewed the two highest-traffic shell files and the global CSS. The hardcoded brand colors (#00E5FF, #ff6b6b, #46a2d3) in DashboardLayout.tsx and PublicHeader.tsx already have semantic token equivalents in src/index.css, and the app is dark-mode-only (index.html hardcodes `<html class="dark">`), so the `:root` light-mode variable block is never rendered.
 
-## Fix 1 — `src/pages/Contact.tsx`
+## Fix 1 — Replace hardcoded brand colors with tokens
 
-Replace the stubbed `onSubmit` with a real `supabase.functions.invoke('landing-capture-lead', ...)` call:
+### src/components/dashboard/DashboardLayout.tsx
+1. Active nav item styling (~line 604-609)
+   - Replace `background: "rgba(0,229,255,0.1)"` with `background: "hsl(var(--primary) / 0.1)"`
+   - Replace `color: "#00E5FF"` with `color: "hsl(var(--primary))"`
+   - Replace `boxShadow` rgba values with `hsl(var(--primary) / 0.2)`
+2. Active icon styling (~line 653)
+   - Replace `style={isActive ? { color: "#00E5FF" } : undefined}` with `style={isActive ? { color: "hsl(var(--primary))" } : undefined}`
+3. Logout icon (~line 733)
+   - Replace `style={{ color: "#ff6b6b" }}` with `style={{ color: "hsl(var(--destructive))" }}`
+4. Collapse button (~line 745)
+   - Replace `border: "1px solid rgba(0,229,255,0.2)"` with `border: "1px solid hsl(var(--primary) / 0.2)"`
+   - Replace `color: "#00E5FF"` with `color: "hsl(var(--primary))"`
+   - Keep `background: "rgba(4,10,20,0.95)"` as-is (dark-background pattern is out of scope for this change)
+5. Mobile menu button (~line 765)
+   - Replace `style={{ color: "#00E5FF" }}` with `style={{ color: "hsl(var(--primary))" }}`
 
-- Body: `{ name, email, phone: phone || undefined, industry: service_interest || undefined, notes: company_name ? "Company: ${company_name}\n\n${notes}" : notes, source: 'contact_page' }`.
-- On error → destructive toast, keep form values.
-- On success → existing "Message Received!" toast + `form.reset()`.
-- Handle 429 rate-limit response with a friendly "Please wait a moment and try again" message (the function returns `{ error }` on 429; branch on that string).
-- Add `import { supabase } from '@/integrations/supabase/client'` if missing.
+### src/components/layout/PublicHeader.tsx
+1. Wordmark span (~line 30)
+   - Replace `text-[#00E5FF]` with `text-primary`
+2. Tagline span (~line 31)
+   - Replace `text-[#46a2d3]` with `text-primary/60` to approximate the original muted sky-blue feel
 
-## Fix 2 — `src/components/audit/AuditResults.tsx`
+## Fix 2 — Remove dead light-mode CSS
 
-Gate the existing `PDFDownloadLink` behind a small inline name+email capture. Audit results themselves stay unauthenticated/ungated — only the PDF export is gated.
+### src/index.css
+- Delete the entire `:root` CSS variable block (roughly lines 13-97) that defines the unused light-mode theme.
+- Keep the `.dark` block unchanged so all existing tokens continue to resolve correctly for the always-dark app.
+- No rename of `.dark` to `:root` is required, since `<html class="dark">` is already set everywhere.
 
-- New state: `leadCaptured`, `captureName`, `captureEmail`, `isCapturing`.
-- `handleCaptureAndDownload`: invokes `landing-capture-lead` with `{ name: captureName, email: captureEmail, industry: industryId ?? undefined, notes: 'Completed the Free AI Opportunity Audit and downloaded the PDF report.', source: 'opportunity_audit' }`. On success → `setLeadCaptured(true)`. On error → log + still unlock (don't block value delivery over a backend hiccup), but show a toast noting delivery may be delayed. On 429 → keep form open, show rate-limit toast, do NOT unlock.
-- Use the existing `industryId` prop (Claude's `selectedIndustry` name doesn't exist here).
-- Client-side validation: trimmed non-empty name (≤100), valid email (≤255) using a small zod schema so behavior matches the server. Disable button while invalid or `isCapturing`.
-- Replace the `PDFDownloadLink` block:
-  - If `!leadCaptured`: render inline card with Name input, Email input, and "Unlock My Checklist" button.
-  - If `leadCaptured`: render the existing `PDFDownloadLink` unchanged.
-- Copy stays consistent with the "no signup required to view results" promise — capture copy is scoped to the PDF: "Enter your details to download your personalized setup checklist."
+## Out of scope
+- Dark background rgba() values (`rgba(4,10,20,...)`), near-white text (`rgba(255,255,255,...)`), and other surface-level hardcoded colors are intentionally left untouched pending a separate dedicated cleanup.
+- No functional changes to navigation, header links, or layout behavior.
 
-## Explicitly out of scope
-
-- Team notifications on new leads (flagged as follow-up in the source prompt).
-- Removing the phantom `send-walkthrough-demo` reference in `supabase/config.toml` — separate cleanup.
-- Any changes to `landing-capture-lead` itself.
-
-## Acceptance
-
-- Contact form submit → new `leads` row `source='contact_page'`, `intent='demo_request'`.
-- Invalid email in Contact form → server validation rejects; UI shows destructive toast.
-- Audit results screen shows on-screen findings without capture.
-- PDF section shows name/email inputs; on submit → new `leads` row `source='opportunity_audit'`, then `PDFDownloadLink` renders and the user can download.
-- Rate-limit (429) on either form → friendly toast, form remains usable, no broken UI.
+## Acceptance checklist
+- [ ] Sidebar active-item highlight, active icon, logout icon, collapse button, and mobile menu button render visually identical to before (zero-visible-difference refactor).
+- [ ] PublicHeader wordmark and tagline colors look the same or acceptably close; we can adjust the tagline opacity fraction if `text-primary/60` does not match #46a2d3 closely enough.
+- [ ] The dead `:root` light-mode block is removed, and the codebase no longer contains a silently unreachable second theme.
+- [ ] App builds and existing dark-mode screens remain unchanged.
