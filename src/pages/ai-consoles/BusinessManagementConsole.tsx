@@ -51,7 +51,7 @@ export default function BusinessManagementConsole() {
             <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={Briefcase}
-              title="Business Operations"
+              title="Business Management"
               description="One place for quotes, invoices, inventory, employees, and customer records."
               featureColor="platform"
               showAuraBar
@@ -65,7 +65,7 @@ export default function BusinessManagementConsole() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigate('/dashboard/ai-agents')}
+                        onClick={() => navigate('/dashboard/ai-agents/business_finance')}
                         className="w-full sm:w-auto"
                       >
                         <Cpu className="h-3.5 w-3.5 mr-1.5" />
