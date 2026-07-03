@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { 
   RefreshCw, 
   ArrowRight, 
@@ -15,12 +17,22 @@ import {
   Rocket,
   Download,
   FileText,
+  Lock,
 } from "lucide-react";
 import { TierType, TierScores, TIER_RECOMMENDATIONS } from "./types";
 import { useNavigate } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { AuditChecklistPDF } from "./AuditChecklistPDF";
 import { getIndustryContent } from "@/lib/industryMarketingContent";
+import { useState } from "react";
+import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+const captureSchema = z.object({
+  name: z.string().trim().min(2, "Please enter your name").max(100),
+  email: z.string().trim().email("Please enter a valid email").max(255),
+});
 
 interface AuditResultsProps {
   tierPercentages: TierScores;
@@ -71,6 +83,52 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
   // Calculate scaled hours based on fit percentage
   const avgFit = tierPercentages[recommendedTier];
   const scaledHours = Math.round((avgFit / 100) * roiEstimate.hoursSaved);
+
+  // PDF export is gated behind a lightweight lead capture. On-screen results
+  // remain fully visible without capture (preserves "no signup required" copy).
+  const [leadCaptured, setLeadCaptured] = useState(false);
+  const [captureName, setCaptureName] = useState("");
+  const [captureEmail, setCaptureEmail] = useState("");
+  const [isCapturing, setIsCapturing] = useState(false);
+
+  const captureParse = captureSchema.safeParse({ name: captureName, email: captureEmail });
+  const captureValid = captureParse.success;
+
+  const handleCaptureAndDownload = async () => {
+    if (!captureValid) return;
+    setIsCapturing(true);
+    try {
+      const { error } = await supabase.functions.invoke('landing-capture-lead', {
+        body: {
+          name: captureName.trim(),
+          email: captureEmail.trim(),
+          industry: industryId ?? undefined,
+          notes: 'Completed the Free AI Opportunity Audit and downloaded the PDF report.',
+          source: 'opportunity_audit',
+        },
+      });
+      if (error) {
+        const status = (error as any)?.context?.status ?? (error as any)?.status;
+        const msg = (error as any)?.message || '';
+        if (status === 429 || /rate.?limit|too many/i.test(msg)) {
+          toast.error('Too many submissions from your network. Please wait a moment and try again.');
+          return;
+        }
+        // Don't block value delivery over a backend hiccup — log + unlock.
+        console.error('Failed to capture audit lead:', error);
+        toast.warning("We couldn't record your details, but your download is unlocked.");
+        setLeadCaptured(true);
+        return;
+      }
+      setLeadCaptured(true);
+    } catch (err) {
+      console.error('Failed to capture audit lead:', err);
+      toast.warning("We couldn't record your details, but your download is unlocked.");
+      setLeadCaptured(true);
+    } finally {
+      setIsCapturing(false);
+    }
+  };
 
   const handleViewPricing = () => {
     navigate('/');
@@ -359,24 +417,66 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
                     <span>Side-by-side comparison of all 4 plans</span>
                   </li>
                 </ul>
-                <PDFDownloadLink
-                  document={
-                    <AuditChecklistPDF
-                      recommendedTier={recommendedTier}
-                      fitScore={fitScore}
-                      answers={answers}
-                      industryId={industryId}
-                    />
-                  }
-                  fileName={`aura-setup-plan-${industryId && industryId !== 'other' ? `${industryId}-` : ''}${recommendation.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`}
-                >
-                  {({ loading }) => (
-                    <Button size="lg" className="gap-2" disabled={loading}>
+                {!leadCaptured ? (
+                  <div className="w-full max-w-md space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <Lock className="h-4 w-4 text-primary" />
+                      Enter your details to download your personalized setup checklist.
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="audit-capture-name" className="text-xs">Name</Label>
+                      <Input
+                        id="audit-capture-name"
+                        value={captureName}
+                        onChange={(e) => setCaptureName(e.target.value)}
+                        placeholder="Your name"
+                        maxLength={100}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="audit-capture-email" className="text-xs">Email</Label>
+                      <Input
+                        id="audit-capture-email"
+                        type="email"
+                        value={captureEmail}
+                        onChange={(e) => setCaptureEmail(e.target.value)}
+                        placeholder="you@company.com"
+                        maxLength={255}
+                      />
+                    </div>
+                    <Button
+                      size="lg"
+                      className="w-full gap-2"
+                      onClick={handleCaptureAndDownload}
+                      disabled={!captureValid || isCapturing}
+                    >
                       <Download className="h-4 w-4" />
-                      {loading ? 'Preparing your PDF...' : 'Download Setup Checklist (PDF)'}
+                      {isCapturing ? 'Preparing…' : 'Unlock My Checklist'}
                     </Button>
-                  )}
-                </PDFDownloadLink>
+                    <p className="text-[11px] text-muted-foreground">
+                      We'll email you a copy and occasional Aura updates. No spam.
+                    </p>
+                  </div>
+                ) : (
+                  <PDFDownloadLink
+                    document={
+                      <AuditChecklistPDF
+                        recommendedTier={recommendedTier}
+                        fitScore={fitScore}
+                        answers={answers}
+                        industryId={industryId}
+                      />
+                    }
+                    fileName={`aura-setup-plan-${industryId && industryId !== 'other' ? `${industryId}-` : ''}${recommendation.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`}
+                  >
+                    {({ loading }) => (
+                      <Button size="lg" className="gap-2" disabled={loading}>
+                        <Download className="h-4 w-4" />
+                        {loading ? 'Preparing your PDF...' : 'Download Setup Checklist (PDF)'}
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
+                )}
               </div>
             </div>
           </CardContent>
