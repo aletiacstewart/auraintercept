@@ -187,21 +187,39 @@ Deno.serve(async (req: Request) => {
     const url = new URL(req.url);
     const op = url.searchParams.get("op") ?? "propose";
 
-    // --- approve / reject / revert ops are JWT-gated through RLS ---
+    // --- approve / reject: JWT required, caller must belong to the action's company ---
     if (op === "approve" || op === "reject") {
-      const auth = req.headers.get("Authorization") ?? "";
-      const token = auth.replace("Bearer ", "");
-      if (!token) throw new Error("auth required");
-      const { data: u, error: ue } = await supabase.auth.getUser(token);
-      if (ue || !u.user) throw new Error("invalid token");
       const { id } = (await req.json()) as { id: string };
+      if (!id) {
+        return new Response(JSON.stringify({ error: "id required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Load the target row first so we can authorize against its company_id.
+      const { data: existing, error: loadErr } = await supabase
+        .from("agent_proposed_actions")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (loadErr) throw loadErr;
+
+      const authz = await authorizeInternalRequest(req, existing.company_id as string);
+      if (!authz.ok) {
+        return new Response(JSON.stringify({ error: authz.error }), {
+          status: authz.status,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const reviewerId = authz.ctx.userId; // null for service-role callers
 
       if (op === "reject") {
         const { data, error } = await supabase
           .from("agent_proposed_actions")
           .update({
             status: "rejected",
-            reviewed_by: u.user.id,
+            reviewed_by: reviewerId,
             reviewed_at: new Date().toISOString(),
           })
           .eq("id", id)
@@ -213,13 +231,7 @@ Deno.serve(async (req: Request) => {
         });
       }
 
-      // approve: load action, perform side-effect, mark approved or failed
-      const { data: existing, error: loadErr } = await supabase
-        .from("agent_proposed_actions")
-        .select("*")
-        .eq("id", id)
-        .single();
-      if (loadErr) throw loadErr;
+      // approve: perform side-effect, mark approved or failed
       try {
         const summary = await applyAction(
           supabase,
@@ -231,7 +243,7 @@ Deno.serve(async (req: Request) => {
           .from("agent_proposed_actions")
           .update({
             status: "approved",
-            reviewed_by: u.user.id,
+            reviewed_by: reviewerId,
             reviewed_at: new Date().toISOString(),
             executed_at: new Date().toISOString(),
             result_summary: summary,
@@ -249,7 +261,7 @@ Deno.serve(async (req: Request) => {
           .from("agent_proposed_actions")
           .update({
             status: "failed",
-            reviewed_by: u.user.id,
+            reviewed_by: reviewerId,
             reviewed_at: new Date().toISOString(),
             result_summary: `failed: ${msg}`,
           })
@@ -258,13 +270,22 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // --- propose: called by agents (service-role) ---
+    // --- propose: called by agents (service-role) or authenticated dashboard users ---
     const body = (await req.json()) as ProposeBody;
     if (!body.company_id || !body.agent_id || !body.action_type) {
       return new Response(
         JSON.stringify({ error: "company_id, agent_id, action_type required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
+    }
+
+    // Auth: caller must be service-role OR a user in body.company_id (platform_admin bypass).
+    const proposeAuthz = await authorizeInternalRequest(req, body.company_id);
+    if (!proposeAuthz.ok) {
+      return new Response(JSON.stringify({ error: proposeAuthz.error }), {
+        status: proposeAuthz.status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Resolve any leftover canonical URL placeholders server-side.
