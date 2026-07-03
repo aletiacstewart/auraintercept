@@ -84,6 +84,37 @@ Deno.serve(async (req) => {
     const isVirtual = deliveryType === 'virtual';
     const isAtBusiness = deliveryType === 'in_person_business';
 
+    // Emit real business events to the agent orchestrator for tech
+    // assignment + job completion. Fire-and-forget; downstream operatives
+    // in EVENT_ROUTING (field_navigation for tech_assigned; business_finance,
+    // customer_journey, outreach for job_complete) react to these.
+    const ORCHESTRATOR_EVENT_MAP: Record<string, string> = {
+      assigned: 'tech_assigned',
+      completed: 'job_complete',
+    };
+    const orchestratorEvent = ORCHESTRATOR_EVENT_MAP[notificationType];
+    if (orchestratorEvent && appointment?.company_id) {
+      fetch(`${supabaseUrl}/functions/v1/ai-orchestrator`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceRoleKey}`,
+        },
+        body: JSON.stringify({
+          action: 'emit_event',
+          companyId: appointment.company_id,
+          agentType: 'field_navigation',
+          eventType: orchestratorEvent,
+          payload: {
+            appointment_id: appointment.id,
+            job_assignment_id: jobAssignmentId,
+            service_type: appointment.service_type,
+            completed_at: notificationType === 'completed' ? new Date().toISOString() : null,
+          },
+        }),
+      }).catch(err => console.error(`Failed to emit ${orchestratorEvent} event:`, err));
+    }
+
     // Resolve industry-specific noun for "Job" (e.g. "Showing", "Reservation",
     // "Repair Order"). Falls back to "Job" so existing copy is unchanged for
     // verticals without a pack.
