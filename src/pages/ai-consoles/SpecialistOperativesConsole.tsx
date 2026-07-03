@@ -199,7 +199,7 @@ const SPECIALISTS: SpecialistDef[] = (INDUSTRY_SPECIALIST_OPERATIVES as readonly
   };
 });
 
-function SpecialistChat({ specialist }: { specialist: SpecialistDef }) {
+function SpecialistChat({ specialist, industryKey }: { specialist: SpecialistDef; industryKey?: string }) {
   const { companyId, user } = useAuth();
   const { messages, isLoading, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: companyId ?? undefined,
@@ -229,6 +229,8 @@ function SpecialistChat({ specialist }: { specialist: SpecialistDef }) {
   };
 
   const Icon = specialist.icon;
+  const examples =
+    (industryKey && specialist.examples[industryKey]) || specialist.examples.default;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -309,7 +311,7 @@ function SpecialistChat({ specialist }: { specialist: SpecialistDef }) {
         <div>
           <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Try one of these</div>
           <div className="space-y-2">
-            {specialist.examples.map((ex, i) => (
+            {examples.map((ex, i) => (
               <button
                 key={i}
                 onClick={() => setInput(ex)}
