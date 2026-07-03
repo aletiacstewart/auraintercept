@@ -233,29 +233,24 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'notification_email', label: 'Admin Notification Email', type: 'text', placeholder: 'admin@company.com', description: 'Email for admin notifications' }
     ]
   },
-  campaign: {
-    name: 'Campaign Agent',
-    description: 'Unified marketing agent handling promotions, referrals, win-back, and seasonal campaigns.',
+  outreach: {
+    name: 'Outreach Agent',
+    description: 'Unified marketing and lead agent: promotions, referrals, win-back campaigns, seasonal outreach, and inbound lead capture/qualification.',
     category: 'marketing_sales',
     phase: 1,
     icon: Megaphone,
     color: 'text-feature-marketing',
     capabilities: [
-      'Promotional campaigns',
-      'Referral program management',
-      'Win-back & re-engagement',
-      'Seasonal outreach',
-      'Audience segmentation',
-      'A/B testing',
-      'Performance tracking'
+      'Promotional campaigns, referral program management, win-back & seasonal outreach',
+      'Audience segmentation and A/B testing',
+      'Lead capture, scoring, and qualification',
+      'Automated follow-up assignment for new leads'
     ],
     configFields: [
-      // General settings
       { key: 'max_campaigns_per_month', label: 'Max Campaigns / Month', type: 'number', min: 1, max: 50, defaultValue: 4 },
       { key: 'require_approval', label: 'Require Admin Approval', type: 'switch', defaultValue: true },
-      { key: 'primary_channels', label: 'Primary Channels', type: 'textarea', placeholder: 'Email\nSMS\nSocial', description: 'Channels to prioritize (one per line)' },
-      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, concise', description: 'Tone and style guidelines' },
-      // Promo settings
+      { key: 'primary_channels', label: 'Primary Channels', type: 'textarea', placeholder: 'Email\nSMS\nSocial' },
+      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, concise' },
       { key: 'target_segments', label: 'Target Segments', type: 'select', options: [
         { value: 'all', label: 'All Customers' },
         { value: 'inactive', label: 'Inactive Customers' },
@@ -263,7 +258,6 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'new', label: 'New Customers' }
       ]},
       { key: 'default_discount_percent', label: 'Default Discount (%)', type: 'number', min: 5, max: 50, defaultValue: 10 },
-      // Referral settings
       { key: 'referrer_reward', label: 'Referrer Reward ($)', type: 'number', min: 0, max: 100, defaultValue: 25 },
       { key: 'referee_discount', label: 'New Customer Discount (%)', type: 'number', min: 0, max: 50, defaultValue: 10 },
       { key: 'min_spend_for_reward', label: 'Min Spend for Reward ($)', type: 'number', min: 0, max: 500, defaultValue: 50 },
@@ -272,207 +266,34 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'discount', label: 'Future Discount' },
         { value: 'cash', label: 'Cash/Gift Card' }
       ]},
-      // Win-back settings
       { key: 'inactive_threshold_days', label: 'Win-back Inactive Threshold (days)', type: 'number', min: 30, max: 365, defaultValue: 90 },
       { key: 'winback_offer_percent', label: 'Win-back Discount (%)', type: 'number', min: 5, max: 50, defaultValue: 15 },
       { key: 'max_attempts', label: 'Max Outreach Attempts', type: 'number', min: 1, max: 5, defaultValue: 3 },
       { key: 'outreach_interval_days', label: 'Days Between Attempts', type: 'number', min: 7, max: 30, defaultValue: 14 },
-      // Seasonal settings
-      { key: 'seasonal_services', label: 'Seasonal Services', type: 'textarea', placeholder: 'Spring HVAC tune-up, Fall furnace check, etc.', description: 'Seasonal services to promote (one per line)' },
+      { key: 'seasonal_services', label: 'Seasonal Services', type: 'textarea', placeholder: 'Spring HVAC tune-up, Fall furnace check, etc.' },
       { key: 'advance_notice_days', label: 'Seasonal Advance Notice (days)', type: 'number', min: 7, max: 60, defaultValue: 30 },
       { key: 'weather_triggers', label: 'Enable Weather Triggers', type: 'switch', defaultValue: false },
-      { key: 'repeat_annually', label: 'Repeat Annually', type: 'switch', defaultValue: true }
+      { key: 'repeat_annually', label: 'Repeat Annually', type: 'switch', defaultValue: true },
+      { key: 'auto_qualify', label: 'Auto-Qualify New Leads', type: 'switch', defaultValue: true },
+      { key: 'qualification_threshold', label: 'Qualification Score Threshold', type: 'slider', min: 1, max: 100, step: 5, defaultValue: 50 },
+      { key: 'response_time_hours', label: 'Target Response Time (hours)', type: 'number', min: 1, max: 48, defaultValue: 2 },
+      { key: 'auto_assign', label: 'Auto-Assign Leads to Sales Rep', type: 'switch', defaultValue: false },
+      { key: 'notify_on_high_value', label: 'Alert on High-Value Leads', type: 'switch', defaultValue: true }
     ]
   },
-  // Social Media Agents
-  social_content: {
+  creative_content: {
     name: 'Creative Content Agent',
-    description: 'Creates platform-optimized content for Facebook, Instagram, LinkedIn, TikTok, Google Business, and SMS. Content is ready to copy and post via the Manual Bridge or auto-publish via your own API credentials.',
-    category: 'social_media',
-    phase: 1,
-    icon: Megaphone,
-    color: 'text-pink-400',
-    capabilities: [
-      'Multi-platform content creation',
-      'Hashtag optimization',
-      'Caption generation',
-      'Manual Bridge one-click posting',
-      'Own API auto-publish support'
-    ],
-    configFields: [
-      { key: 'default_platforms', label: 'Default Platforms', type: 'textarea', placeholder: 'instagram\nfacebook\nlinkedin', description: 'Default platforms for new posts (one per line)' },
-      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, engaging', description: 'Describe your brand tone and style' },
-      { key: 'hashtag_count', label: 'Default Hashtag Count', type: 'number', min: 0, max: 30, defaultValue: 10 },
-      { key: 'require_approval', label: 'Require Approval Before Publishing', type: 'switch', defaultValue: true }
-    ]
-  },
-  social_scheduler: {
-    name: 'Social Scheduler Agent',
-    description: "Manages the content calendar and queue across 6 platforms. Sets posts to 'Ready to Post' status so your team can use the Manual Bridge or auto-publish via configured API credentials.",
-    category: 'social_media',
-    phase: 2,
-    icon: Megaphone,
-    color: 'text-pink-400',
-    capabilities: [
-      'Optimal time scheduling',
-      'Ready to Post queue management',
-      'Cross-platform coordination',
-      'Calendar overview',
-      'Manual Bridge guided posting'
-    ],
-    configFields: [
-      { key: 'auto_schedule', label: 'Auto-Schedule for Optimal Times', type: 'switch', defaultValue: true },
-      { key: 'timezone', label: 'Timezone', type: 'select', options: [
-        { value: 'America/New_York', label: 'Eastern Time' },
-        { value: 'America/Chicago', label: 'Central Time' },
-        { value: 'America/Denver', label: 'Mountain Time' },
-        { value: 'America/Los_Angeles', label: 'Pacific Time' }
-      ]},
-      { key: 'posts_per_day', label: 'Max Posts Per Day', type: 'number', min: 1, max: 10, defaultValue: 3 },
-      { key: 'weekend_posting', label: 'Enable Weekend Posting', type: 'switch', defaultValue: true }
-    ]
-  },
-  social_analytics: {
-    name: 'Social Analytics Agent',
-    description: 'Tracks engagement, reach, and content performance across all 6 platforms. Provides actionable insights and content optimization recommendations.',
-    category: 'social_media',
-    phase: 3,
-    icon: BarChart3,
-    color: 'text-pink-400',
-    capabilities: [
-      'Engagement tracking',
-      'Reach analysis',
-      'Content performance',
-      'Audience insights',
-      'Competitor benchmarking'
-    ],
-    configFields: [
-      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ]},
-      { key: 'track_competitors', label: 'Track Competitors', type: 'switch', defaultValue: false },
-      { key: 'alert_viral_content', label: 'Alert on Viral Content', type: 'switch', defaultValue: true, description: 'Get notified when content performs exceptionally well' },
-      { key: 'engagement_goal', label: 'Engagement Rate Goal (%)', type: 'slider', min: 1, max: 10, step: 0.5, defaultValue: 3 }
-    ]
-  },
-  insights: {
-    name: 'Insights Agent',
-    description: 'Analyzes business data and provides actionable recommendations.',
-    category: 'business_operations',
-    phase: 2,
-    icon: BarChart3,
-    color: 'text-feature-analytics',
-    capabilities: [
-      'Trend analysis',
-      'Anomaly detection',
-      'Performance metrics',
-      'Recommendations'
-    ],
-    configFields: [
-      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ]},
-      { key: 'metrics_tracked', label: 'Key Metrics', type: 'textarea', placeholder: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate\nTechnician Utilization\nAverage Job Duration\nRepeat Customer Rate\nCancellation Rate', description: 'Metrics to track (one per line)', defaultValue: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate\nTechnician Utilization\nAverage Job Duration\nRepeat Customer Rate\nCancellation Rate' },
-      { key: 'anomaly_sensitivity', label: 'Anomaly Detection Sensitivity', type: 'slider', min: 1, max: 10, step: 1, defaultValue: 5 },
-      { key: 'send_alerts', label: 'Send Alert Notifications', type: 'switch', defaultValue: true }
-    ]
-  },
-  forecast: {
-    name: 'Forecast Agent',
-    description: 'Predicts demand, revenue, and resource needs based on historical data.',
-    category: 'business_operations',
-    phase: 7,
-    icon: BarChart3,
-    color: 'text-feature-analytics',
-    capabilities: [
-      'Demand forecasting',
-      'Revenue prediction',
-      'Capacity planning',
-      'Trend projection'
-    ],
-    configFields: [
-      { key: 'forecast_horizon_days', label: 'Forecast Horizon (days)', type: 'number', min: 7, max: 365, defaultValue: 30 },
-      { key: 'confidence_threshold', label: 'Confidence Threshold (%)', type: 'slider', min: 50, max: 95, step: 5, defaultValue: 80 },
-      { key: 'include_seasonality', label: 'Include Seasonality', type: 'switch', defaultValue: true },
-      { key: 'update_frequency', label: 'Update Frequency', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ]}
-    ]
-  },
-  revenue: {
-    name: 'Revenue Agent',
-    description: 'Tracks revenue streams, analyzes profitability, and identifies growth opportunities.',
-    category: 'business_operations',
-    phase: 6,
-    icon: BarChart3,
-    color: 'text-feature-invoices',
-    capabilities: [
-      'Revenue tracking',
-      'Profitability analysis',
-      'Growth opportunity identification',
-      'Payment reconciliation',
-      'Revenue forecasting'
-    ],
-    configFields: [
-      { key: 'revenue_goal_monthly', label: 'Monthly Revenue Goal ($)', type: 'number', min: 0, max: 1000000, defaultValue: 10000, description: 'Target monthly revenue' },
-      { key: 'alert_threshold_percent', label: 'Alert When Below Goal (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 80, description: 'Alert when revenue drops below this percentage of goal' },
-      { key: 'track_by_service', label: 'Track by Service Type', type: 'switch', defaultValue: true },
-      { key: 'track_by_technician', label: 'Track by Technician', type: 'switch', defaultValue: true },
-      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ]},
-      { key: 'include_projections', label: 'Include Revenue Projections', type: 'switch', defaultValue: true }
-    ]
-  },
-  performance: {
-    name: 'Performance Agent',
-    description: 'Tracks team and individual performance metrics, identifies improvement opportunities.',
-    category: 'business_operations',
-    phase: 3,
-    icon: BarChart3,
-    color: 'text-feature-analytics',
-    capabilities: [
-      'Team performance tracking',
-      'Individual metrics',
-      'Goal tracking',
-      'Performance trends',
-      'Improvement recommendations'
-    ],
-    configFields: [
-      { key: 'tracking_period', label: 'Tracking Period', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ], defaultValue: 'weekly' },
-      { key: 'show_individual_metrics', label: 'Show Individual Metrics', type: 'switch', defaultValue: true },
-      { key: 'show_team_metrics', label: 'Show Team Metrics', type: 'switch', defaultValue: true },
-      { key: 'performance_goal_completion', label: 'Goal Completion Target (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 85 },
-      { key: 'alert_low_performers', label: 'Alert on Low Performance', type: 'switch', defaultValue: false, description: 'Send alerts when performance drops below threshold' }
-    ]
-  },
-  creative: {
-    name: 'Creative Agent',
-    description: 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing.',
+    description: 'Unified AI content generation and social publishing. Creates on-brand copy, images, and posts for web, social media, campaigns, and blogs; schedules across platforms and tracks performance.',
     category: 'content_engine',
     phase: 1,
     icon: Sparkles,
-    color: 'text-purple-400',
+    color: 'text-pink-400',
     capabilities: [
-      'Multi-channel content generation',
-      'Brand voice consistency',
-      'Website copy creation',
-      'Social media content',
-      'Campaign messaging',
-      'Blog post generation',
-      'SMS template creation'
+      'Multi-channel content generation (web, social, campaigns, blogs, SMS)',
+      'Brand-voice-consistent copy and hashtag optimization',
+      'Content calendar and cross-platform scheduling',
+      'Manual Bridge one-click posting and own-API auto-publish',
+      'Engagement, reach, and content performance analytics'
     ],
     configFields: [
       { key: 'brand_voice', label: 'Brand Voice', type: 'select', options: [
@@ -487,34 +308,74 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'conversational', label: 'Conversational' },
         { value: 'inspirational', label: 'Inspirational' }
       ], defaultValue: 'informative' },
-      { key: 'target_audience', label: 'Target Audience', type: 'textarea', placeholder: 'Homeowners, businesses, property managers...', description: 'Describe your target audience' },
-      { key: 'use_research', label: 'Use Real-time Research', type: 'switch', defaultValue: true, description: 'Enhance content with Tavily research' },
+      { key: 'target_audience', label: 'Target Audience', type: 'textarea', placeholder: 'Homeowners, businesses, property managers...' },
       { key: 'content_length', label: 'Default Content Length', type: 'select', options: [
         { value: 'short', label: 'Short (50-100 words)' },
         { value: 'medium', label: 'Medium (100-250 words)' },
         { value: 'long', label: 'Long (250-500 words)' }
-      ], defaultValue: 'medium' }
+      ], defaultValue: 'medium' },
+      { key: 'use_research', label: 'Use Real-time Research', type: 'switch', defaultValue: true, description: 'Enhance content with Tavily research' },
+      { key: 'default_platforms', label: 'Default Social Platforms', type: 'textarea', placeholder: 'instagram\nfacebook\nlinkedin' },
+      { key: 'hashtag_count', label: 'Default Hashtag Count', type: 'number', min: 0, max: 30, defaultValue: 10 },
+      { key: 'require_approval', label: 'Require Approval Before Publishing', type: 'switch', defaultValue: true },
+      { key: 'auto_schedule', label: 'Auto-Schedule for Optimal Times', type: 'switch', defaultValue: true },
+      { key: 'timezone', label: 'Timezone', type: 'select', options: [
+        { value: 'America/New_York', label: 'Eastern Time' },
+        { value: 'America/Chicago', label: 'Central Time' },
+        { value: 'America/Denver', label: 'Mountain Time' },
+        { value: 'America/Los_Angeles', label: 'Pacific Time' }
+      ]},
+      { key: 'posts_per_day', label: 'Max Posts Per Day', type: 'number', min: 1, max: 10, defaultValue: 3 },
+      { key: 'weekend_posting', label: 'Enable Weekend Posting', type: 'switch', defaultValue: true },
+      { key: 'report_frequency', label: 'Analytics Report Frequency', type: 'select', options: [
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+      ]},
+      { key: 'alert_viral_content', label: 'Alert on Viral Content', type: 'switch', defaultValue: true },
+      { key: 'engagement_goal', label: 'Engagement Rate Goal (%)', type: 'slider', min: 1, max: 10, step: 0.5, defaultValue: 3 }
     ]
   },
-  lead: {
-    name: 'Lead Agent',
-    description: 'Captures and qualifies incoming leads, manages lead scoring, and routes prospects to appropriate follow-up workflows.',
-    category: 'marketing_sales',
-    phase: 2,
-    icon: Users,
-    color: 'text-feature-marketing',
+  analytics_intelligence: {
+    name: 'Analytics Intelligence Agent',
+    description: 'Unified insights, performance, revenue, and forecasting analytics with anomaly detection and recommendations.',
+    category: 'business_operations',
+    phase: 3,
+    icon: BarChart3,
+    color: 'text-feature-analytics',
     capabilities: [
-      'Lead capture & intake',
-      'Lead qualification scoring',
-      'Source tracking',
-      'Automated follow-up assignment'
+      'Trend analysis and anomaly detection',
+      'Team and individual performance tracking',
+      'Revenue tracking and profitability analysis',
+      'Demand and revenue forecasting',
+      'Actionable recommendations and alerts'
     ],
     configFields: [
-      { key: 'auto_qualify', label: 'Auto-Qualify Leads', type: 'switch', defaultValue: true, description: 'Automatically score and qualify incoming leads' },
-      { key: 'qualification_threshold', label: 'Qualification Score Threshold', type: 'slider', min: 1, max: 100, step: 5, defaultValue: 50, description: 'Minimum score to be considered qualified' },
-      { key: 'response_time_hours', label: 'Target Response Time (hours)', type: 'number', min: 1, max: 48, defaultValue: 2 },
-      { key: 'auto_assign', label: 'Auto-Assign to Sales Rep', type: 'switch', defaultValue: false },
-      { key: 'notify_on_high_value', label: 'Alert on High-Value Leads', type: 'switch', defaultValue: true }
+      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+      ], defaultValue: 'weekly' },
+      { key: 'metrics_tracked', label: 'Key Metrics', type: 'textarea', placeholder: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate', description: 'Metrics to track (one per line)', defaultValue: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate\nTechnician Utilization\nAverage Job Duration\nRepeat Customer Rate\nCancellation Rate' },
+      { key: 'anomaly_sensitivity', label: 'Anomaly Detection Sensitivity', type: 'slider', min: 1, max: 10, step: 1, defaultValue: 5 },
+      { key: 'send_alerts', label: 'Send Alert Notifications', type: 'switch', defaultValue: true },
+      { key: 'tracking_period', label: 'Performance Tracking Period', type: 'select', options: [
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+      ], defaultValue: 'weekly' },
+      { key: 'show_individual_metrics', label: 'Show Individual Metrics', type: 'switch', defaultValue: true },
+      { key: 'show_team_metrics', label: 'Show Team Metrics', type: 'switch', defaultValue: true },
+      { key: 'performance_goal_completion', label: 'Goal Completion Target (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 85 },
+      { key: 'alert_low_performers', label: 'Alert on Low Performance', type: 'switch', defaultValue: false },
+      { key: 'revenue_goal_monthly', label: 'Monthly Revenue Goal ($)', type: 'number', min: 0, max: 1000000, defaultValue: 10000 },
+      { key: 'alert_threshold_percent', label: 'Alert When Revenue Below Goal (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 80 },
+      { key: 'track_by_service', label: 'Track by Service Type', type: 'switch', defaultValue: true },
+      { key: 'track_by_technician', label: 'Track by Technician', type: 'switch', defaultValue: true },
+      { key: 'include_projections', label: 'Include Revenue Projections', type: 'switch', defaultValue: true },
+      { key: 'forecast_horizon_days', label: 'Forecast Horizon (days)', type: 'number', min: 7, max: 365, defaultValue: 30 },
+      { key: 'confidence_threshold', label: 'Forecast Confidence Threshold (%)', type: 'slider', min: 50, max: 95, step: 5, defaultValue: 80 },
+      { key: 'include_seasonality', label: 'Include Seasonality in Forecasts', type: 'switch', defaultValue: true }
     ]
   },
   web_presence: {
