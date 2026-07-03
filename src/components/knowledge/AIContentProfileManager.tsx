@@ -620,17 +620,20 @@ export function AIContentProfileManager() {
       </div>
 
       {/* Industry Selection */}
-      <Card className="scroll-mt-[128px]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-            <CardTitle className="text-base">Industry Categories</CardTitle>
+      <Accordion type="multiple" defaultValue={['industry', 'description']} className="space-y-4">
+      <AccordionItem value="industry" className="border rounded-lg bg-card scroll-mt-[128px]">
+        <AccordionTrigger className="px-4 hover:no-underline">
+          <div className="text-left">
+            <div className="text-base font-semibold flex items-center gap-2">
+              <Building2 className="h-4 w-4 text-muted-foreground" />
+              Industry Categories
+            </div>
+            <div className="text-sm text-muted-foreground font-normal">
+              Select your primary industry and up to 5 secondary categories (like Google My Business)
+            </div>
           </div>
-          <CardDescription>
-            Select your primary industry and up to 5 secondary categories (like Google My Business)
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-4 space-y-4">
           <div>
             <Label>Primary Industry</Label>
             <Select 
@@ -678,17 +681,24 @@ export function AIContentProfileManager() {
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
+        </AccordionContent>
+      </AccordionItem>
 
       {/* Keywords */}
-      <Card className="scroll-mt-[128px]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+      <AccordionItem value="keywords" className="border rounded-lg bg-card scroll-mt-[128px]">
+        <AccordionTrigger className="px-4 hover:no-underline">
+          <div className="text-left">
+            <div className="text-base font-semibold flex items-center gap-2">
               <Tags className="h-4 w-4 text-muted-foreground" />
-              <CardTitle className="text-base">Keywords & Terms</CardTitle>
+              Keywords &amp; Terms
             </div>
+            <div className="text-sm text-muted-foreground font-normal">
+              Add keywords that should be incorporated into generated content
+            </div>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-4 space-y-4">
+          <div className="flex justify-end">
             <Button
               variant="outline"
               size="sm"
@@ -703,11 +713,6 @@ export function AIContentProfileManager() {
               {isLoadingSuggestions ? 'Generating...' : 'Suggest Keywords'}
             </Button>
           </div>
-          <CardDescription>
-            Add keywords that should be incorporated into generated content
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
           {/* Current keywords */}
           <div className="flex flex-wrap gap-2">
             {keywords.map(keyword => (
@@ -762,21 +767,23 @@ export function AIContentProfileManager() {
               <Plus className="h-4 w-4" />
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </AccordionContent>
+      </AccordionItem>
 
       {/* Business Description */}
-      <Card className="scroll-mt-[128px]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-            <CardTitle className="text-base">Business Description</CardTitle>
+      <AccordionItem value="description" className="border rounded-lg bg-card scroll-mt-[128px]">
+        <AccordionTrigger className="px-4 hover:no-underline">
+          <div className="text-left">
+            <div className="text-base font-semibold flex items-center gap-2">
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              Business Description
+            </div>
+            <div className="text-sm text-muted-foreground font-normal">
+              Describe your business, services, and what makes you unique
+            </div>
           </div>
-          <CardDescription>
-            Describe your business, services, and what makes you unique
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-4 space-y-4">
           <div>
             <Label>Business Overview</Label>
             <Textarea
@@ -820,21 +827,23 @@ export function AIContentProfileManager() {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </AccordionContent>
+      </AccordionItem>
 
       {/* Content Tone */}
-      <Card className="scroll-mt-[128px]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Target className="h-4 w-4 text-muted-foreground" />
-            <CardTitle className="text-base">Content Tone & Voice</CardTitle>
+      <AccordionItem value="tone" className="border rounded-lg bg-card scroll-mt-[128px]">
+        <AccordionTrigger className="px-4 hover:no-underline">
+          <div className="text-left">
+            <div className="text-base font-semibold flex items-center gap-2">
+              <Target className="h-4 w-4 text-muted-foreground" />
+              Content Tone &amp; Voice
+            </div>
+            <div className="text-sm text-muted-foreground font-normal">
+              Set the preferred tone and style for generated content
+            </div>
           </div>
-          <CardDescription>
-            Set the preferred tone and style for generated content
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-4 space-y-4">
           <div>
             <Label>Tone</Label>
             <Select 
@@ -866,21 +875,23 @@ export function AIContentProfileManager() {
               className="min-h-[80px]"
             />
           </div>
-        </CardContent>
-      </Card>
+        </AccordionContent>
+      </AccordionItem>
 
       {/* Content Topics */}
-      <Card className="scroll-mt-[128px]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-muted-foreground" />
-            <CardTitle className="text-base">Content Topics</CardTitle>
+      <AccordionItem value="topics" className="border rounded-lg bg-card scroll-mt-[128px]">
+        <AccordionTrigger className="px-4 hover:no-underline">
+          <div className="text-left">
+            <div className="text-base font-semibold flex items-center gap-2">
+              <Lightbulb className="h-4 w-4 text-muted-foreground" />
+              Content Topics
+            </div>
+            <div className="text-sm text-muted-foreground font-normal">
+              Define themes for automated social content generation. The AI will rotate through these topics when creating batch content.
+            </div>
           </div>
-          <CardDescription>
-            Define themes for automated social content generation. The AI will rotate through these topics when creating batch content.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-4 space-y-4">
           {/* Preset topic checkboxes — filtered by selected industries */}
           {(() => {
             const selected = [primaryIndustry, ...secondaryIndustries].filter(Boolean);
@@ -950,21 +961,23 @@ export function AIContentProfileManager() {
               Select at least one topic to enable intelligent content variety in batch generation.
             </p>
           )}
-        </CardContent>
-      </Card>
+        </AccordionContent>
+      </AccordionItem>
 
       {/* Avoid Keywords */}
-      <Card className="scroll-mt-[128px]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Ban className="h-4 w-4 text-muted-foreground" />
-            <CardTitle className="text-base">Content Restrictions</CardTitle>
+      <AccordionItem value="restrictions" className="border rounded-lg bg-card scroll-mt-[128px]">
+        <AccordionTrigger className="px-4 hover:no-underline">
+          <div className="text-left">
+            <div className="text-base font-semibold flex items-center gap-2">
+              <Ban className="h-4 w-4 text-muted-foreground" />
+              Content Restrictions
+            </div>
+            <div className="text-sm text-muted-foreground font-normal">
+              Specify words or phrases to avoid in generated content
+            </div>
           </div>
-          <CardDescription>
-            Specify words or phrases to avoid in generated content
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-4 space-y-4">
           <div className="flex flex-wrap gap-2">
             {avoidKeywords.map(keyword => (
               <Badge key={keyword} variant="destructive" className="gap-1">
@@ -986,8 +999,9 @@ export function AIContentProfileManager() {
               <Plus className="h-4 w-4" />
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </AccordionContent>
+      </AccordionItem>
+      </Accordion>
 
       {/* Test Content Dialog */}
       <Dialog open={testOpen} onOpenChange={setTestOpen}>
