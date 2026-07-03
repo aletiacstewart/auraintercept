@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { verifyMetaSignedRequest } from "../_shared/meta-webhook-signature.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,9 +21,19 @@ Deno.serve(async (req) => {
     let confirmationCode = crypto.randomUUID();
 
     if (signedRequest) {
-      const [, payload] = signedRequest.split(".");
-      const decoded = JSON.parse(atob(payload));
-      const userId = decoded.user_id;
+      const verify = await verifyMetaSignedRequest(signedRequest);
+      if (!verify.ok) {
+        console.error("[social-oauth-data-deletion] signature verification failed:", verify.reason);
+        // Return the expected shape to Meta, but do NOT delete anything.
+        return new Response(
+          JSON.stringify({
+            url: `https://auraintercept.ai/data-deletion?code=${confirmationCode}`,
+            confirmation_code: confirmationCode,
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const userId = verify.payload?.user_id as string | undefined;
 
       if (userId) {
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
