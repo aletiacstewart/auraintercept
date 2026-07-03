@@ -877,14 +877,22 @@ export default function Index() {
                         </div>
                       </div>
                     </div>
-                    <div className="rounded-md bg-black/20 p-3">
-                      <p className="text-[11px] font-semibold text-warning uppercase tracking-wide mb-1">Why your own account</p>
-                      <p className="text-[11px] text-white/85 leading-relaxed">If another business's texts ever get flagged for spam, your number and sending reputation stay completely unaffected — because it was never shared in the first place.</p>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+          {/* Account ownership & credit card notice */}
+          <div className="mt-8 max-w-4xl mx-auto space-y-3">
+            <div className="rounded-md bg-black/20 p-4">
+              <p className="text-[11px] font-semibold text-warning uppercase tracking-wide mb-1">Why your own account</p>
+              <p className="text-[11px] text-white/85 leading-relaxed">
+                If another business's texts or emails ever get flagged for spam or a violation, your number, email, and sending reputation stay completely unaffected — because it was never shared in the first place.
+              </p>
+            </div>
+            <p className="text-[11px] text-white/70 text-center">
+              A valid credit card is required on every provider account — including during your trial. Vendor fees are set by the provider and may change at any time.
+            </p>
           </div>
 
           {/* Vendor cards grid */}
@@ -910,7 +918,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Email Delivery</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Resend account · billed directly by Resend</p>
                 <p className="text-[10px] text-white">Resend pricing: Free 3,000/mo · Pro $20 (50k) · Scale $90+ · then ~$0.90 per 1,000</p>
-                <p className="text-[10px] text-white">Custom domain recommended · Valid credit card required on your Resend account</p>
+                <p className="text-[10px] text-white">Custom domain recommended</p>
                 
               </div>
 
@@ -922,7 +930,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">AI Voice Synthesis</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own ElevenLabs account · billed directly by ElevenLabs</p>
                 <p className="text-[10px] text-white">Free 15 min/mo · Starter $5 · Creator $22 · Pro $99 · pay-as-you-go available</p>
-                <p className="text-[10px] text-white">Valid credit card required on your ElevenLabs account · all tiers</p>
+                
               </div>
 
               <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -976,7 +984,7 @@ export default function Index() {
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Tavily account · billed directly by Tavily</p>
                 <p className="text-[10px] text-white">Tavily pricing: Free 1,000 credits/mo · then $0.008/credit · Project plans from ~$30/mo</p>
                 <p className="text-[10px] text-white">Search 1–2/query · Extract 1–2 per 5 URLs · Map 1 per 10 URLs · Crawl = Map + Extract</p>
-                <p className="text-[10px] text-white">API key configured during onboarding · Valid credit card required on your Tavily account</p>
+                <p className="text-[10px] text-white">API key configured during onboarding</p>
               </div>
             </div>
 
