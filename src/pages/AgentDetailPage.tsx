@@ -24,7 +24,21 @@ import {
   Megaphone,
   BarChart3,
   Sparkles,
-  Globe
+  Globe,
+  Wrench,
+  FileCheck,
+  Ruler,
+  ShieldCheck,
+  FileText,
+  PenTool,
+  TrendingUp,
+  Scissors,
+  Heart,
+  UtensilsCrossed,
+  CalendarClock,
+  ListChecks,
+  CalendarDays,
+  MessageCircleHeart
 } from 'lucide-react';
 
 const AGENT_DEFINITIONS: Record<string, {
