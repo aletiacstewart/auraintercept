@@ -11,56 +11,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
-import { 
-  ArrowLeft, 
-  Settings, 
-  Play, 
+import {
+  ArrowLeft,
+  Settings,
+  Play,
   Activity,
   Bot,
-  Users,
-  Truck,
-  Briefcase,
-  Megaphone,
-  BarChart3,
-  Sparkles,
-  Globe,
-  Wrench,
-  FileCheck,
-  Ruler,
-  ShieldCheck,
-  FileText,
-  PenTool,
-  TrendingUp,
-  Scissors,
-  Heart,
-  UtensilsCrossed,
-  CalendarClock,
-  ListChecks,
-  CalendarDays,
-  MessageCircleHeart
 } from 'lucide-react';
-
-const AGENT_DEFINITIONS: Record<string, {
-  name: string;
-  description: string;
-  category: string;
-  phase: number;
-  icon: React.ElementType;
-  color: string;
-  capabilities: string[];
-  configFields: Array<{
-    key: string;
-    label: string;
-    type: 'text' | 'textarea' | 'number' | 'select' | 'switch' | 'slider';
-    options?: { value: string; label: string }[];
-    placeholder?: string;
-    description?: string;
-    min?: number;
-    max?: number;
-    step?: number;
-    defaultValue?: any;
-  }>;
-}> = {
+import { AGENT_REGISTRY } from '@/lib/agentRegistry';
   triage: {
     name: 'AI Receptionist',
     description: 'First point of contact that classifies customer intent and routes to appropriate specialized agents.',
