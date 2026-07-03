@@ -450,7 +450,7 @@ export default function SpecialistOperativesConsole() {
             {visibleSpecialists.map((s) => (
               <TabsContent key={s.id} value={s.id} className="mt-4">
                 {tierUnlocked ? (
-                  <SpecialistChat specialist={s} />
+                  <SpecialistChat specialist={s} industryKey={pack?.industry_id} />
                 ) : (
                   <Card className="p-12 text-center border-border/60">
                     <Lock className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
