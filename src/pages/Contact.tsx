@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { VoiceChat } from '@/components/ai/VoiceChat';
 import { AuraCharacter } from '@/components/aura/AuraAvatarChat';
 import { SEO } from '@/components/seo/SEO';
+import { supabase } from '@/integrations/supabase/client';
 
 const AURA_COMPANY_ID = '04c57cbe-358e-4036-a3ad-b777a55f5be0';
 const AURA_COMPANY_NAME = 'Aura Intercept';
@@ -76,16 +77,40 @@ export default function Contact() {
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
     try {
-      // For now, just log the submission and show success
-      // In production, this would be sent to an edge function or CRM
-      console.log('Contact form submission:', data);
-      
+      const { error } = await supabase.functions.invoke('landing-capture-lead', {
+        body: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone || undefined,
+          industry: data.service_interest || undefined,
+          notes: data.company_name
+            ? `Company: ${data.company_name}\n\n${data.notes}`
+            : data.notes,
+          source: 'contact_page',
+        },
+      });
+
+      if (error) {
+        const msg = (error as any)?.message || '';
+        const status = (error as any)?.context?.status ?? (error as any)?.status;
+        if (status === 429 || /rate.?limit|too many/i.test(msg)) {
+          toast({
+            title: 'Please slow down',
+            description: 'Too many submissions from your network. Please wait a moment and try again.',
+            variant: 'destructive',
+          });
+          return;
+        }
+        throw error;
+      }
+
       toast({
         title: 'Message Received!',
         description: "Thank you for reaching out. We'll get back to you within 24 hours.",
       });
       form.reset();
     } catch (error: any) {
+      console.error('Contact form submission failed:', error);
       toast({
         title: 'Error',
         description: 'Failed to send message. Please try again or contact us directly.',
