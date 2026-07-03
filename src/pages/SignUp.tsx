@@ -515,20 +515,19 @@ export default function SignUp() {
       return;
     }
 
-    // Validate registration code
-    const { data: codeData, error: codeError } = await supabase
-      .from('employee_registration_codes')
-      .select('*')
-      .eq('code', registrationCode)
-      .eq('used', false)
-      .gt('expires_at', new Date().toISOString())
+    // Validate registration code via SECURITY DEFINER RPC (RLS blocks direct table reads)
+    const { data: validation, error: validationError } = await supabase
+      .rpc('validate_registration_code', { p_code: registrationCode })
       .maybeSingle();
 
-    if (codeError || !codeData) {
+    if (validationError || !validation?.is_valid) {
       toast({ title: 'Invalid Code', description: 'The registration code is invalid or expired', variant: 'destructive' });
       setIsLoading(false);
       return;
     }
+
+    const codeCompanyId = validation.company_id as string;
+    const codeJobRole = (validation.job_role as string | null) ?? null;
 
     const redirectUrl = `${window.location.origin}/dashboard`;
 
@@ -552,19 +551,32 @@ export default function SignUp() {
       // Update profile with company_id
       await supabase
         .from('profiles')
-        .update({ company_id: codeData.company_id })
+        .update({ company_id: codeCompanyId } as never)
         .eq('id', authData.user.id);
 
       // Assign employee role
       await supabase
         .from('user_roles')
-        .insert({ user_id: authData.user.id, role: 'employee' });
+        .insert({ user_id: authData.user.id, role: 'employee' } as never);
 
-      // Mark code as used
+      // Auto-assign job role if the invite specified one
+      if (codeJobRole) {
+        await supabase
+          .from('employee_job_assignments')
+          .insert({
+            employee_id: authData.user.id,
+            job_type: codeJobRole,
+            company_id: codeCompanyId,
+            assigned_by: authData.user.id,
+          } as never);
+      }
+
+      // Mark code as used (RLS enforces JWT email must match code's email)
       await supabase
         .from('employee_registration_codes')
-        .update({ used: true })
-        .eq('id', codeData.id);
+        .update({ used: true } as never)
+        .eq('code', registrationCode)
+        .eq('used', false);
 
       toast({ title: 'Welcome!', description: 'Your employee account has been created!' });
       navigate('/dashboard');

@@ -3070,6 +3070,7 @@ export type Database = {
           email: string | null
           expires_at: string
           id: string
+          job_role: string | null
           used: boolean | null
         }
         Insert: {
@@ -3079,6 +3080,7 @@ export type Database = {
           email?: string | null
           expires_at: string
           id?: string
+          job_role?: string | null
           used?: boolean | null
         }
         Update: {
@@ -3088,6 +3090,7 @@ export type Database = {
           email?: string | null
           expires_at?: string
           id?: string
+          job_role?: string | null
           used?: boolean | null
         }
         Relationships: [
