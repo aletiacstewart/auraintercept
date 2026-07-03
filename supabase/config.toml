@@ -78,9 +78,6 @@ verify_jwt = false
 [functions.elevenlabs-conversation-token]
 verify_jwt = true
 
-[functions.elevenlabs-tts]
-verify_jwt = true
-
 [functions.elevenlabs-clone-voice]
 verify_jwt = true
 
@@ -102,14 +99,8 @@ verify_jwt = false
 [functions.stripe-customer-portal]
 verify_jwt = true
 
-[functions.create-demo-trial]
-verify_jwt = false
-
 [functions.trial-reminders]
 verify_jwt = false
-
-[functions.tts]
-verify_jwt = true
 
 [functions.ai-agent-chat]
 verify_jwt = false
@@ -139,9 +130,6 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.parse-faq-document]
-verify_jwt = true
-
-[functions.crm-adapter]
 verify_jwt = true
 
 [functions.voice-booking-agent]
@@ -180,9 +168,6 @@ verify_jwt = false
 [functions.delete-users]
 verify_jwt = true
 
-[functions.create-demo-accounts]
-verify_jwt = false
-
 [functions.voice-navigator]
 verify_jwt = true
 
@@ -217,9 +202,6 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.voice-swaig]
-verify_jwt = false
-
-[functions.send-walkthrough-demo]
 verify_jwt = false
 
 [functions.voice-post-prompt]
