@@ -602,9 +602,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                           collapsed && 'justify-center px-2'
                         )}
                         style={isActive ? {
-                          background: "rgba(0,229,255,0.1)",
-                          color: "#00E5FF",
-                          boxShadow: "0 0 12px rgba(0,229,255,0.2), inset 0 0 0 1px rgba(0,229,255,0.2)",
+                          background: "hsl(var(--primary) / 0.1)",
+                          color: "hsl(var(--primary))",
+                          boxShadow: "0 0 12px hsl(var(--primary) / 0.2), inset 0 0 0 1px hsl(var(--primary) / 0.2)",
                           borderRadius: 8,
                         } : {
                            color: "rgba(255,255,255,0.92)",
@@ -650,7 +650,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                           }
                         }}
                       >
-                        <Icon className={cn("w-5 h-5 flex-shrink-0", item.featureColor && !isActive && item.featureColor)} style={isActive ? { color: "#00E5FF" } : undefined} />
+                        <Icon className={cn("w-5 h-5 flex-shrink-0", item.featureColor && !isActive && item.featureColor)} style={isActive ? { color: "hsl(var(--primary))" } : undefined} />
                         {!collapsed && <span className="truncate">{displayLabel}</span>}
                       </Button>
                     );
@@ -730,7 +730,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             style={{ color: "rgba(255,255,255,0.92)" }}
             onClick={handleSignOut}
           >
-            <LogOut className="w-5 h-5 flex-shrink-0" style={{ color: "#ff6b6b" }} />
+            <LogOut className="w-5 h-5 flex-shrink-0" style={{ color: "hsl(var(--destructive))" }} />
             {!collapsed && <span>Sign Out</span>}
           </Button>
             </div>
@@ -742,7 +742,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           variant="ghost"
           size="icon"
           className="hidden md:flex absolute -right-3 top-8 h-6 w-6 rounded-full"
-          style={{ border: "1px solid rgba(0,229,255,0.2)", background: "rgba(4,10,20,0.95)", color: "#00E5FF" }}
+          style={{ border: "1px solid hsl(var(--primary) / 0.2)", background: "rgba(4,10,20,0.95)", color: "hsl(var(--primary))" }}
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
@@ -762,7 +762,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               className="md:hidden h-9 w-9 shrink-0"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
-              style={{ color: "#00E5FF" }}
+              style={{ color: "hsl(var(--primary))" }}
             >
               <Menu className="w-5 h-5" />
             </Button>
