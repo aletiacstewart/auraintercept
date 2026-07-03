@@ -214,7 +214,7 @@ export function TechnicianJobQueue({ emptyTitle = 'No Active Jobs', emptyHint = 
 
       const { error } = await supabase
         .from('job_assignments')
-        .update(updateData)
+        .update(updateData as never)
         .eq('id', jobId);
 
       if (error) throw error;

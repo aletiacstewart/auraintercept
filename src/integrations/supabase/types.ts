@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      _cron_shared_secret: {
+        Row: {
+          created_at: string
+          id: number
+          secret: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          secret: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          secret?: string
+        }
+        Relationships: []
+      }
       agent_performance_metrics: {
         Row: {
           agent_type: string

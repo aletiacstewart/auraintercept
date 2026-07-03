@@ -2,6 +2,7 @@
 // Spot-checks critical agent infra per active company and logs degradation
 // to platform_issues so admins see autonomy gaps without manual checking.
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { requireCronSecret } from '../_shared/cron-auth.ts';
 
 const VERSION = 'v1.0.0';
 
@@ -14,6 +15,9 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const denied = await requireCronSecret(req, corsHeaders);
+  if (denied) return denied;
 
   const startedAt = Date.now();
   console.log(`[cron-health-check ${VERSION}] starting sweep`);

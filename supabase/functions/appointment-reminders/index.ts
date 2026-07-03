@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { getCompanyTerminology } from '../_shared/terminology.ts';
 import { sendGuardedSms } from '../_shared/sms-guard.ts';
+import { requireCronSecret } from '../_shared/cron-auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -86,6 +87,9 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const denied = await requireCronSecret(req, corsHeaders);
+  if (denied) return denied;
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;

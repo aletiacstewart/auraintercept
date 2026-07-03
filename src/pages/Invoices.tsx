@@ -128,7 +128,7 @@ export default function Invoices() {
         updateData.paid_at = new Date().toISOString();
         if (payment_method) updateData.payment_method = payment_method;
       }
-      const { error } = await supabase.from('invoices').update(updateData).eq('id', id);
+      const { error } = await supabase.from('invoices').update(updateData as never).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { verifyMetaSignature } from "../_shared/meta-webhook-signature.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,6 +39,17 @@ Deno.serve(async (req) => {
   if (req.method === "POST") {
     try {
       const body = await req.text();
+
+      // Verify Meta HMAC signature (skipped with warning if META_APP_SECRET unset).
+      const sig = await verifyMetaSignature(req, body);
+      if (!sig.ok) {
+        console.warn("[social-webhook] signature rejected:", sig.reason);
+        return new Response(JSON.stringify({ error: "invalid signature" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       let payload: any;
       try {
         payload = JSON.parse(body);

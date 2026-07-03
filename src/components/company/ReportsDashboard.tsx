@@ -198,7 +198,7 @@ export function ReportsDashboard() {
     const updateField = `${reportType}_digest_enabled`;
     const { error } = await supabase
       .from('companies')
-      .update({ [updateField]: enabled })
+      .update({ [updateField]: enabled } as never)
       .eq('id', companyId);
 
     if (error) {
@@ -240,7 +240,7 @@ export function ReportsDashboard() {
 
     const { error } = await supabase
       .from('companies')
-      .update(updates)
+      .update(updates as never)
       .eq('id', companyId);
 
     if (error) {

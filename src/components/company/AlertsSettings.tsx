@@ -71,7 +71,7 @@ export function AlertsSettings() {
       if (!companyId) throw new Error('No company ID');
       const { error } = await supabase
         .from('companies')
-        .update(updates)
+        .update(updates as never)
         .eq('id', companyId);
       if (error) throw error;
     },
