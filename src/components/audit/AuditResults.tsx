@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { 
   RefreshCw, 
   ArrowRight, 
@@ -15,12 +17,22 @@ import {
   Rocket,
   Download,
   FileText,
+  Lock,
 } from "lucide-react";
 import { TierType, TierScores, TIER_RECOMMENDATIONS } from "./types";
 import { useNavigate } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { AuditChecklistPDF } from "./AuditChecklistPDF";
 import { getIndustryContent } from "@/lib/industryMarketingContent";
+import { useState } from "react";
+import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+const captureSchema = z.object({
+  name: z.string().trim().min(2, "Please enter your name").max(100),
+  email: z.string().trim().email("Please enter a valid email").max(255),
+});
 
 interface AuditResultsProps {
   tierPercentages: TierScores;
@@ -71,6 +83,52 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
   // Calculate scaled hours based on fit percentage
   const avgFit = tierPercentages[recommendedTier];
   const scaledHours = Math.round((avgFit / 100) * roiEstimate.hoursSaved);
+
+  // PDF export is gated behind a lightweight lead capture. On-screen results
+  // remain fully visible without capture (preserves "no signup required" copy).
+  const [leadCaptured, setLeadCaptured] = useState(false);
+  const [captureName, setCaptureName] = useState("");
+  const [captureEmail, setCaptureEmail] = useState("");
+  const [isCapturing, setIsCapturing] = useState(false);
+
+  const captureParse = captureSchema.safeParse({ name: captureName, email: captureEmail });
+  const captureValid = captureParse.success;
+
+  const handleCaptureAndDownload = async () => {
+    if (!captureValid) return;
+    setIsCapturing(true);
+    try {
+      const { error } = await supabase.functions.invoke('landing-capture-lead', {
+        body: {
+          name: captureName.trim(),
+          email: captureEmail.trim(),
+          industry: industryId ?? undefined,
+          notes: 'Completed the Free AI Opportunity Audit and downloaded the PDF report.',
+          source: 'opportunity_audit',
+        },
+      });
+      if (error) {
+        const status = (error as any)?.context?.status ?? (error as any)?.status;
+        const msg = (error as any)?.message || '';
+        if (status === 429 || /rate.?limit|too many/i.test(msg)) {
+          toast.error('Too many submissions from your network. Please wait a moment and try again.');
+          return;
+        }
+        // Don't block value delivery over a backend hiccup — log + unlock.
+        console.error('Failed to capture audit lead:', error);
+        toast.warning("We couldn't record your details, but your download is unlocked.");
+        setLeadCaptured(true);
+        return;
+      }
+      setLeadCaptured(true);
+    } catch (err) {
+      console.error('Failed to capture audit lead:', err);
+      toast.warning("We couldn't record your details, but your download is unlocked.");
+      setLeadCaptured(true);
+    } finally {
+      setIsCapturing(false);
+    }
+  };
 
   const handleViewPricing = () => {
     navigate('/');
