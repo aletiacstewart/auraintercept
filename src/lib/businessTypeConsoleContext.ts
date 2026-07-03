@@ -41,7 +41,10 @@ export function getConsoleContext(
     getMatrixRowForBusinessType(industryVertical);
   const groupSummary = matrixRow ? getGroupSummary(matrixRow.category) : null;
   const top = matrixRow ? topChannels(matrixRow, topN) : [];
+  const humanize = (s: string) =>
+    s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   const displayLabel =
-    matrixRow?.name ?? (businessType || industryVertical || profileSpec.label);
+    matrixRow?.name ??
+    humanize(businessType || industryVertical || profileSpec.label || '');
   return { profileKey, profileSpec, matrixRow, groupSummary, topChannels: top, displayLabel };
 }
