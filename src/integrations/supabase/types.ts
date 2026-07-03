@@ -4634,6 +4634,42 @@ export type Database = {
           },
         ]
       }
+      oauth_state_nonces: {
+        Row: {
+          company_id: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          extra: Json
+          id: string
+          nonce: string
+          provider: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          extra?: Json
+          id?: string
+          nonce: string
+          provider: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          extra?: Json
+          id?: string
+          nonce?: string
+          provider?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       onboarding_invites: {
         Row: {
           company_name: string
