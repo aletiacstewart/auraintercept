@@ -51,7 +51,7 @@ import { HOW_TO_USE } from '@/lib/howToUseContent';
 type SpecialistDef = {
   id: IndustrySpecialistOperative;
   icon: React.ElementType;
-  examples: string[];
+  examples: Record<string, string[]> & { default: string[] };
   usedBy: string;
 };
 
@@ -60,107 +60,130 @@ const SPECIALISTS_RAW: SpecialistDef[] = [
     id: 'diagnostic',
     icon: Stethoscope,
     usedBy: 'Customers (pre-visit triage), Technicians (on-site)',
-    examples: [
-      'My AC is blowing warm air. What might be wrong?',
-      'Here\'s a photo of the unit — what part do I likely need?',
-      'Customer reports a burning smell from the panel. What should I check first?',
-    ],
+    examples: {
+      default: [
+        'My AC is blowing warm air. What might be wrong?',
+        'Here\'s a photo of the unit — what part do I likely need?',
+        'Customer reports a burning smell from the panel. What should I check first?',
+      ],
+      saas_platform: [
+        'A customer says the CSV export is failing halfway. What should I check first?',
+        'Users report the dashboard is loading blank after login — walk me through triage.',
+        'Webhook deliveries are silently failing for one tenant. Where do I start?',
+      ],
+    },
   },
   {
     id: 'permit_code',
     icon: FileCheck,
     usedBy: 'Dispatch, Technicians, Estimators',
-    examples: [
-      'Do I need a permit to replace a 200A service panel in this jurisdiction?',
-      'What code applies to a tankless water heater install in California?',
-      'Walk me through pulling an HVAC permit for a residential job.',
-    ],
+    examples: {
+      default: [
+        'Do I need a permit to replace a 200A service panel in this jurisdiction?',
+        'What code applies to a tankless water heater install in California?',
+        'Walk me through pulling an HVAC permit for a residential job.',
+      ],
+      saas_platform: [
+        'What compliance controls apply if we start processing EU customer data?',
+        'Draft a SOC 2 evidence checklist for a change-management review.',
+        'Which GDPR obligations kick in when we add a new subprocessor?',
+      ],
+    },
   },
   {
     id: 'site_survey',
     icon: Ruler,
     usedBy: 'Estimators, Sales, Customers (self-survey)',
-    examples: [
-      'Generate a pre-install survey checklist for a roof replacement.',
-      'What measurements do I need before quoting a mini-split install?',
-      'Walk a homeowner through capturing photos for a remote estimate.',
-    ],
+    examples: {
+      default: [
+        'Generate a pre-install survey checklist for a roof replacement.',
+        'What measurements do I need before quoting a mini-split install?',
+        'Walk a homeowner through capturing photos for a remote estimate.',
+      ],
+      saas_platform: [
+        'Build a discovery checklist for a new enterprise customer onboarding.',
+        'What questions should I ask before scoping a custom integration?',
+        'Draft a technical requirements survey for a prospect evaluating our API.',
+      ],
+    },
   },
   {
     id: 'insurance_claim',
     icon: ShieldCheck,
     usedBy: 'Customers (claim docs), Admins (claim review)',
-    examples: [
-      'Help me document hail damage for my homeowner\'s claim.',
-      'What information does the carrier need for a water-loss claim?',
-      'Produce a claim-ready summary from these photos and dates.',
-    ],
+    examples: {
+      default: [
+        'Help me document hail damage for my homeowner\'s claim.',
+        'What information does the carrier need for a water-loss claim?',
+        'Produce a claim-ready summary from these photos and dates.',
+      ],
+    },
   },
   // Real Estate
   { id: 'listing_writer', icon: Home, usedBy: 'Agents, Marketing',
-    examples: [
+    examples: { default: [
       'Write a 3-bullet listing description for a 4-bed colonial with a finished basement.',
       'Draft a punchy headline for an open house this Sunday at 2pm.',
       'Suggest 5 feature highlights from these photos and the MLS sheet.',
-    ] },
+    ] } },
   { id: 'offer_drafter', icon: FileSignature, usedBy: 'Agents, Brokers',
-    examples: [
+    examples: { default: [
       'Draft an offer letter for a buyer at $625k with a 30-day close.',
       'Compose a counter-offer that splits the inspection credit.',
       'Add a financing contingency to this draft offer.',
-    ] },
+    ] } },
   { id: 'comp_analyst', icon: BarChart3, usedBy: 'Agents, Pricing',
-    examples: [
+    examples: { default: [
       'Pull comps for 123 Maple St (3-bed, 1800 sqft) within 1 mile, last 90 days.',
       'Summarize how this listing prices vs. nearby actives and pendings.',
       'Show the price-per-sqft trend for this neighborhood over 12 months.',
-    ] },
+    ] } },
   // Beauty & Wellness
   { id: 'style_consultant', icon: Scissors, usedBy: 'Stylists, Clients',
-    examples: [
+    examples: { default: [
       'Suggest 3 cuts that suit a heart-shaped face and fine hair.',
       'Recommend a color formula for a level 6 base going to honey-balayage.',
       'Build a 4-week treatment plan for damaged hair after bleach.',
-    ] },
+    ] } },
   { id: 'loyalty_coach', icon: Heart, usedBy: 'Front desk, Marketing',
-    examples: [
+    examples: { default: [
       'Find clients who haven\'t rebooked in 8+ weeks and draft a personal note for each.',
       'Suggest a loyalty perk for a client on visit #10.',
       'Draft a friendly reminder for a client whose last color is fading.',
-    ] },
+    ] } },
   // Restaurants
   { id: 'menu_writer', icon: UtensilsCrossed, usedBy: 'Owner, FOH manager',
-    examples: [
+    examples: { default: [
       'Write today\'s special: pan-seared halibut with lemon-caper butter.',
       'Draft dietary callouts (GF, V, DF) for these 6 menu items.',
       'Write a brunch menu intro in our brand voice.',
-    ] },
+    ] } },
   { id: 'reservation_optimizer', icon: CalendarClock, usedBy: 'Host, Manager',
-    examples: [
+    examples: { default: [
       'Reshuffle tonight\'s 7pm bookings to seat the 6-top by the window.',
       'Find the best slot to add a 4-top tomorrow without breaking turn time.',
       'Suggest table moves to free a 2-top for a walk-in.',
-    ] },
+    ] } },
   // Personal Assistant
   { id: 'task_triager', icon: ListChecks, usedBy: 'Assistants, Clients',
-    examples: [
+    examples: { default: [
       'Sort today\'s 12 inbound requests by urgency and owner.',
       'Flag anything past due and draft status update messages.',
       'Group these tasks into errands, calls, and research blocks.',
-    ] },
+    ] } },
   { id: 'calendar_optimizer', icon: CalendarRange, usedBy: 'Assistants',
-    examples: [
+    examples: { default: [
       'Reshuffle this week to consolidate Tuesday meetings into one block.',
       'Find the best 90-min focus window for deep work tomorrow.',
       'Add 15-min travel buffers between in-person meetings.',
-    ] },
+    ] } },
   // Universal booking-first
   { id: 'review_responder', icon: MessageCircleHeart, usedBy: 'Owner, Marketing',
-    examples: [
+    examples: { default: [
       'Draft a warm response to this 5-star Google review.',
       'Compose a professional reply to this 2-star review without sounding defensive.',
       'Respond to a Yelp review that mentions long wait times.',
-    ] },
+    ] } },
 ];
 
 // Index for lookup. Any specialist in the enum without a hand-written entry
@@ -172,7 +195,7 @@ const SPECIALISTS: SpecialistDef[] = (INDUSTRY_SPECIALIST_OPERATIVES as readonly
     id,
     icon: Sparkles,
     usedBy: 'Industry-specific',
-    examples: [SPECIALIST_DESCRIPTIONS[id] ?? 'Ask the specialist a question.'],
+    examples: { default: [SPECIALIST_DESCRIPTIONS[id] ?? 'Ask the specialist a question.'] },
   };
 });
 
