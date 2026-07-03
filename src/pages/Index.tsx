@@ -877,10 +877,6 @@ export default function Index() {
                         </div>
                       </div>
                     </div>
-                    <div className="rounded-md bg-black/20 p-3">
-                      <p className="text-[11px] font-semibold text-warning uppercase tracking-wide mb-1">Why your own account</p>
-                      <p className="text-[11px] text-white/85 leading-relaxed">If another business's texts ever get flagged for spam, your number and sending reputation stay completely unaffected — because it was never shared in the first place.</p>
-                    </div>
                   </div>
                 </div>
               </div>
