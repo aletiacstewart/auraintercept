@@ -882,6 +882,18 @@ export default function Index() {
               </div>
             </div>
           </div>
+          {/* Account ownership & credit card notice */}
+          <div className="mt-8 max-w-4xl mx-auto space-y-3">
+            <div className="rounded-md bg-black/20 p-4">
+              <p className="text-[11px] font-semibold text-warning uppercase tracking-wide mb-1">Why your own account</p>
+              <p className="text-[11px] text-white/85 leading-relaxed">
+                If another business's texts or emails ever get flagged for spam or a violation, your number, email, and sending reputation stay completely unaffected — because it was never shared in the first place.
+              </p>
+            </div>
+            <p className="text-[11px] text-white/70 text-center">
+              A valid credit card is required on every provider account — including during your trial. Vendor fees are set by the provider and may change at any time.
+            </p>
+          </div>
 
           {/* Vendor cards grid */}
           <div className="mt-8 max-w-4xl mx-auto">
