@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -44,6 +45,13 @@ Deno.serve(async (req) => {
     if (!companyId) throw new Error('companyId is required');
     if (!customerPhone) throw new Error('customerPhone is required');
     if (!customerName) throw new Error('customerName is required');
+
+    const authResult = await authorizeInternalRequest(req, companyId);
+    if (!authResult.ok) {
+      return new Response(JSON.stringify({ error: authResult.error }), {
+        status: authResult.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const normalizedPhone = normalizePhoneNumber(customerPhone);
 

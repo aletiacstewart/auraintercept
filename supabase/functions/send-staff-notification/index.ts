@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { sendGuardedEmail } from "../_shared/email-guard.ts";
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -60,6 +61,13 @@ serve(async (req) => {
     }: NotificationRequest = await req.json();
 
     console.log(`Processing ${notificationType} notification for company ${companyId}`);
+
+    const authResult = await authorizeInternalRequest(req, companyId);
+    if (!authResult.ok) {
+      return new Response(JSON.stringify({ error: authResult.error }), {
+        status: authResult.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // 1. Create in-app notification
     const { data: notification, error: notifError } = await supabase

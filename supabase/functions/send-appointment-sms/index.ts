@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyTerminology } from "../_shared/industry-pack.ts";
 import { sendGuardedSms, normalizeE164US } from "../_shared/sms-guard.ts";
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -38,6 +39,13 @@ Deno.serve(async (req) => {
     if (!companyId) throw new Error('companyId is required');
     if (!customerPhone) throw new Error('customerPhone is required');
     if (!rawMessage) throw new Error('message is required');
+
+    const authResult = await authorizeInternalRequest(req, companyId);
+    if (!authResult.ok) {
+      return new Response(JSON.stringify({ error: authResult.error }), {
+        status: authResult.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Apply industry-aware terminology (no-op if message has no placeholders)
     const pack = await loadIndustryPackForCompany(supabase, companyId);
