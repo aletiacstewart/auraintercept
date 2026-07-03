@@ -1,81 +1,54 @@
-## Goal
-Add a **Platform Brief Export** page (platform_admin only) that generates a single comprehensive markdown file summarizing the entire Aura Intercept platform. You click one button, download the `.md`, paste it into Claude, and Claude has full context for advising on agents, consoles, and features — no repo access required.
+## Security Hardening — Round 1 (final plan)
 
-## What the brief contains
+Confirmed with you:
+- **Meta App Secret:** not configured. FIX 3 will be **scaffolded inactive** — helper file + wiring committed, but if `META_APP_SECRET` env var is missing the function logs a warning and continues (same pattern as `signalwire-signature.ts`). Nothing breaks. When you're ready to activate, add the secret and it turns on automatically.
+- **`/talk-to-aura`:** stays public and functional. `elevenlabs-tts` keeps `verify_jwt = false`.
 
-One markdown document with these sections, auto-assembled from the live codebase and database:
+---
 
-1. **Platform Overview** — stack, hosting, tenancy model, identity split (platform_admin vs company_admin)
-2. **Pricing & Tiers** — 4-tier launch pricing, onboarding fees, legacy tier mapping (pulled from `src/lib/launchPricing.ts` + `LEGACY_TIER_MAP`)
-3. **AI Operatives (24 agents / 10 operatives)** — name, role, tier gate, associated edge function, description (from `src/features/ai-operatives/*` + `agentStyles`)
-4. **Consoles & Routes** — every route in `src/App.tsx` grouped by user role (platform_admin / company_admin / employee / customer / public), with a one-line purpose
-5. **Edge Functions Inventory** — every `supabase/functions/*/index.ts` with its purpose (parsed from top-of-file comments or function name), auth model, and secrets used
-6. **Database Schema** — table name, column count, RLS policy count, one-line purpose (from a lightweight introspection query)
-7. **Integrations & 3rd-Party** — SignalWire, ElevenLabs, Resend, Tavily, Stripe, Upload-Post, Google Calendar, social OAuth — status, tier gating, customer-account requirement
-8. **Industry Packs** — the 28 packs from `industry_template_packs` with terminology + tier defaults
-9. **Feature Access Matrix** — tier × feature grid (from `src/lib/feature-access` / `tierGating`)
-10. **Recent Security Posture** — links to the security memory summary (no live findings, no secrets)
-11. **Known Constraints** — 4-tier only, no multi-location, no CRM/warranty, customer-owned 3rd-party accounts, admin identity split
+### FIX 2 — Dedupe `elevenlabs-tts` config
+- Remove the FIRST `[functions.elevenlabs-tts]` block (`verify_jwt = true`) from `supabase/config.toml`.
+- Keep the SECOND block (`verify_jwt = false`) so `/talk-to-aura` keeps working.
+- Add lightweight abuse guard inside `elevenlabs-tts/index.ts`: simple per-IP in-memory rate limit (e.g. 20 req / 60s) + reject empty/whitespace text (already have 4000-char cap).
 
-## Where it lives
+### FIX 1 — Lock down 8 cron-only functions
+- Generate `CRON_SECRET` via `generate_secret`.
+- Add `supabase/functions/_shared/cron-auth.ts` with `verifyCronSecret(req)` (checks `x-cron-secret` header against `Deno.env.get("CRON_SECRET")`, fails closed).
+- Insert the check at the top of each handler (after CORS preflight):
+  - `monthly-digest`, `quarterly-digest`, `weekly-digest`
+  - `trial-reminders`, `cost-alerts`, `cron-health-check`
+  - `appointment-reminders`, `lead-follow-up-reminders` (added — touch PII, currently unprotected)
+- Migration that unschedules and re-registers those 8 cron jobs with the `x-cron-secret` header hardcoded in the SQL (same pattern already used for the anon key — Postgres GUC route isn't reliable on Lovable Cloud). The secret value in the migration will match `CRON_SECRET`.
 
-- **Route:** `/dashboard/platform-brief` (gated to `platform_admin`, same guard as `/dashboard/architecture`)
-- **Sidebar entry:** under the existing power-user section (hidden from non-admins by the same guard)
-- **UI:** single page with a "Generate & Download Brief" button, a preview pane showing the markdown, a "Copy to clipboard" button, and a "Regenerate" button. Also shows generation timestamp.
+### FIX 3 — Meta webhook signature verification (scaffolded, inactive)
+- Add `supabase/functions/_shared/meta-webhook-signature.ts` mirroring `signalwire-signature.ts`: HMAC-SHA256 with `META_APP_SECRET`, timing-safe compare against `X-Hub-Signature-256`.
+- Wire into `social-webhook/index.ts` POST branch, after reading the raw body.
+- Guard behavior: if `META_APP_SECRET` is unset → log `[social-webhook] META_APP_SECRET not set — signature check skipped` and continue (so nothing breaks today). When you later add the secret, verification turns on and mismatches return 401.
 
-## How it's assembled
+### FIX 4 — `config.toml` cleanup (scoped)
+- Remove only the 7 confirmed stale `[functions.*]` blocks: `create-demo-accounts`, `create-demo-customer`, `create-demo-employee`, `create-demo-trial`, `crm-adapter`, `send-walkthrough-demo`, `tts`.
+- **Skip** adding entries for the 21 undocumented functions — they default to `verify_jwt = true` (secure); adding entries adds risk without benefit for this round.
 
-- **Static config** (pricing, tiers, agents, industry packs, feature-access matrix) is imported directly from existing TS modules — no duplication.
-- **Routes** are extracted from a lightweight scan of `src/App.tsx`'s route table (parsed at build time via a small helper, or a curated list kept in `src/lib/platform-brief/routes.ts`).
-- **Edge functions** list is generated by a build-time script that reads `supabase/functions/*/index.ts` filenames and top-file JSDoc — output to `src/lib/platform-brief/edge-functions.generated.ts`.
-- **Database summary** is fetched at click-time via a new `platform-brief-snapshot` edge function that calls a `SECURITY DEFINER` RPC returning table name + column count + policy count only (no data, no PII).
+### FIX 6 — `package.json` hygiene
+- Move `vitest`, `jsdom`, `@testing-library/react`, `@testing-library/jest-dom` from `dependencies` to `devDependencies`.
 
-## What it deliberately excludes
+### FIX 5 — SKIPPED
+Pure UI refactor of 3 install pages. No security or functional benefit. Bundle later if desired.
 
-- No secret values, no `tenant_integrations` rows, no customer PII, no auth tokens
-- No Supabase project ref or URLs (per platform standards)
-- No live security findings (Claude gets the memory summary only)
-- No user counts or business metrics — this is architectural context, not analytics
+---
 
-## Files to add
+### Deliverables
+- 2 new shared files: `_shared/cron-auth.ts`, `_shared/meta-webhook-signature.ts`
+- 9 edge function edits: 8 cron functions + `social-webhook` + `elevenlabs-tts`
+- 1 migration: re-register 8 cron jobs with `x-cron-secret` header
+- 1 `config.toml` edit (remove 8 blocks — 7 stale + 1 duplicate)
+- 1 `package.json` edit
+- 1 new secret: `CRON_SECRET` (auto-generated)
 
-```
-src/pages/dashboard/PlatformBrief.tsx                 (UI page)
-src/lib/platform-brief/
-  ├── index.ts                                        (main assembler)
-  ├── sections/
-  │    ├── overview.ts
-  │    ├── pricing.ts
-  │    ├── operatives.ts
-  │    ├── routes.ts
-  │    ├── edge-functions.ts
-  │    ├── schema.ts
-  │    ├── integrations.ts
-  │    ├── industry-packs.ts
-  │    ├── feature-matrix.ts
-  │    └── constraints.ts
-  ├── edge-functions.generated.ts                     (build-time generated)
-  └── types.ts
-supabase/functions/platform-brief-snapshot/index.ts   (schema summary RPC caller)
-supabase/migrations/<ts>_platform_brief_snapshot.sql  (SECURITY DEFINER RPC: get_public_schema_summary, platform_admin only)
-scripts/generate-edge-functions-list.ts               (dev-time helper, run via bun)
-```
+### After deploy — verification
+- `curl` each of the 8 cron functions with no `x-cron-secret` → expect `401`.
+- Watch `cron.job_run_details` after next scheduled run → expect success.
+- `elevenlabs-tts` still callable from `/talk-to-aura` with no auth.
+- `social-webhook` still accepts Meta events (signature check inactive until secret added).
 
-## Files to edit
-
-- `src/App.tsx` — add the new route with platform_admin guard
-- Sidebar config (wherever power-user pages are registered) — add "Platform Brief" entry
-
-## Security
-
-- Page + RPC + edge function all gated to `platform_admin` (via `has_role`)
-- RPC returns only aggregate metadata (name, count, policy count) — never row data
-- Brief is generated client-side and downloaded; nothing is uploaded anywhere
-
-## Out of scope
-
-- No live sync to Claude, no MCP wiring, no auto-post to external service
-- No regeneration on schedule — user-triggered only
-- No PDF export (markdown only; Claude reads markdown best)
-
-Approve and I'll build it.
+Approve to switch to build mode.
