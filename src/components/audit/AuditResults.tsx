@@ -417,24 +417,66 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
                     <span>Side-by-side comparison of all 4 plans</span>
                   </li>
                 </ul>
-                <PDFDownloadLink
-                  document={
-                    <AuditChecklistPDF
-                      recommendedTier={recommendedTier}
-                      fitScore={fitScore}
-                      answers={answers}
-                      industryId={industryId}
-                    />
-                  }
-                  fileName={`aura-setup-plan-${industryId && industryId !== 'other' ? `${industryId}-` : ''}${recommendation.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`}
-                >
-                  {({ loading }) => (
-                    <Button size="lg" className="gap-2" disabled={loading}>
+                {!leadCaptured ? (
+                  <div className="w-full max-w-md space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <Lock className="h-4 w-4 text-primary" />
+                      Enter your details to download your personalized setup checklist.
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="audit-capture-name" className="text-xs">Name</Label>
+                      <Input
+                        id="audit-capture-name"
+                        value={captureName}
+                        onChange={(e) => setCaptureName(e.target.value)}
+                        placeholder="Your name"
+                        maxLength={100}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="audit-capture-email" className="text-xs">Email</Label>
+                      <Input
+                        id="audit-capture-email"
+                        type="email"
+                        value={captureEmail}
+                        onChange={(e) => setCaptureEmail(e.target.value)}
+                        placeholder="you@company.com"
+                        maxLength={255}
+                      />
+                    </div>
+                    <Button
+                      size="lg"
+                      className="w-full gap-2"
+                      onClick={handleCaptureAndDownload}
+                      disabled={!captureValid || isCapturing}
+                    >
                       <Download className="h-4 w-4" />
-                      {loading ? 'Preparing your PDF...' : 'Download Setup Checklist (PDF)'}
+                      {isCapturing ? 'Preparing…' : 'Unlock My Checklist'}
                     </Button>
-                  )}
-                </PDFDownloadLink>
+                    <p className="text-[11px] text-muted-foreground">
+                      We'll email you a copy and occasional Aura updates. No spam.
+                    </p>
+                  </div>
+                ) : (
+                  <PDFDownloadLink
+                    document={
+                      <AuditChecklistPDF
+                        recommendedTier={recommendedTier}
+                        fitScore={fitScore}
+                        answers={answers}
+                        industryId={industryId}
+                      />
+                    }
+                    fileName={`aura-setup-plan-${industryId && industryId !== 'other' ? `${industryId}-` : ''}${recommendation.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`}
+                  >
+                    {({ loading }) => (
+                      <Button size="lg" className="gap-2" disabled={loading}>
+                        <Download className="h-4 w-4" />
+                        {loading ? 'Preparing your PDF...' : 'Download Setup Checklist (PDF)'}
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
+                )}
               </div>
             </div>
           </CardContent>
