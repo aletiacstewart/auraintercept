@@ -1,46 +1,33 @@
-## Confirmed — customer_journey has no real tools
+## Progressive Disclosure Consistency — 3 pages
 
-Verified in `supabase/functions/ai-agent-chat/index.ts`:
-- `AGENT_TOOLS` (line 1035+) defines `booking` (1135), `followup` (1334), `review` (1399) but **no `customer_journey` key**.
-- `TOOL_KEY_MAP` (line 3973) has aliases for every other consolidated operative (social, analytics, outreach, field_navigation, business_finance) but **nothing mapping to `customer_journey`**.
-- `toolKey = TOOL_KEY_MAP[agentType] || agentType` → for `customer_journey` this is `'customer_journey'` → `AGENT_TOOLS['customer_journey']` is undefined → falls through to the handoff-only default at line 4001.
+Apply the existing `AuraIntelligenceSettings` accordion pattern (shadcn `Accordion type="multiple"`) to three currently always-expanded pages. Pure presentation — no changes to form fields, validation, save handlers, or AI actions.
 
-Claude's diagnosis is correct. The agent can talk about booking/follow-up/review but cannot call any of the underlying tools.
+### Fix 1 — `src/pages/Settings.tsx` (Company tab)
+Line 115 `TabsContent value="company"`. Currently renders `BrandingSettings`, `ContactInfoSettings`, `PublicAppUrlSettings` stacked with `<Separator />`.
+- Replace with `<Accordion type="multiple" defaultValue={['branding']} className="space-y-4">` containing three `AccordionItem`s (`branding`, `contact`, `app-url`).
+- Each item: title + muted description in `AccordionTrigger`; existing component inside `AccordionContent`.
+- Remove the old separators/headings.
 
-## Plan
+### Fix 2 — `src/pages/KnowledgeBase.tsx` (AI Profile tab)
+Line 112 `TabsContent value="ai-profile"`. Wrap its 6 sections in an accordion with `defaultValue={['industry','description']}` (Industry Categories + Business Description open by default; the other 4 collapsed). Preserve every "AI Generate", "Save Profile", "Test Content" button unchanged inside their sections.
 
-### Fix — Give `customer_journey` the union of booking + followup + review tools
-
-`supabase/functions/ai-agent-chat/index.ts`, inside the `AGENT_TOOLS` object literal, add a new key after the `review` array (line ~1399+) so the spreads resolve to already-defined properties:
-
-```ts
-customer_journey: [
-  ...AGENT_TOOLS.booking,
-  ...AGENT_TOOLS.followup,
-  ...AGENT_TOOLS.review,
-],
-```
-
-Note: spreading `AGENT_TOOLS.booking` inside the same object literal that's defining `AGENT_TOOLS` doesn't work — the identifier isn't bound yet. Two safe options:
-
-1. **Define the arrays as `const` first, then compose the object.** Extract `BOOKING_TOOLS`, `FOLLOWUP_TOOLS`, `REVIEW_TOOLS` as top-level `const` arrays, then reference them from both the legacy keys and the new `customer_journey` key. Cleanest but touches three existing entries.
-2. **Add `customer_journey` after the object is constructed:** immediately after the `AGENT_TOOLS` declaration, do `AGENT_TOOLS.customer_journey = [...AGENT_TOOLS.booking, ...AGENT_TOOLS.followup, ...AGENT_TOOLS.review];`. Minimal diff, no restructuring of existing entries.
-
-Recommended: **option 2** — smallest surgical change, matches the "additive, nothing about the existing legacy arrays changes" acceptance criterion.
-
-### Optional cleanup (also included)
-Add legacy aliases to `TOOL_KEY_MAP` so any straggler code calling the old names routes to the same unified set going forward:
-```ts
-booking: 'customer_journey',
-followup: 'customer_journey',
-review: 'customer_journey',
-```
-This is safe because after the fix, `AGENT_TOOLS.customer_journey` contains the full union — so `booking`/`followup`/`review` callers get a superset of their old tools, not less.
+### Fix 3 — `src/pages/Automation.tsx` (10 agents)
+Currently maps `AGENTS` → `<Card>` per agent, all expanded (line 311+). Convert to collapsed row list:
+- Container: `<div className="rounded-lg border divide-y">`
+- Single-expanded state: `const [expandedAgentId, setExpandedAgentId] = useState<string | null>(null)`
+- Each row: header button showing `agent.label`, `agent.description`, and current settings summary (`d.mode`, `Conf {confidence_threshold}`, `Cap ${max_value_usd}`, `{daily_action_cap}/day`) plus rotating `ChevronDown`.
+- On expand: render the existing 4-field form + per-agent Save button unchanged inside a `<div className="p-4 pt-0 border-t bg-muted/20">`.
+- Keep `drafts`, `updateDraft`, `saveAgent`, validation, and bulk actions untouched.
 
 ### Files touched
-- `supabase/functions/ai-agent-chat/index.ts` — one added assignment plus 3 alias entries in `TOOL_KEY_MAP`.
+- `src/pages/Settings.tsx`
+- `src/pages/KnowledgeBase.tsx`
+- `src/pages/Automation.tsx`
+
+Imports to add where missing: `Accordion, AccordionItem, AccordionTrigger, AccordionContent` from `@/components/ui/accordion`; `ChevronDown` from `lucide-react`; `cn` from `@/lib/utils`.
 
 ### Verification
-- Deploy the function, then invoke `ai-agent-chat` with `agentType: 'customer_journey'` and a message like "book me an appointment tomorrow at 2pm". Check the response `tool_calls` (or edge function logs) for `create_appointment` / `check_availability`.
-- Second call with "send a review request to that customer" → expect `send_review_request` in tool_calls.
-- Call once with legacy `agentType: 'booking'` → still returns booking tools (now via the alias, superset).
+- Settings → Company: Branding open, other two collapse/expand; saves still work.
+- KB → AI Profile: 2 open, 4 collapsed; AI Generate / Save Profile / Test Content still fire.
+- Automation: 10 collapsed rows with summary; expanding one shows form; Save persists per agent; bulk Save-All unaffected.
+- No console errors; TypeScript passes.
