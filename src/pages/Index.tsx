@@ -984,7 +984,7 @@ export default function Index() {
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Tavily account · billed directly by Tavily</p>
                 <p className="text-[10px] text-white">Tavily pricing: Free 1,000 credits/mo · then $0.008/credit · Project plans from ~$30/mo</p>
                 <p className="text-[10px] text-white">Search 1–2/query · Extract 1–2 per 5 URLs · Map 1 per 10 URLs · Crawl = Map + Extract</p>
-                <p className="text-[10px] text-white">API key configured during onboarding · Valid credit card required on your Tavily account</p>
+                <p className="text-[10px] text-white">API key configured during onboarding</p>
               </div>
             </div>
 
