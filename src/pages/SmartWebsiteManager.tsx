@@ -334,12 +334,12 @@ export default function SmartWebsiteManager() {
                         onClick={() => { setShowLivePreview(p => !p); refreshPreview(); }}
                       >
                         <PanelRightOpen className="w-4 h-4 mr-2" />
-                        {showLivePreview ? 'Hide Preview' : 'Live Preview'}
+                        {showLivePreview ? 'Hide Panel' : 'Preview Panel'}
                       </Button>
                     )}
                     <Button variant="outline" className="w-full sm:w-auto" onClick={() => window.open(websiteUrl, '_blank')}>
                       <Eye className="w-4 h-4 mr-2" />
-                      Preview
+                      Open Live Site
                     </Button>
                     <Button variant="outline" className="w-full sm:w-auto" onClick={() => copyToClipboard(websiteUrl)}>
                       <Copy className="w-4 h-4 mr-2" />

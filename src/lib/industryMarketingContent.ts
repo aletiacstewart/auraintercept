@@ -54,7 +54,7 @@ const ORLANDO = { cities: ['Orlando', 'Winter Park', 'Kissimmee'], zips: ['32801
 export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
   // ─── Default (shown before user picks an industry) ───────────────
   default: make(
-    'default', 'Aura Intercept', '✨', 'Default',
+    'default', 'your business', '✨', 'Default',
     {
       headline: 'Smart agents. Automated service.',
       subheadline: 'Aura answers every call, text, and chat 24/7 — books jobs, dispatches the right person, and follows up with customers automatically. Pick your industry above to see a demo built for you.',
