@@ -1,14 +1,18 @@
 // agent-action-executor
 // Single mutating-action entrypoint for AI agents.
 // Reads company_agent_autonomy, decides auto vs queue, writes to agent_proposed_actions.
-// Internal/service callers can bypass auth with X-Internal-Token header.
+// Every call must present a valid Supabase user JWT (or the service-role key as bearer
+// for real server-to-server callers). Authorization is enforced via the shared
+// `authorizeInternalRequest` helper which also confirms the caller belongs to the
+// target company (platform_admin bypasses).
 
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-internal-token",
+    "authorization, x-client-info, apikey, content-type",
 };
 
 type Mode = "off" | "suggest" | "auto_safe" | "auto_all";
