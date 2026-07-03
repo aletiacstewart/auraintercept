@@ -1,52 +1,38 @@
+
 ## Review of Claude's recommendations
 
-Claude's diagnosis is **partially outdated but the core concern is valid**:
+The diagnosis is **correct**. `AGENT_DEFINITIONS` in `src/pages/AgentDetailPage.tsx` still uses the pre-consolidation 24-granular-agent keys (booking, followup, review, route, eta, checkin, quoting, invoice, inventory, campaign, lead, insights, forecast, revenue, performance, creative, social_content, social_scheduler, social_analytics). The hub (`AIAgentsHub.tsx`) navigates using the canonical operative IDs — `customer_journey`, `outreach`, `creative_content`, `business_finance`, `field_navigation`, `analytics_intelligence` — none of which exist in the definitions map, so those 6 operative cards + all 14 specialist cards route to "Agent Not Found." Only `triage`, `dispatch`, `admin`, `web_presence` survived because their keys are unchanged.
 
-- **`social-webhook` (FIX 2)** — already fixed. `supabase/functions/_shared/meta-webhook-signature.ts` exists and `social-webhook/index.ts` already calls `verifyMetaSignature(req, body)` on POST, rejecting bad signatures with 401. Nothing to do here.
-- **`social-oauth-deauthorize` (FIX 3)** — still vulnerable. It calls `atob(payload)` on the payload half of `signed_request` and acts on `user_id` with no HMAC check. Anyone can forge a POST and deactivate any `social_accounts` row matching a guessed `platform_account_id`.
-- **`social-oauth-data-deletion` (FIX 4)** — same shape, worse blast radius: it **deletes** `social_accounts` rows for the attacker-supplied `user_id`.
-- **`META_APP_SECRET`** — needs to be present as a Supabase secret; otherwise the helper runs in warn-and-skip rollout mode (safe default, but not actually closing the gap).
+Legacy settings rows are safe: `useAIAgentOrchestrator.ts` (line 190–200) already merges old `agent_type` values via `normalizeAgentName`, so any settings previously saved under `booking.*`, `inventory.*`, etc. will surface under the new consolidated key without a data migration.
 
-Claude's proposed helper duplicates what already exists. Better to extend the existing file so we don't have two Meta-signature modules drifting apart.
+### Judgment calls — my take
+
+1. **Drop `PLATFORM_ADMIN_ONLY_AGENTS = ['inventory']`.** Correct. `AIAgentsHub.tsx` (line 279) already gates `business_finance` from non-platform-admins via `HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN`, so the detail-page gate is redundant *for now* — but the hub gate also currently hides `business_finance` from company_admins. Removing the detail-page restriction alone won't expose it because they can't reach the card. The real question is whether `business_finance` should be visible to company_admins at all; that's outside this fix. **Recommendation: remove the detail-page restriction as proposed**, and flag the hub-visibility question separately.
+
+2. **`creative_content` written fresh rather than concatenated.** Reasonable — mechanically merging 4 overlapping definitions produces a form nobody wants to fill out. Approving the editorial rewrite.
 
 ## Plan
 
-### 1. Extend `supabase/functions/_shared/meta-webhook-signature.ts`
-Add a second exported function alongside the existing `verifyMetaSignature`:
+### Edit `src/pages/AgentDetailPage.tsx`
 
-- `verifyMetaSignedRequest(signedRequest: string)` → `{ ok, skipped?, reason?, payload? }`
-  - Split on `.` into `[encodedSig, encodedPayload]`; reject malformed.
-  - Base64url-decode the payload to JSON (always return the decoded payload so callers can log even in skip mode).
-  - If `META_APP_SECRET` unset: warn once and return `{ ok: true, skipped: true, payload }` (matches the existing rollout behavior).
-  - Otherwise HMAC-SHA256 the **raw `encodedPayload` string** with the app secret, base64url-decode the provided signature, compare with `timingSafeEq`.
-  - Reuse the existing `timingSafeEq` / `hmacSha256Hex` helpers in the file.
+1. **Replace `AGENT_DEFINITIONS`** — keep the 4 working keys (`triage`, `dispatch`, `admin`, `web_presence`) verbatim; delete the 19 stale keys; add the 6 merged operative keys and 14 specialist keys from Claude's prompt (24 total). Add any missing lucide-react icon imports (`MessageCircleHeart`, etc.) to the top-of-file import block.
 
-No changes to the existing `verifyMetaSignature` export or to `social-webhook`.
-
-### 2. Patch `supabase/functions/social-oauth-deauthorize/index.ts`
-- Import `verifyMetaSignedRequest`.
-- Replace the manual `signedRequest.split(".")` + `atob(payload)` block with a call to the helper.
-- On `!verify.ok`: log the reason and return `200 { success: true }` (Meta requires 200), but **do not** touch `social_accounts`.
-- On success, read `verify.payload?.user_id` and run the existing `update({ is_active: false, ... })` logic unchanged.
-
-### 3. Patch `supabase/functions/social-oauth-data-deletion/index.ts`
-- Same import + replacement pattern.
-- On `!verify.ok`: log, mint a confirmation code, return the expected `{ url, confirmation_code }` JSON shape to Meta, but **do not delete** anything.
-- On success, use `verify.payload?.user_id` for the existing delete.
-
-### 4. Secret
-- If `META_APP_SECRET` is not already stored, request it via `add_secret` after the code changes land. Until it's set, all three endpoints stay in warn-and-skip rollout mode.
-
-### Files touched
-- `supabase/functions/_shared/meta-webhook-signature.ts` (extend)
-- `supabase/functions/social-oauth-deauthorize/index.ts`
-- `supabase/functions/social-oauth-data-deletion/index.ts`
+2. **Remove `PLATFORM_ADMIN_ONLY_AGENTS = ['inventory']`** and the `isRestrictedAgent` check that consumes it (line 645). Nothing else references it.
 
 ### Not touched
-- `social-webhook/index.ts` — already verifies X-Hub-Signature-256.
-- No frontend, DB, or config changes.
+
+- `useAIAgentOrchestrator.ts` — legacy-name merging already handles surfacing old settings under new keys.
+- `AIAgentsHub.tsx` — hub already uses canonical IDs; no change needed.
+- `AgentTestConsole.tsx` / `AgentEventLog.tsx` — consume `agentId` directly, unaffected by the definitions map.
+- No DB migration; no edge functions.
+
+### Flagged, not fixed here
+
+- `outreach` (24 fields) and `analytics_intelligence` (18 fields) will render as long flat forms. Follow-up: group into collapsible sections inside `AgentSettingsPanel.tsx`.
+- Whether `business_finance` should be visible to company_admins in the hub (currently platform-admin-only via `HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN`).
 
 ### Acceptance
-- Forged `signed_request` POST to either OAuth callback → logged failure, no row updated/deleted, Meta still gets its expected 200 response shape.
-- Real Meta-initiated deauthorization from a connected test app still deactivates the row.
-- `META_APP_SECRET` unset → endpoints keep working, log a one-time skip warning (rollout-safe).
+
+- All 10 operative cards + all 14 specialist cards open a real settings page.
+- Companies with legacy settings rows see their old values pre-filled under the new consolidated keys (via existing orchestrator merge).
+- `business_finance` opens normally for a platform_admin; hub visibility rules unchanged.

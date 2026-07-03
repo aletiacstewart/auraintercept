@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useAIAgentOrchestrator, AgentInfo } from '@/hooks/useAIAgentOrchestrator';
-import { useAuth } from '@/contexts/AuthContext';
 import { AgentSettingsPanel } from '@/components/ai/agents/AgentSettingsPanel';
 import { AgentTestConsole } from '@/components/ai/agents/AgentTestConsole';
 import { AgentEventLog } from '@/components/ai/agents/AgentEventLog';
@@ -24,7 +23,21 @@ import {
   Megaphone,
   BarChart3,
   Sparkles,
-  Globe
+  Globe,
+  Wrench,
+  FileCheck,
+  Ruler,
+  ShieldCheck,
+  FileText,
+  PenTool,
+  TrendingUp,
+  Scissors,
+  Heart,
+  UtensilsCrossed,
+  CalendarClock,
+  ListChecks,
+  CalendarDays,
+  MessageCircleHeart
 } from 'lucide-react';
 
 const AGENT_DEFINITIONS: Record<string, {
@@ -68,73 +81,41 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'auto_escalate_unknown', label: 'Auto-escalate Unknown Intents', type: 'switch', defaultValue: true }
     ]
   },
-  booking: {
-    name: 'Booking Agent',
-    description: 'Handles appointment scheduling, rescheduling, and cancellations with intelligent slot management.',
+  customer_journey: {
+    name: 'Customer Journey Agent',
+    description: 'Manages the full post-booking relationship: scheduling, post-service follow-up, and review collection.',
     category: 'customer_engagement',
     phase: 2,
     icon: Users,
     color: 'text-cyan-400',
     capabilities: [
-      'Schedule new appointments',
-      'Reschedule existing bookings',
-      'Cancel appointments',
-      'Check availability',
-      'Send confirmations'
+      'Schedule, reschedule, and cancel appointments',
+      'Post-service check-ins and satisfaction surveys',
+      'Issue resolution and re-engagement',
+      'Review request timing and multi-platform posting',
+      'Response generation and sentiment analysis'
     ],
     configFields: [
       { key: 'booking_window_days', label: 'Booking Window (days)', type: 'number', min: 1, max: 90, defaultValue: 30, description: 'How far in advance customers can book' },
       { key: 'min_notice_hours', label: 'Minimum Notice (hours)', type: 'number', min: 0, max: 72, defaultValue: 2, description: 'Minimum hours before appointment for booking' },
       { key: 'allow_same_day', label: 'Allow Same-Day Booking', type: 'switch', defaultValue: true },
       { key: 'auto_confirm', label: 'Auto-Confirm Bookings', type: 'switch', defaultValue: false },
-      { key: 'confirmation_message', label: 'Confirmation Message', type: 'textarea', placeholder: 'Your appointment has been confirmed for {date} at {time}.' }
-    ]
-  },
-  followup: {
-    name: 'Follow-up Agent',
-    description: 'Manages post-service follow-ups, satisfaction checks, and feedback collection.',
-    category: 'customer_engagement',
-    phase: 3,
-    icon: Users,
-    color: 'text-cyan-400',
-    capabilities: [
-      'Post-service check-ins',
-      'Satisfaction surveys',
-      'Issue resolution',
-      'Re-engagement campaigns'
-    ],
-    configFields: [
+      { key: 'confirmation_message', label: 'Confirmation Message', type: 'textarea', placeholder: 'Your appointment has been confirmed for {date} at {time}.' },
       { key: 'followup_delay_hours', label: 'Follow-up Delay (hours)', type: 'number', min: 1, max: 168, defaultValue: 24, description: 'Hours after service to send follow-up' },
       { key: 'followup_message', label: 'Follow-up Message', type: 'textarea', placeholder: 'Hi {name}, how was your recent service with us?' },
       { key: 'satisfaction_threshold', label: 'Satisfaction Alert Threshold', type: 'slider', min: 1, max: 5, step: 1, defaultValue: 3, description: 'Rating below this triggers alert' },
-      { key: 'auto_escalate_issues', label: 'Auto-Escalate Issues', type: 'switch', defaultValue: true }
-    ]
-  },
-  review: {
-    name: 'Review Agent',
-    description: 'Collects and manages customer reviews, handles responses, and monitors reputation.',
-    category: 'customer_engagement',
-    phase: 4,
-    icon: Users,
-    color: 'text-cyan-400',
-    capabilities: [
-      'Review request timing',
-      'Multi-platform posting',
-      'Response generation',
-      'Sentiment analysis'
-    ],
-    configFields: [
-      { key: 'google_review_url', label: 'Google Business Profile Review URL', type: 'text', placeholder: 'https://g.page/r/YOUR-BUSINESS/review', description: 'Direct link to your Google Business Profile review page' },
-      { key: 'facebook_review_url', label: 'Facebook Review URL', type: 'text', placeholder: 'https://facebook.com/yourpage/reviews', description: 'Direct link to your Facebook page reviews' },
-      { key: 'yelp_review_url', label: 'Yelp Review URL', type: 'text', placeholder: 'https://yelp.com/biz/your-business', description: 'Direct link to your Yelp business page' },
+      { key: 'auto_escalate_issues', label: 'Auto-Escalate Issues', type: 'switch', defaultValue: true },
+      { key: 'google_review_url', label: 'Google Business Profile Review URL', type: 'text', placeholder: 'https://g.page/r/YOUR-BUSINESS/review' },
+      { key: 'facebook_review_url', label: 'Facebook Review URL', type: 'text', placeholder: 'https://facebook.com/yourpage/reviews' },
+      { key: 'yelp_review_url', label: 'Yelp Review URL', type: 'text', placeholder: 'https://yelp.com/biz/your-business' },
       { key: 'review_platforms', label: 'Primary Review Platform', type: 'select', options: [
         { value: 'google', label: 'Google' },
         { value: 'yelp', label: 'Yelp' },
         { value: 'facebook', label: 'Facebook' }
-      ], description: 'Default platform to request reviews on' },
-      { key: 'review_request_delay', label: 'Request Delay (days)', type: 'number', min: 0, max: 14, defaultValue: 1, description: 'Days after service to send review request' },
-      { key: 'min_rating_for_request', label: 'Min Rating to Request Review', type: 'slider', min: 1, max: 5, step: 1, defaultValue: 4, description: 'Only request reviews from customers rating this or higher' },
-      { key: 'auto_respond_reviews', label: 'Auto-Respond to Reviews', type: 'switch', defaultValue: false, description: 'Automatically generate responses to customer reviews' }
+      ]},
+      { key: 'review_request_delay', label: 'Review Request Delay (days)', type: 'number', min: 0, max: 14, defaultValue: 1 },
+      { key: 'min_rating_for_request', label: 'Min Rating to Request Review', type: 'slider', min: 1, max: 5, step: 1, defaultValue: 4 },
+      { key: 'auto_respond_reviews', label: 'Auto-Respond to Reviews', type: 'switch', defaultValue: false }
     ]
   },
   dispatch: {
@@ -161,18 +142,19 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'workload_weight', label: 'Workload Balance Weight', type: 'slider', min: 0, max: 100, step: 10, defaultValue: 20 }
     ]
   },
-  route: {
-    name: 'Route Agent',
-    description: 'Optimizes travel routes for field workers to minimize time and fuel costs.',
+  field_navigation: {
+    name: 'Field Navigation Agent',
+    description: 'Optimizes routes, tracks technician location and ETA, and manages job-site check-in/check-out.',
     category: 'field_operations',
     phase: 2,
     icon: Truck,
     color: 'text-green-500',
     capabilities: [
-      'Multi-stop optimization',
-      'Traffic consideration',
-      'Time window constraints',
-      'Real-time re-routing'
+      'Multi-stop route optimization with traffic consideration',
+      'Real-time location tracking and ETA calculation',
+      'Customer arrival notifications and delay alerts',
+      'Arrival verification with photo documentation',
+      'Job completion tracking and customer sign-off'
     ],
     configFields: [
       { key: 'optimization_priority', label: 'Optimization Priority', type: 'select', options: [
@@ -182,61 +164,29 @@ const AGENT_DEFINITIONS: Record<string, {
       ]},
       { key: 'consider_traffic', label: 'Consider Traffic', type: 'switch', defaultValue: true },
       { key: 'buffer_time_minutes', label: 'Buffer Time (minutes)', type: 'number', min: 0, max: 60, defaultValue: 15 },
-      { key: 'max_stops_per_route', label: 'Max Stops Per Route', type: 'number', min: 1, max: 20, defaultValue: 8 }
-    ]
-  },
-  eta: {
-    name: 'ETA Agent',
-    description: 'Tracks technician location and provides accurate arrival time predictions.',
-    category: 'field_operations',
-    phase: 3,
-    icon: Truck,
-    color: 'text-green-500',
-    capabilities: [
-      'Real-time tracking',
-      'ETA calculations',
-      'Customer notifications',
-      'Delay alerts'
-    ],
-    configFields: [
-      { key: 'update_frequency_minutes', label: 'Update Frequency (minutes)', type: 'number', min: 1, max: 30, defaultValue: 5 },
+      { key: 'max_stops_per_route', label: 'Max Stops Per Route', type: 'number', min: 1, max: 20, defaultValue: 8 },
+      { key: 'update_frequency_minutes', label: 'Location Update Frequency (minutes)', type: 'number', min: 1, max: 30, defaultValue: 5 },
       { key: 'notify_customer_minutes', label: 'Notify Customer When (minutes away)', type: 'number', min: 5, max: 60, defaultValue: 15 },
       { key: 'delay_threshold_minutes', label: 'Delay Alert Threshold (minutes)', type: 'number', min: 5, max: 30, defaultValue: 10 },
-      { key: 'auto_notify_delays', label: 'Auto-Notify on Delays', type: 'switch', defaultValue: true }
-    ]
-  },
-  checkin: {
-    name: 'Check-in Agent',
-    description: 'Manages job site arrivals, departures, and work verification.',
-    category: 'field_operations',
-    phase: 4,
-    icon: Truck,
-    color: 'text-green-500',
-    capabilities: [
-      'Arrival verification',
-      'Photo documentation',
-      'Job completion tracking',
-      'Customer sign-off'
-    ],
-    configFields: [
-      { key: 'require_photos', label: 'Require Photos', type: 'switch', defaultValue: true },
+      { key: 'auto_notify_delays', label: 'Auto-Notify on Delays', type: 'switch', defaultValue: true },
+      { key: 'require_photos', label: 'Require Check-in Photos', type: 'switch', defaultValue: true },
       { key: 'min_photos', label: 'Minimum Photos Required', type: 'number', min: 0, max: 10, defaultValue: 2 },
       { key: 'geo_fence_meters', label: 'Geo-fence Radius (meters)', type: 'number', min: 10, max: 500, defaultValue: 100 },
       { key: 'require_signature', label: 'Require Customer Signature', type: 'switch', defaultValue: false }
     ]
   },
-  quoting: {
-    name: 'Quoting Agent',
-    description: 'Generates accurate service quotes based on job requirements and pricing rules.',
+  business_finance: {
+    name: 'Business Finance Agent',
+    description: 'Generates quotes, handles invoicing and payment collection, and tracks parts/supply inventory.',
     category: 'business_operations',
     phase: 4,
     icon: Briefcase,
     color: 'text-feature-quotes',
     capabilities: [
-      'Dynamic pricing',
-      'Parts estimation',
-      'Labor calculation',
-      'Quote delivery'
+      'Dynamic quote generation with parts and labor estimation',
+      'Invoice generation, payment links, and collection reminders',
+      'Stock tracking with low-stock alerts and auto-reorder',
+      'Usage forecasting by technician'
     ],
     configFields: [
       { key: 'pricing_model', label: 'Pricing Model', type: 'select', options: [
@@ -246,23 +196,7 @@ const AGENT_DEFINITIONS: Record<string, {
       ]},
       { key: 'tax_rate', label: 'Tax Rate (%)', type: 'number', min: 0, max: 25, step: 0.1, defaultValue: 0 },
       { key: 'quote_validity_days', label: 'Quote Valid For (days)', type: 'number', min: 1, max: 90, defaultValue: 30 },
-      { key: 'include_breakdown', label: 'Include Price Breakdown', type: 'switch', defaultValue: true }
-    ]
-  },
-  invoice: {
-    name: 'Invoice Agent',
-    description: 'Handles invoicing, payment processing, and collection follow-ups.',
-    category: 'business_operations',
-    phase: 5,
-    icon: Briefcase,
-    color: 'text-feature-invoices',
-    capabilities: [
-      'Invoice generation',
-      'Payment links',
-      'Payment reminders',
-      'Collection automation'
-    ],
-    configFields: [
+      { key: 'include_breakdown', label: 'Include Price Breakdown', type: 'switch', defaultValue: true },
       { key: 'payment_terms_days', label: 'Payment Terms (days)', type: 'number', min: 0, max: 90, defaultValue: 30 },
       { key: 'reminder_schedule', label: 'Reminder Schedule', type: 'select', options: [
         { value: 'none', label: 'No Reminders' },
@@ -271,27 +205,11 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'aggressive', label: 'Aggressive (1, 3, 7, 14 days)' }
       ]},
       { key: 'auto_late_fee', label: 'Auto Apply Late Fee', type: 'switch', defaultValue: false },
-      { key: 'late_fee_percent', label: 'Late Fee (%)', type: 'number', min: 0, max: 10, step: 0.5, defaultValue: 1.5 }
-    ]
-  },
-  inventory: {
-    name: 'Inventory Agent',
-    description: 'Tracks parts and supplies, manages stock levels, and handles reordering.',
-    category: 'business_operations',
-    phase: 4,
-    icon: Briefcase,
-    color: 'text-feature-inventory',
-    capabilities: [
-      'Stock tracking',
-      'Low stock alerts',
-      'Usage forecasting',
-      'Auto-reorder'
-    ],
-    configFields: [
+      { key: 'late_fee_percent', label: 'Late Fee (%)', type: 'number', min: 0, max: 10, step: 0.5, defaultValue: 1.5 },
       { key: 'low_stock_threshold', label: 'Low Stock Alert Threshold', type: 'number', min: 1, max: 100, defaultValue: 10 },
       { key: 'auto_reorder', label: 'Enable Auto-Reorder', type: 'switch', defaultValue: false },
       { key: 'reorder_quantity_multiplier', label: 'Reorder Quantity Multiplier', type: 'slider', min: 1, max: 5, step: 0.5, defaultValue: 2 },
-      { key: 'track_by_technician', label: 'Track by Technician', type: 'switch', defaultValue: true }
+      { key: 'track_by_technician', label: 'Track Inventory by Technician', type: 'switch', defaultValue: true }
     ]
   },
   admin: {
@@ -314,29 +232,24 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'notification_email', label: 'Admin Notification Email', type: 'text', placeholder: 'admin@company.com', description: 'Email for admin notifications' }
     ]
   },
-  campaign: {
-    name: 'Campaign Agent',
-    description: 'Unified marketing agent handling promotions, referrals, win-back, and seasonal campaigns.',
+  outreach: {
+    name: 'Outreach Agent',
+    description: 'Unified marketing and lead agent: promotions, referrals, win-back campaigns, seasonal outreach, and inbound lead capture/qualification.',
     category: 'marketing_sales',
     phase: 1,
     icon: Megaphone,
     color: 'text-feature-marketing',
     capabilities: [
-      'Promotional campaigns',
-      'Referral program management',
-      'Win-back & re-engagement',
-      'Seasonal outreach',
-      'Audience segmentation',
-      'A/B testing',
-      'Performance tracking'
+      'Promotional campaigns, referral program management, win-back & seasonal outreach',
+      'Audience segmentation and A/B testing',
+      'Lead capture, scoring, and qualification',
+      'Automated follow-up assignment for new leads'
     ],
     configFields: [
-      // General settings
       { key: 'max_campaigns_per_month', label: 'Max Campaigns / Month', type: 'number', min: 1, max: 50, defaultValue: 4 },
       { key: 'require_approval', label: 'Require Admin Approval', type: 'switch', defaultValue: true },
-      { key: 'primary_channels', label: 'Primary Channels', type: 'textarea', placeholder: 'Email\nSMS\nSocial', description: 'Channels to prioritize (one per line)' },
-      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, concise', description: 'Tone and style guidelines' },
-      // Promo settings
+      { key: 'primary_channels', label: 'Primary Channels', type: 'textarea', placeholder: 'Email\nSMS\nSocial' },
+      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, concise' },
       { key: 'target_segments', label: 'Target Segments', type: 'select', options: [
         { value: 'all', label: 'All Customers' },
         { value: 'inactive', label: 'Inactive Customers' },
@@ -344,7 +257,6 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'new', label: 'New Customers' }
       ]},
       { key: 'default_discount_percent', label: 'Default Discount (%)', type: 'number', min: 5, max: 50, defaultValue: 10 },
-      // Referral settings
       { key: 'referrer_reward', label: 'Referrer Reward ($)', type: 'number', min: 0, max: 100, defaultValue: 25 },
       { key: 'referee_discount', label: 'New Customer Discount (%)', type: 'number', min: 0, max: 50, defaultValue: 10 },
       { key: 'min_spend_for_reward', label: 'Min Spend for Reward ($)', type: 'number', min: 0, max: 500, defaultValue: 50 },
@@ -353,207 +265,34 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'discount', label: 'Future Discount' },
         { value: 'cash', label: 'Cash/Gift Card' }
       ]},
-      // Win-back settings
       { key: 'inactive_threshold_days', label: 'Win-back Inactive Threshold (days)', type: 'number', min: 30, max: 365, defaultValue: 90 },
       { key: 'winback_offer_percent', label: 'Win-back Discount (%)', type: 'number', min: 5, max: 50, defaultValue: 15 },
       { key: 'max_attempts', label: 'Max Outreach Attempts', type: 'number', min: 1, max: 5, defaultValue: 3 },
       { key: 'outreach_interval_days', label: 'Days Between Attempts', type: 'number', min: 7, max: 30, defaultValue: 14 },
-      // Seasonal settings
-      { key: 'seasonal_services', label: 'Seasonal Services', type: 'textarea', placeholder: 'Spring HVAC tune-up, Fall furnace check, etc.', description: 'Seasonal services to promote (one per line)' },
+      { key: 'seasonal_services', label: 'Seasonal Services', type: 'textarea', placeholder: 'Spring HVAC tune-up, Fall furnace check, etc.' },
       { key: 'advance_notice_days', label: 'Seasonal Advance Notice (days)', type: 'number', min: 7, max: 60, defaultValue: 30 },
       { key: 'weather_triggers', label: 'Enable Weather Triggers', type: 'switch', defaultValue: false },
-      { key: 'repeat_annually', label: 'Repeat Annually', type: 'switch', defaultValue: true }
+      { key: 'repeat_annually', label: 'Repeat Annually', type: 'switch', defaultValue: true },
+      { key: 'auto_qualify', label: 'Auto-Qualify New Leads', type: 'switch', defaultValue: true },
+      { key: 'qualification_threshold', label: 'Qualification Score Threshold', type: 'slider', min: 1, max: 100, step: 5, defaultValue: 50 },
+      { key: 'response_time_hours', label: 'Target Response Time (hours)', type: 'number', min: 1, max: 48, defaultValue: 2 },
+      { key: 'auto_assign', label: 'Auto-Assign Leads to Sales Rep', type: 'switch', defaultValue: false },
+      { key: 'notify_on_high_value', label: 'Alert on High-Value Leads', type: 'switch', defaultValue: true }
     ]
   },
-  // Social Media Agents
-  social_content: {
+  creative_content: {
     name: 'Creative Content Agent',
-    description: 'Creates platform-optimized content for Facebook, Instagram, LinkedIn, TikTok, Google Business, and SMS. Content is ready to copy and post via the Manual Bridge or auto-publish via your own API credentials.',
-    category: 'social_media',
-    phase: 1,
-    icon: Megaphone,
-    color: 'text-pink-400',
-    capabilities: [
-      'Multi-platform content creation',
-      'Hashtag optimization',
-      'Caption generation',
-      'Manual Bridge one-click posting',
-      'Own API auto-publish support'
-    ],
-    configFields: [
-      { key: 'default_platforms', label: 'Default Platforms', type: 'textarea', placeholder: 'instagram\nfacebook\nlinkedin', description: 'Default platforms for new posts (one per line)' },
-      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, engaging', description: 'Describe your brand tone and style' },
-      { key: 'hashtag_count', label: 'Default Hashtag Count', type: 'number', min: 0, max: 30, defaultValue: 10 },
-      { key: 'require_approval', label: 'Require Approval Before Publishing', type: 'switch', defaultValue: true }
-    ]
-  },
-  social_scheduler: {
-    name: 'Social Scheduler Agent',
-    description: "Manages the content calendar and queue across 6 platforms. Sets posts to 'Ready to Post' status so your team can use the Manual Bridge or auto-publish via configured API credentials.",
-    category: 'social_media',
-    phase: 2,
-    icon: Megaphone,
-    color: 'text-pink-400',
-    capabilities: [
-      'Optimal time scheduling',
-      'Ready to Post queue management',
-      'Cross-platform coordination',
-      'Calendar overview',
-      'Manual Bridge guided posting'
-    ],
-    configFields: [
-      { key: 'auto_schedule', label: 'Auto-Schedule for Optimal Times', type: 'switch', defaultValue: true },
-      { key: 'timezone', label: 'Timezone', type: 'select', options: [
-        { value: 'America/New_York', label: 'Eastern Time' },
-        { value: 'America/Chicago', label: 'Central Time' },
-        { value: 'America/Denver', label: 'Mountain Time' },
-        { value: 'America/Los_Angeles', label: 'Pacific Time' }
-      ]},
-      { key: 'posts_per_day', label: 'Max Posts Per Day', type: 'number', min: 1, max: 10, defaultValue: 3 },
-      { key: 'weekend_posting', label: 'Enable Weekend Posting', type: 'switch', defaultValue: true }
-    ]
-  },
-  social_analytics: {
-    name: 'Social Analytics Agent',
-    description: 'Tracks engagement, reach, and content performance across all 6 platforms. Provides actionable insights and content optimization recommendations.',
-    category: 'social_media',
-    phase: 3,
-    icon: BarChart3,
-    color: 'text-pink-400',
-    capabilities: [
-      'Engagement tracking',
-      'Reach analysis',
-      'Content performance',
-      'Audience insights',
-      'Competitor benchmarking'
-    ],
-    configFields: [
-      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ]},
-      { key: 'track_competitors', label: 'Track Competitors', type: 'switch', defaultValue: false },
-      { key: 'alert_viral_content', label: 'Alert on Viral Content', type: 'switch', defaultValue: true, description: 'Get notified when content performs exceptionally well' },
-      { key: 'engagement_goal', label: 'Engagement Rate Goal (%)', type: 'slider', min: 1, max: 10, step: 0.5, defaultValue: 3 }
-    ]
-  },
-  insights: {
-    name: 'Insights Agent',
-    description: 'Analyzes business data and provides actionable recommendations.',
-    category: 'business_operations',
-    phase: 2,
-    icon: BarChart3,
-    color: 'text-feature-analytics',
-    capabilities: [
-      'Trend analysis',
-      'Anomaly detection',
-      'Performance metrics',
-      'Recommendations'
-    ],
-    configFields: [
-      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ]},
-      { key: 'metrics_tracked', label: 'Key Metrics', type: 'textarea', placeholder: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate\nTechnician Utilization\nAverage Job Duration\nRepeat Customer Rate\nCancellation Rate', description: 'Metrics to track (one per line)', defaultValue: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate\nTechnician Utilization\nAverage Job Duration\nRepeat Customer Rate\nCancellation Rate' },
-      { key: 'anomaly_sensitivity', label: 'Anomaly Detection Sensitivity', type: 'slider', min: 1, max: 10, step: 1, defaultValue: 5 },
-      { key: 'send_alerts', label: 'Send Alert Notifications', type: 'switch', defaultValue: true }
-    ]
-  },
-  forecast: {
-    name: 'Forecast Agent',
-    description: 'Predicts demand, revenue, and resource needs based on historical data.',
-    category: 'business_operations',
-    phase: 7,
-    icon: BarChart3,
-    color: 'text-feature-analytics',
-    capabilities: [
-      'Demand forecasting',
-      'Revenue prediction',
-      'Capacity planning',
-      'Trend projection'
-    ],
-    configFields: [
-      { key: 'forecast_horizon_days', label: 'Forecast Horizon (days)', type: 'number', min: 7, max: 365, defaultValue: 30 },
-      { key: 'confidence_threshold', label: 'Confidence Threshold (%)', type: 'slider', min: 50, max: 95, step: 5, defaultValue: 80 },
-      { key: 'include_seasonality', label: 'Include Seasonality', type: 'switch', defaultValue: true },
-      { key: 'update_frequency', label: 'Update Frequency', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ]}
-    ]
-  },
-  revenue: {
-    name: 'Revenue Agent',
-    description: 'Tracks revenue streams, analyzes profitability, and identifies growth opportunities.',
-    category: 'business_operations',
-    phase: 6,
-    icon: BarChart3,
-    color: 'text-feature-invoices',
-    capabilities: [
-      'Revenue tracking',
-      'Profitability analysis',
-      'Growth opportunity identification',
-      'Payment reconciliation',
-      'Revenue forecasting'
-    ],
-    configFields: [
-      { key: 'revenue_goal_monthly', label: 'Monthly Revenue Goal ($)', type: 'number', min: 0, max: 1000000, defaultValue: 10000, description: 'Target monthly revenue' },
-      { key: 'alert_threshold_percent', label: 'Alert When Below Goal (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 80, description: 'Alert when revenue drops below this percentage of goal' },
-      { key: 'track_by_service', label: 'Track by Service Type', type: 'switch', defaultValue: true },
-      { key: 'track_by_technician', label: 'Track by Technician', type: 'switch', defaultValue: true },
-      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ]},
-      { key: 'include_projections', label: 'Include Revenue Projections', type: 'switch', defaultValue: true }
-    ]
-  },
-  performance: {
-    name: 'Performance Agent',
-    description: 'Tracks team and individual performance metrics, identifies improvement opportunities.',
-    category: 'business_operations',
-    phase: 3,
-    icon: BarChart3,
-    color: 'text-feature-analytics',
-    capabilities: [
-      'Team performance tracking',
-      'Individual metrics',
-      'Goal tracking',
-      'Performance trends',
-      'Improvement recommendations'
-    ],
-    configFields: [
-      { key: 'tracking_period', label: 'Tracking Period', type: 'select', options: [
-        { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' },
-        { value: 'monthly', label: 'Monthly' }
-      ], defaultValue: 'weekly' },
-      { key: 'show_individual_metrics', label: 'Show Individual Metrics', type: 'switch', defaultValue: true },
-      { key: 'show_team_metrics', label: 'Show Team Metrics', type: 'switch', defaultValue: true },
-      { key: 'performance_goal_completion', label: 'Goal Completion Target (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 85 },
-      { key: 'alert_low_performers', label: 'Alert on Low Performance', type: 'switch', defaultValue: false, description: 'Send alerts when performance drops below threshold' }
-    ]
-  },
-  creative: {
-    name: 'Creative Agent',
-    description: 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing.',
+    description: 'Unified AI content generation and social publishing. Creates on-brand copy, images, and posts for web, social media, campaigns, and blogs; schedules across platforms and tracks performance.',
     category: 'content_engine',
     phase: 1,
     icon: Sparkles,
-    color: 'text-purple-400',
+    color: 'text-pink-400',
     capabilities: [
-      'Multi-channel content generation',
-      'Brand voice consistency',
-      'Website copy creation',
-      'Social media content',
-      'Campaign messaging',
-      'Blog post generation',
-      'SMS template creation'
+      'Multi-channel content generation (web, social, campaigns, blogs, SMS)',
+      'Brand-voice-consistent copy and hashtag optimization',
+      'Content calendar and cross-platform scheduling',
+      'Manual Bridge one-click posting and own-API auto-publish',
+      'Engagement, reach, and content performance analytics'
     ],
     configFields: [
       { key: 'brand_voice', label: 'Brand Voice', type: 'select', options: [
@@ -568,34 +307,74 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'conversational', label: 'Conversational' },
         { value: 'inspirational', label: 'Inspirational' }
       ], defaultValue: 'informative' },
-      { key: 'target_audience', label: 'Target Audience', type: 'textarea', placeholder: 'Homeowners, businesses, property managers...', description: 'Describe your target audience' },
-      { key: 'use_research', label: 'Use Real-time Research', type: 'switch', defaultValue: true, description: 'Enhance content with Tavily research' },
+      { key: 'target_audience', label: 'Target Audience', type: 'textarea', placeholder: 'Homeowners, businesses, property managers...' },
       { key: 'content_length', label: 'Default Content Length', type: 'select', options: [
         { value: 'short', label: 'Short (50-100 words)' },
         { value: 'medium', label: 'Medium (100-250 words)' },
         { value: 'long', label: 'Long (250-500 words)' }
-      ], defaultValue: 'medium' }
+      ], defaultValue: 'medium' },
+      { key: 'use_research', label: 'Use Real-time Research', type: 'switch', defaultValue: true, description: 'Enhance content with Tavily research' },
+      { key: 'default_platforms', label: 'Default Social Platforms', type: 'textarea', placeholder: 'instagram\nfacebook\nlinkedin' },
+      { key: 'hashtag_count', label: 'Default Hashtag Count', type: 'number', min: 0, max: 30, defaultValue: 10 },
+      { key: 'require_approval', label: 'Require Approval Before Publishing', type: 'switch', defaultValue: true },
+      { key: 'auto_schedule', label: 'Auto-Schedule for Optimal Times', type: 'switch', defaultValue: true },
+      { key: 'timezone', label: 'Timezone', type: 'select', options: [
+        { value: 'America/New_York', label: 'Eastern Time' },
+        { value: 'America/Chicago', label: 'Central Time' },
+        { value: 'America/Denver', label: 'Mountain Time' },
+        { value: 'America/Los_Angeles', label: 'Pacific Time' }
+      ]},
+      { key: 'posts_per_day', label: 'Max Posts Per Day', type: 'number', min: 1, max: 10, defaultValue: 3 },
+      { key: 'weekend_posting', label: 'Enable Weekend Posting', type: 'switch', defaultValue: true },
+      { key: 'report_frequency', label: 'Analytics Report Frequency', type: 'select', options: [
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+      ]},
+      { key: 'alert_viral_content', label: 'Alert on Viral Content', type: 'switch', defaultValue: true },
+      { key: 'engagement_goal', label: 'Engagement Rate Goal (%)', type: 'slider', min: 1, max: 10, step: 0.5, defaultValue: 3 }
     ]
   },
-  lead: {
-    name: 'Lead Agent',
-    description: 'Captures and qualifies incoming leads, manages lead scoring, and routes prospects to appropriate follow-up workflows.',
-    category: 'marketing_sales',
-    phase: 2,
-    icon: Users,
-    color: 'text-feature-marketing',
+  analytics_intelligence: {
+    name: 'Analytics Intelligence Agent',
+    description: 'Unified insights, performance, revenue, and forecasting analytics with anomaly detection and recommendations.',
+    category: 'business_operations',
+    phase: 3,
+    icon: BarChart3,
+    color: 'text-feature-analytics',
     capabilities: [
-      'Lead capture & intake',
-      'Lead qualification scoring',
-      'Source tracking',
-      'Automated follow-up assignment'
+      'Trend analysis and anomaly detection',
+      'Team and individual performance tracking',
+      'Revenue tracking and profitability analysis',
+      'Demand and revenue forecasting',
+      'Actionable recommendations and alerts'
     ],
     configFields: [
-      { key: 'auto_qualify', label: 'Auto-Qualify Leads', type: 'switch', defaultValue: true, description: 'Automatically score and qualify incoming leads' },
-      { key: 'qualification_threshold', label: 'Qualification Score Threshold', type: 'slider', min: 1, max: 100, step: 5, defaultValue: 50, description: 'Minimum score to be considered qualified' },
-      { key: 'response_time_hours', label: 'Target Response Time (hours)', type: 'number', min: 1, max: 48, defaultValue: 2 },
-      { key: 'auto_assign', label: 'Auto-Assign to Sales Rep', type: 'switch', defaultValue: false },
-      { key: 'notify_on_high_value', label: 'Alert on High-Value Leads', type: 'switch', defaultValue: true }
+      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+      ], defaultValue: 'weekly' },
+      { key: 'metrics_tracked', label: 'Key Metrics', type: 'textarea', placeholder: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate', description: 'Metrics to track (one per line)', defaultValue: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate\nTechnician Utilization\nAverage Job Duration\nRepeat Customer Rate\nCancellation Rate' },
+      { key: 'anomaly_sensitivity', label: 'Anomaly Detection Sensitivity', type: 'slider', min: 1, max: 10, step: 1, defaultValue: 5 },
+      { key: 'send_alerts', label: 'Send Alert Notifications', type: 'switch', defaultValue: true },
+      { key: 'tracking_period', label: 'Performance Tracking Period', type: 'select', options: [
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+      ], defaultValue: 'weekly' },
+      { key: 'show_individual_metrics', label: 'Show Individual Metrics', type: 'switch', defaultValue: true },
+      { key: 'show_team_metrics', label: 'Show Team Metrics', type: 'switch', defaultValue: true },
+      { key: 'performance_goal_completion', label: 'Goal Completion Target (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 85 },
+      { key: 'alert_low_performers', label: 'Alert on Low Performance', type: 'switch', defaultValue: false },
+      { key: 'revenue_goal_monthly', label: 'Monthly Revenue Goal ($)', type: 'number', min: 0, max: 1000000, defaultValue: 10000 },
+      { key: 'alert_threshold_percent', label: 'Alert When Revenue Below Goal (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 80 },
+      { key: 'track_by_service', label: 'Track by Service Type', type: 'switch', defaultValue: true },
+      { key: 'track_by_technician', label: 'Track by Technician', type: 'switch', defaultValue: true },
+      { key: 'include_projections', label: 'Include Revenue Projections', type: 'switch', defaultValue: true },
+      { key: 'forecast_horizon_days', label: 'Forecast Horizon (days)', type: 'number', min: 7, max: 365, defaultValue: 30 },
+      { key: 'confidence_threshold', label: 'Forecast Confidence Threshold (%)', type: 'slider', min: 50, max: 95, step: 5, defaultValue: 80 },
+      { key: 'include_seasonality', label: 'Include Seasonality in Forecasts', type: 'switch', defaultValue: true }
     ]
   },
   web_presence: {
@@ -625,40 +404,234 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'content_freshness_days', label: 'Content Freshness Alert (days)', type: 'number', min: 30, max: 365, defaultValue: 90, description: 'Alert when content is older than this' },
       { key: 'auto_meta_suggestions', label: 'Auto-Generate Meta Suggestions', type: 'switch', defaultValue: true }
     ]
+  },
+  // === INDUSTRY SPECIALISTS ===
+  diagnostic: {
+    name: 'Diagnostic Specialist',
+    description: 'Photo + symptom analysis with likely-fix suggestions and parts recommendations.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: Wrench,
+    color: 'text-amber-400',
+    capabilities: ['Photo + symptom analysis', 'Likely-fix suggestions', 'Parts recommendations'],
+    configFields: [
+      { key: 'confidence_threshold', label: 'Suggestion Confidence Threshold (%)', type: 'slider', min: 50, max: 95, step: 5, defaultValue: 75 },
+      { key: 'require_photo', label: 'Require Photo for Diagnosis', type: 'switch', defaultValue: true },
+      { key: 'suggest_parts', label: 'Suggest Replacement Parts', type: 'switch', defaultValue: true }
+    ]
+  },
+  permit_code: {
+    name: 'Permit & Code Specialist',
+    description: 'Local code lookups, permit determinations, and pull-process guidance.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: FileCheck,
+    color: 'text-amber-400',
+    capabilities: ['Local code lookups', 'Permit determinations', 'Pull-process guidance'],
+    configFields: [
+      { key: 'jurisdiction', label: 'Primary Jurisdiction', type: 'text', placeholder: 'City, State' },
+      { key: 'auto_flag_required_permits', label: 'Auto-Flag Jobs Needing Permits', type: 'switch', defaultValue: true },
+      { key: 'include_fee_estimates', label: 'Include Permit Fee Estimates', type: 'switch', defaultValue: true }
+    ]
+  },
+  site_survey: {
+    name: 'Site Survey & Quote Specialist',
+    description: 'Pre-install survey workflow, measurements, and takeoff math.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: Ruler,
+    color: 'text-amber-400',
+    capabilities: ['Pre-install survey workflow', 'Measurements capture', 'Takeoff math'],
+    configFields: [
+      { key: 'measurement_unit', label: 'Measurement Unit', type: 'select', options: [
+        { value: 'imperial', label: 'Imperial (ft/in)' },
+        { value: 'metric', label: 'Metric (m/cm)' }
+      ], defaultValue: 'imperial' },
+      { key: 'require_survey_photos', label: 'Require Survey Photos', type: 'switch', defaultValue: true },
+      { key: 'auto_generate_quote', label: 'Auto-Generate Quote from Survey', type: 'switch', defaultValue: true }
+    ]
+  },
+  insurance_claim: {
+    name: 'Insurance Claim Specialist',
+    description: 'Damage documentation and claim-ready reports for carriers.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: ShieldCheck,
+    color: 'text-amber-400',
+    capabilities: ['Damage documentation', 'Claim-ready report generation', 'Carrier-format exports'],
+    configFields: [
+      { key: 'default_carrier_format', label: 'Default Carrier Format', type: 'select', options: [
+        { value: 'xactimate', label: 'Xactimate' },
+        { value: 'symbility', label: 'Symbility' },
+        { value: 'generic', label: 'Generic PDF' }
+      ], defaultValue: 'generic' },
+      { key: 'require_before_after_photos', label: 'Require Before/After Photos', type: 'switch', defaultValue: true },
+      { key: 'auto_attach_estimate', label: 'Auto-Attach Line-Item Estimate', type: 'switch', defaultValue: true }
+    ]
+  },
+  listing_writer: {
+    name: 'Listing Writer',
+    description: 'Drafts listing descriptions, headlines, and feature highlights from property data.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: FileText,
+    color: 'text-amber-400',
+    capabilities: ['Listing description drafts', 'Headline generation', 'Feature highlights'],
+    configFields: [
+      { key: 'tone', label: 'Copy Tone', type: 'select', options: [
+        { value: 'luxury', label: 'Luxury' },
+        { value: 'family', label: 'Family-Friendly' },
+        { value: 'investor', label: 'Investor-Focused' }
+      ], defaultValue: 'family' },
+      { key: 'target_length_words', label: 'Target Description Length (words)', type: 'number', min: 50, max: 500, defaultValue: 180 },
+      { key: 'require_approval', label: 'Require Approval Before Publish', type: 'switch', defaultValue: true }
+    ]
+  },
+  offer_drafter: {
+    name: 'Offer Drafter',
+    description: 'Composes offer letters, counter-offers, and contingency language for review.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: PenTool,
+    color: 'text-amber-400',
+    capabilities: ['Offer letter drafts', 'Counter-offer composition', 'Contingency language'],
+    configFields: [
+      { key: 'default_contingencies', label: 'Default Contingencies', type: 'textarea', placeholder: 'Inspection\nAppraisal\nFinancing' },
+      { key: 'earnest_money_percent', label: 'Default Earnest Money (%)', type: 'number', min: 0, max: 10, step: 0.5, defaultValue: 1 },
+      { key: 'require_attorney_review', label: 'Flag for Attorney Review', type: 'switch', defaultValue: true }
+    ]
+  },
+  comp_analyst: {
+    name: 'Comp Analyst',
+    description: 'Pulls comparable sales and rentals, summarizes pricing position.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: TrendingUp,
+    color: 'text-amber-400',
+    capabilities: ['Comparable sales lookup', 'Rental comps', 'Pricing position summary'],
+    configFields: [
+      { key: 'comp_radius_miles', label: 'Comp Radius (miles)', type: 'number', min: 0.25, max: 10, step: 0.25, defaultValue: 1 },
+      { key: 'lookback_months', label: 'Lookback Window (months)', type: 'number', min: 1, max: 24, defaultValue: 6 },
+      { key: 'include_pending', label: 'Include Pending Sales', type: 'switch', defaultValue: true }
+    ]
+  },
+  style_consultant: {
+    name: 'Style Consultant',
+    description: 'Suggests cuts, colors, and treatments based on client photo + history.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: Scissors,
+    color: 'text-amber-400',
+    capabilities: ['Cut and color suggestions', 'Treatment recommendations', 'Client history awareness'],
+    configFields: [
+      { key: 'require_photo', label: 'Require Client Photo', type: 'switch', defaultValue: true },
+      { key: 'reference_history', label: 'Reference Past Visits', type: 'switch', defaultValue: true },
+      { key: 'suggest_addons', label: 'Suggest Add-On Services', type: 'switch', defaultValue: true }
+    ]
+  },
+  loyalty_coach: {
+    name: 'Loyalty Coach',
+    description: 'Identifies repeat-visit risk and drafts personalized rebook outreach.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: Heart,
+    color: 'text-amber-400',
+    capabilities: ['Repeat-visit risk scoring', 'Personalized rebook outreach', 'Loyalty milestone tracking'],
+    configFields: [
+      { key: 'rebook_reminder_days', label: 'Rebook Reminder (days after visit)', type: 'number', min: 7, max: 180, defaultValue: 30 },
+      { key: 'risk_threshold', label: 'At-Risk Score Threshold', type: 'slider', min: 1, max: 100, step: 5, defaultValue: 60 },
+      { key: 'auto_send_outreach', label: 'Auto-Send Rebook Outreach', type: 'switch', defaultValue: false }
+    ]
+  },
+  menu_writer: {
+    name: 'Menu Writer',
+    description: 'Drafts menu copy, daily specials, and dietary callouts in your brand voice.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: UtensilsCrossed,
+    color: 'text-amber-400',
+    capabilities: ['Menu copy drafting', 'Daily specials', 'Dietary callouts'],
+    configFields: [
+      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Rustic, warm, ingredient-forward' },
+      { key: 'include_allergens', label: 'Include Allergen Callouts', type: 'switch', defaultValue: true },
+      { key: 'include_dietary_tags', label: 'Include Dietary Tags (V, GF, DF)', type: 'switch', defaultValue: true }
+    ]
+  },
+  reservation_optimizer: {
+    name: 'Reservation Optimizer',
+    description: 'Reshuffles bookings to maximize covers and minimize gaps.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: CalendarClock,
+    color: 'text-amber-400',
+    capabilities: ['Booking reshuffle', 'Cover maximization', 'Gap minimization'],
+    configFields: [
+      { key: 'turn_time_minutes', label: 'Standard Turn Time (minutes)', type: 'number', min: 30, max: 240, defaultValue: 90 },
+      { key: 'buffer_minutes', label: 'Buffer Between Seatings (minutes)', type: 'number', min: 0, max: 30, defaultValue: 10 },
+      { key: 'suggest_walk_in_slots', label: 'Suggest Walk-In Slots', type: 'switch', defaultValue: true }
+    ]
+  },
+  task_triager: {
+    name: 'Task Triager',
+    description: 'Sorts inbound client tasks by urgency, owner, and due date.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: ListChecks,
+    color: 'text-amber-400',
+    capabilities: ['Urgency sorting', 'Owner assignment', 'Due-date extraction'],
+    configFields: [
+      { key: 'urgency_keywords', label: 'Urgency Keywords', type: 'textarea', placeholder: 'urgent, asap, today, EOD' },
+      { key: 'default_owner', label: 'Default Owner (if unassigned)', type: 'text', placeholder: 'name@example.com' },
+      { key: 'auto_notify_owner', label: 'Auto-Notify Assigned Owner', type: 'switch', defaultValue: true }
+    ]
+  },
+  calendar_optimizer: {
+    name: 'Calendar Optimizer',
+    description: 'Suggests slot consolidation and travel-time-aware scheduling fixes.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: CalendarDays,
+    color: 'text-amber-400',
+    capabilities: ['Slot consolidation suggestions', 'Travel-time-aware scheduling', 'Conflict resolution'],
+    configFields: [
+      { key: 'travel_buffer_minutes', label: 'Travel Buffer (minutes)', type: 'number', min: 0, max: 60, defaultValue: 15 },
+      { key: 'prefer_back_to_back', label: 'Prefer Back-to-Back Bookings', type: 'switch', defaultValue: true },
+      { key: 'suggest_consolidation', label: 'Suggest Slot Consolidation', type: 'switch', defaultValue: true }
+    ]
+  },
+  review_responder: {
+    name: 'Review Responder',
+    description: 'Drafts on-brand responses to new reviews across Google, Yelp, and Facebook.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: MessageCircleHeart,
+    color: 'text-amber-400',
+    capabilities: ['Multi-platform review monitoring', 'On-brand response drafting', 'Sentiment-aware tone matching'],
+    configFields: [
+      { key: 'auto_draft_response', label: 'Auto-Draft Responses', type: 'switch', defaultValue: true },
+      { key: 'require_approval_before_post', label: 'Require Approval Before Posting', type: 'switch', defaultValue: true },
+      { key: 'respond_to_negative_only', label: 'Only Auto-Draft for Negative Reviews', type: 'switch', defaultValue: false }
+    ]
   }
 };
-
-// Agents restricted to platform_admin only
-const PLATFORM_ADMIN_ONLY_AGENTS = ['inventory'];
 
 export default function AgentDetailPage() {
   const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
   const { agents, loading, toggleAgent, updateAgentSettings, companyId } = useAIAgentOrchestrator();
-  const { userRole } = useAuth();
   const [activeTab, setActiveTab] = useState('settings');
 
   const agentDef = agentId ? AGENT_DEFINITIONS[agentId] : null;
   const agentData = agents.find(a => a.type === agentId);
-  
-  // Check if this agent is restricted to platform_admin
-  const isRestrictedAgent = agentId && PLATFORM_ADMIN_ONLY_AGENTS.includes(agentId);
-  const hasAccess = !isRestrictedAgent || userRole === 'platform_admin';
 
-  if (!agentId || !agentDef || !hasAccess) {
+  if (!agentId || !agentDef) {
     return (
       <DashboardLayout>
         <div className="p-6">
           <Card className="p-12 text-center">
             <Bot className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
-              {!hasAccess ? 'Access Restricted' : 'Agent Not Found'}
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              {!hasAccess 
-                ? 'This agent is only available to platform administrators.' 
-                : 'The requested agent does not exist.'}
-            </p>
+            <h3 className="text-lg font-semibold mb-2">Agent Not Found</h3>
+            <p className="text-muted-foreground mb-4">The requested agent does not exist.</p>
             <Button onClick={() => navigate('/dashboard/ai-agents')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Agents
