@@ -12,6 +12,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 
 function newRoomId() {
   return 'aura-' + Math.random().toString(36).slice(2, 10);
@@ -82,6 +84,7 @@ export default function VideoConsole() {
           icon={Video}
           title="Video Console"
           description="Start or join live video meetings with customers, prospects, and your team."
+          action={<HowToUseModal {...HOW_TO_USE.videoConsole} />}
         />
 
         <div className="grid gap-6 md:grid-cols-2">
