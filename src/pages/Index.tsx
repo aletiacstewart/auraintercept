@@ -918,7 +918,7 @@ export default function Index() {
                 <p className="text-[10px] text-white mb-1">Email Delivery</p>
                 <p className="text-[10px] text-emerald-400 font-medium">Your own Resend account · billed directly by Resend</p>
                 <p className="text-[10px] text-white">Resend pricing: Free 3,000/mo · Pro $20 (50k) · Scale $90+ · then ~$0.90 per 1,000</p>
-                <p className="text-[10px] text-white">Custom domain recommended · Valid credit card required on your Resend account</p>
+                <p className="text-[10px] text-white">Custom domain recommended</p>
                 
               </div>
 
