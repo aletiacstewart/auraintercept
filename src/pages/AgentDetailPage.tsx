@@ -405,40 +405,235 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'content_freshness_days', label: 'Content Freshness Alert (days)', type: 'number', min: 30, max: 365, defaultValue: 90, description: 'Alert when content is older than this' },
       { key: 'auto_meta_suggestions', label: 'Auto-Generate Meta Suggestions', type: 'switch', defaultValue: true }
     ]
+  },
+  // === INDUSTRY SPECIALISTS ===
+  diagnostic: {
+    name: 'Diagnostic Specialist',
+    description: 'Photo + symptom analysis with likely-fix suggestions and parts recommendations.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: Wrench,
+    color: 'text-amber-400',
+    capabilities: ['Photo + symptom analysis', 'Likely-fix suggestions', 'Parts recommendations'],
+    configFields: [
+      { key: 'confidence_threshold', label: 'Suggestion Confidence Threshold (%)', type: 'slider', min: 50, max: 95, step: 5, defaultValue: 75 },
+      { key: 'require_photo', label: 'Require Photo for Diagnosis', type: 'switch', defaultValue: true },
+      { key: 'suggest_parts', label: 'Suggest Replacement Parts', type: 'switch', defaultValue: true }
+    ]
+  },
+  permit_code: {
+    name: 'Permit & Code Specialist',
+    description: 'Local code lookups, permit determinations, and pull-process guidance.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: FileCheck,
+    color: 'text-amber-400',
+    capabilities: ['Local code lookups', 'Permit determinations', 'Pull-process guidance'],
+    configFields: [
+      { key: 'jurisdiction', label: 'Primary Jurisdiction', type: 'text', placeholder: 'City, State' },
+      { key: 'auto_flag_required_permits', label: 'Auto-Flag Jobs Needing Permits', type: 'switch', defaultValue: true },
+      { key: 'include_fee_estimates', label: 'Include Permit Fee Estimates', type: 'switch', defaultValue: true }
+    ]
+  },
+  site_survey: {
+    name: 'Site Survey & Quote Specialist',
+    description: 'Pre-install survey workflow, measurements, and takeoff math.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: Ruler,
+    color: 'text-amber-400',
+    capabilities: ['Pre-install survey workflow', 'Measurements capture', 'Takeoff math'],
+    configFields: [
+      { key: 'measurement_unit', label: 'Measurement Unit', type: 'select', options: [
+        { value: 'imperial', label: 'Imperial (ft/in)' },
+        { value: 'metric', label: 'Metric (m/cm)' }
+      ], defaultValue: 'imperial' },
+      { key: 'require_survey_photos', label: 'Require Survey Photos', type: 'switch', defaultValue: true },
+      { key: 'auto_generate_quote', label: 'Auto-Generate Quote from Survey', type: 'switch', defaultValue: true }
+    ]
+  },
+  insurance_claim: {
+    name: 'Insurance Claim Specialist',
+    description: 'Damage documentation and claim-ready reports for carriers.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: ShieldCheck,
+    color: 'text-amber-400',
+    capabilities: ['Damage documentation', 'Claim-ready report generation', 'Carrier-format exports'],
+    configFields: [
+      { key: 'default_carrier_format', label: 'Default Carrier Format', type: 'select', options: [
+        { value: 'xactimate', label: 'Xactimate' },
+        { value: 'symbility', label: 'Symbility' },
+        { value: 'generic', label: 'Generic PDF' }
+      ], defaultValue: 'generic' },
+      { key: 'require_before_after_photos', label: 'Require Before/After Photos', type: 'switch', defaultValue: true },
+      { key: 'auto_attach_estimate', label: 'Auto-Attach Line-Item Estimate', type: 'switch', defaultValue: true }
+    ]
+  },
+  listing_writer: {
+    name: 'Listing Writer',
+    description: 'Drafts listing descriptions, headlines, and feature highlights from property data.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: FileText,
+    color: 'text-amber-400',
+    capabilities: ['Listing description drafts', 'Headline generation', 'Feature highlights'],
+    configFields: [
+      { key: 'tone', label: 'Copy Tone', type: 'select', options: [
+        { value: 'luxury', label: 'Luxury' },
+        { value: 'family', label: 'Family-Friendly' },
+        { value: 'investor', label: 'Investor-Focused' }
+      ], defaultValue: 'family' },
+      { key: 'target_length_words', label: 'Target Description Length (words)', type: 'number', min: 50, max: 500, defaultValue: 180 },
+      { key: 'require_approval', label: 'Require Approval Before Publish', type: 'switch', defaultValue: true }
+    ]
+  },
+  offer_drafter: {
+    name: 'Offer Drafter',
+    description: 'Composes offer letters, counter-offers, and contingency language for review.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: PenTool,
+    color: 'text-amber-400',
+    capabilities: ['Offer letter drafts', 'Counter-offer composition', 'Contingency language'],
+    configFields: [
+      { key: 'default_contingencies', label: 'Default Contingencies', type: 'textarea', placeholder: 'Inspection\nAppraisal\nFinancing' },
+      { key: 'earnest_money_percent', label: 'Default Earnest Money (%)', type: 'number', min: 0, max: 10, step: 0.5, defaultValue: 1 },
+      { key: 'require_attorney_review', label: 'Flag for Attorney Review', type: 'switch', defaultValue: true }
+    ]
+  },
+  comp_analyst: {
+    name: 'Comp Analyst',
+    description: 'Pulls comparable sales and rentals, summarizes pricing position.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: TrendingUp,
+    color: 'text-amber-400',
+    capabilities: ['Comparable sales lookup', 'Rental comps', 'Pricing position summary'],
+    configFields: [
+      { key: 'comp_radius_miles', label: 'Comp Radius (miles)', type: 'number', min: 0.25, max: 10, step: 0.25, defaultValue: 1 },
+      { key: 'lookback_months', label: 'Lookback Window (months)', type: 'number', min: 1, max: 24, defaultValue: 6 },
+      { key: 'include_pending', label: 'Include Pending Sales', type: 'switch', defaultValue: true }
+    ]
+  },
+  style_consultant: {
+    name: 'Style Consultant',
+    description: 'Suggests cuts, colors, and treatments based on client photo + history.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: Scissors,
+    color: 'text-amber-400',
+    capabilities: ['Cut and color suggestions', 'Treatment recommendations', 'Client history awareness'],
+    configFields: [
+      { key: 'require_photo', label: 'Require Client Photo', type: 'switch', defaultValue: true },
+      { key: 'reference_history', label: 'Reference Past Visits', type: 'switch', defaultValue: true },
+      { key: 'suggest_addons', label: 'Suggest Add-On Services', type: 'switch', defaultValue: true }
+    ]
+  },
+  loyalty_coach: {
+    name: 'Loyalty Coach',
+    description: 'Identifies repeat-visit risk and drafts personalized rebook outreach.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: Heart,
+    color: 'text-amber-400',
+    capabilities: ['Repeat-visit risk scoring', 'Personalized rebook outreach', 'Loyalty milestone tracking'],
+    configFields: [
+      { key: 'rebook_reminder_days', label: 'Rebook Reminder (days after visit)', type: 'number', min: 7, max: 180, defaultValue: 30 },
+      { key: 'risk_threshold', label: 'At-Risk Score Threshold', type: 'slider', min: 1, max: 100, step: 5, defaultValue: 60 },
+      { key: 'auto_send_outreach', label: 'Auto-Send Rebook Outreach', type: 'switch', defaultValue: false }
+    ]
+  },
+  menu_writer: {
+    name: 'Menu Writer',
+    description: 'Drafts menu copy, daily specials, and dietary callouts in your brand voice.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: UtensilsCrossed,
+    color: 'text-amber-400',
+    capabilities: ['Menu copy drafting', 'Daily specials', 'Dietary callouts'],
+    configFields: [
+      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Rustic, warm, ingredient-forward' },
+      { key: 'include_allergens', label: 'Include Allergen Callouts', type: 'switch', defaultValue: true },
+      { key: 'include_dietary_tags', label: 'Include Dietary Tags (V, GF, DF)', type: 'switch', defaultValue: true }
+    ]
+  },
+  reservation_optimizer: {
+    name: 'Reservation Optimizer',
+    description: 'Reshuffles bookings to maximize covers and minimize gaps.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: CalendarClock,
+    color: 'text-amber-400',
+    capabilities: ['Booking reshuffle', 'Cover maximization', 'Gap minimization'],
+    configFields: [
+      { key: 'turn_time_minutes', label: 'Standard Turn Time (minutes)', type: 'number', min: 30, max: 240, defaultValue: 90 },
+      { key: 'buffer_minutes', label: 'Buffer Between Seatings (minutes)', type: 'number', min: 0, max: 30, defaultValue: 10 },
+      { key: 'suggest_walk_in_slots', label: 'Suggest Walk-In Slots', type: 'switch', defaultValue: true }
+    ]
+  },
+  task_triager: {
+    name: 'Task Triager',
+    description: 'Sorts inbound client tasks by urgency, owner, and due date.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: ListChecks,
+    color: 'text-amber-400',
+    capabilities: ['Urgency sorting', 'Owner assignment', 'Due-date extraction'],
+    configFields: [
+      { key: 'urgency_keywords', label: 'Urgency Keywords', type: 'textarea', placeholder: 'urgent, asap, today, EOD' },
+      { key: 'default_owner', label: 'Default Owner (if unassigned)', type: 'text', placeholder: 'name@example.com' },
+      { key: 'auto_notify_owner', label: 'Auto-Notify Assigned Owner', type: 'switch', defaultValue: true }
+    ]
+  },
+  calendar_optimizer: {
+    name: 'Calendar Optimizer',
+    description: 'Suggests slot consolidation and travel-time-aware scheduling fixes.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: CalendarDays,
+    color: 'text-amber-400',
+    capabilities: ['Slot consolidation suggestions', 'Travel-time-aware scheduling', 'Conflict resolution'],
+    configFields: [
+      { key: 'travel_buffer_minutes', label: 'Travel Buffer (minutes)', type: 'number', min: 0, max: 60, defaultValue: 15 },
+      { key: 'prefer_back_to_back', label: 'Prefer Back-to-Back Bookings', type: 'switch', defaultValue: true },
+      { key: 'suggest_consolidation', label: 'Suggest Slot Consolidation', type: 'switch', defaultValue: true }
+    ]
+  },
+  review_responder: {
+    name: 'Review Responder',
+    description: 'Drafts on-brand responses to new reviews across Google, Yelp, and Facebook.',
+    category: 'industry_specialist',
+    phase: 3,
+    icon: MessageCircleHeart,
+    color: 'text-amber-400',
+    capabilities: ['Multi-platform review monitoring', 'On-brand response drafting', 'Sentiment-aware tone matching'],
+    configFields: [
+      { key: 'auto_draft_response', label: 'Auto-Draft Responses', type: 'switch', defaultValue: true },
+      { key: 'require_approval_before_post', label: 'Require Approval Before Posting', type: 'switch', defaultValue: true },
+      { key: 'respond_to_negative_only', label: 'Only Auto-Draft for Negative Reviews', type: 'switch', defaultValue: false }
+    ]
   }
 };
-
-// Agents restricted to platform_admin only
-const PLATFORM_ADMIN_ONLY_AGENTS = ['inventory'];
 
 export default function AgentDetailPage() {
   const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
   const { agents, loading, toggleAgent, updateAgentSettings, companyId } = useAIAgentOrchestrator();
-  const { userRole } = useAuth();
+  useAuth();
   const [activeTab, setActiveTab] = useState('settings');
 
   const agentDef = agentId ? AGENT_DEFINITIONS[agentId] : null;
   const agentData = agents.find(a => a.type === agentId);
-  
-  // Check if this agent is restricted to platform_admin
-  const isRestrictedAgent = agentId && PLATFORM_ADMIN_ONLY_AGENTS.includes(agentId);
-  const hasAccess = !isRestrictedAgent || userRole === 'platform_admin';
 
-  if (!agentId || !agentDef || !hasAccess) {
+  if (!agentId || !agentDef) {
     return (
       <DashboardLayout>
         <div className="p-6">
           <Card className="p-12 text-center">
             <Bot className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
-              {!hasAccess ? 'Access Restricted' : 'Agent Not Found'}
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              {!hasAccess 
-                ? 'This agent is only available to platform administrators.' 
-                : 'The requested agent does not exist.'}
-            </p>
+            <h3 className="text-lg font-semibold mb-2">Agent Not Found</h3>
+            <p className="text-muted-foreground mb-4">The requested agent does not exist.</p>
             <Button onClick={() => navigate('/dashboard/ai-agents')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Agents
