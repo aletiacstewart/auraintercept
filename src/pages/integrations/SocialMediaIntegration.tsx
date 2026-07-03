@@ -214,9 +214,22 @@ export default function SocialMediaIntegration() {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const redirectUri = `${supabaseUrl}/functions/v1/social-oauth?action=callback`;
 
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) {
+        toast.error('You must be signed in to connect a social account');
+        setConnectingPlatform(null);
+        return;
+      }
+
       const res = await fetch(
         `${supabaseUrl}/functions/v1/social-oauth?action=init&platform=${platform}&company_id=${companyId}&redirect_uri=${encodeURIComponent(redirectUri)}`,
-        { headers: { 'Content-Type': 'application/json' } }
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
       );
 
       const data = await res.json();
