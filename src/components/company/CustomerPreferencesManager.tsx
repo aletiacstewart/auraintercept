@@ -152,7 +152,7 @@ export function CustomerPreferencesManager() {
     mutationFn: async ({ id, field, value }: { id: string; field: string; value: boolean }) => {
       const { error } = await supabase
         .from("appointments")
-        .update({ [field]: value })
+        .update({ [field]: value } as never)
         .eq("id", id);
       if (error) throw error;
     },
@@ -169,7 +169,7 @@ export function CustomerPreferencesManager() {
     mutationFn: async ({ ids, field, value }: { ids: string[]; field: string; value: boolean }) => {
       const { error } = await supabase
         .from("appointments")
-        .update({ [field]: value })
+        .update({ [field]: value } as never)
         .in("id", ids);
       if (error) throw error;
     },
