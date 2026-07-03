@@ -82,73 +82,41 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'auto_escalate_unknown', label: 'Auto-escalate Unknown Intents', type: 'switch', defaultValue: true }
     ]
   },
-  booking: {
-    name: 'Booking Agent',
-    description: 'Handles appointment scheduling, rescheduling, and cancellations with intelligent slot management.',
+  customer_journey: {
+    name: 'Customer Journey Agent',
+    description: 'Manages the full post-booking relationship: scheduling, post-service follow-up, and review collection.',
     category: 'customer_engagement',
     phase: 2,
     icon: Users,
     color: 'text-cyan-400',
     capabilities: [
-      'Schedule new appointments',
-      'Reschedule existing bookings',
-      'Cancel appointments',
-      'Check availability',
-      'Send confirmations'
+      'Schedule, reschedule, and cancel appointments',
+      'Post-service check-ins and satisfaction surveys',
+      'Issue resolution and re-engagement',
+      'Review request timing and multi-platform posting',
+      'Response generation and sentiment analysis'
     ],
     configFields: [
       { key: 'booking_window_days', label: 'Booking Window (days)', type: 'number', min: 1, max: 90, defaultValue: 30, description: 'How far in advance customers can book' },
       { key: 'min_notice_hours', label: 'Minimum Notice (hours)', type: 'number', min: 0, max: 72, defaultValue: 2, description: 'Minimum hours before appointment for booking' },
       { key: 'allow_same_day', label: 'Allow Same-Day Booking', type: 'switch', defaultValue: true },
       { key: 'auto_confirm', label: 'Auto-Confirm Bookings', type: 'switch', defaultValue: false },
-      { key: 'confirmation_message', label: 'Confirmation Message', type: 'textarea', placeholder: 'Your appointment has been confirmed for {date} at {time}.' }
-    ]
-  },
-  followup: {
-    name: 'Follow-up Agent',
-    description: 'Manages post-service follow-ups, satisfaction checks, and feedback collection.',
-    category: 'customer_engagement',
-    phase: 3,
-    icon: Users,
-    color: 'text-cyan-400',
-    capabilities: [
-      'Post-service check-ins',
-      'Satisfaction surveys',
-      'Issue resolution',
-      'Re-engagement campaigns'
-    ],
-    configFields: [
+      { key: 'confirmation_message', label: 'Confirmation Message', type: 'textarea', placeholder: 'Your appointment has been confirmed for {date} at {time}.' },
       { key: 'followup_delay_hours', label: 'Follow-up Delay (hours)', type: 'number', min: 1, max: 168, defaultValue: 24, description: 'Hours after service to send follow-up' },
       { key: 'followup_message', label: 'Follow-up Message', type: 'textarea', placeholder: 'Hi {name}, how was your recent service with us?' },
       { key: 'satisfaction_threshold', label: 'Satisfaction Alert Threshold', type: 'slider', min: 1, max: 5, step: 1, defaultValue: 3, description: 'Rating below this triggers alert' },
-      { key: 'auto_escalate_issues', label: 'Auto-Escalate Issues', type: 'switch', defaultValue: true }
-    ]
-  },
-  review: {
-    name: 'Review Agent',
-    description: 'Collects and manages customer reviews, handles responses, and monitors reputation.',
-    category: 'customer_engagement',
-    phase: 4,
-    icon: Users,
-    color: 'text-cyan-400',
-    capabilities: [
-      'Review request timing',
-      'Multi-platform posting',
-      'Response generation',
-      'Sentiment analysis'
-    ],
-    configFields: [
-      { key: 'google_review_url', label: 'Google Business Profile Review URL', type: 'text', placeholder: 'https://g.page/r/YOUR-BUSINESS/review', description: 'Direct link to your Google Business Profile review page' },
-      { key: 'facebook_review_url', label: 'Facebook Review URL', type: 'text', placeholder: 'https://facebook.com/yourpage/reviews', description: 'Direct link to your Facebook page reviews' },
-      { key: 'yelp_review_url', label: 'Yelp Review URL', type: 'text', placeholder: 'https://yelp.com/biz/your-business', description: 'Direct link to your Yelp business page' },
+      { key: 'auto_escalate_issues', label: 'Auto-Escalate Issues', type: 'switch', defaultValue: true },
+      { key: 'google_review_url', label: 'Google Business Profile Review URL', type: 'text', placeholder: 'https://g.page/r/YOUR-BUSINESS/review' },
+      { key: 'facebook_review_url', label: 'Facebook Review URL', type: 'text', placeholder: 'https://facebook.com/yourpage/reviews' },
+      { key: 'yelp_review_url', label: 'Yelp Review URL', type: 'text', placeholder: 'https://yelp.com/biz/your-business' },
       { key: 'review_platforms', label: 'Primary Review Platform', type: 'select', options: [
         { value: 'google', label: 'Google' },
         { value: 'yelp', label: 'Yelp' },
         { value: 'facebook', label: 'Facebook' }
-      ], description: 'Default platform to request reviews on' },
-      { key: 'review_request_delay', label: 'Request Delay (days)', type: 'number', min: 0, max: 14, defaultValue: 1, description: 'Days after service to send review request' },
-      { key: 'min_rating_for_request', label: 'Min Rating to Request Review', type: 'slider', min: 1, max: 5, step: 1, defaultValue: 4, description: 'Only request reviews from customers rating this or higher' },
-      { key: 'auto_respond_reviews', label: 'Auto-Respond to Reviews', type: 'switch', defaultValue: false, description: 'Automatically generate responses to customer reviews' }
+      ]},
+      { key: 'review_request_delay', label: 'Review Request Delay (days)', type: 'number', min: 0, max: 14, defaultValue: 1 },
+      { key: 'min_rating_for_request', label: 'Min Rating to Request Review', type: 'slider', min: 1, max: 5, step: 1, defaultValue: 4 },
+      { key: 'auto_respond_reviews', label: 'Auto-Respond to Reviews', type: 'switch', defaultValue: false }
     ]
   },
   dispatch: {
@@ -175,18 +143,19 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'workload_weight', label: 'Workload Balance Weight', type: 'slider', min: 0, max: 100, step: 10, defaultValue: 20 }
     ]
   },
-  route: {
-    name: 'Route Agent',
-    description: 'Optimizes travel routes for field workers to minimize time and fuel costs.',
+  field_navigation: {
+    name: 'Field Navigation Agent',
+    description: 'Optimizes routes, tracks technician location and ETA, and manages job-site check-in/check-out.',
     category: 'field_operations',
     phase: 2,
     icon: Truck,
     color: 'text-green-500',
     capabilities: [
-      'Multi-stop optimization',
-      'Traffic consideration',
-      'Time window constraints',
-      'Real-time re-routing'
+      'Multi-stop route optimization with traffic consideration',
+      'Real-time location tracking and ETA calculation',
+      'Customer arrival notifications and delay alerts',
+      'Arrival verification with photo documentation',
+      'Job completion tracking and customer sign-off'
     ],
     configFields: [
       { key: 'optimization_priority', label: 'Optimization Priority', type: 'select', options: [
@@ -196,61 +165,29 @@ const AGENT_DEFINITIONS: Record<string, {
       ]},
       { key: 'consider_traffic', label: 'Consider Traffic', type: 'switch', defaultValue: true },
       { key: 'buffer_time_minutes', label: 'Buffer Time (minutes)', type: 'number', min: 0, max: 60, defaultValue: 15 },
-      { key: 'max_stops_per_route', label: 'Max Stops Per Route', type: 'number', min: 1, max: 20, defaultValue: 8 }
-    ]
-  },
-  eta: {
-    name: 'ETA Agent',
-    description: 'Tracks technician location and provides accurate arrival time predictions.',
-    category: 'field_operations',
-    phase: 3,
-    icon: Truck,
-    color: 'text-green-500',
-    capabilities: [
-      'Real-time tracking',
-      'ETA calculations',
-      'Customer notifications',
-      'Delay alerts'
-    ],
-    configFields: [
-      { key: 'update_frequency_minutes', label: 'Update Frequency (minutes)', type: 'number', min: 1, max: 30, defaultValue: 5 },
+      { key: 'max_stops_per_route', label: 'Max Stops Per Route', type: 'number', min: 1, max: 20, defaultValue: 8 },
+      { key: 'update_frequency_minutes', label: 'Location Update Frequency (minutes)', type: 'number', min: 1, max: 30, defaultValue: 5 },
       { key: 'notify_customer_minutes', label: 'Notify Customer When (minutes away)', type: 'number', min: 5, max: 60, defaultValue: 15 },
       { key: 'delay_threshold_minutes', label: 'Delay Alert Threshold (minutes)', type: 'number', min: 5, max: 30, defaultValue: 10 },
-      { key: 'auto_notify_delays', label: 'Auto-Notify on Delays', type: 'switch', defaultValue: true }
-    ]
-  },
-  checkin: {
-    name: 'Check-in Agent',
-    description: 'Manages job site arrivals, departures, and work verification.',
-    category: 'field_operations',
-    phase: 4,
-    icon: Truck,
-    color: 'text-green-500',
-    capabilities: [
-      'Arrival verification',
-      'Photo documentation',
-      'Job completion tracking',
-      'Customer sign-off'
-    ],
-    configFields: [
-      { key: 'require_photos', label: 'Require Photos', type: 'switch', defaultValue: true },
+      { key: 'auto_notify_delays', label: 'Auto-Notify on Delays', type: 'switch', defaultValue: true },
+      { key: 'require_photos', label: 'Require Check-in Photos', type: 'switch', defaultValue: true },
       { key: 'min_photos', label: 'Minimum Photos Required', type: 'number', min: 0, max: 10, defaultValue: 2 },
       { key: 'geo_fence_meters', label: 'Geo-fence Radius (meters)', type: 'number', min: 10, max: 500, defaultValue: 100 },
       { key: 'require_signature', label: 'Require Customer Signature', type: 'switch', defaultValue: false }
     ]
   },
-  quoting: {
-    name: 'Quoting Agent',
-    description: 'Generates accurate service quotes based on job requirements and pricing rules.',
+  business_finance: {
+    name: 'Business Finance Agent',
+    description: 'Generates quotes, handles invoicing and payment collection, and tracks parts/supply inventory.',
     category: 'business_operations',
     phase: 4,
     icon: Briefcase,
     color: 'text-feature-quotes',
     capabilities: [
-      'Dynamic pricing',
-      'Parts estimation',
-      'Labor calculation',
-      'Quote delivery'
+      'Dynamic quote generation with parts and labor estimation',
+      'Invoice generation, payment links, and collection reminders',
+      'Stock tracking with low-stock alerts and auto-reorder',
+      'Usage forecasting by technician'
     ],
     configFields: [
       { key: 'pricing_model', label: 'Pricing Model', type: 'select', options: [
@@ -260,23 +197,7 @@ const AGENT_DEFINITIONS: Record<string, {
       ]},
       { key: 'tax_rate', label: 'Tax Rate (%)', type: 'number', min: 0, max: 25, step: 0.1, defaultValue: 0 },
       { key: 'quote_validity_days', label: 'Quote Valid For (days)', type: 'number', min: 1, max: 90, defaultValue: 30 },
-      { key: 'include_breakdown', label: 'Include Price Breakdown', type: 'switch', defaultValue: true }
-    ]
-  },
-  invoice: {
-    name: 'Invoice Agent',
-    description: 'Handles invoicing, payment processing, and collection follow-ups.',
-    category: 'business_operations',
-    phase: 5,
-    icon: Briefcase,
-    color: 'text-feature-invoices',
-    capabilities: [
-      'Invoice generation',
-      'Payment links',
-      'Payment reminders',
-      'Collection automation'
-    ],
-    configFields: [
+      { key: 'include_breakdown', label: 'Include Price Breakdown', type: 'switch', defaultValue: true },
       { key: 'payment_terms_days', label: 'Payment Terms (days)', type: 'number', min: 0, max: 90, defaultValue: 30 },
       { key: 'reminder_schedule', label: 'Reminder Schedule', type: 'select', options: [
         { value: 'none', label: 'No Reminders' },
@@ -285,27 +206,11 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'aggressive', label: 'Aggressive (1, 3, 7, 14 days)' }
       ]},
       { key: 'auto_late_fee', label: 'Auto Apply Late Fee', type: 'switch', defaultValue: false },
-      { key: 'late_fee_percent', label: 'Late Fee (%)', type: 'number', min: 0, max: 10, step: 0.5, defaultValue: 1.5 }
-    ]
-  },
-  inventory: {
-    name: 'Inventory Agent',
-    description: 'Tracks parts and supplies, manages stock levels, and handles reordering.',
-    category: 'business_operations',
-    phase: 4,
-    icon: Briefcase,
-    color: 'text-feature-inventory',
-    capabilities: [
-      'Stock tracking',
-      'Low stock alerts',
-      'Usage forecasting',
-      'Auto-reorder'
-    ],
-    configFields: [
+      { key: 'late_fee_percent', label: 'Late Fee (%)', type: 'number', min: 0, max: 10, step: 0.5, defaultValue: 1.5 },
       { key: 'low_stock_threshold', label: 'Low Stock Alert Threshold', type: 'number', min: 1, max: 100, defaultValue: 10 },
       { key: 'auto_reorder', label: 'Enable Auto-Reorder', type: 'switch', defaultValue: false },
       { key: 'reorder_quantity_multiplier', label: 'Reorder Quantity Multiplier', type: 'slider', min: 1, max: 5, step: 0.5, defaultValue: 2 },
-      { key: 'track_by_technician', label: 'Track by Technician', type: 'switch', defaultValue: true }
+      { key: 'track_by_technician', label: 'Track Inventory by Technician', type: 'switch', defaultValue: true }
     ]
   },
   admin: {
