@@ -245,7 +245,7 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
 
       const { error: insertError } = await supabase
         .from('social_content_drafts')
-        .insert(drafts);
+        .insert(drafts as never);
       
       if (insertError) throw insertError;
       

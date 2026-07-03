@@ -79,7 +79,7 @@ export const InvoicesManager: React.FC<InvoicesManagerProps> = ({ onClose }) => 
       if (status === 'paid') {
         updateData.paid_at = new Date().toISOString();
       }
-      const { error } = await supabase.from('invoices').update(updateData).eq('id', id);
+      const { error } = await supabase.from('invoices').update(updateData as never).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

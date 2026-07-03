@@ -109,7 +109,7 @@ export function TechnicianCheckIn() {
           [timestampMap[status]]: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           ...additionalData,
-        })
+        } as never)
         .eq('id', activeJob.id);
 
       if (error) throw error;

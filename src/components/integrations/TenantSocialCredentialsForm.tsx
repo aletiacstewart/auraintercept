@@ -103,7 +103,7 @@ export function TenantSocialCredentialsForm({
       if (existingRow) {
         const { error } = await supabase
           .from('tenant_integrations')
-          .update(updates)
+          .update(updates as never)
           .eq('company_id', companyId);
         if (error) throw error;
       } else {

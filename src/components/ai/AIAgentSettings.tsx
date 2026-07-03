@@ -315,7 +315,7 @@ export const AIAgentSettings = () => {
       if (integrations?.id) {
         const { error } = await supabase
           .from('tenant_integrations')
-          .update(updateData)
+          .update(updateData as never)
           .eq('id', integrations.id);
         if (error) throw error;
       } else {

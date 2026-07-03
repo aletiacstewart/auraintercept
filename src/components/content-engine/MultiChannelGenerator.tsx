@@ -317,7 +317,7 @@ export function MultiChannelGenerator() {
         email_template: content.body || '',
         status: 'draft',
         created_by: user?.id,
-      });
+      } as never);
 
       if (error) throw error;
       toast({ title: 'Saved!', description: 'Campaign draft created' });
@@ -407,7 +407,7 @@ export function MultiChannelGenerator() {
       if (existing) {
         const { error } = await supabase
           .from('smart_websites')
-          .update(updates)
+          .update(updates as never)
           .eq('company_id', effectiveCompanyId!);
         if (error) throw error;
       } else {
