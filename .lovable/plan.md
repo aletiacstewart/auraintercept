@@ -1,81 +1,88 @@
-# Console UX & Nav IA Fixes — Review + Plan
+# Agent Registry Consolidation + CustomerPortal Rename — Review + Plan
 
-Reviewed all 5 of Claude's recommendations against the current codebase. All are accurate and safe. Recommend implementing 1–4 as specified, and doing **only the plumbing** portion of 5 (interface + fallback wiring) without seeding half-finished per-industry copy.
+Both of Claude's recommendations are correct and address real risks. Verified against the current codebase:
+
+- `AGENT_DEFINITIONS` (AgentDetailPage.tsx line 43), `DEFAULT_AGENTS` (useAIAgentOrchestrator.ts line 95), and `AGENTS` (Automation.tsx line 21) are three independent hand-maintained lists — exactly the drift risk Claude flagged.
+- `src/pages/CustomerPortal.tsx` really is the `/appointment?token=…` lookup page and shares a name with `CustomerPortalHome` / `CustomerCompanyPortal` / `CustomerPortalConsole` — meaningful collision.
+
+Recommend implementing both fixes as specified, with a few small refinements below.
 
 ---
 
-## Fix 1 — Missing "How to Use" modals (3 consoles)
+## FIX 1 — Single agent registry
 
-Add three entries to `src/lib/howToUseContent.ts` following the existing shape used by `analyticsConsole` / `fieldOpsConsole`:
-- `specialistOperativesConsole`
-- `contentEngineConsole`
-- `videoConsole`
+### New file `src/lib/agentRegistry.ts`
 
-Then wire `<HowToUseModal {...HOW_TO_USE.xxx} />` into the `PageHeader` action slot of:
-- `src/pages/ai-consoles/SpecialistOperativesConsole.tsx`
-- `src/pages/ContentEngineConsole.tsx`
-- `src/pages/VideoConsole.tsx`
+- Defines `AgentRegistryEntry` (icon + config schema) and exports `AGENT_REGISTRY: Record<string, AgentRegistryEntry>`.
+- Populated by moving all 24 entries currently living in `AGENT_DEFINITIONS` verbatim (10 operatives + 14 specialists), adding `type` and `isSpecialist` flags.
+- Exports `getAgentEntry`, `listCoreAgents`, `listSpecialistAgents`.
 
-## Fix 2 — Contextual "Manage Agents" deep-links
+### `src/pages/AgentDetailPage.tsx`
 
-Update the `onClick` in each console's Manage Agents button:
-
-| File | New target |
-|---|---|
-| `FieldOpsConsole.tsx` | `/dashboard/ai-agents/field_navigation` |
-| `ai-consoles/SocialMediaConsole.tsx` | `/dashboard/ai-agents/creative_content` |
-| `MarketingSalesConsole.tsx` | `/dashboard/ai-agents/outreach` |
-| `BusinessManagementConsole.tsx` | `/dashboard/ai-agents/business_finance` |
-| `AnalyticsConsole.tsx` | `/dashboard/ai-agents/analytics_intelligence` |
-| `ai-consoles/CustomerPortalConsole.tsx` | `/dashboard/ai-agents/triage` |
-
-Leave `SpecialistOperativesConsole` untouched (it *is* the specialist browser).
-
-Note: this depends on the prior AgentDetailPage fix (already shipped) — the six target IDs all exist in the rebuilt `AGENT_DEFINITIONS`, so no additional detail-page work needed. **However `triage` should be double-checked** — it wasn't in the operatives list I rebuilt. If it isn't a live definition key, either add it or point Customer Portal at `customer_journey` instead. Will verify during build and choose the correct target then.
-
-## Fix 3 — Title mismatch
-
-`BusinessManagementConsole.tsx` currently titles the page **"Business Operations"** while the sidebar calls it **"Business Management"**. Align on **"Business Management"** (matches sidebar + tier/marketing copy). One-line change to the `PageHeader title` prop.
-
-## Fix 4 — Generalize the hardcoded restaurants hide-rule
-
-- Extend `ProfileLabelOverrides` in `src/lib/industryProfiles.ts` with `hiddenNavHrefs?: string[]`.
-- On the restaurant profile spec(s), add `hiddenNavHrefs: ['/dashboard/appointments']`.
-- In `DashboardLayout.tsx`, replace:
+- Delete the local `AGENT_DEFINITIONS` block.
+- Import from `@/lib/agentRegistry` and replace the lookup:
+  ```ts
+  const agentDef = agentId ? AGENT_REGISTRY[agentId] : null;
   ```
-  if (industryPack?.industry_id === 'restaurants' && item.href === '/dashboard/appointments') return false;
+- Drop the now-unused `lucide-react` icon imports that were only referenced by `AGENT_DEFINITIONS`.
+
+### `src/hooks/useAIAgentOrchestrator.ts`
+
+- Replace hand-written `DEFAULT_AGENTS: AgentInfo[]` with:
+  ```ts
+  const DEFAULT_AGENTS: AgentInfo[] = Object.values(AGENT_REGISTRY).map(entry => ({
+    type: entry.type,
+    name: entry.name,
+    category: entry.category,
+    phase: entry.phase,
+    is_enabled: false,
+    settings: {},
+  }));
   ```
-  with:
-  ```
-  if (!isPlatformAdmin && profileSpec?.labelOverrides.hiddenNavHrefs?.includes(item.href)) return false;
-  ```
-- Leave the `saas_platform` "Operations Map" relabel as-is per Claude's own note — it's a one-off for the flagship tenant, not a generalizable rule.
+- Will verify `AgentInfo` shape lines up (any extra required fields — e.g. `id` or `capabilities` — get filled from the entry or defaulted the same way today's list does) before flipping the assignment.
 
-## Fix 5 — Adaptive console titling (plumbing only)
+### `src/pages/Automation.tsx`
 
-**Recommendation: do the plumbing, skip the seed copy.**
+- Replace the local `AGENTS` array with `listCoreAgents().map(...)`.
+- **Judgment call kept from prior round**: excluding specialists from Automation matches today's behavior. Specialists draft content on request and don't have autonomy dials, so surfacing them in Automation would be a new UX surface, not a bug fix. Keeping `listCoreAgents()`. If you'd rather they appear too, say so and I'll switch to `Object.values(AGENT_REGISTRY)`.
 
-Extend `IndustryServiceConsoleConfig` in `src/lib/industryAgentMap.ts` with optional fields:
-```
-businessMgmtTitle?: string;
-businessMgmtDescription?: string;
-marketingConsoleTitle?: string;
-marketingConsoleDescription?: string;
-```
+### Scope guardrails
 
-Wire `BusinessManagementConsole.tsx` and `MarketingSalesConsole.tsx` to read from `serviceConfig` with fallback to today's generic copy (same pattern `FieldOpsConsole.tsx` already uses).
+- Leave `SPECIALIST_LABELS` / `SPECIALIST_DESCRIPTIONS` in `subscriptionAgentConfig.ts` untouched — tier gating and hub filtering read them and unifying is out of scope for this pass.
+- No changes to `AIAgentsHub.tsx` — it already reads from the orchestrator hook and will pick up the registry indirectly.
 
-**Do NOT seed the "Transaction Management" / "Back of House" values in this pass.** Rationale: authoring per-cluster copy for 6 consoles × N clusters is a content decision that deserves its own dedicated pass with the same care that already went into `workerConsoleTitle`. Landing partial copy for two industries now sets an inconsistent precedent (why real estate and restaurants but not beauty, repair, outdoor?). The plumbing lets a future pass drop copy in as a pure data change with zero code risk.
+### Risk
 
-If you'd rather seed the two examples now to validate the mechanism end-to-end, say so and I'll include them.
+Icons: some `AGENT_DEFINITIONS` entries reference icons that aren't currently imported anywhere else. Registry file will own those imports; `AgentDetailPage.tsx` keeps only the icons it uses for chrome (Save, ArrowLeft, etc.). Verified before deleting imports.
+
+---
+
+## FIX 2 — Rename `CustomerPortal.tsx` → `AppointmentLookup.tsx`
+
+Confirmed current state:
+- `src/App.tsx` line 72: `import CustomerPortal from "./pages/CustomerPortal";`
+- `src/App.tsx` line 309: `<Route path="/appointment" element={<CustomerPortal />} />`
+- File exports `default function CustomerPortal()`.
+
+Steps:
+1. `mv src/pages/CustomerPortal.tsx src/pages/AppointmentLookup.tsx`.
+2. Rename the exported function `CustomerPortal` → `AppointmentLookup`.
+3. Update `src/App.tsx` import + JSX usage to `AppointmentLookup`.
+4. Grep for any other references to `from ".*CustomerPortal"` (not `CustomerPortalHome`/`Install`/`AppInstall`/`Console`) and update them — a first pass shows only `App.tsx` needs the change, but will re-check post-rename.
+
+No logic changes.
 
 ---
 
 ## Acceptance
 
-Same as Claude's checklist, with one adjustment for Fix 5: the two consoles read from `serviceConfig` and fall back cleanly when no override is set — no seeded per-industry copy landed yet.
+- All 24 agent detail routes still open (registry-sourced).
+- Automation page shows the same 10 core operatives as today.
+- Editing `agentRegistry.ts` propagates to both AgentDetailPage and Automation without touching either.
+- `/appointment?token=…` still loads the lookup page.
+- Codebase has no dangling imports of the old `CustomerPortal` default export.
 
-## Judgment calls flagged
+## Open decisions to confirm
 
-1. **Customer Portal → `triage`**: verify this operative key exists before shipping; otherwise use `customer_journey`.
-2. **Fix 5 seed copy**: skipping in this pass. Confirm or override.
+1. **Specialists in Automation**: keep excluded (default) or include? Recommend keep excluded.
+2. **`SPECIALIST_LABELS/DESCRIPTIONS` unification**: defer to a later pass. OK to defer?
