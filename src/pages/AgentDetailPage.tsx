@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useAIAgentOrchestrator, AgentInfo } from '@/hooks/useAIAgentOrchestrator';
-import { useAuth } from '@/contexts/AuthContext';
 import { AgentSettingsPanel } from '@/components/ai/agents/AgentSettingsPanel';
 import { AgentTestConsole } from '@/components/ai/agents/AgentTestConsole';
 import { AgentEventLog } from '@/components/ai/agents/AgentEventLog';
@@ -620,7 +619,6 @@ export default function AgentDetailPage() {
   const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
   const { agents, loading, toggleAgent, updateAgentSettings, companyId } = useAIAgentOrchestrator();
-  useAuth();
   const [activeTab, setActiveTab] = useState('settings');
 
   const agentDef = agentId ? AGENT_DEFINITIONS[agentId] : null;
