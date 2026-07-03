@@ -13,6 +13,7 @@ import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { HowToUseModal } from '@/components/ui/HowToUseModal';
 import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { getMarketingPlaybook } from '@/lib/industryMarketingPlaybooks';
 import { SpecialistOperativesLauncher } from '@/components/ai/SpecialistOperativesLauncher';
@@ -45,6 +46,9 @@ export default function MarketingSalesConsole() {
   const navigate = useNavigate();
   const { pack } = useIndustryPack();
   const playbook = getMarketingPlaybook(pack);
+  const serviceConfig = useMemo(() => getIndustryServiceConsoleConfig(pack), [pack]);
+  const consoleTitle = serviceConfig.marketingConsoleTitle ?? 'Outreach & Sales';
+  const consoleDescription = serviceConfig.marketingConsoleDescription ?? playbook.description;
   const marketingWorkflows = useMemo(() => getMarketingWorkflows(pack), [pack]);
   const { run: runChain } = useRunWorkflowChain();
   const { submitQuery } = useAuraCommand();
@@ -63,8 +67,8 @@ export default function MarketingSalesConsole() {
             <MedicalComplianceNotice industryId={pack?.industry_id} />
             <PageHeader
               icon={Megaphone}
-              title="Outreach & Sales"
-              description={playbook.description}
+              title={consoleTitle}
+              description={consoleDescription}
               featureColor="platform"
               showAuraBar
               badge={<ValueBadge label={playbook.tagline} />}
