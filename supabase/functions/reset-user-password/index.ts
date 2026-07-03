@@ -65,8 +65,9 @@ serve(async (req) => {
         { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+    const isPlatformAdmin = roles.some(r => r.role === "platform_admin");
 
-    console.log(`Password reset by admin ${callerId} with role ${roles[0].role}`);
+    console.log(`Password reset by admin ${callerId} with roles ${roles.map(r=>r.role).join(",")}`);
     // ============ END AUTHORIZATION CHECK ============
 
     const { email, newPassword } = await req.json();
@@ -96,6 +97,24 @@ serve(async (req) => {
         JSON.stringify({ error: "User not found" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Company admins may only reset passwords of users in their own company,
+    // and never of platform admins.
+    if (!isPlatformAdmin) {
+      const [{ data: callerProfile }, { data: targetProfile }, { data: targetRoles }] = await Promise.all([
+        supabaseAdmin.from("profiles").select("company_id").eq("id", callerId).maybeSingle(),
+        supabaseAdmin.from("profiles").select("company_id").eq("id", user.id).maybeSingle(),
+        supabaseAdmin.from("user_roles").select("role").eq("user_id", user.id),
+      ]);
+      const targetIsPlatformAdmin = (targetRoles ?? []).some((r: { role: string }) => r.role === "platform_admin");
+      const callerCompanyId = callerProfile?.company_id ?? null;
+      if (targetIsPlatformAdmin || !callerCompanyId || targetProfile?.company_id !== callerCompanyId) {
+        return new Response(
+          JSON.stringify({ error: "Forbidden - target user is not in your company" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // Update the user's password

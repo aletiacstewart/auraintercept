@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -166,6 +167,27 @@ serve(async (req) => {
     const { company_id, mode = "both", lead_id } = body as { company_id: string; mode?: "push" | "pull" | "both"; lead_id?: string };
     if (!company_id) {
       return new Response(JSON.stringify({ ok: false, error: "company_id required" }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // Require either the service role key (server-to-server) or an authenticated
+    // user with marketing/full-company access to the target company. Prevents
+    // anonymous CRM writes using another tenant's stored credentials.
+    const authz = await authorizeInternalRequest(req, company_id);
+    if (!authz.ok) {
+      return new Response(JSON.stringify({ ok: false, error: authz.error }), {
+        status: authz.status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!authz.ctx.isService) {
+      // Require marketing / full-company access for user-initiated syncs
+      const { data: perms } = await supabase.rpc("has_marketing_access", { _user_id: authz.ctx.userId });
+      if (perms !== true) {
+        return new Response(JSON.stringify({ ok: false, error: "Forbidden — marketing access required" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const { data: conn } = await supabase.from("crm_connections").select("*").eq("company_id", company_id).eq("status", "connected").maybeSingle();

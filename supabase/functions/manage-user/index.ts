@@ -62,7 +62,49 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Admin action by user ${callerId} with role ${roles[0].role}`);
+    const isPlatformAdmin = roles.some(r => r.role === 'platform_admin');
+    // Resolve caller's company so company_admins are strictly scoped to their own tenant.
+    const { data: callerProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('company_id')
+      .eq('id', callerId)
+      .maybeSingle();
+    const callerCompanyId = callerProfile?.company_id ?? null;
+
+    // Helper: for company_admins, require the target user (looked up by email) to be
+    // in the same company as the caller. Also blocks operating on platform_admins.
+    const assertTargetInCallerCompany = async (targetEmail: string): Promise<{ ok: true; targetId: string } | { ok: false; response: Response }> => {
+      const { data: usersData } = await supabaseAdmin.auth.admin.listUsers();
+      const target = usersData?.users.find(u => u.email?.toLowerCase() === targetEmail.toLowerCase());
+      if (!target) {
+        return { ok: false, response: new Response(
+          JSON.stringify({ error: 'User not found', email: targetEmail }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )};
+      }
+      if (isPlatformAdmin) return { ok: true, targetId: target.id };
+      // company_admin: verify same tenant and target is not a platform_admin
+      const [{ data: tProfile }, { data: tRoles }] = await Promise.all([
+        supabaseAdmin.from('profiles').select('company_id').eq('id', target.id).maybeSingle(),
+        supabaseAdmin.from('user_roles').select('role').eq('user_id', target.id),
+      ]);
+      const targetIsPlatformAdmin = (tRoles ?? []).some((r: { role: string }) => r.role === 'platform_admin');
+      if (targetIsPlatformAdmin) {
+        return { ok: false, response: new Response(
+          JSON.stringify({ error: 'Forbidden - cannot operate on platform admin accounts' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )};
+      }
+      if (!callerCompanyId || tProfile?.company_id !== callerCompanyId) {
+        return { ok: false, response: new Response(
+          JSON.stringify({ error: 'Forbidden - target user is not in your company' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )};
+      }
+      return { ok: true, targetId: target.id };
+    };
+
+    console.log(`Admin action by user ${callerId} with roles ${roles.map(r=>r.role).join(',')}`);
     // ============ END AUTHORIZATION CHECK ============
 
     const body = await req.json();
@@ -77,23 +119,9 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Find user
-      const { data: usersData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
-      if (listError) {
-        console.error('Error listing users:', listError);
-        return new Response(
-          JSON.stringify({ error: 'Failed to list users' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      const user = usersData.users.find(u => u.email?.toLowerCase() === email.toLowerCase());
-      if (!user) {
-        return new Response(
-          JSON.stringify({ error: 'User not found', email }),
-          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
+      const scope = await assertTargetInCallerCompany(email);
+      if (!scope.ok) return scope.response;
+      const user = { id: scope.targetId };
 
       // Delete from user_roles first
       await supabaseAdmin.from('user_roles').delete().eq('user_id', user.id);
@@ -129,6 +157,32 @@ Deno.serve(async (req) => {
         );
       }
 
+      // Only platform_admin can mint platform_admin accounts. company_admin can only
+      // create users in their own company, and cannot escalate to platform_admin.
+      const ALLOWED_ROLES_FOR_COMPANY_ADMIN = new Set(['company_admin', 'employee', 'customer', 'technician']);
+      if (!isPlatformAdmin) {
+        if (role === 'platform_admin' || !ALLOWED_ROLES_FOR_COMPANY_ADMIN.has(role)) {
+          return new Response(
+            JSON.stringify({ error: 'Forbidden - cannot assign that role' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        // Force the new user into caller's company
+        if (!callerCompanyId) {
+          return new Response(
+            JSON.stringify({ error: 'Forbidden - caller has no company scope' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        if (companyId && companyId !== callerCompanyId) {
+          return new Response(
+            JSON.stringify({ error: 'Forbidden - cannot create users in another company' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+      const effectiveCompanyId = isPlatformAdmin ? companyId : callerCompanyId;
+
       // Create user
       const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
         email,
@@ -148,10 +202,10 @@ Deno.serve(async (req) => {
       const userId = userData.user.id;
 
       // Update profile with company_id if provided
-      if (companyId) {
+      if (effectiveCompanyId) {
         const { error: profileError } = await supabaseAdmin
           .from('profiles')
-          .update({ company_id: companyId, full_name: fullName || email.split('@')[0] })
+          .update({ company_id: effectiveCompanyId, full_name: fullName || email.split('@')[0] })
           .eq('id', userId);
 
         if (profileError) {
@@ -198,23 +252,9 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Find user by old email
-      const { data: usersData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
-      if (listError) {
-        console.error('Error listing users:', listError);
-        return new Response(
-          JSON.stringify({ error: 'Failed to list users' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      const user = usersData.users.find(u => u.email?.toLowerCase() === oldEmail.toLowerCase());
-      if (!user) {
-        return new Response(
-          JSON.stringify({ error: 'User not found', oldEmail }),
-          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
+      const scope = await assertTargetInCallerCompany(oldEmail);
+      if (!scope.ok) return scope.response;
+      const user = { id: scope.targetId };
 
       // Update the auth user email
       const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(user.id, {

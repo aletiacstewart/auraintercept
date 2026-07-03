@@ -366,6 +366,23 @@ Deno.serve(async (req) => {
         );
       }
 
+      // Require an authenticated caller for init so we can bind the nonce to a real user.
+      const initAuthHeader = req.headers.get("authorization") ?? req.headers.get("Authorization");
+      if (!initAuthHeader || !initAuthHeader.toLowerCase().startsWith("bearer ")) {
+        return new Response(
+          JSON.stringify({ error: "Authorization required" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const { data: initClaims } = await supabase.auth.getUser(initAuthHeader.slice(7).trim());
+      const initUserId = initClaims?.user?.id;
+      if (!initUserId) {
+        return new Response(
+          JSON.stringify({ error: "Invalid token" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       const creds = await getPlatformCredentials(supabase, platform, companyId);
       if (!creds) {
         return new Response(
@@ -374,7 +391,23 @@ Deno.serve(async (req) => {
         );
       }
 
-      const state = btoa(JSON.stringify({ platform, companyId }));
+      // Persist a single-use, server-side nonce so a forged `state` on callback cannot
+      // hijack another company's social integration.
+      const state = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
+      const { error: nonceErr } = await supabase.from("oauth_state_nonces").insert({
+        nonce: state,
+        provider: `social:${platform}`,
+        company_id: companyId,
+        user_id: initUserId,
+        extra: { platform, redirect_uri: redirectUri },
+      });
+      if (nonceErr) {
+        console.error("[social-oauth] Failed to persist nonce:", nonceErr);
+        return new Response(
+          JSON.stringify({ error: "Failed to start OAuth" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
       const oauthUrl = buildOAuthUrl(platform, creds, redirectUri, state);
 
       return new Response(
@@ -402,17 +435,21 @@ Deno.serve(async (req) => {
         );
       }
 
-      let stateData: { platform: string; companyId: string };
-      try {
-        stateData = JSON.parse(atob(state));
-      } catch {
+      const { data: nonceRow } = await supabase
+        .from("oauth_state_nonces")
+        .select("id, provider, company_id, consumed_at, expires_at, extra")
+        .eq("nonce", state)
+        .like("provider", "social:%")
+        .maybeSingle();
+      if (!nonceRow || nonceRow.consumed_at || new Date(nonceRow.expires_at) < new Date()) {
         return new Response(
-          JSON.stringify({ error: "Invalid state parameter" }),
+          JSON.stringify({ error: "Invalid or expired state parameter" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-
-      const { platform, companyId } = stateData;
+      await supabase.from("oauth_state_nonces").update({ consumed_at: new Date().toISOString() }).eq("id", nonceRow.id);
+      const platform = (nonceRow.extra as { platform?: string })?.platform ?? nonceRow.provider.slice("social:".length);
+      const companyId = nonceRow.company_id;
       const redirectUri = url.searchParams.get("redirect_uri") || `${supabaseUrl}/functions/v1/social-oauth?action=callback`;
 
       const creds = await getPlatformCredentials(supabase, platform, companyId);

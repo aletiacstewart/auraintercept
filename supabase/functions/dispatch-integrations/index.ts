@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,6 +32,17 @@ serve(async (req) => {
       );
     }
     const { company_id, event, payload } = parsed.data;
+
+    // This endpoint fans messages out to a company's connected Slack/Teams webhooks.
+    // Restrict it to trusted internal callers OR authenticated members of the target
+    // company to prevent anonymous message injection.
+    const authz = await authorizeInternalRequest(req, company_id);
+    if (!authz.ok) {
+      return new Response(
+        JSON.stringify({ error: authz.error }),
+        { status: authz.status, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
