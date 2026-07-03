@@ -86,6 +86,7 @@ import CRMIntegration from "./pages/integrations/CRMIntegration";
 // BusinessOpsHub merged into BusinessOperations
 import Help from "./pages/Help";
 import Architecture from "./pages/Architecture";
+import PlatformBrief from "./pages/dashboard/PlatformBrief";
 import Calculators from "./pages/Calculators";
 import ExportDocumentation from "./pages/ExportDocumentation";
 import VideoPromptsPage from "./pages/VideoPromptsPage";
@@ -270,6 +271,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/email-limits" element={<ProtectedRoute><EmailLimits /></ProtectedRoute>} />
                 <Route path="/dashboard/tavily-limits" element={<ProtectedRoute><TavilyLimits /></ProtectedRoute>} />
                 <Route path="/dashboard/architecture" element={<ProtectedRoute requiredRole="platform_admin"><Architecture /></ProtectedRoute>} />
+                <Route path="/dashboard/platform-brief" element={<ProtectedRoute requiredRole="platform_admin"><PlatformBrief /></ProtectedRoute>} />
                 <Route path="/dashboard/calculators" element={<ProtectedRoute requiredRole="platform_admin"><Calculators /></ProtectedRoute>} />
                 <Route path="/dashboard/export-docs" element={<Navigate to="/dashboard/platform-guides?tab=export" replace />} />
                 <Route path="/dashboard/video-prompts" element={<Navigate to="/dashboard/platform-guides?tab=video" replace />} />

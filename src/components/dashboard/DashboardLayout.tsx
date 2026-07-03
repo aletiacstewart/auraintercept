@@ -181,6 +181,7 @@ const navGroups: NavGroup[] = [
       { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['company_admin', 'employee'], featureColor: 'text-feature-overview' },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
+      { label: 'Platform Brief', icon: FileText, href: '/dashboard/platform-brief', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
     ],
   },
 ];
