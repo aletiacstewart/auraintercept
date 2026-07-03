@@ -1,36 +1,46 @@
-## Screenshot-verified UI cleanup (5 fixes)
+## Confirmed — customer_journey has no real tools
 
-All five claims verified against source. Planning the four small fixes and one scoped content fix.
+Verified in `supabase/functions/ai-agent-chat/index.ts`:
+- `AGENT_TOOLS` (line 1035+) defines `booking` (1135), `followup` (1334), `review` (1399) but **no `customer_journey` key**.
+- `TOOL_KEY_MAP` (line 3973) has aliases for every other consolidated operative (social, analytics, outreach, field_navigation, business_finance) but **nothing mapping to `customer_journey`**.
+- `toolKey = TOOL_KEY_MAP[agentType] || agentType` → for `customer_journey` this is `'customer_journey'` → `AGENT_TOOLS['customer_journey']` is undefined → falls through to the handoff-only default at line 4001.
 
-### Fix 1 — Default industry label (HIGH)
-`src/lib/industryMarketingContent.ts` line 57: change the `default` entry's label from `'Aura Intercept'` to `'your business'`. Renders "See it in action — for your business." on `/for-business` before an industry is picked, and flows into `IndustryROICalculator`'s `industryLabel`.
+Claude's diagnosis is correct. The agent can talk about booking/follow-up/review but cannot call any of the underlying tools.
 
-### Fix 2 — Duplicate "Social Media" sidebar labels (MEDIUM)
-`src/components/dashboard/DashboardLayout.tsx` line 172: rename the integrations entry label from `'Social Media'` to `'Social Media Setup'`. The console entry at line 148 stays `'Social Media'`. Routes unchanged.
+## Plan
 
-### Fix 3 — Raw snake_case business type badge (MEDIUM)
-`src/lib/businessTypeConsoleContext.ts` around line 44: add a small `humanize()` helper (`replace(/_/g,' ')` + title-case) and apply it only to the fallback path when `matrixRow?.name` is missing. Common case (matrix hit) is untouched.
+### Fix — Give `customer_journey` the union of booking + followup + review tools
 
-### Fix 4 — Industry-aware specialist example prompts (MEDIUM)
-`src/pages/ai-consoles/SpecialistOperativesConsole.tsx`:
-- Change each specialist's `examples: string[]` in `SPECIALISTS_RAW` to `examples: Record<string, string[]>` with a `default` key holding today's trades prompts (zero-change fallback).
-- Resolve the active industry cluster via the existing industry pack / company context already used elsewhere in the console (I'll confirm the exact hook while editing — likely `useIndustryPack`).
-- In render, use `examples[clusterKey] ?? examples.default`.
-- Seed one cluster (`saas_platform`) with tailored prompts for 2–3 specialists (Diagnostic + one or two others) as the proof-of-concept. Remaining specialists/clusters fall back to trades prompts unchanged.
+`supabase/functions/ai-agent-chat/index.ts`, inside the `AGENT_TOOLS` object literal, add a new key after the `review` array (line ~1399+) so the spreads resolve to already-defined properties:
 
-### Fix 5 — Preview button naming on Web Presence (LOW)
-`src/pages/SmartWebsiteManager.tsx` ~lines 331–343: label-only change.
-- Toggle button: `'Live Preview'` / `'Hide Preview'` → `'Preview Panel'` / `'Hide Panel'`.
-- New-tab button: `'Preview'` → `'Open Live Site'`.
-Behavior unchanged.
+```ts
+customer_journey: [
+  ...AGENT_TOOLS.booking,
+  ...AGENT_TOOLS.followup,
+  ...AGENT_TOOLS.review,
+],
+```
 
-### Out of scope (per prompt, low-confidence visual-only items)
-Automation page table refactor, Customer Portal missing icon labels, Setup Progress widget auto-collapse — not touching this pass.
+Note: spreading `AGENT_TOOLS.booking` inside the same object literal that's defining `AGENT_TOOLS` doesn't work — the identifier isn't bound yet. Two safe options:
+
+1. **Define the arrays as `const` first, then compose the object.** Extract `BOOKING_TOOLS`, `FOLLOWUP_TOOLS`, `REVIEW_TOOLS` as top-level `const` arrays, then reference them from both the legacy keys and the new `customer_journey` key. Cleanest but touches three existing entries.
+2. **Add `customer_journey` after the object is constructed:** immediately after the `AGENT_TOOLS` declaration, do `AGENT_TOOLS.customer_journey = [...AGENT_TOOLS.booking, ...AGENT_TOOLS.followup, ...AGENT_TOOLS.review];`. Minimal diff, no restructuring of existing entries.
+
+Recommended: **option 2** — smallest surgical change, matches the "additive, nothing about the existing legacy arrays changes" acceptance criterion.
+
+### Optional cleanup (also included)
+Add legacy aliases to `TOOL_KEY_MAP` so any straggler code calling the old names routes to the same unified set going forward:
+```ts
+booking: 'customer_journey',
+followup: 'customer_journey',
+review: 'customer_journey',
+```
+This is safe because after the fix, `AGENT_TOOLS.customer_journey` contains the full union — so `booking`/`followup`/`review` callers get a superset of their old tools, not less.
+
+### Files touched
+- `supabase/functions/ai-agent-chat/index.ts` — one added assignment plus 3 alias entries in `TOOL_KEY_MAP`.
 
 ### Verification
-- Build passes.
-- `/for-business` (no `?industry=`): CTA reads "for your business."; ROI calculator label updated.
-- Sidebar shows `Social Media` + `Social Media Setup`, both routes intact.
-- A `saas_platform` account (no matrix row) shows "Saas Platform" (or "SaaS Platform" if I special-case; will use generic humanize → "Saas Platform") instead of `saas_platform`. Matrix-backed types still use `matrixRow.name`.
-- Specialist console: `saas_platform` company sees tailored prompts on seeded specialists; trades companies see original prompts everywhere.
-- Web Presence: both buttons work as before; labels updated.
+- Deploy the function, then invoke `ai-agent-chat` with `agentType: 'customer_journey'` and a message like "book me an appointment tomorrow at 2pm". Check the response `tool_calls` (or edge function logs) for `create_appointment` / `check_availability`.
+- Second call with "send a review request to that customer" → expect `send_review_request` in tool_calls.
+- Call once with legacy `agentType: 'booking'` → still returns booking tools (now via the alias, superset).
