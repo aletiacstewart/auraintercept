@@ -68,3 +68,61 @@ export async function verifyMetaSignature(
   }
   return { ok: true };
 }
+
+export interface MetaSignedRequestResult {
+  ok: boolean;
+  skipped?: boolean;
+  reason?: string;
+  payload?: Record<string, unknown>;
+}
+
+function b64urlToBytes(s: string): Uint8Array {
+  const b64 = s.replace(/-/g, "+").replace(/_/g, "/")
+    .padEnd(s.length + ((4 - (s.length % 4)) % 4), "=");
+  const bin = atob(b64);
+  return Uint8Array.from(bin, (c) => c.charCodeAt(0));
+}
+
+/**
+ * Verify a Meta `signed_request` string ({base64url_sig}.{base64url_payload}).
+ * Used by deauthorize and data-deletion callbacks. Env-gated the same way as
+ * verifyMetaSignature: if META_APP_SECRET is unset, verification is SKIPPED
+ * with a warning and the decoded payload is still returned.
+ */
+export async function verifyMetaSignedRequest(
+  signedRequest: string,
+): Promise<MetaSignedRequestResult> {
+  const parts = signedRequest.split(".");
+  if (parts.length !== 2) {
+    return { ok: false, reason: "malformed_signed_request" };
+  }
+  const [encodedSig, encodedPayload] = parts;
+
+  let payload: Record<string, unknown>;
+  try {
+    payload = JSON.parse(new TextDecoder().decode(b64urlToBytes(encodedPayload)));
+  } catch {
+    return { ok: false, reason: "payload_not_json" };
+  }
+
+  const secret = Deno.env.get("META_APP_SECRET");
+  if (!secret) {
+    if (!warnedSkip) {
+      console.warn("[meta-webhook-signature] META_APP_SECRET not set — skipping signed_request verification");
+      warnedSkip = true;
+    }
+    return { ok: true, skipped: true, payload };
+  }
+
+  const expectedHex = await hmacSha256Hex(secret, encodedPayload);
+  const providedBytes = b64urlToBytes(encodedSig);
+  let providedHex = "";
+  for (let i = 0; i < providedBytes.length; i++) {
+    providedHex += providedBytes[i].toString(16).padStart(2, "0");
+  }
+
+  if (!timingSafeEq(providedHex, expectedHex)) {
+    return { ok: false, reason: "signature_mismatch", payload };
+  }
+  return { ok: true, payload };
+}

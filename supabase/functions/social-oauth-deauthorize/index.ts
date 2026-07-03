@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { verifyMetaSignedRequest } from "../_shared/meta-webhook-signature.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,10 +20,16 @@ Deno.serve(async (req) => {
     console.log("[social-oauth-deauthorize] Received deauthorization callback");
 
     if (signedRequest) {
-      // Parse the signed_request to get user_id
-      const [, payload] = signedRequest.split(".");
-      const decoded = JSON.parse(atob(payload));
-      const userId = decoded.user_id;
+      const verify = await verifyMetaSignedRequest(signedRequest);
+      if (!verify.ok) {
+        console.error("[social-oauth-deauthorize] signature verification failed:", verify.reason);
+        // Still return 200 to Meta per their requirements, but do NOT act.
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const userId = verify.payload?.user_id as string | undefined;
 
       if (userId) {
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
