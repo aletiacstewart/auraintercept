@@ -861,7 +861,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium text-card-foreground">What happens when my trial ends?</h4>
               <p className="text-sm text-muted-foreground">
-                When your 60-day trial ends, you'll need to subscribe to continue using AI features. Your data will be preserved.
+                When your 60-Day Live Trial ends, you'll need to subscribe to continue using AI features. Your data will be preserved.
               </p>
             </div>
             <div>

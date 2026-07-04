@@ -768,7 +768,7 @@ export function AgentTestConsole({
               )}
               <Badge variant="outline" className="text-xs gap-1">
                 <Sparkles className="h-3 w-3" />
-                Powered by Lovable AI
+                Powered by Aura AI
               </Badge>
             </div>
             <CardDescription>

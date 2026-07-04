@@ -277,10 +277,10 @@ export function GuidedLaunchFlow({ roleMappings, recommendedTier, onBack }: Guid
             Self-Guided Launch
           </Badge>
           <h1 className="text-2xl sm:text-3xl font-brand text-foreground mb-2">
-            Your 14-Day Go-Live Timeline
+            Your 30-Day Onboarding Timeline
           </h1>
           <p className="text-muted-foreground max-w-lg mx-auto">
-            Follow this timeline to go live in 14 days. Complete tasks in order for the best results.
+            Follow this timeline to go live within your first 30 days. Complete tasks in order for the best results.
           </p>
         </div>
 

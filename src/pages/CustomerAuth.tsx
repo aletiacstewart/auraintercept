@@ -156,9 +156,24 @@ export default function CustomerAuth() {
 
       if (roleError) {
         console.error('Role assignment error:', roleError);
-        toast({ title: 'Warning', description: 'Account created but setup incomplete. Please contact support.', variant: 'destructive' });
-        setIsLoading(false);
-        return;
+        // Retry once — profile trigger may still be settling.
+        await new Promise((r) => setTimeout(r, 800));
+        const { error: retryError } = await supabase
+          .from('user_roles')
+          .insert({ user_id: authData.user.id, role: 'customer' });
+        if (retryError) {
+          console.error('Role assignment retry failed:', retryError);
+          // Sign the user out so they don't land in a role-less state that
+          // silently breaks every gated route.
+          await supabase.auth.signOut();
+          toast({
+            title: 'Setup Incomplete',
+            description: 'We could not finish setting up your account. Please try signing up again in a moment or contact support.',
+            variant: 'destructive',
+          });
+          setIsLoading(false);
+          return;
+        }
       }
 
       toast({ 

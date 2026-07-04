@@ -90,7 +90,7 @@ const OVERRIDES: Record<string, Partial<PortalCopy>> = {
     portalHeaderLabel: 'Vehicle Owner Portal',
     welcomeSubtitle: 'Open a repair order and track your vehicle\u2019s service.' },
   appliance_repair: { customerNoun: 'Customer', requestNoun: 'Repair Ticket',
-    specialistSubtitle: 'Customer-facing specialists for self-diagnosis and warranty status.' },
+    specialistSubtitle: 'Customer-facing specialists for self-diagnosis and service coverage status.' },
   roofing: { customerNoun: 'Property Owner', requestNoun: 'Inspection Request',
     specialistSubtitle: 'Owner-facing specialists for inspections, claims, and storm response.' },
   solar: { customerNoun: 'Homeowner', requestNoun: 'Quote Request',
