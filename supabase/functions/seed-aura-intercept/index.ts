@@ -6,7 +6,6 @@ const corsHeaders = {
 };
 
 const COMPANY_ID = '04c57cbe-358e-4036-a3ad-b777a55f5be0';
-const PASSWORD = 'aiagent*!';
 
 type Persona = {
   email: string;
@@ -27,6 +26,7 @@ async function ensureUser(
   admin: ReturnType<typeof createClient>,
   email: string,
   fullName: string,
+  password: string,
 ): Promise<{ userId: string; created: boolean }> {
   let existing: { id: string } | undefined;
   for (let page = 1; page <= 10; page++) {
@@ -37,7 +37,7 @@ async function ensureUser(
   }
   if (existing) {
     await admin.auth.admin.updateUserById(existing.id, {
-      password: PASSWORD,
+      password,
       email_confirm: true,
       user_metadata: { full_name: fullName },
     });
@@ -45,7 +45,7 @@ async function ensureUser(
   }
   const { data, error } = await admin.auth.admin.createUser({
     email,
-    password: PASSWORD,
+    password,
     email_confirm: true,
     user_metadata: { full_name: fullName },
   });
@@ -53,8 +53,8 @@ async function ensureUser(
   return { userId: data.user.id, created: true };
 }
 
-async function seedPersona(admin: ReturnType<typeof createClient>, p: Persona) {
-  const { userId, created } = await ensureUser(admin, p.email, p.fullName);
+async function seedPersona(admin: ReturnType<typeof createClient>, p: Persona, password: string) {
+  const { userId, created } = await ensureUser(admin, p.email, p.fullName, password);
 
   // Profile — link to Aura Intercept tenant
   await admin.from('profiles').upsert(
@@ -86,6 +86,12 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const seedPassword = Deno.env.get('AURA_TENANT_SEED_PASSWORD');
+    if (!seedPassword || seedPassword.length < 16) {
+      return new Response(JSON.stringify({
+        error: 'AURA_TENANT_SEED_PASSWORD secret missing or too short (min 16 chars). Set it in Cloud secrets before seeding.',
+      }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
 
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
@@ -136,7 +142,7 @@ Deno.serve(async (req: Request) => {
     const results = [];
     for (const p of PERSONAS) {
       try {
-        results.push({ ok: true, ...(await seedPersona(admin, p)) });
+        results.push({ ok: true, ...(await seedPersona(admin, p, seedPassword)) });
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         console.error(`Persona ${p.email} failed:`, msg);
@@ -147,7 +153,6 @@ Deno.serve(async (req: Request) => {
     return new Response(JSON.stringify({
       success: true,
       company: { id: company.id, name: company.name, tier: company.subscription_tier, vertical: company.industry_vertical },
-      password: PASSWORD,
       personas: results,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (e) {
