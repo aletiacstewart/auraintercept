@@ -37,6 +37,14 @@ import { PublicFooter } from '@/components/layout/PublicFooter';
 import { type ServerValidationResult } from '@/lib/password-validation';
 import { BetaCodeInput, type BetaCodeResult } from '@/components/billing/BetaCodeInput';
 import { BetaSignupNotice } from '@/components/billing/BetaSignupNotice';
+import {
+  LAUNCH_PRICING,
+  formatPrice,
+  getMonthlyPrice,
+  getAnnualPrice,
+  getTierPricing,
+  type TierKey,
+} from '@/lib/launchPricing';
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -45,11 +53,36 @@ type AuthMode = 'platform_admin' | 'company' | 'employee' | 'customer';
 
 const VALID_MODES: AuthMode[] = ['platform_admin', 'company', 'employee', 'customer'];
 
+// Prices derived from launchPricing.ts — never hardcode.
+const buildTierOption = (
+  id: TierKey,
+  sub: string,
+  color: 'teal' | 'primary' | 'purple' | 'amber',
+  popular: boolean,
+) => {
+  const t = getTierPricing(id);
+  const monthly = getMonthlyPrice(id);
+  const annual = getAnnualPrice(id);
+  const originalAnnual = LAUNCH_PRICING.active ? t.annualOriginal : annual;
+  return {
+    id,
+    name: t.name,
+    sub,
+    originalMonthly: formatPrice(t.original),
+    monthlyPrice: formatPrice(monthly),
+    annualPrice: formatPrice(Math.round(annual / 12)),
+    annualTotal: formatPrice(annual),
+    savings: formatPrice(Math.max(0, originalAnnual - annual)),
+    color,
+    popular,
+  } as const;
+};
+
 const TIER_OPTIONS = [
-  { id: 'starter',     name: 'Aura Core',  sub: 'Solo operators • Restaurants • Single-location', originalMonthly: '$697',   monthlyPrice: '$497',   annualPrice: '$398', annualTotal: '$4,771', savings: '$1,193',   color: 'teal',    popular: false },
-  { id: 'connect',     name: 'Aura Boost', sub: 'HVAC • Plumbing • Field Service',               originalMonthly: '$1,394', monthlyPrice: '$994',   annualPrice: '$795', annualTotal: '$9,542', savings: '$2,386', color: 'primary', popular: true  },
-  { id: 'performance', name: 'Aura Pro',   sub: 'Growing companies • Multiple technicians',      originalMonthly: '$2,788', monthlyPrice: '$1,988', annualPrice: '$1,590', annualTotal: '$19,085', savings: '$4,771', color: 'purple',  popular: false },
-  { id: 'command',     name: 'Aura Elite', sub: 'Full Suite • Enterprise • Unlimited',           originalMonthly: '$5,576', monthlyPrice: '$3,979', annualPrice: '$3,183', annualTotal: '$38,198', savings: '$9,550', color: 'amber',   popular: false },
+  buildTierOption('starter',     'Solo operators • Restaurants • Single-location', 'teal',    false),
+  buildTierOption('connect',     'HVAC • Plumbing • Field Service',               'primary', true),
+  buildTierOption('performance', 'Growing companies • Multiple technicians',      'purple',  false),
+  buildTierOption('command',     'Full Suite • Enterprise • Unlimited',           'amber',   false),
 ] as const;
 
 export default function SignUp() {

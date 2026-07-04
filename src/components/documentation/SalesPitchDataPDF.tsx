@@ -814,7 +814,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.closingCard}>
         <Text style={styles.closingTitle}>[TARGET] Closing Question</Text>
         <Text style={styles.closingText}>
-          "Based on what you've shared about your business—[recap their situation]—I'd recommend starting with [Tier]. It addresses your immediate need for [primary pain point] while giving you room to grow. Should I walk you through the 60-day trial? The first 30 days are your onboarding window, then 30 days of full live use."
+          "Based on what you've shared about your business—[recap their situation]—I'd recommend starting with [Tier]. It addresses your immediate need for [primary pain point] while giving you room to grow. Should I walk you through the 60-Day Live Trial? The first 30 days are your concierge onboarding window, then 30 days of full live use."
         </Text>
       </View>
 
@@ -850,7 +850,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionLabel}>The Risk Reversal Close</Text>
         <Text style={styles.responseText}>
           "I understand you want to be careful with this decision. Here's what I can offer:{'\n\n'}
-          Start your 60-day trial today. Full access to [tier]. First 30 days = onboarding (we configure everything for you), then 30 days of full live use. The one-time onboarding fee is due at trial start and is non-refundable; cancel any time during the live-use window before your first monthly subscription charge.{'\n\n'}
+          Start your 60-Day Live Trial today. Full access to [tier]. First 30 days = concierge onboarding (we configure everything for you), then 30 days of full live use. The one-time onboarding fee is due at trial start and is non-refundable; cancel any time during the live-use window before your first monthly subscription charge.{'\n\n'}
           There's literally zero risk. The only risk is continuing to miss calls while you think about it.{'\n\n'}
           Can I get you started with that trial right now?"
         </Text>
