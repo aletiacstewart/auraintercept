@@ -87,7 +87,7 @@ export function LaunchPathSelector({
                   { icon: Calendar, text: '45-minute kickoff call' },
                   { icon: Settings, text: 'We configure everything' },
                   { icon: Video, text: 'Test calls with you' },
-                  { icon: CheckCircle2, text: 'Go live in 7-14 days' },
+                  { icon: CheckCircle2, text: 'Go live in your first 30 days' },
                 ].map((item, index) => (
                   <li key={index} className="flex items-center gap-2 text-sm text-foreground">
                     <item.icon className="h-4 w-4 text-primary" />
@@ -121,12 +121,12 @@ export function LaunchPathSelector({
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Set it up yourself with our 14-day guided timeline and video tutorials.
+                Set it up yourself with our 30-day guided onboarding timeline and video tutorials.
               </p>
               
               <ul className="space-y-2">
                 {[
-                  { icon: Calendar, text: '14-day launch timeline' },
+                  { icon: Calendar, text: '30-day onboarding timeline' },
                   { icon: Video, text: 'Step-by-step video guides' },
                   { icon: HelpCircle, text: 'In-app help & tooltips' },
                   { icon: CheckCircle2, text: 'Go live at your pace' },
@@ -154,11 +154,11 @@ export function LaunchPathSelector({
                 <p className="font-medium text-foreground mb-1">Time to Live</p>
                 <div className="flex justify-around">
                   <div>
-                    <p className="font-bold text-primary">7-14 days</p>
+                    <p className="font-bold text-primary">Within 30 days</p>
                     <p className="text-xs text-muted-foreground">Concierge</p>
                   </div>
                   <div>
-                    <p className="font-bold text-foreground">14-21 days</p>
+                    <p className="font-bold text-foreground">Within 30 days</p>
                     <p className="text-xs text-muted-foreground">Self-Guided</p>
                   </div>
                 </div>

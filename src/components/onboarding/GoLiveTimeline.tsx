@@ -1,4 +1,4 @@
-// GoLiveTimeline component for 14-day launch visualization
+// GoLiveTimeline component for 30-day onboarding visualization (part of the 60-Day Live Trial)
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -149,7 +149,7 @@ export function GoLiveTimeline({
   const navigate = useNavigate();
   const today = new Date();
   const currentDay = Math.max(1, differenceInDays(today, startDate) + 1);
-  const goLiveDate = addDays(startDate, 13); // 14 days from start (0-indexed)
+  const goLiveDate = addDays(startDate, 29); // 30 days from start (0-indexed) — end of onboarding window
   const daysUntilLive = Math.max(0, differenceInDays(goLiveDate, today));
   
   const completedCount = milestones.filter(m => m.isComplete).length;

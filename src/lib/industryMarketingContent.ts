@@ -233,11 +233,11 @@ export const INDUSTRY_CONTENT: Record<string, IndustryContent> = {
     'appliance_repair', 'Appliance Repair', '🧊', 'Specialized Home',
     {
       headline: 'Fridge died. Aura dispatches.',
-      subheadline: 'Aura captures make/model, symptom, and warranty status so your tech rolls with the right part on the truck.',
+      subheadline: 'Aura captures make/model, symptom, and service coverage status so your technician rolls with the right part on the truck.',
     },
     [
       { title: 'Capture make + model up front', description: 'No more wasted trips — parts are already in the van.' },
-      { title: 'Warranty triage', description: 'Aura asks for warranty status and routes warranty work to your manufacturer queue.' },
+      { title: 'Service coverage triage', description: 'Aura asks about active service plans or manufacturer coverage and routes covered work to your manufacturer queue.' },
       { title: 'Same-day diagnostic booking', description: 'Customers see real availability and book on the spot.' },
     ],
     ['My Whirlpool fridge stopped cooling last night.', 'Washer is making a loud banging noise.', 'My oven won\'t heat past 200°F.'],

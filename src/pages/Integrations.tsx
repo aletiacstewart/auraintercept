@@ -377,7 +377,7 @@ export default function Integrations() {
                   <Link to="/dashboard/integrations/social">Social Media</Link>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/dashboard/integrations/crm">CRM Sync</Link>
+                  <Link to="/dashboard/integrations/crm">Lead Capture &amp; Scoring</Link>
                 </Button>
               </div>
             </div>
