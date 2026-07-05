@@ -112,6 +112,7 @@ import NotFound from "./pages/NotFound";
 import PlatformIssues from "./pages/PlatformIssues";
 import PlatformHealth from "./pages/PlatformHealth";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
+import OAuthConsent from "./pages/OAuthConsent";
 import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
 import CompanyBlog from "./pages/CompanyBlog";
