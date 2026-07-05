@@ -1,7 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { TIER_AGENT_CONFIG } from '@/lib/subscriptionAgentConfig';
-import { formatMonthlyCost } from '@/lib/launchPricing';
+import { formatMonthlyCost, formatOnboardingCost, getTierPricing, formatPrice } from '@/lib/launchPricing';
 
 // Cyber-Sentry inspired palette (PDF renderer requires literal colors).
 const c = {
@@ -506,8 +506,7 @@ const DISCOVERY_QUESTIONS = [
   'What\'s the #1 thing that would unlock 20% more revenue right now?',
 ];
 
-const ELEVATOR_PITCH =
-  'Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at $497/mo (Beta Pricing, was $697). Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There\'s a 60-day live trial with concierge onboarding in the first 30 days, then 30 days of full live use.';
+const ELEVATOR_PITCH = `Aura Intercept is an AI operations platform that consolidates 24 AI agents into 10 operatives — one for the front desk, one for marketing, one for dispatch, one for billing, and so on. It answers your phone, texts, emails, and chat 24/7, books appointments, dispatches techs, sends invoices, and runs your marketing — all under one platform fee starting at ${formatMonthlyCost('starter')}/mo (Beta Pricing, was ${formatPrice(getTierPricing('starter').original)}). Customers bring their own SignalWire, Stripe, etc., so we never mark up usage. There's a 60-day live trial with concierge onboarding in the first 30 days, then 30 days of full live use.`;
 
 const DEMO_FLOW = [
   '0:00 — Show Command Center. Ask Aura a natural-language question. Wow.',
@@ -519,10 +518,10 @@ const DEMO_FLOW = [
 ];
 
 const TIER_FIT = [
-  { who: '1–10 employees, no field techs, owner-operator', tier: 'Aura Core ($497/mo)' },
-  { who: '10–25 employees, dispatch + field crews, needs routing/ETA', tier: 'Aura Boost ($994/mo)' },
-  { who: '25–50 employees, billing + analytics critical', tier: 'Aura Pro ($1,988/mo)' },
-  { who: '50+ employees, multi-team, wants AI Operatives Hub + everything', tier: 'Aura Elite ($3,979/mo)' },
+  { who: '1–10 employees, no field techs, owner-operator', tier: `Aura Core (${formatMonthlyCost('starter')}/mo)` },
+  { who: '10–25 employees, dispatch + field crews, needs routing/ETA', tier: `Aura Boost (${formatMonthlyCost('connect')}/mo)` },
+  { who: '25–50 employees, billing + analytics critical', tier: `Aura Pro (${formatMonthlyCost('performance')}/mo)` },
+  { who: '50+ employees, multi-team, wants AI Operatives Hub + everything', tier: `Aura Elite (${formatMonthlyCost('command')}/mo)` },
 ];
 
 const OBJECTIONS_EXTRA = [
@@ -542,7 +541,7 @@ const EMAIL_TEMPLATES = [
 ];
 
 const SMS_TEMPLATES = [
-  { name: 'Cold opener', body: 'Hi {{first_name}} — saw {{company}} online. Curious if you\'re losing calls after hours? We have an AI receptionist that answers 24/7 from $497/mo. Worth a quick demo?' },
+  { name: 'Cold opener', body: `Hi {{first_name}} — saw {{company}} online. Curious if you're losing calls after hours? We have an AI receptionist that answers 24/7 from ${formatMonthlyCost('starter')}/mo. Worth a quick demo?` },
   { name: 'Demo nudge', body: 'Still on for our {{day}} demo? I\'ll show how Aura would handle your last week of missed calls. — {{rep}}' },
   { name: 'Trial activation', body: 'Trial link: auraintercept.ai/auth — 60 days, concierge setup in the first 30. Reply if you need help.' },
 ];
@@ -557,11 +556,15 @@ const TALKING_POINTS = [
 
 const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
+const onboardingLine = (key: 'starter' | 'connect' | 'performance' | 'command') => {
+  const t = getTierPricing(key);
+  return `${formatOnboardingCost(key)} one-time (50% OFF — was ${formatPrice(t.onboardingOriginal)})`;
+};
 const TIERS: Array<{ key: keyof typeof TIER_AGENT_CONFIG; onboarding: string; employees: string }> = [
-  { key: 'starter', onboarding: '$249 one-time (50% OFF — was $497)', employees: '10 employees' },
-  { key: 'connect', onboarding: '$497 one-time (50% OFF — was $994)', employees: '25 employees' },
-  { key: 'performance', onboarding: '$994 one-time (50% OFF — was $1,988)', employees: '50 employees' },
-  { key: 'command', onboarding: '$1,990 one-time (50% OFF — was $3,979)', employees: 'Unlimited employees' },
+  { key: 'starter', onboarding: onboardingLine('starter'), employees: '10 employees' },
+  { key: 'connect', onboarding: onboardingLine('connect'), employees: '25 employees' },
+  { key: 'performance', onboarding: onboardingLine('performance'), employees: '50 employees' },
+  { key: 'command', onboarding: onboardingLine('command'), employees: 'Unlimited employees' },
 ];
 
 const opName = (id: string) => OPERATIVES.find(o => o.id === id)?.name ?? id;
