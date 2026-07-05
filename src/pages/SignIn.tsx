@@ -31,6 +31,9 @@ export default function SignIn() {
   const rawMode = searchParams.get('mode');
   const mode: AuthMode = rawMode && VALID_MODES.includes(rawMode as AuthMode) ? (rawMode as AuthMode) : 'company';
   const source = searchParams.get('source');
+  const nextRaw = searchParams.get('next');
+  // Only accept same-origin relative paths, per app-mcp-server-authoring redirect rules.
+  const nextPath = nextRaw && nextRaw.startsWith('/') && !nextRaw.startsWith('//') ? nextRaw : null;
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -73,7 +76,9 @@ export default function SignIn() {
 
       toast({ title: 'Welcome back!', description: 'Redirecting...' });
 
-      if (roleData?.role === 'customer') {
+      if (nextPath) {
+        navigate(nextPath, { replace: true });
+      } else if (roleData?.role === 'customer') {
         navigate('/customer');
       } else {
         navigate('/dashboard');
