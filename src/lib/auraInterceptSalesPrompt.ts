@@ -2,6 +2,18 @@
 // Used by the admin "Copy Talk to Aura sales prompt" button so the latest voice
 // prompt can be pasted into the ElevenLabs agent dashboard. Keep in sync with
 // the edge-function copy — both should be updated together.
+import {
+  LAUNCH_PRICING,
+  formatPrice,
+  formatSalesLine,
+  getAnnualPrice,
+  getTierPricing,
+} from './launchPricing';
+
+const core = getTierPricing('starter');
+const boost = getTierPricing('connect');
+const pro = getTierPricing('performance');
+const elite = getTierPricing('command');
 
 const KNOWLEDGE_BASE = `KNOWLEDGE BASE — Aura Intercept
 
@@ -18,15 +30,15 @@ What it is:
   lead scoring, and marketing.
 
 Pricing — 4 Tiers (Beta Pricing is ACTIVE — quote the sale price first, mention the original was higher):
-- Aura Core — $497/mo + $249 onboarding   (Beta — was $697/mo + $497 onboarding)
+- ${core.name} — ${formatSalesLine('starter')}
     8 Smart AI Agents · 3 Consoles · 10 employees. Solo, salons, restaurants, single-truck.
-- Aura Boost — $994/mo + $497 onboarding  (Beta — was $1,394/mo + $994 onboarding)
+- ${boost.name} — ${formatSalesLine('connect')}
     12 Smart AI Agents · 5 Consoles · 25 employees. HVAC, plumbing, electrical, field service.
-- Aura Pro — $1,988/mo + $994 onboarding  (Beta — was $2,788/mo + $1,988 onboarding)
+- ${pro.name} — ${formatSalesLine('performance')}
     16 Smart AI Agents · 5 Consoles · 50 employees. Adds campaigns + social automation.
-- Aura Elite — $3,979/mo + $1,990 onboarding (Beta — was $5,576/mo + $3,979 onboarding)
+- ${elite.name} — ${formatSalesLine('command')}
     All 24 Smart AI Agents · all 7 Consoles + AI Operatives Hub · unlimited employees.
-- Annual: Core $4,771/yr · Boost $9,542/yr · Pro $19,085/yr · Elite $38,198/yr (~20% off).
+- Annual: Core ${formatPrice(getAnnualPrice('starter'))}/yr · Boost ${formatPrice(getAnnualPrice('connect'))}/yr · Pro ${formatPrice(getAnnualPrice('performance'))}/yr · Elite ${formatPrice(getAnnualPrice('command'))}/yr (~20% off).
 - Onboarding fee = 50% of beta monthly per tier, due at start of the 60-Day Live Trial,
   non-refundable once concierge onboarding begins.
 
