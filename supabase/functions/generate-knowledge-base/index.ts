@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -108,13 +109,7 @@ Return ONLY the JSON object, no additional text.`;
 
     console.log(`Generating knowledge base for ${industry}, companyId: ${companyId || 'none'}`);
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const { response: response, modelUsed: responseModel, fellBackFromPrimary: responseFellBack } = await callAIGatewayWithFallback({
         model: 'google/gemini-3-flash-preview',
         messages: [
           { role: 'system', content: systemPrompt },
@@ -122,8 +117,8 @@ Return ONLY the JSON object, no additional text.`;
         ],
         temperature: 0.7,
         max_tokens: 4000,
-      }),
-    });
+      });
+    if (responseFellBack) console.warn(`[generate-knowledge-base] primary model unavailable, served by ${responseModel}`);
 
     if (!response.ok) {
       if (response.status === 429) {

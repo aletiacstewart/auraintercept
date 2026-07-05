@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { guardedTavilyFetch } from '../_shared/tavily-guard.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -125,21 +126,15 @@ Respond in valid JSON format:
 
 Make each platform's content UNIQUE - not just shortened versions of each other. Adapt tone, format, and approach for each platform's audience.`;
 
-  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  const { response: response, modelUsed: responseModel, fellBackFromPrimary: responseFellBack } = await callAIGatewayWithFallback({
       model: 'google/gemini-2.5-flash',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
       max_tokens: 3000,
-    }),
-  });
+    });
+  if (responseFellBack) console.warn(`[generate-social-batch] primary model unavailable, served by ${responseModel}`);
 
   if (!response.ok) {
     throw new Error(`AI API error: ${response.status}`);
