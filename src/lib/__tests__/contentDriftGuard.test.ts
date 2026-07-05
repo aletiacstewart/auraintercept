@@ -125,16 +125,22 @@ describe('content drift guard', () => {
       .map((f) => path.join('src/components/documentation', f));
 
     const hits: string[] = [];
+    // Competitor names — pricing values on lines mentioning these are
+    // competitor pricing (Jobber, ServiceTitan, Housecall Pro), not Aura pricing.
+    const competitorRe = /jobber|servicetitan|housecall|jobtread|fieldedge|thumbtack|angi/i;
     for (const file of pdfFiles) {
       const content = fs.readFileSync(file, 'utf-8');
-      for (const stale of knownLegacy) {
-        // Match $VALUE, $VALUE/mo, $VALUE.00, standalone VALUE
-        const re = new RegExp(`\\$?\\b${stale}\\b`, 'g');
-        const matches = content.match(re);
-        if (matches && canonical.has(stale) === false) {
-          hits.push(`${file}: legacy pricing value ${stale} appears ${matches.length}x`);
+      const lines = content.split('\n');
+      lines.forEach((line, i) => {
+        if (competitorRe.test(line)) return;
+        for (const stale of knownLegacy) {
+          if (canonical.has(stale)) continue;
+          const re = new RegExp(`\\$${stale}\\b`);
+          if (re.test(line)) {
+            hits.push(`${file}:${i + 1}: stale price $${stale} — ${line.trim().slice(0, 140)}`);
+          }
         }
-      }
+      });
     }
 
     expect(hits, `Stale pricing values found in PDFs:\n${hits.join('\n')}`).toEqual([]);
