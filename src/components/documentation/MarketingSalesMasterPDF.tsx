@@ -1,6 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { TIER_AGENT_CONFIG } from '@/lib/subscriptionAgentConfig';
+import { formatMonthlyCost } from '@/lib/launchPricing';
 
 // Cyber-Sentry inspired palette (PDF renderer requires literal colors).
 const c = {
@@ -529,13 +530,13 @@ const OBJECTIONS_EXTRA = [
   { q: '"We already use SignalWire / Stripe / Resend."', a: 'Perfect — we plug into your existing accounts. Aura never resells provider usage; you keep the same vendor relationships and bills.' },
   { q: '"Onboarding fee feels steep."', a: 'It\'s a one-time concierge cost equal to one month — you get a 30-day live setup of voice, SMS, KB, agents, calendars, and integrations. Without it, most teams take 60–90 days to self-serve.' },
   { q: '"Will my staff resist AI?"', a: 'Aura is the receptionist that frees your staff for high-value work. Plain-English labels (Front Desk, Dispatch, Billing) make it feel like a teammate, not a robot.' },
-  { q: '"What about multi-location?"', a: 'Aura is single-tenant per company today. Multi-location is on the roadmap; current customers operate one Aura per brand or location.' },
+  { q: '"What about multi-location?"', a: 'Aura runs one workspace per company. Customers with multiple brands or physical locations operate a separate Aura workspace per brand — there is no multi-location hierarchy.' },
   { q: '"Can I cancel during the trial?"', a: 'Yes. Monthly billing only begins after day 60. The one-time onboarding fee is non-refundable since concierge work is performed in days 1–30.' },
   { q: '"How do you compare to ServiceTitan / Housecall Pro?"', a: 'Those are operations platforms; Aura is an AI layer that *runs* the operations — answering, booking, dispatching, marketing autonomously. Many customers run Aura alongside an existing FSM.' },
 ];
 
 const EMAIL_TEMPLATES = [
-  { name: 'Cold opener', body: 'Subject: 24/7 AI receptionist for {{company}}\n\nHi {{first_name}} — your team likely misses 20–40% of calls outside business hours. Aura Intercept is an AI receptionist + dispatcher + marketer that answers every call, books appointments, and dispatches your techs — for $497/mo. Worth a 15-min look?' },
+  { name: 'Cold opener', body: `Subject: 24/7 AI receptionist for {{company}}\n\nHi {{first_name}} — your team likely misses 20–40% of calls outside business hours. Aura Intercept is an AI receptionist + dispatcher + marketer that answers every call, books appointments, and dispatches your techs — starting at ${formatMonthlyCost('starter')}. Worth a 15-min look?` },
   { name: 'Demo follow-up', body: 'Subject: Recap + next step\n\nThanks for the time. Pulling together: tier fit ({{tier}}), onboarding timeline (30d), 3rd-party setup list. Reply "go" and we\'ll send the trial signup link.' },
   { name: 'Stalled prospect', body: 'Subject: Quick re-ping\n\nHaven\'t heard back — usually means timing or budget. We have a free AI Opportunity Audit (no card, 10 min) that quantifies missed-call revenue. Worth a look?' },
 ];
