@@ -127,7 +127,7 @@ describe('content drift guard', () => {
     const hits: string[] = [];
     // Competitor names — pricing values on lines mentioning these are
     // competitor pricing (Jobber, ServiceTitan, Housecall Pro), not Aura pricing.
-    const competitorRe = /jobber|servicetitan|housecall|jobtread|fieldedge|thumbtack|angi/i;
+    const competitorRe = /jobber|servicetitan|housecall|jobtread|fieldedge|thumbtack|angi|grow\s+tier|marketing\s+pro|marketing\s+suite|phones\s+pro/i;
     for (const file of pdfFiles) {
       const content = fs.readFileSync(file, 'utf-8');
       const lines = content.split('\n');
