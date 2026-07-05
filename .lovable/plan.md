@@ -1,77 +1,103 @@
-# Deferred Items — Sequenced Follow-Up Plan
+# Full Site Audit + Auto-Fix Pass
 
-Four passes, executed in order. Each pass ends with a verification step before the next begins so regressions surface early.
+Single sweeping pass across the app. Findings and fixes ship together in phased commits so we can spot-check between phases, but I don't stop for approval between phases unless something looks structurally wrong.
 
----
+## Phase 0 — Inventory (read-only, ~1 turn)
 
-## Pass 1 — DB Security (1.4 + 1.5)
+Produce an internal working manifest (not shipped to user) covering:
 
-**Goal:** Close storage-bucket enumeration and blanket `SECURITY DEFINER` `EXECUTE` grants without breaking public widget RPCs.
+- **Routes** — every route in `src/App.tsx` + nested routers. Confirm each renders a real page (no `NotFound`, no orphan).
+- **Consoles** — 10 operative consoles + Dashboard, Field Ops, Dispatch, Business Mgt, Customer Portal, Social, Content Engine, Analytics, Marketing/Sales, Receptionist, Appointment, Pipeline, Custom.
+- **Agents** — all 24 agents in `agentStyles.ts` / `subscriptionAgentConfig.ts`. Cross-check against edge functions that back them.
+- **Edge functions** — enumerate `supabase/functions/*`. Flag any UI call site pointing at a function that no longer exists, and any function with no call site.
+- **Buttons/links** — grep for `onClick`, `<Link`, `navigate(`, `href=`. Flag `TODO`, `console.log('todo`, empty handlers, `href="#"`, `disabled` w/o reason.
+- **Mock data** — grep for `mock`, `fake`, `sample`, `demoData`, `Lorem`, hardcoded arrays used as list sources in production pages (exclude `/dashboard/demo-seeder` and marketing surfaces).
+- **Guides & docs** — `Help.tsx`, `AIAgentGuide.tsx`, `IntegrationDocs.tsx`, `helpContentConfig.ts`, `industryHelpContent.ts`, `industryHelpPrompts.ts`, per-console "How to use" panels, install pages (5 PWA install pages), export docs (`ExportDocs`, PDF generators in `src/lib/pdf/*`), tutorial content (`useTutorial.ts`), walkthrough (`aura-walkthrough.mp4` context copy).
+- **Pricing/tier/naming drift** — cross-check every human-readable pricing/tier/agent-name string against `launchPricing.ts` + `canonicalNames.ts` + memory registry.
+- **Empty states** — verify every list surface uses `IndustryEmptyState` (per memory), not blank divs or fake rows.
 
-Steps:
-1. Inventory: list every `storage.buckets` row and every `SECURITY DEFINER` function in `public` with its current `EXECUTE` grants.
-2. Cross-reference each SECURITY DEFINER function against callers (widget code, edge functions, unauthenticated pages). Categorize:
-   - **Keep public EXECUTE** — `get_company_public_info*`, `get_company_feature_flags`, `get_company_industry_pack`, `get_appointment_by_token`, `get_appointment_by_customer_token`, `get_company_calendar_feed_token` (already marked intentional).
-   - **Restrict to `authenticated`** — anything only signed-in dashboards use.
-   - **Restrict to `service_role`** — anything only edge functions use.
-3. Single migration: `REVOKE EXECUTE ... FROM PUBLIC` on all SECURITY DEFINER functions, then targeted `GRANT EXECUTE` per the categorization above.
-4. Storage: add RLS on `storage.buckets` denying anon `SELECT` (bucket listing) while keeping per-object policies intact.
-5. Verify: run `supabase--linter` and `security--run_security_scan`, load public widget, public booking, customer portal, and unauthenticated smart-website pages.
+## Phase 1 — Functional fixes (P0)
 
-Rollback: single migration is easily reverted if a widget breaks.
+- Wire or remove **non-functional buttons** (dead onClicks, `href="#"`, "Coming soon" that has no toggle).
+- Fix **broken navigation** (routes that don't exist, links to deleted pages).
+- Remove **references to deleted features** (CRM, warranty, multi-location — per memory these are removed but stale mentions may exist).
+- Confirm every **agent** has a live edge function backing it; if not, hide the trigger behind a feature flag / disabled state with clear copy.
+- Confirm each **console tab** actually loads data (no perpetual skeleton, no infinite spinner from a missing query).
 
----
+## Phase 2 — Mock data purge → industry empty states
 
-## Pass 2 — Stage 4 Color-Token Purge (~150 instances)
+Per user's answer, **replace all mock/placeholder data with `IndustryEmptyState`** (no hiding).
 
-**Goal:** Replace hardcoded color utilities (`text-white`, `bg-black`, `bg-[#...]`, `rgba(...)`) with semantic tokens from `index.css` — per the Cyber-Sentry design standard.
+- Grep + fix: hardcoded arrays feeding dashboards, KPIs, lists, charts.
+- Every list/table without rows → `IndustryEmptyState` with tenant-appropriate CTA.
+- Every KPI card with no live source → either wire to the real query (if it exists) or render a "No data yet — [CTA]" state using the pack's copy.
+- Charts without data → empty-chart component with the same industry CTA pattern.
 
-Steps:
-1. Scan: `rg -n "bg-\[#|text-\[#|border-\[#|#[0-9a-fA-F]{6}|rgba\(" src/` and bucket by file. `src/pages/Index.tsx` (~76) done first as a reference.
-2. For each file, map raw values to existing tokens (`--primary`, `--secondary-accent`, `--background`, `--foreground`, `--muted`, etc.). Add new tokens to `index.css` only if truly missing.
-3. Convert in batches of ~10 files, screenshot before/after via Playwright at 1280×1800 for the top routes (`/`, `/dashboard`, `/dashboard/ai-agent`, console pages).
-4. Verify: visual diff each batch; confirm dark mode still reads correctly.
+## Phase 3 — Content consistency sweep
 
-No functional/business-logic changes — presentation only.
+- **Pricing strings** — all human-readable prices route through `launchPricing.ts` helpers (`formatMonthlyCost`, `formatOnboardingCost`, `formatSalesLine`). Purge any remaining `$497` / `$697` / `$994` string literals in copy, prompts, PDFs, blog templates, campaign templates, marketing pages.
+- **Tier names** — canonical: Aura Core, Aura Boost, Aura Pro, Aura Elite. Purge legacy names in visible copy.
+- **Agent names / operative labels** — reconcile against `canonicalNames.ts` + memory (Front Desk, On The Way, Billing, etc.).
+- **Trial copy** — 60-Day Live Trial (30d onboarding + 30d live). Purge any "14-day" / "30-day trial" remnants.
+- **3rd-party disclaimers** — every SignalWire / ElevenLabs / Resend / Tavily / Stripe / Upload-Post surface has the customer-pass-through disclaimer per `legal/third-party-fee-disclaimer` memory. No "bundled/overage/absorbed" copy.
+- **Industry-aware copy** — Help + install pages + console headers resolve terminology through `useIndustryPack` + `getNavLabels` (per `features/help/industry-aware-content-standard`). No hardcoded "HVAC", "technician", "AC repair" in generic surfaces.
 
----
+## Phase 4 — Guide rewrites (per-console, full rewrites)
 
-## Pass 3 — 2.2 Price Strings in Prompts/Templates
+Per user's answer, **full rewrite per console**, plus author guides where missing. Each guide follows the same template:
 
-**Goal:** Remove remaining hardcoded tier prices from long templated strings so `launchPricing.ts` remains the single source of truth.
+```text
+1. What this console does (1 sentence, industry-aware)
+2. Who uses it (role)
+3. Step-by-step first-run walkthrough (5–8 steps)
+4. Key AI actions you can ask Aura in this console (5 examples, pack-aware)
+5. Common issues + fixes
+6. What connects (integrations / other consoles this feeds)
+```
 
-Files:
-- `src/pages/AIAgentGuide.tsx`
-- `src/lib/subscriptionAgentConfig.ts`
-- `src/lib/helpSystemPrompt.ts`
-- `src/lib/auraInterceptSalesPrompt.ts`
+Consoles covered (full rewrite each):
 
-Steps:
-1. Read each file; identify every literal price/tier string.
-2. Introduce a `buildPricingBlurb()` helper (or reuse existing one from `launchPricing.ts`) that returns the canonical text with strikethrough originals + beta sale + onboarding, per Core memory.
-3. Replace inline strings with template interpolation of the helper output.
-4. Verify: unit-snapshot each generated prompt; visit AIAgentGuide page and confirm rendered copy matches active `LAUNCH_PRICING`.
+- Dashboard (Simple + Pro modes)
+- Field Ops Console
+- Dispatch/GPS Console
+- Business Management Console
+- Marketing & Sales Console
+- Social Media Console
+- Content Engine Console
+- Analytics Console
+- Customer Portal Console
+- Receptionist Console
+- Appointment Console
+- Pipeline Console
+- Technician Console (mobile)
+- Customer Portal (customer-facing)
+- Onboarding / Fast Start
+- Integrations pages (CRM, Calendar, Email, SMS, Voice, Tavily)
+- Settings (7 categories)
+- Help hub (index rewrite tying them together)
 
----
+Delivery: rewritten copy lives in `helpContentConfig.ts` + `industryHelpContent.ts` + new per-console `*.help.ts` sidecars where appropriate. Install pages (5 PWA installers) get fresh step-by-step per install method.
 
-## Pass 4 — 5.3 AI Gateway Fallback Model Wiring
+## Phase 5 — Export documents
 
-**Goal:** When the primary Lovable AI model returns 429/5xx, transparently retry against a fallback model of the same family before surfacing an error.
+- Regenerate PDF templates (`src/lib/pdf/*`, outreach toolkit, audit report, ROI calculator export, agent guide export).
+- Ensure every generated doc: current pricing, current tier names, current disclaimers, industry-aware terminology, no dead feature references, no "Lovable" text visible to customers.
+- QA every PDF/PPT by rendering to image and eyeballing per `documents-artifacts` rule.
 
-Steps:
-1. Identify the shared AI-gateway call site (likely inside an edge function wrapper or `src/lib/*` helper — locate first).
-2. Add a `MODEL_FALLBACK_CHAIN` map, e.g.:
-   - `google/gemini-2.5-pro` → `google/gemini-2.5-flash` → `google/gemini-2.5-flash-lite`
-   - `openai/gpt-5` → `openai/gpt-5-mini` → `openai/gpt-5-nano`
-3. Wrap the call: on `429` (rate-limit) or `5xx`, log a `protocol_switch_event`, retry once with the next model in chain. Preserve original request shape.
-4. Surface the actual model used in the response metadata so the console can show it.
-5. Verify: unit-test the wrapper with a mocked 429; watch `ai_agent_logs` for a real switch event.
+## Phase 6 — Verification
 
----
+- `tsgo` typecheck (harness runs it).
+- Playwright smoke: dashboard, one console per category, one install page, one export doc, one industry-specific empty state. Screenshots to `/tmp/browser/`.
+- Build clean.
+- Report back: what was fixed, what was rewritten, what (if anything) I flagged as needing user decision.
 
-## Technical Notes
+## Deliverable
 
-- Each pass produces its own migration/PR-equivalent so any single pass can be reverted independently.
-- Pass 1 is the only one that touches the database. Passes 2–4 are code-only.
-- After Pass 1, mark the stale scanner findings (`create-demo-trial`, `seed-demo-accounts-v2`) as ignored via `security--manage_security_finding` and update `@security-memory`.
-- I'll check in after Pass 1 and Pass 2 before starting the next, since those have the highest regression risk.
+A single closing message summarizing: routes touched, functional fixes count, mock-data instances replaced, consoles rewritten, exports regenerated, and any items I couldn't auto-decide (with recommendation).
+
+## Scope notes / risks
+
+- **Not touching**: `auth.users` schema, Stripe price IDs (legacy grandfathered), `src/integrations/supabase/client.ts` + `types.ts` (auto-gen), demo seeder data.
+- **Deferred (from prior plan, still deferred)**: Pass 2 color-token purge (~548 instances) — user chose to skip and this pass respects that unless a color mismatch is directly inside a rewritten guide.
+- **High-risk file**: `src/pages/Index.tsx` marketing page — I'll only touch stale pricing/tier/agent copy there, not restructure.
+- **Turn budget**: this is large. If I hit ~30 tool turns without finishing, I'll pause, deliver what's done, and list what remains.
