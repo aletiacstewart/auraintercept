@@ -1,6 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { TIER_AGENT_CONFIG } from '@/lib/subscriptionAgentConfig';
+import { formatMonthlyCost } from '@/lib/launchPricing';
 
 // Cyber-Sentry inspired palette (PDF renderer requires literal colors).
 const c = {
