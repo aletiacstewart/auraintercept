@@ -536,7 +536,7 @@ const OBJECTIONS_EXTRA = [
 ];
 
 const EMAIL_TEMPLATES = [
-  { name: 'Cold opener', body: `Subject: 24/7 AI receptionist for {{company}}\n\nHi {{first_name}} — your team likely misses 20–40% of calls outside business hours. Aura Intercept is an AI receptionist + dispatcher + marketer that answers every call, books appointments, and dispatches your techs — starting at ${formatMonthlyCost('core')}. Worth a 15-min look?` },
+  { name: 'Cold opener', body: `Subject: 24/7 AI receptionist for {{company}}\n\nHi {{first_name}} — your team likely misses 20–40% of calls outside business hours. Aura Intercept is an AI receptionist + dispatcher + marketer that answers every call, books appointments, and dispatches your techs — starting at ${formatMonthlyCost('starter')}. Worth a 15-min look?` },
   { name: 'Demo follow-up', body: 'Subject: Recap + next step\n\nThanks for the time. Pulling together: tier fit ({{tier}}), onboarding timeline (30d), 3rd-party setup list. Reply "go" and we\'ll send the trial signup link.' },
   { name: 'Stalled prospect', body: 'Subject: Quick re-ping\n\nHaven\'t heard back — usually means timing or budget. We have a free AI Opportunity Audit (no card, 10 min) that quantifies missed-call revenue. Worth a look?' },
 ];
