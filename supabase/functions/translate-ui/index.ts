@@ -1,5 +1,6 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -62,20 +63,14 @@ Rules:
 - Keep tone concise and product-appropriate.
 - No explanations, no markdown, no numbering — just the JSON array.`;
 
-      const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { response: aiResp, modelUsed: aiRespModel, fellBackFromPrimary: aiRespFellBack } = await callAIGatewayWithFallback({
           model: 'google/gemini-3-flash-preview',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: numbered },
           ],
-        }),
-      });
+        });
+      if (aiRespFellBack) console.warn(`[translate-ui] primary model unavailable, served by ${aiRespModel}`);
 
       if (!aiResp.ok) {
         const errText = await aiResp.text();

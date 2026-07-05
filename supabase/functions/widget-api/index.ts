@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -614,19 +615,13 @@ GUIDELINES:
       ];
 
       // Single-pass streaming with tool support - uses faster model
-      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const { response: aiResponse, modelUsed: aiResponseModel, fellBackFromPrimary: aiResponseFellBack } = await callAIGatewayWithFallback({
           model: "google/gemini-3-flash-preview",
           messages: [{ role: "system", content: systemPrompt }, ...messages],
           tools,
           stream: true,
-        }),
-      });
+        });
+      if (aiResponseFellBack) console.warn(`[widget-api] primary model unavailable, served by ${aiResponseModel}`);
 
       if (!aiResponse.ok) {
         const errorText = await aiResponse.text();
@@ -856,13 +851,7 @@ GUIDELINES:
         }
         
         // Make follow-up streaming request with tool results
-        const followUpResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        const { response: followUpResponse, modelUsed: followUpResponseModel, fellBackFromPrimary: followUpResponseFellBack } = await callAIGatewayWithFallback({
             model: "google/gemini-3-flash-preview",
             messages: [
               { role: "system", content: systemPrompt },
@@ -871,8 +860,8 @@ GUIDELINES:
               ...toolResults,
             ],
             stream: true,
-          }),
-        });
+          });
+        if (followUpResponseFellBack) console.warn(`[widget-api] primary model unavailable, served by ${followUpResponseModel}`);
 
         if (!followUpResponse.ok) {
           return new Response(JSON.stringify({ error: 'AI service error' }), {

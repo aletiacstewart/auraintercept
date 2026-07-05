@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,13 +31,7 @@ serve(async (req) => {
     console.log("Document content length:", documentContent.length);
 
     // Use AI to extract inventory items from the document
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const { response: response, modelUsed: responseModel, fellBackFromPrimary: responseFellBack } = await callAIGatewayWithFallback({
         model: "google/gemini-2.5-flash",
         messages: [
           {
@@ -72,8 +67,8 @@ Example output format:
             content: `Extract inventory items from this document:\n\n${documentContent}`
           }
         ],
-      }),
-    });
+      });
+    if (responseFellBack) console.warn(`[parse-inventory-document] primary model unavailable, served by ${responseModel}`);
 
     if (!response.ok) {
       if (response.status === 429) {

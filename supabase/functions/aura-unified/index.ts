@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { loadCompanyWorkspace, buildIndustryPromptSnippet } from "../_shared/workspace.ts";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -139,21 +140,15 @@ serve(async (req) => {
     const systemPrompt = INTENT_CLASSIFICATION_PROMPT + industrySnippet;
 
     // Step 1: Classify intent
-    const classificationResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const { response: classificationResponse, modelUsed: classificationResponseModel, fellBackFromPrimary: classificationResponseFellBack } = await callAIGatewayWithFallback({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: input }
         ],
         temperature: 0.1,
-      }),
-    });
+      });
+    if (classificationResponseFellBack) console.warn(`[aura-unified] primary model unavailable, served by ${classificationResponseModel}`);
 
     if (!classificationResponse.ok) {
       if (classificationResponse.status === 429) {

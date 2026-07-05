@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -91,13 +92,7 @@ serve(async (req) => {
 
     // ============ SUGGESTIONS FAST PATH ============
     if (channel === "suggestions") {
-      const suggestionRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")!}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const { response: suggestionRes, modelUsed: suggestionResModel, fellBackFromPrimary: suggestionResFellBack } = await callAIGatewayWithFallback({
           model: "google/gemini-2.5-flash-lite",
           messages: [
             {
@@ -109,8 +104,8 @@ serve(async (req) => {
               content: `Generate 5 campaign topic ideas based on this theme: "${topic}"`,
             },
           ],
-        }),
-      });
+        });
+      if (suggestionResFellBack) console.warn(`[content-engine] primary model unavailable, served by ${suggestionResModel}`);
       const suggData = await suggestionRes.json();
       const raw = suggData.choices?.[0]?.message?.content || "[]";
       let suggestions: string[] = [];
@@ -223,21 +218,15 @@ Format: JSON array with objects containing: message, character_count`,
     const userPrompt = channelPrompts[channel] || `Generate content for ${topic}`;
 
     // ============ CALL LOVABLE AI ============
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${lovableApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const { response: response, modelUsed: responseModel, fellBackFromPrimary: responseFellBack } = await callAIGatewayWithFallback({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: industrySystemPrompt },
           { role: "user", content: userPrompt + (additionalContext ? `\n\nAdditional context: ${JSON.stringify(additionalContext)}` : "") },
         ],
         response_format: { type: "json_object" },
-      }),
-    });
+      });
+    if (responseFellBack) console.warn(`[content-engine] primary model unavailable, served by ${responseModel}`);
 
     if (!response.ok) {
       if (response.status === 429) {

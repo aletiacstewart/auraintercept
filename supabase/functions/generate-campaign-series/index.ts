@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -129,13 +130,7 @@ Space touchpoints appropriately across the ${durationWeeks} weeks.`;
 
     console.log(`Generating ${totalTouchpoints} touchpoints for ${durationWeeks}-week ${campaignType} campaign`);
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const { response: response, modelUsed: responseModel, fellBackFromPrimary: responseFellBack } = await callAIGatewayWithFallback({
         model: 'google/gemini-3-flash-preview',
         messages: [
           { role: 'system', content: systemPrompt },
@@ -143,8 +138,8 @@ Space touchpoints appropriately across the ${durationWeeks} weeks.`;
         ],
         temperature: 0.8,
         max_tokens: 4000,
-      }),
-    });
+      });
+    if (responseFellBack) console.warn(`[generate-campaign-series] primary model unavailable, served by ${responseModel}`);
 
     if (!response.ok) {
       if (response.status === 429) {
