@@ -471,4 +471,50 @@ export const HOW_TO_USE: Record<string, Content> = {
     example:
       'A prospect wants a same-day estimate walkthrough. You spin up a room, text the link, jump on together, share the quote screen, and the whole session shows up in Call History with the appointment attached.',
   },
+
+  dashboard: {
+    title: 'Dashboard',
+    whoUsesIt:
+      'The owner, company admin, or office manager. This is the single glance-first surface for the whole business — Simple view for the daily read, Pro view for the full grid.',
+    runsAutomatically: [
+      'Rolls up today’s bookings, revenue, calls, and messages in one view.',
+      'Surfaces what needs your attention (pending quotes, overdue invoices, at-risk jobs).',
+      'Highlights trial progress and setup steps still to complete.',
+      'Adapts the widgets shown to your industry template pack.',
+      'Ask Aura in plain English — the command bar answers any question against your live data.',
+    ],
+    whenYouStepIn: [
+      'Reading the morning snapshot and reacting to any red flags.',
+      'Switching Simple / Pro view (top-right) depending on how deep you want to look.',
+      'Sharing the “Registration Code” with a new team member so they can join your workspace.',
+    ],
+    steps: [
+      'Finish onboarding steps in the Setup nav at the top — every green check unlocks more automation.',
+      'Pick Simple view for a top-5 KPI glance, Pro view for the full widget grid.',
+      'Try the Aura Command Center — type a question like “how did we do yesterday?”',
+      'Click any KPI to drill into the source console.',
+      'Invite your team using the Registration Code chip in the header.',
+    ],
+    aiActions: [
+      'How did we do yesterday',
+      'What needs my attention today',
+      'Show me every quote waiting for approval',
+      'What is my revenue this month vs last',
+      'Draft a message to every customer with an overdue invoice',
+    ],
+    commonIssues: [
+      { q: 'KPIs show zero on a brand-new workspace', a: 'Expected — widgets fill in as bookings, calls, and invoices land. The empty-state CTA on each widget walks you through the fastest way to generate that data.' },
+      { q: 'Widgets don’t match my industry', a: 'Change the industry template pack under Settings → Business Profile; the dashboard rebuilds automatically.' },
+      { q: 'Setup nav won’t clear', a: 'Each step verifies live data (integration connected, first booking, first invoice). Complete the underlying action, then refresh.' },
+      { q: 'Trial banner disappeared', a: 'It hides after the trial ends or the subscription becomes active — check Billing for current status.' },
+    ],
+    connectsWith: [
+      'Every console (each KPI links back to its source)',
+      'Aura Command Center (natural-language query bar)',
+      'Industry template pack (drives widget layout + copy)',
+      'Billing / trial state, onboarding progress, and setup nav',
+    ],
+    example:
+      'Monday 7 AM: you open the dashboard. Simple view shows 12 bookings today, $4,300 pending revenue, three quotes waiting on your approval, and two overdue invoices. You tap the Aura bar, type “send a reminder to the overdue two,” watch it go, and start your day.',
+  },
 };
