@@ -1,76 +1,53 @@
-# Sequenced Pass: Phase 4A → Phase 5 → Phase 2
+## Recommended Next Steps (post-audit)
 
-Executed in order, one phase committed before the next starts.
+The three-phase audit closed the biggest content/data drift. Here are the highest-leverage follow-ups, ordered by user-visible impact vs. effort.
 
-## Phase 4A — Rewrite 4 highest-traffic console guides
+### 1. Console Guide Coverage Expansion (Phase 4B)
+Phase 4A rewrote 4 top consoles. The following still use short/legacy guides or none at all:
+- Communications console (Voice, SMS, Missed Calls)
+- Scheduling / Booking console
+- Content Engine console
+- Social Media console (3-tab consolidated)
+- Cyber-Sentry monitoring
+- Customer Portal (admin view)
+- Analytics console (NLP interface)
+- Settings (7-category)
 
-Target consoles:
-1. **Dashboard** (Simple + Pro modes)
-2. **Field Ops Console** (`/dashboard/ai-consoles/field-ops`)
-3. **Business Management Console** (`/dashboard/ai-consoles/business-mgt-ops`)
-4. **Marketing & Sales Console** (`/dashboard/ai-consoles/marketing-sales`)
+Apply the same 6-section template + `HowToUseModal` wiring. ~2 guides per turn.
 
-Each guide uses the 6-section template:
-```text
-1. What this console does (1 sentence, industry-aware via useIndustryPack)
-2. Who uses it (role)
-3. Step-by-step first-run walkthrough (5–8 steps)
-4. Key AI actions you can ask Aura here (5 pack-aware examples)
-5. Common issues + fixes
-6. What connects (integrations / other consoles this feeds)
-```
+### 2. Live Runtime Smoke Suite
+We verified via `tsgo` + grep. We have NOT verified that every console actually loads without runtime errors after all recent edits. Proposal:
+- Playwright script that logs in as each demo persona (admin, employee, customer) across 3 representative industries
+- Visits every top-level route, captures console errors + screenshot
+- Output: `/tmp/smoke/<route>.png` + error log
+- Fix anything red in a follow-up turn
 
-Delivery:
-- Extend `src/lib/helpContentConfig.ts` with a `consoleGuides` map keyed by console ID.
-- Extend `src/lib/industryHelpContent.ts` so healthcare + trade + restaurant + retail verticals get overrides on section 1 (description), section 3 (walkthrough), and section 4 (AI actions).
-- Render the guide via a shared `<ConsoleGuidePanel />` (new, `src/components/help/ConsoleGuidePanel.tsx`) mounted inside each console header's existing help sheet/drawer (or added if none exists).
-- No visual-design changes to the console shell.
+### 3. Edge Function Health Sweep
+106 edge functions. Recent fallback migration touched 21. Recommend:
+- Query `edge_function_logs` for last 7 days, group by function, surface any with >5% error rate
+- Spot-check the top offenders
+- Confirm all internal-call functions still have `verify_jwt=false` where required
 
-Verification:
-- `tsgo` clean.
-- Playwright: open each of the 4 consoles, open its help drawer, screenshot; open dashboard in Simple + Pro, screenshot.
+### 4. Empty-State Consistency Pass
+`IndustryEmptyState` is used on primary list surfaces. Secondary surfaces likely still show blank cards:
+- Widget/console sub-tabs (integrations, template pickers, agent detail panels)
+- Modal-embedded lists (assign technician, pick customer, pick product)
+- Enumerate, wire `IndustryEmptyState` or a compact variant
 
-## Phase 5 — Export document QA
+### 5. Accessibility + SEO Quick Pass
+- Single H1 per route audit
+- Missing `alt` on images (grep `<img` without `alt`)
+- Meta description length check across all public routes (`/`, `/audit`, `/for-business`, `/pricing`, blog)
+- JSON-LD on pricing + blog if missing
 
-Enumerate every PDF template under `src/components/documentation/*PDF.tsx` and any PDF generator under `src/lib/pdf/`. For each:
+### 6. Security Memory Refresh
+Run `security--run_security_scan`, triage results, update `@security-memory`. Last full sweep predates the fallback migration + guide rewrites.
 
-1. Render sample output to `/tmp/pdf-qa/<name>.pdf`.
-2. `pdftoppm -jpeg -r 120` → inspect every page image with `code--view`.
-3. Fix any of: hardcoded pricing (route through `launchPricing.ts`), stale tier names, removed-feature refs, "Lovable" leaks, layout breaks, clipped text, broken tables.
-4. Confirm the "3rd-party pass-through cost" disclaimer appears wherever integrations are named (per `legal/third-party-fee-disclaimer` memory).
-5. Re-render and re-inspect after fixes.
+### 7. Deferred (only if you want)
+- Color-token purge Pass 2 (previously deferred by you)
+- PDF visual QA via headless render (Phase 5 was code-only; no pixel check performed)
 
-Known targets so far (final list from enumeration in-turn):
-- `MarketingSalesMasterPDF.tsx` (already partial fix — full QA now)
-- `IndustryMarketingKitPDF.tsx`
-- `CompanyOnboardingPDF.tsx`
-- Any others discovered in the directory scan.
+---
 
-Deliverable: a short QA log summarizing per-PDF findings + fixes.
-
-## Phase 2 — Mock data purge across all pages
-
-Full pass. Per user's earlier rule: **replace with `IndustryEmptyState` (not hide, not flag)**.
-
-Method:
-1. Enumerate list/table/chart-rendering pages under `src/pages/**` and `src/components/**` that could show empty state.
-2. Grep for hardcoded arrays used as list source, `Math.random`-generated display values (excluding legitimate ID gen), demo/sample arrays, and any component that renders a hardcoded row when `data.length === 0`.
-3. For each hit:
-   - If a real query exists → keep the query, replace the fallback rows with `<IndustryEmptyState variant="..." />`.
-   - If no query exists → wire the query (only when the table exists in Supabase and the shape is obvious) OR replace the mock with `<IndustryEmptyState />` and add a TODO comment tying it to the missing backend.
-4. Exclude: `/cyber-sentry-mockup*` (platform_admin gated demo), `/dashboard/demo-seeder`, marketing pages under `src/pages/Index.tsx` / `ForBusiness.tsx` (those are marketing copy, not data), all `*.test.tsx`.
-
-Verification:
-- `tsgo` clean.
-- Playwright: log in as a fresh demo account with empty data, load 6 representative pages (Leads, Quotes, Invoices, Inventory, Customers, Analytics), screenshot each and confirm empty states render with industry-aware CTAs.
-
-## Delivery & pacing
-
-- Each phase committed independently. If a phase surfaces >20 files needing edits, I'll pause after the first batch, report progress, and continue rather than silently chain long tool loops.
-- Final summary lists: files changed per phase, PDFs re-QA'd, mock-data instances converted, and any items I flagged for user decision (e.g., missing backend for a chart).
-
-## Scope notes / risks
-
-- Not touching visual color-token purge (still deferred per your prior choice).
-- Not restructuring the marketing hero page (`Index.tsx`) — only text drift, if any surfaces incidentally.
-- If a supposed "mock" turns out to be intentional demo content on a marketing surface, I'll leave it and note it in the summary.
+### Suggested order
+1 → 2 → 4 → 3 → 5 → 6. Each is 1–3 turns. Confirm which to start with, or say "do all in order" and I'll sequence them the same way as the last run.

@@ -223,6 +223,8 @@ export const HOW_TO_USE: Record<string, Content> = {
 
   socialMediaConsole: {
     title: 'Social Media Console',
+    whoUsesIt:
+      'Owners, marketing leads, and anyone who publishes to Facebook, Instagram, LinkedIn, or TikTok. The console handles the whole loop — generate, schedule, publish, and reply — so you review instead of authoring from scratch.',
     runsAutomatically: [
       'Generates and schedules posts across Facebook, Instagram, LinkedIn, TikTok.',
       'Replies to comments and DMs in your brand voice.',
@@ -236,6 +238,25 @@ export const HOW_TO_USE: Record<string, Content> = {
       'Connect your social accounts in Settings → Integrations.',
       'Set posting frequency (3x / week recommended).',
       'Sit back — content engine fills your calendar.',
+    ],
+    aiActions: [
+      'Draft three posts about our spring tune-up promo',
+      'Reply to every new comment on Instagram in our brand voice',
+      'What was our best-performing post last month',
+      'Schedule a Friday post reminding customers about weekend availability',
+      'Generate an image for a customer-testimonial post',
+    ],
+    commonIssues: [
+      { q: 'Posts aren’t publishing', a: 'Reconnect the social account under Settings → Integrations — OAuth tokens expire every 60 days.' },
+      { q: 'AI-generated images look off-brand', a: 'Update your Brand Voice profile and add reference imagery under Content Engine → Brand.' },
+      { q: 'Replies sound generic', a: 'Enrich your Knowledge Base FAQs — reply tone comes from the same source.' },
+      { q: 'Only some platforms are connected', a: 'Upload-Post.com is optional and covers automated posting on up to 6 platforms — see Integrations for setup.' },
+    ],
+    connectsWith: [
+      'Content Engine (source of copy + images)',
+      'Knowledge Base + Brand Voice (tone and facts)',
+      'Analytics (engagement metrics roll up here)',
+      'Upload-Post.com / native OAuth for publishing',
     ],
     example:
       'Friday afternoon: AI generates 3 posts for next week — a customer testimonial, a tip ("Why your AC freezes up"), and a promo. You approve all 3 in 10 seconds. They post automatically Mon/Wed/Fri.',
@@ -290,6 +311,8 @@ export const HOW_TO_USE: Record<string, Content> = {
 
   analyticsConsole: {
     title: 'Analytics',
+    whoUsesIt:
+      'Owners, operators, and anyone who wants a straight answer about the business without hunting through charts. The natural-language bar is the primary interface — dashboards are secondary.',
     runsAutomatically: [
       'Tracks revenue, bookings, conversion, and AI activity in real time.',
       'Surfaces trends and anomalies (e.g., "bookings down 20% this week").',
@@ -302,6 +325,25 @@ export const HOW_TO_USE: Record<string, Content> = {
     steps: [
       'No setup — analytics fill in as data flows.',
       'Use the chat box at the top to ask anything in plain English.',
+    ],
+    aiActions: [
+      'How did we do last week compared to the week before',
+      'What is my best-performing service this month',
+      'Which lead source has the highest close rate',
+      'Show me every day this month with under five bookings',
+      'Forecast next month’s revenue',
+    ],
+    commonIssues: [
+      { q: 'Charts show zero', a: 'A brand-new workspace needs ~7 days of activity before trends populate — the empty-state CTA on each widget shows the fastest way to get there.' },
+      { q: 'Numbers don’t match my accountant', a: 'Analytics is booked-revenue; accounting is settled-cash. Check Business Management → Reconciliation for the reconciled view.' },
+      { q: 'Natural-language answers feel vague', a: 'Ask a more specific question with a timeframe ("last 14 days," "since Monday") — the AI narrows accordingly.' },
+      { q: 'Monthly report never arrived', a: 'Check Settings → Notifications that email is on and the address is verified.' },
+    ],
+    connectsWith: [
+      'Every console (KPIs are computed from source tables)',
+      'Aura Command Center (shares the same query layer)',
+      'Business Management (revenue + forecast)',
+      'Field Ops (job counts + dispatch efficiency)',
     ],
     example:
       'You type: "What\'s my best service this month?" — Analytics replies: "Furnace tune-ups, $12,400 revenue from 31 jobs, up 18% vs. last month."',
@@ -356,6 +398,8 @@ export const HOW_TO_USE: Record<string, Content> = {
 
   webPresenceConsole: {
     title: 'Web Presence + Smart Website',
+    whoUsesIt:
+      'Owners and marketing operators. Runs your public site, chat widget, and blog end-to-end — you review copy and approve publishes rather than editing HTML.',
     runsAutomatically: [
       'Powers your live Smart Website with your services, hours, and reviews.',
       'Embedded chat widget answers visitor questions instantly.',
@@ -369,12 +413,33 @@ export const HOW_TO_USE: Record<string, Content> = {
       'Set your site colors + logo in Settings → Brand.',
       'Copy the embed snippet onto any existing site if you already have one.',
     ],
+    aiActions: [
+      'Draft a homepage hero that highlights same-day service',
+      'Write a blog post about seasonal maintenance for our top service',
+      'Add a new testimonial from Sarah in Dallas to the homepage',
+      'Change the site accent color to match our new logo',
+      'Show me how the chat widget answered visitors last week',
+    ],
+    commonIssues: [
+      { q: 'Chat widget isn’t showing on my existing site', a: 'Confirm the embed snippet is inside the page <body> and the widget visibility toggle is on under Web Presence → Widget.' },
+      { q: 'Custom domain isn’t resolving', a: 'Add the CNAME + TXT records from Settings → Domain; DNS propagation can take up to 24 hours.' },
+      { q: 'Blog post never published', a: 'Blog drafts sit in the approval queue by default — approve from Web Presence → Blog.' },
+      { q: 'Reviews aren’t appearing', a: 'Connect Google Business Profile under Integrations; the site pulls the most recent 5-star reviews automatically.' },
+    ],
+    connectsWith: [
+      'Knowledge Base (services + hours drive site content)',
+      'Content Engine (blog + hero drafts originate here)',
+      'Front Desk (chat widget hands leads to Booking)',
+      'Google Business Profile + custom domain / CNAME setup',
+    ],
     example:
       'A visitor lands on your site at midnight. Chat widget: "Hi! Need same-day service?" — they answer, AI quotes the price, books the slot. You wake up to a confirmed job.',
   },
 
   customerPortalConsole: {
     title: 'Customer Portal',
+    whoUsesIt:
+      'Owners and office managers set it up once; customers use it daily. The portal cuts inbound calls by giving repeat customers a self-serve place to book, pay, and chat.',
     runsAutomatically: [
       'Lets customers self-book, see appointment history, pay invoices, and chat with AI.',
       'Reduces inbound calls by 40-60%.',
@@ -387,6 +452,25 @@ export const HOW_TO_USE: Record<string, Content> = {
       'Copy the Customer Portal URL from Settings → Customer Portal.',
       'Add it to your email signature, SMS templates, and printed materials.',
       'Print the QR code for trucks / business cards.',
+    ],
+    aiActions: [
+      'Show me every customer who used the portal this week',
+      'Which invoices were paid through the portal',
+      'Send the portal link to every customer we booked this month',
+      'What did customers ask the portal chat most often',
+      'Print a QR code batch for our next mailing',
+    ],
+    commonIssues: [
+      { q: 'Customer says the portal won’t load', a: 'Confirm you’ve published the workspace (Settings → Publish) — the portal URL only resolves after the first publish.' },
+      { q: 'Login link expired', a: 'Portal magic-links expire after 24 hours; the customer can request a new one from the login screen.' },
+      { q: 'Booking slots look wrong', a: 'Portal availability mirrors Business Hours + Google Calendar — update those and refresh.' },
+      { q: 'Payments aren’t going through', a: 'Ensure Stripe is connected under Integrations → Payments and the customer’s invoice has an amount due.' },
+    ],
+    connectsWith: [
+      'Front Desk (portal chat is the same operative)',
+      'Field Ops (bookings from the portal land on the dispatch board)',
+      'Business Management (invoices + payments)',
+      'Google Calendar, Stripe, magic-link auth',
     ],
     example:
       'A repeat customer wants to schedule maintenance. Instead of calling, she opens the portal, picks a slot, pays a deposit, and gets a confirmation — all in 90 seconds.',
@@ -433,6 +517,8 @@ export const HOW_TO_USE: Record<string, Content> = {
 
   contentEngineConsole: {
     title: 'Content Engine',
+    whoUsesIt:
+      'Owners, marketing operators, and anyone who publishes to more than one channel. One prompt fans out into website, social, email, blog, and SMS — all matched to your brand voice.',
     runsAutomatically: [
       'Generates copy, images, and captions across website, social, email, blog, and SMS from one prompt.',
       'Keeps every channel on-brand using your Brand Voice profile.',
@@ -447,6 +533,25 @@ export const HOW_TO_USE: Record<string, Content> = {
       'Open Brand Voice and confirm tone, audience, and do-not-say words.',
       'Go to Generate, pick channels, and describe what you want.',
       'Review, tweak, and publish or schedule from the calendar.',
+    ],
+    aiActions: [
+      'Generate a spring tune-up campaign across every channel',
+      'Rewrite this post in a friendlier tone',
+      'Create three variations of this social caption',
+      'Draft an email newsletter from our last three blog posts',
+      'Schedule the approved posts for next week',
+    ],
+    commonIssues: [
+      { q: 'Copy sounds off-brand', a: 'Update your Brand Voice profile and re-run generation — the engine reads it on every call.' },
+      { q: 'Images look generic', a: 'Upload reference imagery + brand colors under Brand Voice; new generations will match.' },
+      { q: 'A channel is missing from the output', a: 'Enable it under Generate → Channels; disabled channels are skipped even if you mention them in the prompt.' },
+      { q: 'Scheduled post didn’t publish', a: 'Check the social account is connected and the post isn’t stuck in the approval queue.' },
+    ],
+    connectsWith: [
+      'Brand Voice profile (tone, USPs, do-not-say list)',
+      'Social Media Console (publishing + replies)',
+      'Web Presence (blog + hero copy)',
+      'Email (Resend) and SMS (SignalWire) for campaigns',
     ],
     example:
       'Type "spring tune-up promo, $89, book by April 30" — the engine drafts a website banner, three social posts with images, an SMS blast, and a blog post in under a minute. You approve all five in one pass.',
