@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildReceptionistPromptAddon } from "../_shared/receptionist-scripts.ts";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -4033,25 +4034,27 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     ];
 
     // Call Lovable AI Gateway
-    let response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: selectedModel,
-        messages,
-        tools: isPhoneChannel ? tools.filter((t: any) => {
-          // Phone: only allow handoff -- no data tools that trigger follow-up loops
-          const name = t.function?.name;
-          return name === 'handoff_to_agent';
-        }) : tools,
-        tool_choice: 'auto',
-        temperature: 0.7,
-        max_tokens: isPhoneChannel ? 150 : 1000,
-      }),
+    // Use the shared gateway wrapper so 429/5xx transparently fall back to
+    // the next model in the same family before we return an error.
+    const gatewayCall = await callAIGatewayWithFallback({
+      model: selectedModel,
+      messages,
+      tools: isPhoneChannel ? tools.filter((t: any) => {
+        // Phone: only allow handoff -- no data tools that trigger follow-up loops
+        const name = t.function?.name;
+        return name === 'handoff_to_agent';
+      }) : tools,
+      tool_choice: 'auto',
+      temperature: 0.7,
+      max_tokens: isPhoneChannel ? 150 : 1000,
     });
+    let response = gatewayCall.response;
+    if (gatewayCall.fellBackFromPrimary) {
+      console.log(
+        `[ai-agent-chat] fell back from ${selectedModel} to ${gatewayCall.modelUsed}`,
+        gatewayCall.attempts,
+      );
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
