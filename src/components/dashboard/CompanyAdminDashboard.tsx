@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Users, Calendar, MessageSquare, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, Download, Copy, UserCircle, ExternalLink, Target, Package, Megaphone, LayoutDashboard, Share2, Globe, PenTool, ChevronDown } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { useNavigate } from 'react-router-dom';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
 import { DashboardSetupNav } from './DashboardSetupNav';
@@ -270,6 +272,7 @@ export function CompanyAdminDashboard() {
           
           action={
             <div className="flex items-center gap-3 flex-wrap">
+              <HowToUseModal {...HOW_TO_USE.dashboard} />
               {pack.industry_id !== 'generic' && (
                 <Badge variant="outline" className="border-primary/40 text-primary">
                   {pack.label}
