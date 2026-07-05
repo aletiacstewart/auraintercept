@@ -119,3 +119,58 @@ export function getBetaOnboardingPrice(tier: TierKey, now: Date = new Date()): n
   // Per-tier onboarding pricing already reflects beta — no extra cap.
   return getOnboardingPrice(tier);
 }
+
+/* --------------------------------------------------------------------------
+ * Canonical formatted strings for prompts, templates, and copy blocks.
+ * All 4-tier price copy should route through these helpers so `launchPricing`
+ * remains the single source of truth. See Core memory: "Always show original
+ * strikethrough + sale + 'Beta Pricing' chip".
+ * ------------------------------------------------------------------------ */
+
+/** e.g. "$497/mo (was $697)" when beta active, or "$697/mo" when not. */
+export function formatMonthlyCost(tier: TierKey): string {
+  const t = getTierPricing(tier);
+  return LAUNCH_PRICING.active
+    ? `${formatPrice(t.sale)}/mo (was ${formatPrice(t.original)})`
+    : `${formatPrice(t.original)}/mo`;
+}
+
+/** e.g. "$249 (was $497)" when beta active. */
+export function formatOnboardingCost(tier: TierKey): string {
+  const t = getTierPricing(tier);
+  return LAUNCH_PRICING.active
+    ? `${formatPrice(t.onboardingSale)} (was ${formatPrice(t.onboardingOriginal)})`
+    : formatPrice(t.onboardingOriginal);
+}
+
+/** e.g. "Aura Core ($497/mo · $249 onboarding · Beta Pricing — was $697/mo + $497 onboarding)". */
+export function formatTierLabel(tier: TierKey): string {
+  const t = getTierPricing(tier);
+  if (!LAUNCH_PRICING.active) {
+    return `${t.name} (${formatPrice(t.original)}/mo · ${formatPrice(t.onboardingOriginal)} onboarding)`;
+  }
+  return (
+    `${t.name} (${formatPrice(t.sale)}/mo · ${formatPrice(t.onboardingSale)} onboarding · ` +
+    `${LAUNCH_PRICING.label} — was ${formatPrice(t.original)}/mo + ${formatPrice(t.onboardingOriginal)} onboarding)`
+  );
+}
+
+/** e.g. "$497/mo + $249 onboarding   (Beta — was $697/mo + $497 onboarding)". Used in sales voice prompts. */
+export function formatSalesLine(tier: TierKey): string {
+  const t = getTierPricing(tier);
+  if (!LAUNCH_PRICING.active) {
+    return `${formatPrice(t.original)}/mo + ${formatPrice(t.onboardingOriginal)} onboarding`;
+  }
+  return (
+    `${formatPrice(t.sale)}/mo + ${formatPrice(t.onboardingSale)} onboarding ` +
+    `(Beta — was ${formatPrice(t.original)}/mo + ${formatPrice(t.onboardingOriginal)} onboarding)`
+  );
+}
+
+/** Map a display tier name ("Aura Core") back to the TierKey, for legacy tables keyed by label. */
+export function tierKeyFromName(name: string): TierKey | undefined {
+  const entry = (Object.entries(LAUNCH_PRICING.tiers) as Array<[TierKey, TierPricing]>).find(
+    ([, t]) => t.name === name,
+  );
+  return entry?.[0];
+}
