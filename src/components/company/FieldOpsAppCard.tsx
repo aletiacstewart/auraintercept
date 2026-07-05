@@ -89,7 +89,7 @@ export function FieldOpsAppCard() {
               <Alert variant="destructive" className="max-w-xs">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription className="text-xs">
-                  Install links can’t use lovableproject.com (preview) — phones will be redirected to create a Lovable account.
+                  Install links can’t use a preview URL — phones will be redirected to a preview environment that requires an editor account.
                   {' '}
                   <Link to="/dashboard/quick-setup" className="underline font-medium inline-flex items-center gap-1">
                     Set your published app URL <Settings className="h-3 w-3" />

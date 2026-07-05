@@ -111,7 +111,7 @@ export function PublicAppUrlSettings() {
           <AlertDescription>
             When you publish your app, copy the published URL here. The install QR codes for the 
             <strong> Technician Field Ops App</strong>, <strong>Dispatch-Field Ops App</strong>, and <strong>Bus.Mgt Ops App</strong> will 
-            use this URL so users can install the apps without needing a Lovable account.
+            use this URL so users can install the apps without needing an editor account.
           </AlertDescription>
         </Alert>
 
@@ -137,7 +137,7 @@ export function PublicAppUrlSettings() {
             )}
           </div>
           <p className="text-xs text-muted-foreground">
-            Leave empty to use the current page URL (may require Lovable login in preview mode)
+            Leave empty to use the current page URL (may require editor login in preview mode)
           </p>
         </div>
 
