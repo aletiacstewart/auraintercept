@@ -195,6 +195,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
+                <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
                 <Route path="/customer-auth" element={<CustomerAuth />} />
                 <Route path="/talk-to-aura" element={<Navigate to="/contact" replace />} />
                 <Route path="/contact" element={<Contact />} />
