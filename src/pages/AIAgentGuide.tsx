@@ -12,55 +12,61 @@ import ConsoleRequirementsDiagram from '@/components/agents/ConsoleRequirementsD
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { formatMonthlyCost, tierKeyFromName } from '@/lib/launchPricing';
+
+const costFor = (tierName: string): string => {
+  const key = tierKeyFromName(tierName);
+  return key ? formatMonthlyCost(key) : '';
+};
 
 const QUICK_REFERENCE_DATA = [
   { 
     agent: 'Booking Agent', 
     requires: ['AI Receptionist'], 
     tier: 'Aura Core', 
-    cost: '$994/mo (was $1,394)', 
+    cost: costFor('Aura Core'), 
     notes: 'Enables online booking' 
   },
   { 
     agent: 'ETA Agent', 
     requires: ['Dispatch/GPS Console', 'Route Agent'], 
     tier: 'Aura Boost', 
-    cost: '$994/mo (was $1,394)', 
+    cost: costFor('Aura Boost'), 
     notes: 'Full field ops chain' 
   },
   { 
     agent: 'Invoice Agent', 
     requires: ['Quoting Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,979/mo (was $5,576)', 
+    cost: costFor('Aura Elite'), 
     notes: 'Billing automation' 
   },
   { 
     agent: 'Forecast Agent', 
     requires: ['Insights Agent', 'Revenue Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,979/mo (was $5,576)', 
+    cost: costFor('Aura Elite'), 
     notes: 'Full analytics suite' 
   },
   { 
     agent: 'Social Scheduler Agent', 
     requires: ['Creative Content'], 
     tier: 'Aura Pro', 
-    cost: '$1,988/mo (was $2,788)', 
+    cost: costFor('Aura Pro'), 
     notes: 'Social media automation' 
   },
   { 
     agent: 'Performance Agent', 
     requires: ['Insights Agent'], 
     tier: 'Aura Elite', 
-    cost: '$3,979/mo (was $5,576)', 
+    cost: costFor('Aura Elite'), 
     notes: 'KPI tracking' 
   },
   { 
     agent: 'Social Analytics', 
     requires: ['Creative Content'], 
     tier: 'Aura Pro', 
-    cost: '$1,988/mo (was $2,788)', 
+    cost: costFor('Aura Pro'), 
     notes: 'Engagement metrics' 
   },
 ];
