@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -231,13 +232,7 @@ Generate social media content for all 6 platforms:
 6. SMS (personalized thank you with review request)`;
 
     // ============ CALL LOVABLE AI WITH ENHANCED TOOL ============
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${lovableApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const { response: response, modelUsed: responseModel, fellBackFromPrimary: responseFellBack } = await callAIGatewayWithFallback({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: industrySystemPrompt },
@@ -350,8 +345,8 @@ Generate social media content for all 6 platforms:
           },
         ],
         tool_choice: { type: "function", function: { name: "generate_social_content" } },
-      }),
-    });
+      });
+    if (responseFellBack) console.warn(`[generate-social-content] primary model unavailable, served by ${responseModel}`);
 
     if (!response.ok) {
       if (response.status === 429) {

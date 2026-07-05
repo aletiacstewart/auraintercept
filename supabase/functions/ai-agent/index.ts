@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -321,13 +322,7 @@ serve(async (req) => {
     ];
 
     // First, make a non-streaming request to check for tool calls
-    const initialResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const { response: initialResponse, modelUsed: initialResponseModel, fellBackFromPrimary: initialResponseFellBack } = await callAIGatewayWithFallback({
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
@@ -336,8 +331,8 @@ serve(async (req) => {
         tools,
         tool_choice: "auto",
         stream: false,
-      }),
-    });
+      });
+    if (initialResponseFellBack) console.warn(`[ai-agent] primary model unavailable, served by ${initialResponseModel}`);
 
     if (!initialResponse.ok) {
       const errorText = await initialResponse.text();
@@ -389,18 +384,12 @@ serve(async (req) => {
         ...toolResults
       ];
 
-      const followUpResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const { response: followUpResponse, modelUsed: followUpResponseModel, fellBackFromPrimary: followUpResponseFellBack } = await callAIGatewayWithFallback({
           model: "google/gemini-2.5-flash",
           messages: followUpMessages,
           stream,
-        }),
-      });
+        });
+      if (followUpResponseFellBack) console.warn(`[ai-agent] primary model unavailable, served by ${followUpResponseModel}`);
 
       if (!followUpResponse.ok) {
         const errorText = await followUpResponse.text();
@@ -426,13 +415,7 @@ serve(async (req) => {
     }
 
     // No tool calls - make streaming or non-streaming request for regular response
-    const streamResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const { response: streamResponse, modelUsed: streamResponseModel, fellBackFromPrimary: streamResponseFellBack } = await callAIGatewayWithFallback({
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
@@ -441,8 +424,8 @@ serve(async (req) => {
         tools,
         tool_choice: "auto",
         stream,
-      }),
-    });
+      });
+    if (streamResponseFellBack) console.warn(`[ai-agent] primary model unavailable, served by ${streamResponseModel}`);
 
     if (!streamResponse.ok) {
       const errorText = await streamResponse.text();

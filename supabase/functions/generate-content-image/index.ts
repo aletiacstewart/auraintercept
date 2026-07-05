@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -49,18 +50,12 @@ serve(async (req) => {
 
     console.log("[generate-content-image] Generating image for topic:", topic);
 
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const { response: aiResponse, modelUsed: aiResponseModel, fellBackFromPrimary: aiResponseFellBack } = await callAIGatewayWithFallback({
         model: "google/gemini-2.5-flash-image",
         messages: [{ role: "user", content: prompt }],
         modalities: ["image", "text"],
-      }),
-    });
+      });
+    if (aiResponseFellBack) console.warn(`[generate-content-image] primary model unavailable, served by ${aiResponseModel}`);
 
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();

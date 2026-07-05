@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import * as XLSX from "https://esm.sh/xlsx@0.18.5";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -66,15 +67,12 @@ async function aiNormalizeText(text: string): Promise<NormRow[]> {
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   if (!apiKey) return [];
   const prompt = `Extract every lead/contact from this text. Return ONLY JSON: {"leads":[{"name":"","email":"","phone":"","address":"","notes":""}]}. Skip rows without enough info.\n\nTEXT:\n${text.slice(0, 50000)}`;
-  const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
+  const { response: r, modelUsed: rModel, fellBackFromPrimary: rFellBack } = await callAIGatewayWithFallback({
       model: "google/gemini-2.5-flash",
       messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" },
-    }),
-  });
+    });
+  if (rFellBack) console.warn(`[lead-import-parse] primary model unavailable, served by ${rModel}`);
   if (!r.ok) return [];
   const j = await r.json();
   try {

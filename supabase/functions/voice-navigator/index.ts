@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -49,13 +50,7 @@ Page route mappings:
 
 If you can't determine the action, use "unknown" with a helpful message.`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const { response: response, modelUsed: responseModel, fellBackFromPrimary: responseFellBack } = await callAIGatewayWithFallback({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
@@ -87,8 +82,8 @@ If you can't determine the action, use "unknown" with a helpful message.`;
           },
         ],
         tool_choice: { type: "function", function: { name: "interpret_action" } },
-      }),
-    });
+      });
+    if (responseFellBack) console.warn(`[voice-navigator] primary model unavailable, served by ${responseModel}`);
 
     if (!response.ok) {
       if (response.status === 429) {
