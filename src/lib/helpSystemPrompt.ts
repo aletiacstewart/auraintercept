@@ -1,5 +1,6 @@
 import { CONSOLE_HELP_CONFIG, TIER_HELP_DESCRIPTIONS } from './helpContentConfig';
 import { SubscriptionTier } from './subscriptionAgentConfig';
+import { formatTierLabel, type TierKey } from './launchPricing';
 
 /**
  * Derives the AI Help Assistant system prompt from the same canonical
@@ -10,11 +11,13 @@ import { SubscriptionTier } from './subscriptionAgentConfig';
  * already renders that as accordion FAQ entries from CONSOLE_HELP_CONFIG.
  */
 
+// Pricing copy is derived from launchPricing.ts so beta pricing changes
+// automatically flow into the help assistant.
 const TIER_LABEL: Record<Exclude<SubscriptionTier, 'free'>, string> = {
-  starter: 'Aura Core ($497/mo · $249 onboarding · Beta Pricing — was $697/mo + $497 onboarding)',
-  connect: 'Aura Boost ($994/mo · $497 onboarding · Beta Pricing — was $1,394/mo + $994 onboarding)',
-  performance: 'Aura Pro ($1,988/mo · $994 onboarding · Beta Pricing — was $2,788/mo + $1,988 onboarding)',
-  command: 'Aura Elite ($3,979/mo · $1,990 onboarding · Beta Pricing — was $5,576/mo + $3,979 onboarding)',
+  starter: formatTierLabel('starter' as TierKey),
+  connect: formatTierLabel('connect' as TierKey),
+  performance: formatTierLabel('performance' as TierKey),
+  command: formatTierLabel('command' as TierKey),
 };
 
 function renderTierSection(): string {

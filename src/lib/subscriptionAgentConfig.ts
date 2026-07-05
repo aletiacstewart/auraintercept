@@ -3,6 +3,15 @@
 // Display names: Aura Core, Aura Boost, Aura Pro, Aura Elite
 export type SubscriptionTier = 'free' | 'starter' | 'connect' | 'performance' | 'command';
 
+import { LAUNCH_PRICING, formatPrice, getTierPricing } from './launchPricing';
+
+// Pricing strings are derived from launchPricing.ts so beta pricing is a
+// single source of truth. Never hardcode dollar amounts in this file.
+const priceOf = (k: 'starter' | 'connect' | 'performance' | 'command') =>
+  `${formatPrice(LAUNCH_PRICING.active ? getTierPricing(k).sale : getTierPricing(k).original)}/mo`;
+const originalPriceOf = (k: 'starter' | 'connect' | 'performance' | 'command') =>
+  `${formatPrice(getTierPricing(k).original)}/mo`;
+
 // Configuration for each subscription tier
 export interface TierConfig {
   agents: string[];
@@ -28,7 +37,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access — upgrade to unlock AI operatives',
   },
   starter: {
-    // Aura Core ($497/mo · $249 onboarding · Beta Pricing — was $697): 5 consolidated operatives (8 underlying agents) + all 4 comms channels +
+    // Aura Core — pricing derived from launchPricing.ts: 5 consolidated operatives (8 underlying agents) + all 4 comms channels +
     // industry specialists (auto-activated by industry pack). 10 employees.
     agents: [
       'triage',
@@ -42,12 +51,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'social_media', 'analytics_reports', 'ai_operatives_hub',
     ],
     label: 'Aura Core',
-    price: '$497/mo',
-    originalPrice: '$697/mo',
+    price: priceOf('starter'),
+    originalPrice: originalPriceOf('starter'),
     description: 'Voice, SMS, email & web chat handled by 5 AI operatives — booking, follow-up, creative content & web presence included',
   },
   connect: {
-    // Aura Boost ($994/mo · $497 onboarding · Beta Pricing — was $1,394): Core + Field Operations agents (Dispatch + Route/ETA/Check-In). 25 employees.
+    // Aura Boost — pricing derived from launchPricing.ts: Core + Field Operations agents (Dispatch + Route/ETA/Check-In). 25 employees.
     agents: [
       'triage',
       'customer_journey',
@@ -62,12 +71,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'social_media', 'field_operations', 'analytics_reports', 'ai_operatives_hub',
     ],
     label: 'Aura Boost',
-    price: '$994/mo',
-    originalPrice: '$1,394/mo',
+    price: priceOf('connect'),
+    originalPrice: originalPriceOf('connect'),
     description: 'Voice, SMS, email & web chat + 7 AI operatives with dispatch, routing & field operations',
   },
   performance: {
-    // Aura Pro ($1,988/mo · $994 onboarding · Beta Pricing — was $2,788): Boost + Business Finance + Analytics + Admin + Business Management Console.
+    // Aura Pro — pricing derived from launchPricing.ts: Boost + Business Finance + Analytics + Admin + Business Management Console.
     // 50 employees.
     agents: [
       'triage',
@@ -87,12 +96,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'business_management', 'ai_operatives_hub',
     ],
     label: 'Aura Pro',
-    price: '$1,988/mo',
-    originalPrice: '$2,788/mo',
+    price: priceOf('performance'),
+    originalPrice: originalPriceOf('performance'),
     description: '24 AI Operatives with business management, analytics & admin (industry specialists included on every plan)',
   },
   command: {
-    // Aura Elite ($3,979/mo · $1,990 onboarding · Beta Pricing — was $5,576): All 10 consolidated operatives + industry specialists,
+    // Aura Elite — pricing derived from launchPricing.ts: All 10 consolidated operatives + industry specialists,
     // all 7 consoles + AI Hub, unlimited employees.
     agents: [
       'triage',
@@ -108,8 +117,8 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Elite',
-    price: '$3,979/mo',
-    originalPrice: '$5,576/mo',
+    price: priceOf('command'),
+    originalPrice: originalPriceOf('command'),
     description: '24 AI Operatives — full suite with predictive analytics & AI Hub',
   },
 };
