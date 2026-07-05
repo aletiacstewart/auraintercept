@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyChart } from '@/components/shared/EmptyChart';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DollarSign, TrendingUp, FileText, Download, PieChart } from 'lucide-react';
@@ -172,19 +173,26 @@ export function FinancialReports() {
         </CardHeader>
         <CardContent>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={financialData?.monthlyRevenue || []}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="month" className="text-xs" />
-                <YAxis className="text-xs" tickFormatter={(v) => `$${v}`} />
-                <Tooltip 
-                  formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
-                  contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
-                />
-                <Bar dataKey="paid" fill="hsl(var(--primary))" name="Paid" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="outstanding" fill="hsl(var(--muted-foreground))" name="Outstanding" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {(financialData?.monthlyRevenue?.some(m => (m.paid || 0) + (m.outstanding || 0) > 0)) ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={financialData?.monthlyRevenue || []}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis dataKey="month" className="text-xs" />
+                  <YAxis className="text-xs" tickFormatter={(v) => `$${v}`} />
+                  <Tooltip
+                    formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                    contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
+                  />
+                  <Bar dataKey="paid" fill="hsl(var(--primary))" name="Paid" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="outstanding" fill="hsl(var(--muted-foreground))" name="Outstanding" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyChart
+                title="No revenue tracked yet"
+                message="Once invoices are sent and paid, the last six months will appear here."
+              />
+            )}
           </div>
         </CardContent>
       </Card>

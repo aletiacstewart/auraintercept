@@ -1,103 +1,76 @@
-# Full Site Audit + Auto-Fix Pass
+# Sequenced Pass: Phase 4A → Phase 5 → Phase 2
 
-Single sweeping pass across the app. Findings and fixes ship together in phased commits so we can spot-check between phases, but I don't stop for approval between phases unless something looks structurally wrong.
+Executed in order, one phase committed before the next starts.
 
-## Phase 0 — Inventory (read-only, ~1 turn)
+## Phase 4A — Rewrite 4 highest-traffic console guides
 
-Produce an internal working manifest (not shipped to user) covering:
+Target consoles:
+1. **Dashboard** (Simple + Pro modes)
+2. **Field Ops Console** (`/dashboard/ai-consoles/field-ops`)
+3. **Business Management Console** (`/dashboard/ai-consoles/business-mgt-ops`)
+4. **Marketing & Sales Console** (`/dashboard/ai-consoles/marketing-sales`)
 
-- **Routes** — every route in `src/App.tsx` + nested routers. Confirm each renders a real page (no `NotFound`, no orphan).
-- **Consoles** — 10 operative consoles + Dashboard, Field Ops, Dispatch, Business Mgt, Customer Portal, Social, Content Engine, Analytics, Marketing/Sales, Receptionist, Appointment, Pipeline, Custom.
-- **Agents** — all 24 agents in `agentStyles.ts` / `subscriptionAgentConfig.ts`. Cross-check against edge functions that back them.
-- **Edge functions** — enumerate `supabase/functions/*`. Flag any UI call site pointing at a function that no longer exists, and any function with no call site.
-- **Buttons/links** — grep for `onClick`, `<Link`, `navigate(`, `href=`. Flag `TODO`, `console.log('todo`, empty handlers, `href="#"`, `disabled` w/o reason.
-- **Mock data** — grep for `mock`, `fake`, `sample`, `demoData`, `Lorem`, hardcoded arrays used as list sources in production pages (exclude `/dashboard/demo-seeder` and marketing surfaces).
-- **Guides & docs** — `Help.tsx`, `AIAgentGuide.tsx`, `IntegrationDocs.tsx`, `helpContentConfig.ts`, `industryHelpContent.ts`, `industryHelpPrompts.ts`, per-console "How to use" panels, install pages (5 PWA install pages), export docs (`ExportDocs`, PDF generators in `src/lib/pdf/*`), tutorial content (`useTutorial.ts`), walkthrough (`aura-walkthrough.mp4` context copy).
-- **Pricing/tier/naming drift** — cross-check every human-readable pricing/tier/agent-name string against `launchPricing.ts` + `canonicalNames.ts` + memory registry.
-- **Empty states** — verify every list surface uses `IndustryEmptyState` (per memory), not blank divs or fake rows.
-
-## Phase 1 — Functional fixes (P0)
-
-- Wire or remove **non-functional buttons** (dead onClicks, `href="#"`, "Coming soon" that has no toggle).
-- Fix **broken navigation** (routes that don't exist, links to deleted pages).
-- Remove **references to deleted features** (CRM, warranty, multi-location — per memory these are removed but stale mentions may exist).
-- Confirm every **agent** has a live edge function backing it; if not, hide the trigger behind a feature flag / disabled state with clear copy.
-- Confirm each **console tab** actually loads data (no perpetual skeleton, no infinite spinner from a missing query).
-
-## Phase 2 — Mock data purge → industry empty states
-
-Per user's answer, **replace all mock/placeholder data with `IndustryEmptyState`** (no hiding).
-
-- Grep + fix: hardcoded arrays feeding dashboards, KPIs, lists, charts.
-- Every list/table without rows → `IndustryEmptyState` with tenant-appropriate CTA.
-- Every KPI card with no live source → either wire to the real query (if it exists) or render a "No data yet — [CTA]" state using the pack's copy.
-- Charts without data → empty-chart component with the same industry CTA pattern.
-
-## Phase 3 — Content consistency sweep
-
-- **Pricing strings** — all human-readable prices route through `launchPricing.ts` helpers (`formatMonthlyCost`, `formatOnboardingCost`, `formatSalesLine`). Purge any remaining `$497` / `$697` / `$994` string literals in copy, prompts, PDFs, blog templates, campaign templates, marketing pages.
-- **Tier names** — canonical: Aura Core, Aura Boost, Aura Pro, Aura Elite. Purge legacy names in visible copy.
-- **Agent names / operative labels** — reconcile against `canonicalNames.ts` + memory (Front Desk, On The Way, Billing, etc.).
-- **Trial copy** — 60-Day Live Trial (30d onboarding + 30d live). Purge any "14-day" / "30-day trial" remnants.
-- **3rd-party disclaimers** — every SignalWire / ElevenLabs / Resend / Tavily / Stripe / Upload-Post surface has the customer-pass-through disclaimer per `legal/third-party-fee-disclaimer` memory. No "bundled/overage/absorbed" copy.
-- **Industry-aware copy** — Help + install pages + console headers resolve terminology through `useIndustryPack` + `getNavLabels` (per `features/help/industry-aware-content-standard`). No hardcoded "HVAC", "technician", "AC repair" in generic surfaces.
-
-## Phase 4 — Guide rewrites (per-console, full rewrites)
-
-Per user's answer, **full rewrite per console**, plus author guides where missing. Each guide follows the same template:
-
+Each guide uses the 6-section template:
 ```text
-1. What this console does (1 sentence, industry-aware)
+1. What this console does (1 sentence, industry-aware via useIndustryPack)
 2. Who uses it (role)
 3. Step-by-step first-run walkthrough (5–8 steps)
-4. Key AI actions you can ask Aura in this console (5 examples, pack-aware)
+4. Key AI actions you can ask Aura here (5 pack-aware examples)
 5. Common issues + fixes
 6. What connects (integrations / other consoles this feeds)
 ```
 
-Consoles covered (full rewrite each):
+Delivery:
+- Extend `src/lib/helpContentConfig.ts` with a `consoleGuides` map keyed by console ID.
+- Extend `src/lib/industryHelpContent.ts` so healthcare + trade + restaurant + retail verticals get overrides on section 1 (description), section 3 (walkthrough), and section 4 (AI actions).
+- Render the guide via a shared `<ConsoleGuidePanel />` (new, `src/components/help/ConsoleGuidePanel.tsx`) mounted inside each console header's existing help sheet/drawer (or added if none exists).
+- No visual-design changes to the console shell.
 
-- Dashboard (Simple + Pro modes)
-- Field Ops Console
-- Dispatch/GPS Console
-- Business Management Console
-- Marketing & Sales Console
-- Social Media Console
-- Content Engine Console
-- Analytics Console
-- Customer Portal Console
-- Receptionist Console
-- Appointment Console
-- Pipeline Console
-- Technician Console (mobile)
-- Customer Portal (customer-facing)
-- Onboarding / Fast Start
-- Integrations pages (CRM, Calendar, Email, SMS, Voice, Tavily)
-- Settings (7 categories)
-- Help hub (index rewrite tying them together)
+Verification:
+- `tsgo` clean.
+- Playwright: open each of the 4 consoles, open its help drawer, screenshot; open dashboard in Simple + Pro, screenshot.
 
-Delivery: rewritten copy lives in `helpContentConfig.ts` + `industryHelpContent.ts` + new per-console `*.help.ts` sidecars where appropriate. Install pages (5 PWA installers) get fresh step-by-step per install method.
+## Phase 5 — Export document QA
 
-## Phase 5 — Export documents
+Enumerate every PDF template under `src/components/documentation/*PDF.tsx` and any PDF generator under `src/lib/pdf/`. For each:
 
-- Regenerate PDF templates (`src/lib/pdf/*`, outreach toolkit, audit report, ROI calculator export, agent guide export).
-- Ensure every generated doc: current pricing, current tier names, current disclaimers, industry-aware terminology, no dead feature references, no "Lovable" text visible to customers.
-- QA every PDF/PPT by rendering to image and eyeballing per `documents-artifacts` rule.
+1. Render sample output to `/tmp/pdf-qa/<name>.pdf`.
+2. `pdftoppm -jpeg -r 120` → inspect every page image with `code--view`.
+3. Fix any of: hardcoded pricing (route through `launchPricing.ts`), stale tier names, removed-feature refs, "Lovable" leaks, layout breaks, clipped text, broken tables.
+4. Confirm the "3rd-party pass-through cost" disclaimer appears wherever integrations are named (per `legal/third-party-fee-disclaimer` memory).
+5. Re-render and re-inspect after fixes.
 
-## Phase 6 — Verification
+Known targets so far (final list from enumeration in-turn):
+- `MarketingSalesMasterPDF.tsx` (already partial fix — full QA now)
+- `IndustryMarketingKitPDF.tsx`
+- `CompanyOnboardingPDF.tsx`
+- Any others discovered in the directory scan.
 
-- `tsgo` typecheck (harness runs it).
-- Playwright smoke: dashboard, one console per category, one install page, one export doc, one industry-specific empty state. Screenshots to `/tmp/browser/`.
-- Build clean.
-- Report back: what was fixed, what was rewritten, what (if anything) I flagged as needing user decision.
+Deliverable: a short QA log summarizing per-PDF findings + fixes.
 
-## Deliverable
+## Phase 2 — Mock data purge across all pages
 
-A single closing message summarizing: routes touched, functional fixes count, mock-data instances replaced, consoles rewritten, exports regenerated, and any items I couldn't auto-decide (with recommendation).
+Full pass. Per user's earlier rule: **replace with `IndustryEmptyState` (not hide, not flag)**.
+
+Method:
+1. Enumerate list/table/chart-rendering pages under `src/pages/**` and `src/components/**` that could show empty state.
+2. Grep for hardcoded arrays used as list source, `Math.random`-generated display values (excluding legitimate ID gen), demo/sample arrays, and any component that renders a hardcoded row when `data.length === 0`.
+3. For each hit:
+   - If a real query exists → keep the query, replace the fallback rows with `<IndustryEmptyState variant="..." />`.
+   - If no query exists → wire the query (only when the table exists in Supabase and the shape is obvious) OR replace the mock with `<IndustryEmptyState />` and add a TODO comment tying it to the missing backend.
+4. Exclude: `/cyber-sentry-mockup*` (platform_admin gated demo), `/dashboard/demo-seeder`, marketing pages under `src/pages/Index.tsx` / `ForBusiness.tsx` (those are marketing copy, not data), all `*.test.tsx`.
+
+Verification:
+- `tsgo` clean.
+- Playwright: log in as a fresh demo account with empty data, load 6 representative pages (Leads, Quotes, Invoices, Inventory, Customers, Analytics), screenshot each and confirm empty states render with industry-aware CTAs.
+
+## Delivery & pacing
+
+- Each phase committed independently. If a phase surfaces >20 files needing edits, I'll pause after the first batch, report progress, and continue rather than silently chain long tool loops.
+- Final summary lists: files changed per phase, PDFs re-QA'd, mock-data instances converted, and any items I flagged for user decision (e.g., missing backend for a chart).
 
 ## Scope notes / risks
 
-- **Not touching**: `auth.users` schema, Stripe price IDs (legacy grandfathered), `src/integrations/supabase/client.ts` + `types.ts` (auto-gen), demo seeder data.
-- **Deferred (from prior plan, still deferred)**: Pass 2 color-token purge (~548 instances) — user chose to skip and this pass respects that unless a color mismatch is directly inside a rewritten guide.
-- **High-risk file**: `src/pages/Index.tsx` marketing page — I'll only touch stale pricing/tier/agent copy there, not restructure.
-- **Turn budget**: this is large. If I hit ~30 tool turns without finishing, I'll pause, deliver what's done, and list what remains.
+- Not touching visual color-token purge (still deferred per your prior choice).
+- Not restructuring the marketing hero page (`Index.tsx`) — only text drift, if any surfaces incidentally.
+- If a supposed "mock" turns out to be intentional demo content on a marketing surface, I'll leave it and note it in the summary.

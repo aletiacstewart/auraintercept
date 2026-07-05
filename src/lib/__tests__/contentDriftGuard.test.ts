@@ -95,4 +95,54 @@ describe('content drift guard', () => {
     const marketingCopy = fs.readFileSync('src/locales/en/marketing.json', 'utf-8');
     expect(marketingCopy).toMatch(/60-Day Live Trial/i);
   });
+
+  /**
+   * PDF pricing drift guard.
+   *
+   * Documentation PDFs render with @react-pdf/renderer using literal <Text> nodes,
+   * so historically every tier price is inline. If Beta pricing changes in
+   * launchPricing.ts, every PDF must be updated in the same pass. This test scans
+   * each PDF for legacy price literals that no longer match canonical Beta pricing
+   * and fails loudly so nothing ships with stale numbers.
+   */
+  it('documentation PDFs contain only canonical Beta pricing values', async () => {
+    const { LAUNCH_PRICING } = await import('../launchPricing');
+    const canonical = new Set<number>();
+    for (const tier of Object.values(LAUNCH_PRICING.tiers)) {
+      canonical.add(tier.original);
+      canonical.add(tier.sale);
+      canonical.add(tier.onboardingOriginal);
+      canonical.add(tier.onboardingSale);
+    }
+
+    // Values that would indicate stale pricing (do not appear in canonical set).
+    // Extend if a new legacy value is ever introduced during a price change.
+    const knownLegacy = [199, 299, 349, 399, 449, 599, 799, 899, 1499, 1799, 2499, 2999, 4999];
+
+    const pdfFiles = fs
+      .readdirSync('src/components/documentation')
+      .filter((f) => /PDF\.tsx$/.test(f))
+      .map((f) => path.join('src/components/documentation', f));
+
+    const hits: string[] = [];
+    // Competitor names — pricing values on lines mentioning these are
+    // competitor pricing (Jobber, ServiceTitan, Housecall Pro), not Aura pricing.
+    const competitorRe = /jobber|servicetitan|housecall|jobtread|fieldedge|thumbtack|angi|grow\s+tier|marketing\s+pro|marketing\s+suite|phones\s+pro/i;
+    for (const file of pdfFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const lines = content.split('\n');
+      lines.forEach((line, i) => {
+        if (competitorRe.test(line)) return;
+        for (const stale of knownLegacy) {
+          if (canonical.has(stale)) continue;
+          const re = new RegExp(`\\$${stale}\\b`);
+          if (re.test(line)) {
+            hits.push(`${file}:${i + 1}: stale price $${stale} — ${line.trim().slice(0, 140)}`);
+          }
+        }
+      });
+    }
+
+    expect(hits, `Stale pricing values found in PDFs:\n${hits.join('\n')}`).toEqual([]);
+  });
 });

@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { HelpCircle, Zap, Hand, ListChecks, Lightbulb } from 'lucide-react';
+import { HelpCircle, Zap, Hand, ListChecks, Lightbulb, Users, Sparkles, LifeBuoy, Workflow } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface HowToUseModalProps {
@@ -23,6 +23,14 @@ export interface HowToUseModalProps {
   steps: string[];
   /** Concrete home-service example narrative */
   example: string;
+  /** Optional: who typically uses this surface (role sentence) */
+  whoUsesIt?: string;
+  /** Optional: 3–5 example prompts Aura can act on inside this console */
+  aiActions?: string[];
+  /** Optional: common issues + one-line fix */
+  commonIssues?: Array<{ q: string; a: string }>;
+  /** Optional: which other consoles / integrations this surface hands off to */
+  connectsWith?: string[];
   /** Optional className for the trigger button */
   className?: string;
   /** Optional override label (defaults to "How to use") */
@@ -44,6 +52,10 @@ export function HowToUseModal({
   whenYouStepIn,
   steps,
   example,
+  whoUsesIt,
+  aiActions,
+  commonIssues,
+  connectsWith,
   className,
   triggerLabel = 'How to use',
   iconOnly = false,
@@ -79,6 +91,16 @@ export function HowToUseModal({
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
+          {whoUsesIt && (
+            <Card className="p-4 border-sky-500/30 bg-sky-500/5">
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="h-4 w-4 text-sky-400" />
+                <h3 className="font-semibold text-sky-300">Who uses it</h3>
+              </div>
+              <p className="text-sm text-foreground/90">{whoUsesIt}</p>
+            </Card>
+          )}
+
           <Card className="p-4 border-emerald-500/30 bg-emerald-500/5">
             <div className="flex items-center gap-2 mb-3">
               <Zap className="h-4 w-4 text-emerald-400" />
@@ -115,10 +137,55 @@ export function HowToUseModal({
             </ol>
           </Card>
 
+          {aiActions && aiActions.length > 0 && (
+            <Card className="p-4 border-fuchsia-500/30 bg-fuchsia-500/5">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="h-4 w-4 text-fuchsia-400" />
+                <h3 className="font-semibold text-fuchsia-300">Ask Aura in this console</h3>
+              </div>
+              <ul className="space-y-1.5 text-sm text-foreground/90 list-disc list-inside">
+                {aiActions.map((item, i) => (
+                  <li key={i}>“{item}”</li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
+          {commonIssues && commonIssues.length > 0 && (
+            <Card className="p-4 border-rose-500/30 bg-rose-500/5">
+              <div className="flex items-center gap-2 mb-3">
+                <LifeBuoy className="h-4 w-4 text-rose-400" />
+                <h3 className="font-semibold text-rose-300">Common issues + fixes</h3>
+              </div>
+              <ul className="space-y-2 text-sm text-foreground/90">
+                {commonIssues.map((item, i) => (
+                  <li key={i}>
+                    <span className="font-medium text-foreground">{item.q}</span>
+                    <span className="text-foreground/80"> — {item.a}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
+          {connectsWith && connectsWith.length > 0 && (
+            <Card className="p-4 border-teal-500/30 bg-teal-500/5">
+              <div className="flex items-center gap-2 mb-3">
+                <Workflow className="h-4 w-4 text-teal-400" />
+                <h3 className="font-semibold text-teal-300">What connects</h3>
+              </div>
+              <ul className="space-y-1.5 text-sm text-foreground/90 list-disc list-inside">
+                {connectsWith.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
           <Card className="p-4 border-violet-500/30 bg-violet-500/5">
             <div className="flex items-center gap-2 mb-3">
               <Lightbulb className="h-4 w-4 text-violet-400" />
-              <h3 className="font-semibold text-violet-300">Home-service example</h3>
+              <h3 className="font-semibold text-violet-300">Real-world example</h3>
             </div>
             <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{example}</p>
           </Card>
