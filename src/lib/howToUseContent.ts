@@ -176,23 +176,49 @@ export const HOW_TO_USE: Record<string, Content> = {
 
   fieldOpsConsole: {
     title: 'Field Operations Console',
+    whoUsesIt:
+      'Dispatchers, operations managers, and owner-operators who run the day. Field team members see a simpler mobile view (Technician App) — this console is the desk-side command center.',
     runsAutomatically: [
-      'Auto-assigns jobs to the closest / most-skilled tech.',
-      'Sends ETA texts to customers automatically.',
-      'Triggers check-in/check-out workflows on the tech\'s phone.',
-      'Reorders parts when inventory runs low.',
+      'Auto-assigns each job to the closest, most-skilled available team member.',
+      'Sends ETA texts, arrival photos, and completion updates to the customer.',
+      'Triggers check-in / check-out workflows on the team member’s phone.',
+      'Watches route efficiency and flags gaps or overloaded schedules.',
+      'Reorders parts and materials when inventory drops below reorder points.',
     ],
     whenYouStepIn: [
-      'Manually re-assigning a job (sick tech, special-request customer).',
-      'Reviewing daily route efficiency.',
+      'Manually re-assigning a job (sick team member, VIP customer, special skill).',
+      'Reviewing the daily route efficiency summary or a flagged detour.',
+      'Approving high-cost part reorders above your set threshold.',
     ],
     steps: [
-      'Add your technicians in Settings → Team.',
-      'Connect Google Calendar (optional but recommended).',
-      'Watch the Dispatch board fill itself.',
+      'Add your field team in Settings → Team and give each person a role + skills.',
+      'Connect Google Calendar so bookings write straight to the right calendar.',
+      'Open Field Ops → Dispatch. Confirm today’s jobs are assigned to the right people.',
+      'Enable the Technician App (QR code at the top-right) so the team can check in from their phones.',
+      'Turn on inventory reorder alerts under Settings → Inventory if you carry parts.',
+      'Watch the dispatch board fill itself as bookings come in from Front Desk and the website.',
+    ],
+    aiActions: [
+      'Reassign the 2pm job to whoever is closest',
+      'Text the next customer that we are running 20 minutes late',
+      'Show me every job flagged as at-risk today',
+      'Reorder anything under its minimum stock',
+      'What is my dispatch efficiency this week vs last week',
+    ],
+    commonIssues: [
+      { q: 'Jobs aren’t auto-assigning', a: 'Confirm each team member has skills tagged and availability set for today.' },
+      { q: 'ETA texts never went out', a: 'Check Integrations → SMS is connected and the customer’s phone is E.164 format.' },
+      { q: 'Calendar didn’t update', a: 'Reconnect Google Calendar under Integrations → Calendar; the token may have expired.' },
+      { q: 'The map shows nothing', a: 'Grant location permission on the team member’s phone and check they opened the Technician App today.' },
+    ],
+    connectsWith: [
+      'Front Desk (drops new bookings straight onto the dispatch board)',
+      'Business Management (completed jobs auto-generate invoices)',
+      'Customer Portal (customers track ETA + confirm on-site)',
+      'Google Calendar, SignalWire (SMS), and your inventory catalog',
     ],
     example:
-      'A new booking lands at 9 AM. Dispatch sees Tech A is closest with the right skill, auto-assigns the job, texts the customer "Tech A arriving 10:15 AM", and updates the route map. You didn\'t touch a thing.',
+      'A new booking lands at 9 AM. The console sees Alex is closest and holds the right skill tag, auto-assigns the job, texts the customer “Alex arriving 10:15 AM,” and updates the route map. When Alex taps “Complete” at 11:30, an invoice is generated and the customer gets a payment link before Alex is back in the truck.',
   },
 
   socialMediaConsole: {
@@ -216,21 +242,50 @@ export const HOW_TO_USE: Record<string, Content> = {
   },
 
   outreachSalesConsole: {
-    title: 'Outreach & Sales Console',
+    title: 'Marketing & Sales Console',
+    whoUsesIt:
+      'Owners, sales leads, and marketing operators. The console runs itself but this is where you review the pipeline, approve high-value quotes, and shape campaigns.',
     runsAutomatically: [
-      'Sends follow-up emails/SMS to leads who didn\'t book.',
-      'Re-engages dormant customers (e.g., "it\'s been 6 months since your tune-up").',
-      'Generates and sends quotes from chat conversations.',
+      'Follows up with every lead that didn’t book — email, SMS, or both.',
+      'Re-engages dormant customers on the schedule you set (e.g., 30 / 60 / 90 / 180 days).',
+      'Generates quotes from chat and voice conversations and sends them for approval.',
+      'Runs seasonal campaigns from your industry template pack.',
+      'Scores each lead by intent so hot ones bubble up first.',
     ],
     whenYouStepIn: [
-      'Reviewing high-value quotes before they go out (optional approval gate).',
+      'Approving a quote above the auto-send threshold you set.',
+      'Editing a campaign message or adjusting who it targets.',
+      'Reviewing the weekly conversion snapshot.',
     ],
     steps: [
-      'Set re-engagement schedule (default: 30/60/90/180 days).',
-      'Approve quote templates.',
+      'Confirm your Knowledge Base has services + pricing — quotes pull from there.',
+      'Connect Email (Resend) and SMS (SignalWire) under Integrations.',
+      'Set your re-engagement schedule under Marketing → Automation.',
+      'Pick or edit a campaign template from your industry pack and press “Activate.”',
+      'Set your quote-approval threshold under Settings → Sales.',
+      'Watch the pipeline widget on this console — hot leads move to the top automatically.',
+    ],
+    aiActions: [
+      'Send a follow-up to every lead that went cold this week',
+      'Draft a re-engagement campaign for customers we haven’t seen in six months',
+      'Show me every quote over $2,000 waiting for approval',
+      'What is my lead-to-booking conversion this month',
+      'Generate a spring promotion using our brand voice',
+    ],
+    commonIssues: [
+      { q: 'Follow-ups aren’t sending', a: 'Check Email / SMS integrations are connected and your daily send caps aren’t hit.' },
+      { q: 'Quotes reference wrong prices', a: 'Update the service in Knowledge Base — quotes pull live from there.' },
+      { q: 'Campaign audience is empty', a: 'Widen the filter (industry, tag, last-seen) or import more leads via Leads → Import.' },
+      { q: 'Leads aren’t being scored', a: 'The AI needs a few dozen booked jobs to calibrate; scoring becomes accurate around week 2.' },
+    ],
+    connectsWith: [
+      'Knowledge Base (services + pricing for quotes)',
+      'Front Desk (captures new leads from calls and chat)',
+      'Business Management (won quotes flip to invoices)',
+      'Email (Resend), SMS (SignalWire), Social publishing, CRM sync',
     ],
     example:
-      'A lead got a $4,800 quote 2 weeks ago and went silent. The AI sends a friendly nudge: "Hey Sarah — still considering the install? We have an opening Thursday and a $200 spring rebate." She books.',
+      'A lead received a $4,800 quote two weeks ago and went silent. The console sends a friendly nudge: “Hi Sarah — still weighing the install? We have an opening Thursday and a $200 seasonal rebate.” She replies, books, and the win rolls into your pipeline widget the same day.',
   },
 
   analyticsConsole: {
@@ -254,21 +309,49 @@ export const HOW_TO_USE: Record<string, Content> = {
 
   businessMgmtConsole: {
     title: 'Business Management Console',
+    whoUsesIt:
+      'Owners, office managers, and bookkeepers. This is the money + operations backbone — invoicing, payments, forecasting, and compliance in one place.',
     runsAutomatically: [
-      'Generates invoices and sends them automatically when a job completes.',
-      'Tracks payments and follows up on overdue invoices.',
-      'Forecasts revenue and staffing needs from past data.',
+      'Generates and emails invoices the moment a job is marked complete.',
+      'Tracks payments, sends payment-received receipts, and chases overdue invoices on your cadence.',
+      'Forecasts revenue and staffing needs from your past 30 / 60 / 90 days.',
+      'Reconciles Stripe payouts against invoices daily.',
+      'Flags refund requests, chargebacks, and compliance items that need a human look.',
     ],
     whenYouStepIn: [
-      'Approving an invoice over a threshold you set.',
-      'Reviewing the monthly forecast.',
+      'Approving an invoice or refund above the threshold you set.',
+      'Reviewing the monthly forecast and staffing recommendation.',
+      'Answering a flagged compliance item (insurance expiring, permit due, etc.).',
     ],
     steps: [
-      'Connect Stripe in Settings → Integrations.',
-      'Set invoice template and approval thresholds.',
+      'Connect Stripe (or your payment provider) under Integrations → Payments — this uses your own Stripe account and card on file.',
+      'Set your invoice template and email footer under Settings → Billing.',
+      'Set approval thresholds for invoices and refunds under Settings → Sales.',
+      'Turn on the overdue-follow-up cadence (default: day 7, 14, 30).',
+      'Confirm the industry template pack matches your business — quote and invoice templates come from it.',
+      'Watch the revenue widget on this console — it updates as payments settle.',
+    ],
+    aiActions: [
+      'Show me every invoice over 30 days overdue',
+      'Send a friendly overdue reminder to the top five',
+      'What is my projected revenue for next month',
+      'Refund the last payment from customer Alex Rivera',
+      'Break down last month’s revenue by service',
+    ],
+    commonIssues: [
+      { q: 'Invoices aren’t sending', a: 'Confirm the completed job has a customer email and Stripe is connected under Integrations.' },
+      { q: 'Stripe payout doesn’t match', a: 'Open the reconciliation report — most mismatches are Stripe fees; the AI will label them.' },
+      { q: 'Forecast looks off', a: 'Forecasts need ~30 days of data; new workspaces will see a “calibrating” label until enough data lands.' },
+      { q: 'Refund won’t execute', a: 'Refunds above your threshold need admin approval — check the pending queue at the top of the console.' },
+    ],
+    connectsWith: [
+      'Field Ops (completed jobs trigger invoicing)',
+      'Marketing & Sales (won quotes flip to invoices)',
+      'Analytics (revenue + forecast feed the KPI dashboard)',
+      'Stripe / Paddle (payments) and your accounting export',
     ],
     example:
-      'Tech finishes a job at 4 PM, taps "Complete" on his phone. Invoice auto-generates, gets emailed to the customer, payment hits Stripe by 5 PM. You see the cash in your dashboard.',
+      'A team member finishes a job at 4 PM and taps “Complete” on their phone. The invoice generates using your industry template, emails the customer with a Stripe payment link, and the payment settles by 5 PM. The revenue widget on this console ticks up before you’ve seen the notification.',
   },
 
   webPresenceConsole: {
