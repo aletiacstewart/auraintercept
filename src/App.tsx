@@ -112,6 +112,7 @@ import NotFound from "./pages/NotFound";
 import PlatformIssues from "./pages/PlatformIssues";
 import PlatformHealth from "./pages/PlatformHealth";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
+import OAuthConsent from "./pages/OAuthConsent";
 import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
 import CompanyBlog from "./pages/CompanyBlog";
@@ -195,6 +196,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
+                <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
                 <Route path="/customer-auth" element={<CustomerAuth />} />
                 <Route path="/talk-to-aura" element={<Navigate to="/contact" replace />} />
                 <Route path="/contact" element={<Contact />} />

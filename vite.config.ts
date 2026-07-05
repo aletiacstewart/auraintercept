@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import { fileURLToPath } from "node:url";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
+import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -13,6 +14,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
+    mcpPlugin(),
     mode === "production" && VitePWA({
       // 'prompt' lets PWAUpdatePrompt show a banner instead of silently activating a new
       // SW mid-session (which was causing random reloads / logouts on dashboards).
