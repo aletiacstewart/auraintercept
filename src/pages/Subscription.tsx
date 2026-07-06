@@ -766,7 +766,7 @@ export default function Subscription() {
                           const rowBg = isEven ? 'bg-muted/10' : '';
                           
                           return (
-                            <Tooltip key={feature.name}>
+                            <Tooltip key={`${section.title}-${feature.name}`}>
                             <tr className={`border-b border-border/50 hover:bg-muted/20 ${rowBg}`}>
                                 <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
                                 {renderFeatureValue(feature.starter, false, feature.name)}

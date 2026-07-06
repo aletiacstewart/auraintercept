@@ -30,7 +30,7 @@ export default function Dashboard() {
         .from('profiles')
         .select('full_name')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
       return data;
     },
     enabled: !!user?.id,
@@ -44,7 +44,7 @@ export default function Dashboard() {
         .from('companies')
         .select('name')
         .eq('id', companyId)
-        .single();
+        .maybeSingle();
       return data;
     },
     enabled: !!companyId,

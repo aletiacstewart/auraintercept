@@ -37,7 +37,7 @@ export function useOnboardingState() {
           .from('profiles')
           .select('onboarding_completed_at, tours_completed')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
         if (error) {
           console.error('Error fetching onboarding state:', error);
@@ -69,7 +69,7 @@ export function useOnboardingState() {
         .from('profiles')
         .select('tours_completed')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       const currentTours = (currentData?.tours_completed as ToursCompleted) || {};
       const updatedTours = {
