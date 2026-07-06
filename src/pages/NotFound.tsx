@@ -13,7 +13,7 @@ const NotFound = () => {
     void supabase
       .from("platform_issues")
       .insert({
-        issue_type: "not_found",
+        issue_type: "frontend_error",
         severity: "low",
         title: `404: ${location.pathname}`,
         description: `Bad route hit — referrer: ${document.referrer || "(direct)"}, ua: ${navigator.userAgent}`,
