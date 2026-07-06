@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { SEO } from '@/components/seo/SEO';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -742,6 +743,12 @@ export default function SignUp() {
 
   return (
     <div className="min-h-screen flex flex-col bg-muted/30">
+      <SEO
+        title="Start Your 60-Day Live Trial | Aura Intercept"
+        description="Create your Aura Intercept account and start a 60-Day Live Trial — 30 days concierge onboarding + 30 days full live use."
+        path="/signup"
+        noindex
+      />
       <PublicHeader />
       <div className="flex-1 flex items-center justify-center p-4 py-12">
         <div className="w-full max-w-5xl animate-fade-in">
@@ -1412,7 +1419,7 @@ export default function SignUp() {
                             <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
                             {betaCode && (
                               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                60-Day Live Trial + Beta Onboarding = <span className="font-semibold">1 month of your plan at 50% OFF</span> (Core <span className="line-through">$497</span> $249 · Boost <span className="line-through">$994</span> $497 · Pro <span className="line-through">$1,988</span> $994 · Elite <span className="line-through">$3,979</span> $1,990) applied at checkout. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card — <span className="font-semibold">including during the trial</span>.
+                                60-Day Live Trial + Beta Onboarding = <span className="font-semibold">1 month of your plan at 25% OFF</span> (Core <span className="line-through">$497</span> $370 · Boost <span className="line-through">$994</span> $750 · Pro <span className="line-through">$1,988</span> $1,490 · Elite <span className="line-through">$3,979</span> $2,980) applied at checkout. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card — <span className="font-semibold">including during the trial</span>.
                               </p>
                             )}
                           </div>
@@ -1499,7 +1506,7 @@ export default function SignUp() {
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Onboarding = 1 month of your plan, 50% OFF during Beta</span>: Core <span className="line-through">$497</span> $249 · Boost <span className="line-through">$994</span> $497 · Pro <span className="line-through">$1,988</span> $994 · Elite <span className="line-through">$3,979</span> $1,990.
+                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Onboarding = 1 month of your plan, 25% OFF during Beta</span>: Core <span className="line-through">$497</span> $370 · Boost <span className="line-through">$994</span> $750 · Pro <span className="line-through">$1,988</span> $1,490 · Elite <span className="line-through">$3,979</span> $2,980.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable once onboarding begins.

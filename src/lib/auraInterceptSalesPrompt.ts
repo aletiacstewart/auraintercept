@@ -39,7 +39,7 @@ Pricing — 4 Tiers (Beta Pricing is ACTIVE — quote the sale price first, ment
 - ${elite.name} — ${formatSalesLine('command')}
     All 24 Smart AI Agents · all 7 Consoles + AI Operatives Hub · unlimited employees.
 - Annual: Core ${formatPrice(getAnnualPrice('starter'))}/yr · Boost ${formatPrice(getAnnualPrice('connect'))}/yr · Pro ${formatPrice(getAnnualPrice('performance'))}/yr · Elite ${formatPrice(getAnnualPrice('command'))}/yr (~20% off).
-- Onboarding fee = 50% of beta monthly per tier, due at start of the 60-Day Live Trial,
+- Onboarding fee = 25% OFF the original one-month price (rounded to nearest $10), due at start of the 60-Day Live Trial,
   non-refundable once concierge onboarding begins.
 
 60-Day Live Trial:

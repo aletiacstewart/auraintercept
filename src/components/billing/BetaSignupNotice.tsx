@@ -7,7 +7,7 @@ interface BetaSignupNoticeProps {
 
 /**
  * Unified BETA Sign-Up notice — explains 60-Day Live Trial, Beta Pricing,
- * tier-specific beta onboarding fee (50% of beta monthly), 3rd-party
+ * tier-specific beta onboarding fee (25% OFF original, rounded to nearest $10), 3rd-party
  * billing pass-through, and what the
  * onboarding fee covers. Used on the public homepage (above pricing plans)
  * and on the company signup form (above the tier selector).

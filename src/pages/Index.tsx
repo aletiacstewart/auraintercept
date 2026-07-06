@@ -330,6 +330,11 @@ export default function Index() {
 
   return (
     <div style={{ background: "radial-gradient(ellipse 120% 80% at 50% 0%, hsl(200,60%,6%) 0%, hsl(210,40%,4%) 50%, hsl(220,30%,3%) 100%)", minHeight: "100vh", color: "white" }}>
+      <SEO
+        title="Aura Intercept | Smart Agents, Automated Service"
+        description="AI operatives that automate customer engagement, field ops, billing, marketing, and analytics for service businesses."
+        path="/"
+      />
       <style>{`
         @keyframes border-shine {
           0% { background-position: 0% 50%; }
@@ -632,7 +637,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$497</span> <span className="font-semibold">$249</span> (50% OFF — Beta)</p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$497</span> <span className="font-semibold">$370</span> (25% OFF — Beta)</p>
               </CardContent>
             </Card>
 
@@ -664,7 +669,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$994</span> <span className="font-semibold">$497</span> (50% OFF — Beta)</p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$994</span> <span className="font-semibold">$750</span> (25% OFF — Beta)</p>
               </CardContent>
             </Card>
 
@@ -696,7 +701,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$1,988</span> <span className="font-semibold">$994</span> (50% OFF — Beta)</p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$1,988</span> <span className="font-semibold">$1,490</span> (25% OFF — Beta)</p>
               </CardContent>
             </Card>
 
@@ -726,7 +731,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$3,979</span> <span className="font-semibold">$1,990</span> (50% OFF — Beta)</p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$3,979</span> <span className="font-semibold">$2,980</span> (25% OFF — Beta)</p>
               </CardContent>
             </Card>
           </div>

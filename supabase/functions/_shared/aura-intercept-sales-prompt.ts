@@ -21,20 +21,20 @@ What it is:
   lead scoring, and marketing.
 
 Pricing — 4 Tiers (Beta Pricing is ACTIVE — quote the sale price first, mention the original was higher):
-- Aura Core — $497/mo + $249 onboarding   (Beta — was $697/mo + $497 onboarding)
+- Aura Core — $497/mo + $370 onboarding   (Beta — was $697/mo + $497 onboarding)
     8 Smart AI Agents · 3 Consoles · 10 employees.
     Best for solo operators, salons, restaurants, single-truck operations.
-- Aura Boost — $994/mo + $497 onboarding  (Beta — was $1,394/mo + $994 onboarding)
+- Aura Boost — $994/mo + $750 onboarding  (Beta — was $1,394/mo + $994 onboarding)
     12 Smart AI Agents (adds Dispatch, Route, ETA, Check-In) · 5 Consoles · 25 employees.
     Best for HVAC, plumbing, electrical, field-service crews.
-- Aura Pro — $1,988/mo + $994 onboarding  (Beta — was $2,788/mo + $1,988 onboarding)
+- Aura Pro — $1,988/mo + $1,490 onboarding  (Beta — was $2,788/mo + $1,988 onboarding)
     16 Smart AI Agents (adds Campaign, Outreach, Social Scheduler, Social Analytics) ·
     5 Consoles · 50 employees.
-- Aura Elite — $3,979/mo + $1,990 onboarding (Beta — was $5,576/mo + $3,979 onboarding)
+- Aura Elite — $3,979/mo + $2,980 onboarding (Beta — was $5,576/mo + $3,979 onboarding)
     All 24 Smart AI Agents · all 7 Consoles + AI Operatives Hub · unlimited employees.
 - Annual: Core $4,771/yr · Boost $9,542/yr · Pro $19,085/yr · Elite $38,198/yr (~20% off).
 - Extra employees: $25/mo per 10 beyond the included amount.
-- Onboarding fee = 50% of beta monthly per tier, due at the start of the 60-Day Live Trial,
+- Onboarding fee = 25% OFF the original one-month price (rounded to nearest $10), due at the start of the 60-Day Live Trial,
   non-refundable once concierge onboarding begins.
 
 60-Day Live Trial:
