@@ -26,7 +26,7 @@ export function EmployeeDashboard() {
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
       return data;
     },
     enabled: !!user?.id,
@@ -40,7 +40,7 @@ export function EmployeeDashboard() {
         .from('companies')
         .select('name, primary_color, secondary_color, logo_url')
         .eq('id', companyId)
-        .single();
+        .maybeSingle();
       return data;
     },
     enabled: !!companyId,

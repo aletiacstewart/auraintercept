@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThirdPartyCostDisclosureDialog } from '@/components/subscription/ThirdPartyCostDisclosureDialog';
 import { BetaCodeInput, type BetaCodeResult } from '@/components/billing/BetaCodeInput';
 import { ThirdPartyFeeNotice } from '@/components/billing/ThirdPartyFeeNotice';
@@ -754,19 +754,19 @@ export default function Subscription() {
                   </thead>
                   <tbody className="text-sm">
                     {sections.map((section) => (
-                      <>
+                      <React.Fragment key={`sec-${section.title}`}>
                         <tr key={`section-${section.title}`} className="bg-muted/30">
                           <td colSpan={5} className="py-1.5 px-4 font-semibold text-primary">
                             {section.title}
                           </td>
                         </tr>
-                        {section.features.map((feature) => {
+                        {section.features.map((feature, featureIdx) => {
                           const rowIndex = globalRowIndex++;
                           const isEven = rowIndex % 2 === 0;
                           const rowBg = isEven ? 'bg-muted/10' : '';
                           
                           return (
-                            <Tooltip key={feature.name}>
+                            <Tooltip key={`${section.title}-${featureIdx}-${feature.name}`}>
                             <tr className={`border-b border-border/50 hover:bg-muted/20 ${rowBg}`}>
                                 <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
                                 {renderFeatureValue(feature.starter, false, feature.name)}
@@ -777,7 +777,7 @@ export default function Subscription() {
                             </Tooltip>
                           );
                         })}
-                      </>
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>
