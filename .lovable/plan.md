@@ -1,53 +1,45 @@
-## Recommended Next Steps (post-audit)
+## Phase 2 — Live Runtime Smoke Suite
 
-The three-phase audit closed the biggest content/data drift. Here are the highest-leverage follow-ups, ordered by user-visible impact vs. effort.
+Goal: prove every top-level route actually renders without runtime errors after the recent audit + refactor sweep — not just compiles.
 
-### 1. Console Guide Coverage Expansion (Phase 4B)
-Phase 4A rewrote 4 top consoles. The following still use short/legacy guides or none at all:
-- Communications console (Voice, SMS, Missed Calls)
-- Scheduling / Booking console
-- Content Engine console
-- Social Media console (3-tab consolidated)
-- Cyber-Sentry monitoring
-- Customer Portal (admin view)
-- Analytics console (NLP interface)
-- Settings (7-category)
+### Approach
+Playwright script driven from the sandbox against `http://localhost:8080`, persisted at `/tmp/browser/smoke/`.
 
-Apply the same 6-section template + `HowToUseModal` wiring. ~2 guides per turn.
+**Personas (3):**
+- `hvacadmin@demo.com` — company_admin (HVAC pack)
+- `hvactech@demo.com` — technician (mobile view)
+- `hvaccustomer@demo.com` — customer (portal view)
 
-### 2. Live Runtime Smoke Suite
-We verified via `tsgo` + grep. We have NOT verified that every console actually loads without runtime errors after all recent edits. Proposal:
-- Playwright script that logs in as each demo persona (admin, employee, customer) across 3 representative industries
-- Visits every top-level route, captures console errors + screenshot
-- Output: `/tmp/smoke/<route>.png` + error log
-- Fix anything red in a follow-up turn
+Password: `aidemo*!` (per demo registry memory). Restore Supabase session from env, not UI login, per the browser-use guidance.
 
-### 3. Edge Function Health Sweep
-106 edge functions. Recent fallback migration touched 21. Recommend:
-- Query `edge_function_logs` for last 7 days, group by function, surface any with >5% error rate
-- Spot-check the top offenders
-- Confirm all internal-call functions still have `verify_jwt=false` where required
+**Routes covered (~40):**
+- Admin: `/dashboard`, `/dashboard/knowledge-base`, `/dashboard/field-ops`, `/dashboard/business-management`, `/dashboard/marketing-sales`, `/dashboard/social-media`, `/dashboard/content-engine`, `/dashboard/web-presence`, `/dashboard/customer-portal`, `/dashboard/analytics`, `/dashboard/ai-operatives`, `/dashboard/specialists`, `/dashboard/communications`, `/dashboard/scheduling`, `/dashboard/settings` (all 7 tabs), `/dashboard/video`, `/dashboard/cyber-sentry`
+- Technician: `/technician`, `/technician/install`
+- Customer: `/portal`, `/portal/book`, `/portal/invoices`
+- Public: `/`, `/pricing`, `/for-business`, `/audit`, `/auth`
 
-### 4. Empty-State Consistency Pass
-`IndustryEmptyState` is used on primary list surfaces. Secondary surfaces likely still show blank cards:
-- Widget/console sub-tabs (integrations, template pickers, agent detail panels)
-- Modal-embedded lists (assign technician, pick customer, pick product)
-- Enumerate, wire `IndustryEmptyState` or a compact variant
+**Per route:**
+1. Navigate (`domcontentloaded`)
+2. Wait 1200ms for React hydration + queries
+3. Screenshot → `/tmp/browser/smoke/<persona>-<slug>.png`
+4. Capture `page.on("pageerror")` + `console.error` into a JSON log
+5. Assert no `Error boundary` / `Something went wrong` text in DOM
 
-### 5. Accessibility + SEO Quick Pass
-- Single H1 per route audit
-- Missing `alt` on images (grep `<img` without `alt`)
-- Meta description length check across all public routes (`/`, `/audit`, `/for-business`, `/pricing`, blog)
-- JSON-LD on pricing + blog if missing
+### Output
+- `/tmp/browser/smoke/report.json` — `{ persona, route, url, errors: [], warnings: [], screenshot }`
+- Summary table in chat: route × persona × pass/fail
+- Any red rows get a follow-up fix batch in a subsequent turn (not this one)
 
-### 6. Security Memory Refresh
-Run `security--run_security_scan`, triage results, update `@security-memory`. Last full sweep predates the fallback migration + guide rewrites.
+### Scope guardrails
+- Read-only: no forms submitted, no records created
+- Skip `/dashboard/demo-seeder` and `/design-preview` (platform-admin only, out of scope)
+- Skip external OAuth pop-ups
+- Timebox: one Playwright run (~5–8 min). If a route hangs >15s, mark timeout and move on.
 
-### 7. Deferred (only if you want)
-- Color-token purge Pass 2 (previously deferred by you)
-- PDF visual QA via headless render (Phase 5 was code-only; no pixel check performed)
+### Deliverable
+Pass/fail matrix + list of concrete bugs (with stack traces + screenshots) — nothing gets "fixed" this turn; the fix batch is triaged next turn based on severity.
 
----
-
-### Suggested order
-1 → 2 → 4 → 3 → 5 → 6. Each is 1–3 turns. Confirm which to start with, or say "do all in order" and I'll sequence them the same way as the last run.
+### Technical
+- Uses pre-installed Playwright + Chromium (no install needed)
+- Restores session via `LOVABLE_BROWSER_SUPABASE_SESSION_JSON` + cookies per browser-use rules
+- Viewport 1280×1800; mobile persona also gets a 390×844 pass for technician routes
