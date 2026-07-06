@@ -632,7 +632,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$497</span> <span className="font-semibold">$249</span> (50% OFF — Beta)</p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$497</span> <span className="font-semibold">$370</span> (25% OFF — Beta)</p>
               </CardContent>
             </Card>
 
@@ -664,7 +664,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$994</span> <span className="font-semibold">$497</span> (50% OFF — Beta)</p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$994</span> <span className="font-semibold">$750</span> (25% OFF — Beta)</p>
               </CardContent>
             </Card>
 
@@ -696,7 +696,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$1,988</span> <span className="font-semibold">$994</span> (50% OFF — Beta)</p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$1,988</span> <span className="font-semibold">$1,490</span> (25% OFF — Beta)</p>
               </CardContent>
             </Card>
 
@@ -726,7 +726,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$3,979</span> <span className="font-semibold">$1,990</span> (50% OFF — Beta)</p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$3,979</span> <span className="font-semibold">$2,980</span> (25% OFF — Beta)</p>
               </CardContent>
             </Card>
           </div>
