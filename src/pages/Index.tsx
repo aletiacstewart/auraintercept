@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { SEO } from '@/components/seo/SEO';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import heroAgents from '@/assets/hero-agents.jpeg';
@@ -330,6 +331,11 @@ export default function Index() {
 
   return (
     <div style={{ background: "radial-gradient(ellipse 120% 80% at 50% 0%, hsl(200,60%,6%) 0%, hsl(210,40%,4%) 50%, hsl(220,30%,3%) 100%)", minHeight: "100vh", color: "white" }}>
+      <SEO
+        title="Aura Intercept | Smart Agents, Automated Service"
+        description="AI operatives that automate customer engagement, field ops, billing, marketing, and analytics for service businesses."
+        path="/"
+      />
       <style>{`
         @keyframes border-shine {
           0% { background-position: 0% 50%; }

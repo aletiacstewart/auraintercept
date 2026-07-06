@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { SEO } from '@/components/seo/SEO';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -742,6 +743,12 @@ export default function SignUp() {
 
   return (
     <div className="min-h-screen flex flex-col bg-muted/30">
+      <SEO
+        title="Start Your 60-Day Live Trial | Aura Intercept"
+        description="Create your Aura Intercept account and start a 60-Day Live Trial — 30 days concierge onboarding + 30 days full live use."
+        path="/signup"
+        noindex
+      />
       <PublicHeader />
       <div className="flex-1 flex items-center justify-center p-4 py-12">
         <div className="w-full max-w-5xl animate-fade-in">

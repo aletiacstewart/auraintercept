@@ -1,9 +1,15 @@
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
+import { SEO } from '@/components/seo/SEO';
 
 export default function TermsOfService() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="Terms of Service | Aura Intercept"
+        description="Aura Intercept subscription plans, 60-Day Live Trial, onboarding fees, third-party provider requirements, and platform usage terms."
+        path="/terms-of-service"
+      />
       <PublicHeader />
       
       <main className="container max-w-4xl mx-auto px-6 py-20">

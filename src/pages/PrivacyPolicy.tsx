@@ -1,9 +1,15 @@
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
+import { SEO } from '@/components/seo/SEO';
 
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="Privacy Policy | Aura Intercept"
+        description="How Aura Intercept collects, uses, stores, and protects personal and business data across the platform and third-party integrations."
+        path="/privacy-policy"
+      />
       <PublicHeader />
       
       <main className="container max-w-4xl mx-auto px-6 py-20">
