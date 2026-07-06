@@ -56,7 +56,7 @@ export function CompanyAdminDashboard() {
         .from('companies')
         .select('*')
         .eq('id', companyId)
-        .single();
+        .maybeSingle();
       return data;
     },
     enabled: !!companyId,
