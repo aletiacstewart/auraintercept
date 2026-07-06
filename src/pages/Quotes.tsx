@@ -292,25 +292,25 @@ export default function Quotes() {
                       <TableCell className="text-right font-medium">${quote.total_amount.toFixed(2)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => setViewQuote(quote)}>
+                          <Button aria-label="View quote" variant="ghost" size="icon" onClick={() => setViewQuote(quote)}>
                             <Eye className="w-4 h-4" />
                           </Button>
                           {quote.status === 'draft' && (
-                            <Button variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: quote.id, status: 'sent' })}>
+                            <Button aria-label="Send quote" variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: quote.id, status: 'sent' })}>
                               <Send className="w-4 h-4" />
                             </Button>
                           )}
                           {quote.status === 'sent' && (
                             <>
-                              <Button variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: quote.id, status: 'accepted' })}>
+                              <Button aria-label="Accept quote" variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: quote.id, status: 'accepted' })}>
                                 <Check className="w-4 h-4 text-green-600" />
                               </Button>
-                              <Button variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: quote.id, status: 'declined' })}>
+                              <Button aria-label="Decline quote" variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: quote.id, status: 'declined' })}>
                                 <X className="w-4 h-4 text-destructive" />
                               </Button>
                             </>
                           )}
-                          <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(quote.id)}>
+                          <Button aria-label="Delete quote" variant="ghost" size="icon" onClick={() => deleteMutation.mutate(quote.id)}>
                             <Trash2 className="w-4 h-4 text-destructive" />
                           </Button>
                         </div>
