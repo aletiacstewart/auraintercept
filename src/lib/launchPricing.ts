@@ -10,12 +10,12 @@
  *   Elite  | $5,576 / mo       | $3,979 / mo
  *
  * Onboarding (one-time): equals ONE MONTH of the plan (struck-through original),
- * then 50% OFF during Beta — sale price billed:
- *   Tier   | Original (1 mo, struck) | Beta Sale (billed, 50% off)
- *   Core   | $497                    | $249
- *   Boost  | $994                    | $497
- *   Pro    | $1,988                  | $994
- *   Elite  | $3,979                  | $1,990
+ * then 25% OFF during Beta — sale price billed (rounded to nearest $10):
+ *   Tier   | Original (1 mo, struck) | Beta Sale (billed, 25% off)
+ *   Core   | $497                    | $370
+ *   Boost  | $994                    | $750
+ *   Pro    | $1,988                  | $1,490
+ *   Elite  | $3,979                  | $2,980
  * Annual = round(monthly × 12 × 0.8) (~20% savings).
  */
 
@@ -40,7 +40,7 @@ export const LAUNCH_PRICING = {
       original: 697,
       sale: 497,
       onboardingOriginal: 497,
-      onboardingSale: 249,
+      onboardingSale: 370,
       annualOriginal: 6691,
       annualSale: 4771,
     },
@@ -49,7 +49,7 @@ export const LAUNCH_PRICING = {
       original: 1394,
       sale: 994,
       onboardingOriginal: 994,
-      onboardingSale: 497,
+      onboardingSale: 750,
       annualOriginal: 13382,
       annualSale: 9542,
     },
@@ -58,7 +58,7 @@ export const LAUNCH_PRICING = {
       original: 2788,
       sale: 1988,
       onboardingOriginal: 1988,
-      onboardingSale: 994,
+      onboardingSale: 1490,
       annualOriginal: 26765,
       annualSale: 19085,
     },
@@ -67,7 +67,7 @@ export const LAUNCH_PRICING = {
       original: 5576,
       sale: 3979,
       onboardingOriginal: 3979,
-      onboardingSale: 1990,
+      onboardingSale: 2980,
       annualOriginal: 53530,
       annualSale: 38198,
     },
@@ -95,8 +95,8 @@ export function getOnboardingPrice(tier: TierKey): number {
 }
 
 /** Beta onboarding cap — DEPRECATED. Onboarding is now tier-specific
- * (50% of beta monthly), so there is no separate cap to enforce. These
- * exports remain for backward compatibility with older imports. */
+ * (25% OFF original, rounded to nearest $10), so there is no separate
+ * cap to enforce. These exports remain for backward compatibility. */
 export const BETA_ONBOARDING_CAP_CENTS = 0;
 export const BETA_ONBOARDING_CAP_AMOUNT = 0;
 export const BETA_ONBOARDING_CAP_EXPIRES_AT = '2026-08-01T00:00:00Z';
@@ -135,7 +135,7 @@ export function formatMonthlyCost(tier: TierKey): string {
     : `${formatPrice(t.original)}/mo`;
 }
 
-/** e.g. "$249 (was $497)" when beta active. */
+/** e.g. "$370 (was $497)" when beta active. */
 export function formatOnboardingCost(tier: TierKey): string {
   const t = getTierPricing(tier);
   return LAUNCH_PRICING.active
@@ -143,7 +143,7 @@ export function formatOnboardingCost(tier: TierKey): string {
     : formatPrice(t.onboardingOriginal);
 }
 
-/** e.g. "Aura Core ($497/mo · $249 onboarding · Beta Pricing — was $697/mo + $497 onboarding)". */
+/** e.g. "Aura Core ($497/mo · $370 onboarding · Beta Pricing — was $697/mo + $497 onboarding)". */
 export function formatTierLabel(tier: TierKey): string {
   const t = getTierPricing(tier);
   if (!LAUNCH_PRICING.active) {
@@ -155,7 +155,7 @@ export function formatTierLabel(tier: TierKey): string {
   );
 }
 
-/** e.g. "$497/mo + $249 onboarding   (Beta — was $697/mo + $497 onboarding)". Used in sales voice prompts. */
+/** e.g. "$497/mo + $370 onboarding   (Beta — was $697/mo + $497 onboarding)". Used in sales voice prompts. */
 export function formatSalesLine(tier: TierKey): string {
   const t = getTierPricing(tier);
   if (!LAUNCH_PRICING.active) {
