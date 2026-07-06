@@ -97,7 +97,7 @@ export default function CustomerCompanyPortal() {
             <span className="text-sm font-semibold text-card-foreground">Customer Portal</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-card-foreground">
+            <Button aria-label="Sign out" variant="ghost" size="icon" onClick={handleSignOut} className="text-card-foreground">
               <LogOut className="w-5 h-5" />
             </Button>
           </div>

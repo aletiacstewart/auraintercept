@@ -174,7 +174,7 @@ export default function EmployeeDetail() {
         <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard/employees')}>
+          <Button aria-label="Back to employees" variant="ghost" size="icon" onClick={() => navigate('/dashboard/employees')}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-4">
