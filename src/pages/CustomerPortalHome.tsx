@@ -77,7 +77,7 @@ export default function CustomerPortalHome() {
                 <span className="hidden sm:inline">Install App</span>
               </Button>
             )}
-            <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-card-foreground">
+            <Button aria-label="Sign out" variant="ghost" size="icon" onClick={handleSignOut} className="text-card-foreground">
               <LogOut className="w-5 h-5" />
             </Button>
           </div>

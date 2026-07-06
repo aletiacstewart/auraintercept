@@ -148,7 +148,7 @@ export default function CustomerPortalAppInstall() {
                 <div className="flex-1 bg-muted/50 rounded-lg px-4 py-3 border border-border/50">
                   <code className="text-sm text-cyan-400 break-all">{installUrl}</code>
                 </div>
-                <Button variant="outline" size="icon" onClick={handleCopyUrl}>
+                <Button aria-label="Copy install URL" variant="outline" size="icon" onClick={handleCopyUrl}>
                   <FileText className="w-4 h-4" />
                 </Button>
               </div>

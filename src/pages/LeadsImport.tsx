@@ -124,7 +124,7 @@ export default function LeadsImport() {
             description="Upload CSV, Excel, PDF, or Word. Aura's Leads agent parses and adds them."
             featureColor="integrations"
             action={
-              <Button variant="ghost" size="icon" asChild>
+              <Button aria-label="Back" variant="ghost" size="icon" asChild>
                 <Link to="/dashboard/leads"><ArrowLeft className="w-4 h-4" /></Link>
               </Button>
             }

@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { Users, Plus, Copy, Gift, TrendingUp, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
+import { AuraEmptyState } from '@/components/ui/aura-empty-state';
 
 export default function Referrals() {
   const { companyId } = useAuth();
@@ -226,10 +227,14 @@ export default function Referrals() {
             </div>
           ) : referrals?.length === 0 ? (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Users className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium">No referrals yet</h3>
-                <p className="text-muted-foreground text-sm">Generate your first referral code</p>
+              <CardContent>
+                <AuraEmptyState
+                  icon={Users}
+                  title="No referrals yet"
+                  description="Generate your first referral code to reward customers who bring in new business."
+                  actionLabel="New referral"
+                  onAction={() => setDialogOpen(true)}
+                />
               </CardContent>
             </Card>
           ) : (
