@@ -754,7 +754,7 @@ export default function Subscription() {
                   </thead>
                   <tbody className="text-sm">
                     {sections.map((section) => (
-                      <>
+                      <React.Fragment key={`sec-${section.title}`}>
                         <tr key={`section-${section.title}`} className="bg-muted/30">
                           <td colSpan={5} className="py-1.5 px-4 font-semibold text-primary">
                             {section.title}
@@ -777,7 +777,7 @@ export default function Subscription() {
                             </Tooltip>
                           );
                         })}
-                      </>
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>
