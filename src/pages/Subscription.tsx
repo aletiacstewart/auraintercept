@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThirdPartyCostDisclosureDialog } from '@/components/subscription/ThirdPartyCostDisclosureDialog';
 import { BetaCodeInput, type BetaCodeResult } from '@/components/billing/BetaCodeInput';
 import { ThirdPartyFeeNotice } from '@/components/billing/ThirdPartyFeeNotice';
