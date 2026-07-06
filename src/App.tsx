@@ -187,6 +187,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/audit" element={<OpportunityAudit />} />
                 <Route path="/for-business" element={<ForBusiness />} />
+                <Route path="/pricing" element={<Navigate to="/#pricing" replace />} />
                 <Route path="/onboarding" element={<OnboardingForm />} />
                 <Route path="/intake/:token" element={<PublicOnboardingIntake />} />
                 <Route path="/dashboard/onboarding-invites" element={<Navigate to="/dashboard/subscription-analytics?tab=invites" replace />} />
