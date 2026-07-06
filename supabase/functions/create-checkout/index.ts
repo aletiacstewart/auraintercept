@@ -222,7 +222,7 @@ serve(async (req) => {
       { price: selectedTier.price_id, quantity: 1 },
     ];
     if (isFirstCheckout && selectedTier.onboarding_price_id) {
-      // Onboarding is now tier-specific (50% of beta monthly per tier);
+      // Onboarding is now tier-specific (25% OFF original (rounded to nearest $10));
       // legacy beta-cap branch removed. A beta code can still fully waive
       // the onboarding fee via `beta_codes.waive_onboarding_fee`.
       if (!betaWaiveOnboarding) {

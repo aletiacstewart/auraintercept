@@ -558,7 +558,7 @@ const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: '
 
 const onboardingLine = (key: 'starter' | 'connect' | 'performance' | 'command') => {
   const t = getTierPricing(key);
-  return `${formatOnboardingCost(key)} one-time (50% OFF — was ${formatPrice(t.onboardingOriginal)})`;
+  return `${formatOnboardingCost(key)} one-time (25% OFF — was ${formatPrice(t.onboardingOriginal)})`;
 };
 const TIERS: Array<{ key: keyof typeof TIER_AGENT_CONFIG; onboarding: string; employees: string }> = [
   { key: 'starter', onboarding: onboardingLine('starter'), employees: '10 employees' },

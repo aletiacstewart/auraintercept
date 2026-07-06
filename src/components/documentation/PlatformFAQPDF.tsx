@@ -371,7 +371,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Is there a Live Trial?"
-          answer="Yes — 60-Day Live Trial. First 30 days = concierge onboarding (setup, KB, 3rd-party activation, training). Remaining 30 days = fully live. Full tier access. Your one-time per-tier onboarding fee (50% off during Beta — Core $249 · Boost $497 · Pro $994 · Elite $1,990) is due at the start of the trial. Your monthly plan only begins after day 60."
+          answer="Yes — 60-Day Live Trial. First 30 days = concierge onboarding (setup, KB, 3rd-party activation, training). Remaining 30 days = fully live. Full tier access. Your one-time per-tier onboarding fee (25% off during Beta — Core $370 · Boost $750 · Pro $1,490 · Elite $2,980) is due at the start of the trial. Your monthly plan only begins after day 60."
         />
         
         <FAQItem 
@@ -453,7 +453,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What are the onboarding fees?"
-          answer="The one-time onboarding fee equals one month of your plan, with 50% OFF during Beta: Core $249 (was $497), Boost $497 (was $994), Pro $994 (was $1,988), Elite $1,990 (was $3,979). It is due at the start of your 60-Day Live Trial and is non-refundable once onboarding begins. The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — followed by 30 days of full live use. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card, including during the trial."
+          answer="The one-time onboarding fee equals one month of your plan, with 25% OFF during Beta: Core $370 (was $497), Boost $750 (was $994), Pro $1,490 (was $1,988), Elite $2,980 (was $3,979). It is due at the start of your 60-Day Live Trial and is non-refundable once onboarding begins. The first 30 days of the trial are dedicated to onboarding — initial setup, configuration, knowledge-base build-out, 3rd-party activation, and training — followed by 30 days of full live use. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card, including during the trial."
         />
         
         <FAQItem 
@@ -494,7 +494,7 @@ const PlatformFAQPDF = () => {
 
         <FAQItem 
           question="What's included in the Aura Core tier specifically?"
-          answer={`Aura Core ($${SUBSCRIPTION_TIERS.aura_core?.price ?? 497}/mo Beta — was $697) is the entry-level tier with 8 Smart AI Agents, 3 Control Centers, and 10 employees. Perfect for solo operators, restaurants, salons, and single-location businesses. One-time onboarding fee: $249 (Beta, was $497), due at start of the 60-Day Live Trial.`}
+          answer={`Aura Core ($${SUBSCRIPTION_TIERS.aura_core?.price ?? 497}/mo Beta — was $697) is the entry-level tier with 8 Smart AI Agents, 3 Control Centers, and 10 employees. Perfect for solo operators, restaurants, salons, and single-location businesses. One-time onboarding fee: $370 (Beta, was $497), due at start of the 60-Day Live Trial.`}
         />
 
         <View style={styles.warningBox}>

@@ -268,7 +268,7 @@ function pricingSection(): string {
   lines.push(
     "",
     "**Rules:**",
-    "- Onboarding = 50% of beta monthly (per tier). Original strikethrough always shown.",
+    "- Onboarding = 25% OFF original one-month price (rounded to nearest $10). Original strikethrough always shown.",
     "- Legacy tier names map through `LEGACY_TIER_MAP` for grandfathered subscriptions.",
     "- 60-Day Live Trial: 30d concierge onboarding + 30d full live use. Onboarding fee due at trial start.",
   );

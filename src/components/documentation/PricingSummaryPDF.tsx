@@ -238,7 +238,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>One-Time Onboarding Fee</Text>
         <Text style={styles.noticeText}>
-          Equals one month of your plan, with 50% OFF during Beta: Core $249 (was $497) · Boost $497 (was $994) · Pro $994 (was $1,988) · Elite $1,990 (was $3,979). Due at start of the 60-Day Live Trial. The first 30 days of the trial are dedicated to onboarding, then 30 days of full live use. Non-refundable once onboarding begins. Annual billing saves ~20% vs monthly (billed upfront).
+          Equals one month of your plan, with 25% OFF during Beta: Core $370 (was $497) · Boost $750 (was $994) · Pro $1,490 (was $1,988) · Elite $2,980 (was $3,979). Due at start of the 60-Day Live Trial. The first 30 days of the trial are dedicated to onboarding, then 30 days of full live use. Non-refundable once onboarding begins. Annual billing saves ~20% vs monthly (billed upfront).
         </Text>
       </View>
       <View style={styles.footer}>
@@ -262,7 +262,7 @@ const PricingSummaryPDF = () => (
         {[
           { category: 'Monthly Price', core: '$497', boost: '$994', pro: '$1,988', elite: '$3,979' },
           { category: 'Annual Price', core: '$4,771', boost: '$9,542', pro: '$19,085', elite: '$38,198' },
-          { category: 'One-Time Onboarding Fee', core: '$249', boost: '$497', pro: '$994', elite: '$1,990' },
+          { category: 'One-Time Onboarding Fee', core: '$370', boost: '$750', pro: '$1,490', elite: '$2,980' },
           { category: '', core: '', boost: '', pro: '', elite: '' },
           { category: 'AI Operatives', core: '4', boost: '6', pro: '8', elite: 'All 10' },
           { category: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
@@ -332,7 +332,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Message Aura (Text) + Talk to Aura (Voice)</FeatureItem>
         <FeatureItem>SMS/Email appointment reminders</FeatureItem>
         <FeatureItem>10 employee accounts included</FeatureItem>
-        <FeatureItem>$249 one-time onboarding fee (was $497, 50% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$370 one-time onboarding fee (was $497, 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI Service Platform</Text>
@@ -370,7 +370,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>25 employees included</FeatureItem>
-        <FeatureItem>$497 one-time onboarding fee (was $994, 50% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$750 one-time onboarding fee (was $994, 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI Service Platform</Text>
@@ -407,7 +407,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>50 employees included</FeatureItem>
-        <FeatureItem>$994 one-time onboarding fee (was $1,988, 50% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$1,490 one-time onboarding fee (was $1,988, 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI Service Platform</Text>
@@ -451,7 +451,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited employee accounts</FeatureItem>
         <FeatureItem>Enterprise access control</FeatureItem>
         <FeatureItem>All Industry Specialist Agents included</FeatureItem>
-        <FeatureItem>$1,990 one-time onboarding fee (was $3,979, 50% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$2,980 one-time onboarding fee (was $3,979, 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
       </View>
       <View style={styles.footer}>
@@ -578,10 +578,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Includes</Text>
         </View>
         {[
-          { tier: 'Aura Core', fee: '$249 (was $497)', includes: 'Guided setup · 50% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding' },
-          { tier: 'Aura Boost', fee: '$497 (was $994)', includes: 'Onboarding, setup, training · 50% OFF — Beta; due at start of 60-Day Live Trial' },
-          { tier: 'Aura Pro', fee: '$994 (was $1,988)', includes: 'Onboarding, setup, training, industry tuning · 50% OFF — Beta; due at start of 60-Day Live Trial' },
-          { tier: 'Aura Elite', fee: '$1,990 (was $3,979)', includes: 'Enterprise onboarding, custom setup · 50% OFF — Beta; due at start of 60-Day Live Trial' },
+          { tier: 'Aura Core', fee: '$370 (was $497)', includes: 'Guided setup · 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding' },
+          { tier: 'Aura Boost', fee: '$750 (was $994)', includes: 'Onboarding, setup, training · 25% OFF — Beta; due at start of 60-Day Live Trial' },
+          { tier: 'Aura Pro', fee: '$1,490 (was $1,988)', includes: 'Onboarding, setup, training, industry tuning · 25% OFF — Beta; due at start of 60-Day Live Trial' },
+          { tier: 'Aura Elite', fee: '$2,980 (was $3,979)', includes: 'Enterprise onboarding, custom setup · 25% OFF — Beta; due at start of 60-Day Live Trial' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.tier}</Text>
