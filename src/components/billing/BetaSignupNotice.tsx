@@ -33,8 +33,8 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
         <span className="font-semibold text-primary">60-Day Live Trial</span>{' '}
         (30 days concierge onboarding + 30 days full live use). During beta,
         your one-time onboarding fee is{' '}
-        <span className="font-semibold text-primary">50% of your beta monthly price</span>{' '}
-        (per tier, see below), and you lock in{' '}
+        <span className="font-semibold text-primary">25% OFF the original one-month price</span>{' '}
+        (per tier, see below — Core $370, Boost $750, Pro $1,490, Elite $2,980), and you lock in{' '}
         <span className="font-semibold text-primary">Beta Pricing</span> on
         your monthly plan:
       </p>

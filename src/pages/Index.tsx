@@ -781,7 +781,7 @@ export default function Index() {
                 </div>
                 <div className="rounded-md bg-black/20 p-3">
                   <p className="text-[11px] font-semibold text-primary uppercase tracking-wide mb-1">Onboarding Fee</p>
-                  <p className="text-[11px] text-white/85 leading-relaxed">50% of your beta monthly price — due at start of trial, non-refundable once onboarding begins.</p>
+                  <p className="text-[11px] text-white/85 leading-relaxed">25% OFF the original one-month price (Core $370 · Boost $750 · Pro $1,490 · Elite $2,980) — due at start of trial, non-refundable once onboarding begins.</p>
                 </div>
               </div>
 

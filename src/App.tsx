@@ -12,138 +12,141 @@ import { AutoTranslatePageObserver } from "@/components/common/AutoTranslatePage
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
 import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { useVisibilityRefresh } from "@/hooks/useVisibilityRefresh";
 import { useDeploymentAutoReload } from "@/hooks/useDeploymentAutoReload";
+// Eager: public marketing / auth (LCP + SEO landing pages).
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
-import CustomerAuth from "./pages/CustomerAuth";
-import CustomerPortalHome from "./pages/CustomerPortalHome";
-import CustomerPortalInstall from "./pages/CustomerPortalInstall";
-import CustomerCompanyPortal from "./pages/CustomerCompanyPortal";
-
-import Dashboard from "./pages/Dashboard";
-import Companies from "./pages/Companies";
-import Customers from "./pages/Customers";
-import Employees from "./pages/Employees";
-import EmployeeDetail from "./pages/EmployeeDetail";
-import Settings from "./pages/Settings";
-
-import EmployeeAvailability from "./pages/EmployeeAvailability";
-import EmployeeAppointments from "./pages/EmployeeAppointments";
-
-import Messages from "./pages/Messages";
-import EmailLogs from "./pages/EmailLogs";
-import SMSLogs from "./pages/SMSLogs";
-import Integrations from "./pages/Integrations";
-import { VoiceIntegration, SMSIntegration, EmailIntegration, CalendarIntegration, SocialMediaIntegration, TavilyIntegration } from "./pages/integrations";
-import KnowledgeBase from "./pages/KnowledgeBase";
-import AIAgent from "./pages/AIAgent";
-import {
-  CustomerPortalConsole,
-  FieldOpsConsole,
-  BusinessManagementConsole,
-  MarketingSalesConsole,
-  SocialMediaConsole,
-  AnalyticsConsole,
-  NewLeadPage,
-  SpecialistOperativesConsole,
-  PerformanceReportPage,
-  BusinessInsightsPage,
-  RevenueAnalysisPage,
-  DemandForecastPage,
-  CustomerInsightsPage,
-  KpiDashboardPage,
-} from "./pages/ai-consoles";
-import AskAura from "./pages/AskAura";
-import OperationsRouter from "./pages/operations/OperationsRouter";
-import VideoConsole from "./pages/VideoConsole";
-import AIAgentsHub from "./pages/AIAgentsHub";
-import Automation from "./pages/Automation";
-import AIAgentGuide from "./pages/AIAgentGuide";
-import AuditReport from "./pages/AuditReport";
-import AgentDetailPage from "./pages/AgentDetailPage";
-import ContentEngineConsole from "./pages/ContentEngineConsole";
-import Widget from "./pages/Widget";
-import CallHistory from "./pages/CallHistory";
-import Analytics from "./pages/Analytics";
-import AppointmentLookup from "./pages/AppointmentLookup";
-import CustomerDashboard from "./pages/CustomerDashboard";
-import Subscription from "./pages/Subscription";
-import SubscriptionAnalytics from "./pages/SubscriptionAnalytics";
-import PublicChat from "./pages/PublicChat";
-import Inventory from "./pages/Inventory";
-import Quotes from "./pages/Quotes";
-import Invoices from "./pages/Invoices";
-import Referrals from "./pages/Referrals";
-import Campaigns from "./pages/Campaigns";
-import CampaignDetail from "./pages/CampaignDetail";
-import Leads from "./pages/Leads";
-import LeadsImport from "./pages/LeadsImport";
-import CRMIntegration from "./pages/integrations/CRMIntegration";
-// BusinessOpsHub merged into BusinessOperations
-import Help from "./pages/Help";
-import Architecture from "./pages/Architecture";
-import PlatformBrief from "./pages/dashboard/PlatformBrief";
-import Calculators from "./pages/Calculators";
-import CyberSentryMockup from "./pages/CyberSentryMockup";
-import IndustryPacksAdmin from "./pages/admin/IndustryPacksAdmin";
-import PackCoverage from "./pages/admin/PackCoverage";
-import SuperSwitcher from "./pages/SuperSwitcher";
-import CyberSentryPortalMockup from "./pages/CyberSentryPortalMockup";
-import FieldOperations from "./pages/FieldOperations";
-import BusinessOperations from "./pages/BusinessOperations";
-import FieldOpsInstall from "./pages/FieldOpsInstall";
-import DispatchFieldOpsInstall from "./pages/DispatchFieldOpsInstall";
-import BusinessMgtOpsInstall from "./pages/BusinessMgtOpsInstall";
-import FieldOpsApp from "./pages/FieldOpsApp";
-import DispatchFieldOpsApp from "./pages/DispatchFieldOpsApp";
-import BusinessMgtOpsApp from "./pages/BusinessMgtOpsApp";
-import OpportunityAudit from "./pages/OpportunityAudit";
-import OnboardingForm from "./pages/OnboardingForm";
-import PublicOnboardingIntake from "./pages/PublicOnboardingIntake";
-import OnboardingInvites from "./pages/admin/OnboardingInvites";
-import CustomerPortalAppInstall from "./pages/CustomerPortalAppInstall";
+import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
-import NotFound from "./pages/NotFound";
-import PlatformIssues from "./pages/PlatformIssues";
-import PlatformHealth from "./pages/PlatformHealth";
-import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
-import OAuthConsent from "./pages/OAuthConsent";
-import SmartWebsite from "./pages/SmartWebsite";
-import SmartWebsiteManager from "./pages/SmartWebsiteManager";
-import CompanyBlog from "./pages/CompanyBlog";
-import CompanyBlogPost from "./pages/CompanyBlogPost";
-import Contact from "./pages/Contact";
+import OpportunityAudit from "./pages/OpportunityAudit";
 import ForBusiness from "./pages/ForBusiness";
-
+import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
-import BlogManagement from "./pages/BlogManagement";
-// Technician Dashboard Pages
-import {
-  TechnicianDashboard,
-  TechnicianAIConsole,
-  TechnicianJobs,
-  TechnicianCalendar,
-  TechnicianSettings,
-  TechnicianAvailability,
-  TechnicianHistory,
-  TechnicianProfile,
-  TechnicianInstall,
-} from "./pages/technician";
-
-import IntegrationDocs from "./pages/IntegrationDocs";
-import PlatformGuides from "./pages/PlatformGuides";
-import NotificationSettingsPage from "./pages/NotificationSettingsPage";
-import EmailLimits from "./pages/settings/EmailLimits";
-import TavilyLimits from "./pages/settings/TavilyLimits";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import DesignPreview from "./pages/DesignPreview";
-import PublicBooking from "./pages/PublicBooking";
+
+// Lazy: everything else. Each named-export module wraps a `.then(m => ({ default: m.X }))`.
+const CustomerAuth = lazy(() => import("./pages/CustomerAuth"));
+const CustomerPortalHome = lazy(() => import("./pages/CustomerPortalHome"));
+const CustomerPortalInstall = lazy(() => import("./pages/CustomerPortalInstall"));
+const CustomerCompanyPortal = lazy(() => import("./pages/CustomerCompanyPortal"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Companies = lazy(() => import("./pages/Companies"));
+const Customers = lazy(() => import("./pages/Customers"));
+const Employees = lazy(() => import("./pages/Employees"));
+const EmployeeDetail = lazy(() => import("./pages/EmployeeDetail"));
+const Settings = lazy(() => import("./pages/Settings"));
+const EmployeeAvailability = lazy(() => import("./pages/EmployeeAvailability"));
+const EmployeeAppointments = lazy(() => import("./pages/EmployeeAppointments"));
+const Messages = lazy(() => import("./pages/Messages"));
+const EmailLogs = lazy(() => import("./pages/EmailLogs"));
+const SMSLogs = lazy(() => import("./pages/SMSLogs"));
+const Integrations = lazy(() => import("./pages/Integrations"));
+const VoiceIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.VoiceIntegration })));
+const SMSIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.SMSIntegration })));
+const EmailIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.EmailIntegration })));
+const CalendarIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.CalendarIntegration })));
+const SocialMediaIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.SocialMediaIntegration })));
+const TavilyIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.TavilyIntegration })));
+const KnowledgeBase = lazy(() => import("./pages/KnowledgeBase"));
+const AIAgent = lazy(() => import("./pages/AIAgent"));
+const CustomerPortalConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.CustomerPortalConsole })));
+const FieldOpsConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.FieldOpsConsole })));
+const BusinessManagementConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.BusinessManagementConsole })));
+const MarketingSalesConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.MarketingSalesConsole })));
+const SocialMediaConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.SocialMediaConsole })));
+const AnalyticsConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.AnalyticsConsole })));
+const NewLeadPage = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.NewLeadPage })));
+const SpecialistOperativesConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.SpecialistOperativesConsole })));
+const PerformanceReportPage = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.PerformanceReportPage })));
+const BusinessInsightsPage = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.BusinessInsightsPage })));
+const RevenueAnalysisPage = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.RevenueAnalysisPage })));
+const DemandForecastPage = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.DemandForecastPage })));
+const CustomerInsightsPage = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.CustomerInsightsPage })));
+const KpiDashboardPage = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.KpiDashboardPage })));
+const AskAura = lazy(() => import("./pages/AskAura"));
+const OperationsRouter = lazy(() => import("./pages/operations/OperationsRouter"));
+const VideoConsole = lazy(() => import("./pages/VideoConsole"));
+const AIAgentsHub = lazy(() => import("./pages/AIAgentsHub"));
+const Automation = lazy(() => import("./pages/Automation"));
+const AIAgentGuide = lazy(() => import("./pages/AIAgentGuide"));
+const AuditReport = lazy(() => import("./pages/AuditReport"));
+const AgentDetailPage = lazy(() => import("./pages/AgentDetailPage"));
+const ContentEngineConsole = lazy(() => import("./pages/ContentEngineConsole"));
+const Widget = lazy(() => import("./pages/Widget"));
+const CallHistory = lazy(() => import("./pages/CallHistory"));
+const Analytics = lazy(() => import("./pages/Analytics"));
+const AppointmentLookup = lazy(() => import("./pages/AppointmentLookup"));
+const CustomerDashboard = lazy(() => import("./pages/CustomerDashboard"));
+const Subscription = lazy(() => import("./pages/Subscription"));
+const SubscriptionAnalytics = lazy(() => import("./pages/SubscriptionAnalytics"));
+const PublicChat = lazy(() => import("./pages/PublicChat"));
+const Inventory = lazy(() => import("./pages/Inventory"));
+const Quotes = lazy(() => import("./pages/Quotes"));
+const Invoices = lazy(() => import("./pages/Invoices"));
+const Referrals = lazy(() => import("./pages/Referrals"));
+const Campaigns = lazy(() => import("./pages/Campaigns"));
+const CampaignDetail = lazy(() => import("./pages/CampaignDetail"));
+const Leads = lazy(() => import("./pages/Leads"));
+const LeadsImport = lazy(() => import("./pages/LeadsImport"));
+const CRMIntegration = lazy(() => import("./pages/integrations/CRMIntegration"));
+const Help = lazy(() => import("./pages/Help"));
+const Architecture = lazy(() => import("./pages/Architecture"));
+const PlatformBrief = lazy(() => import("./pages/dashboard/PlatformBrief"));
+const Calculators = lazy(() => import("./pages/Calculators"));
+const CyberSentryMockup = lazy(() => import("./pages/CyberSentryMockup"));
+const IndustryPacksAdmin = lazy(() => import("./pages/admin/IndustryPacksAdmin"));
+const PackCoverage = lazy(() => import("./pages/admin/PackCoverage"));
+const SuperSwitcher = lazy(() => import("./pages/SuperSwitcher"));
+const CyberSentryPortalMockup = lazy(() => import("./pages/CyberSentryPortalMockup"));
+const BusinessOperations = lazy(() => import("./pages/BusinessOperations"));
+const FieldOpsInstall = lazy(() => import("./pages/FieldOpsInstall"));
+const DispatchFieldOpsInstall = lazy(() => import("./pages/DispatchFieldOpsInstall"));
+const BusinessMgtOpsInstall = lazy(() => import("./pages/BusinessMgtOpsInstall"));
+const FieldOpsApp = lazy(() => import("./pages/FieldOpsApp"));
+const DispatchFieldOpsApp = lazy(() => import("./pages/DispatchFieldOpsApp"));
+const BusinessMgtOpsApp = lazy(() => import("./pages/BusinessMgtOpsApp"));
+const OnboardingForm = lazy(() => import("./pages/OnboardingForm"));
+const PublicOnboardingIntake = lazy(() => import("./pages/PublicOnboardingIntake"));
+const CustomerPortalAppInstall = lazy(() => import("./pages/CustomerPortalAppInstall"));
+const PlatformIssues = lazy(() => import("./pages/PlatformIssues"));
+const PlatformHealth = lazy(() => import("./pages/PlatformHealth"));
+const OAuthGoogleCalendar = lazy(() => import("./pages/OAuthGoogleCalendar"));
+const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
+const SmartWebsite = lazy(() => import("./pages/SmartWebsite"));
+const SmartWebsiteManager = lazy(() => import("./pages/SmartWebsiteManager"));
+const CompanyBlog = lazy(() => import("./pages/CompanyBlog"));
+const CompanyBlogPost = lazy(() => import("./pages/CompanyBlogPost"));
+const BlogManagement = lazy(() => import("./pages/BlogManagement"));
+const TechnicianDashboard = lazy(() => import("./pages/technician").then(m => ({ default: m.TechnicianDashboard })));
+const TechnicianAIConsole = lazy(() => import("./pages/technician").then(m => ({ default: m.TechnicianAIConsole })));
+const TechnicianJobs = lazy(() => import("./pages/technician").then(m => ({ default: m.TechnicianJobs })));
+const TechnicianCalendar = lazy(() => import("./pages/technician").then(m => ({ default: m.TechnicianCalendar })));
+const TechnicianSettings = lazy(() => import("./pages/technician").then(m => ({ default: m.TechnicianSettings })));
+const TechnicianAvailability = lazy(() => import("./pages/technician").then(m => ({ default: m.TechnicianAvailability })));
+const TechnicianHistory = lazy(() => import("./pages/technician").then(m => ({ default: m.TechnicianHistory })));
+const TechnicianProfile = lazy(() => import("./pages/technician").then(m => ({ default: m.TechnicianProfile })));
+const TechnicianInstall = lazy(() => import("./pages/technician").then(m => ({ default: m.TechnicianInstall })));
+const IntegrationDocs = lazy(() => import("./pages/IntegrationDocs"));
+const PlatformGuides = lazy(() => import("./pages/PlatformGuides"));
+const NotificationSettingsPage = lazy(() => import("./pages/NotificationSettingsPage"));
+const EmailLimits = lazy(() => import("./pages/settings/EmailLimits"));
+const TavilyLimits = lazy(() => import("./pages/settings/TavilyLimits"));
+const DesignPreview = lazy(() => import("./pages/DesignPreview"));
+const PublicBooking = lazy(() => import("./pages/PublicBooking"));
+
+// Suspense fallback for lazy routes — minimal, on-brand.
+const RouteFallback = () => (
+  <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-live="polite">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+    <span className="sr-only">Loading…</span>
+  </div>
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -180,6 +183,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
             <ScrollToTop />
             <VoiceProvider>
               {!isEmbedMode && <AuraVoiceOverlay />}
+              <Suspense fallback={<RouteFallback />}>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
@@ -329,6 +333,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </Suspense>
             </VoiceProvider>
           </BrowserRouter>
           </ErrorBoundary>
