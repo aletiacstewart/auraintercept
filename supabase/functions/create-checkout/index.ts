@@ -16,32 +16,32 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 // Standard (struck-through display only): $697 / $1,394 / $2,788 / $5,576.
 // Onboarding fee (Beta, one-time, 25% OFF original, rounded to nearest $10):
 //   Core $370 · Boost $750 · Pro $1,490 · Elite $2,980.
-// TODO(pricing-update): the onboarding_price_id values below still point to the
-// old 50%-off amounts ($249/$497/$994/$1,990). Replace with new Stripe price IDs
-// for $370/$750/$1,490/$2,980 once the owner creates them in the Stripe dashboard.
+// Onboarding price IDs updated 2026-07-07 to the new 25%-off amounts
+// ($370 / $750 / $1,490 / $2,980). Legacy 50%-off IDs are retained in commit
+// history only — do not use them for new checkouts.
 const CORE = {
   name: "Aura Core",
   price: 49700,
   price_id: "price_1TmJ2pEGn9AqCo3ECdv8mh0A",
-  onboarding_price_id: "price_1TmJ2tEGn9AqCo3EmpVYjiUm", // TODO: replace — currently $249, should be $370
+  onboarding_price_id: "price_1TqgFCEGn9AqCo3EFVk0SKZV", // $370 one-time
 };
 const BOOST = {
   name: "Aura Boost",
   price: 99400,
   price_id: "price_1TmJ2qEGn9AqCo3EpspZoDZK",
-  onboarding_price_id: "price_1TmJ2uEGn9AqCo3EO854d1Ml", // TODO: replace — currently $497, should be $750
+  onboarding_price_id: "price_1TqgFDEGn9AqCo3Emyd1SEf5", // $750 one-time
 };
 const PRO = {
   name: "Aura Pro",
   price: 198800,
   price_id: "price_1TmJ2rEGn9AqCo3EkxrT5Z09",
-  onboarding_price_id: "price_1TmJ2vEGn9AqCo3EHoqQuLSm", // TODO: replace — currently $994, should be $1,490
+  onboarding_price_id: "price_1TqgFFEGn9AqCo3Ez36DpcJL", // $1,490 one-time
 };
 const ELITE = {
   name: "Aura Elite",
   price: 397900,
   price_id: "price_1TmJ2tEGn9AqCo3ES4Mf3YHm",
-  onboarding_price_id: "price_1TmJ2wEGn9AqCo3E6oQRe5E7", // TODO: replace — currently $1,990, should be $2,980
+  onboarding_price_id: "price_1TqgFFEGn9AqCo3Ei7axEGKc", // $2,980 one-time
 };
 const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   // Canonical 4 tiers
