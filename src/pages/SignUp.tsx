@@ -1500,8 +1500,8 @@ export default function SignUp() {
                                   <span className="ml-auto inline-flex items-baseline gap-1.5">
                                     <span className="text-primary font-bold">
                                       {selectedTier
-                                        ? `$${{ starter: 249, connect: 497, performance: 994, command: 1990 }[selectedTier].toLocaleString()}`
-                                        : 'from $249'}
+                                        ? `$${{ starter: 370, connect: 750, performance: 1490, command: 2980 }[selectedTier].toLocaleString()}`
+                                        : 'from $370'}
                                     </span>
                                   </span>
                                 </label>

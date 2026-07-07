@@ -1262,7 +1262,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.agentName}>"Sounds expensive"</Text>
         <Text style={styles.agentDescription}>
           "Let's do the math together. If you miss just 5 calls per week at $300 average job,
-          that's $6,000/month in lost revenue. Aura Core is $497/month (Beta — was $697) with a one-time $249 onboarding fee. You get a 60-Day Live Trial — 30 days of concierge onboarding, then 30 days of full live use — before your monthly plan begins."
+          that's $6,000/month in lost revenue. Aura Core is $497/month (Beta — was $697) with a one-time $370 onboarding fee (25% OFF — was $497). You get a 60-Day Live Trial — 30 days of concierge onboarding, then 30 days of full live use — before your monthly plan begins."
         </Text>
       </View>
 
