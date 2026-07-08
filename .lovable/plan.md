@@ -1,40 +1,41 @@
 ## Status vs. audit prompt
 
-All four fixes are **already implemented** in the codebase from an earlier turn:
+All four fixes are **already in place**. Verified against DB + code:
 
-| Audit item | Status | Location |
+| Fix | Status | Evidence |
 |---|---|---|
-| FIX 1 — Shared Meta signature helper | ✅ Done | `supabase/functions/_shared/meta-webhook-signature.ts` (exports `verifyMetaSignature` for X-Hub-Signature-256 and `verifyMetaSignedRequest` for the `signed_request` format). Env-gated on `META_APP_SECRET`; warn-and-skip when unset; timing-safe hex compare; correct base64url handling. |
-| FIX 2 — `social-webhook` | ✅ Done | Line 41 reads raw body once, line 44 calls `verifyMetaSignature`. GET `hub.verify_token` handshake left untouched. |
-| FIX 3 — `social-oauth-deauthorize` | ✅ Done | Line 23 calls `verifyMetaSignedRequest`; on failure returns `{ success: true }` 200 to Meta and skips the DB deactivate. |
-| FIX 4 — `social-oauth-data-deletion` | ✅ Done | Line 24 calls `verifyMetaSignedRequest`; on failure returns the expected `{ url, confirmation_code }` 200 and skips the DB delete. |
+| 1. `validate_registration_code` matches real schema | ✅ Done | Live function definition references only real columns: `erc.company_id`, `erc.expires_at`, `erc.used`, `erc.job_role`, `c.name`. No `max_uses`/`current_uses`. Runs `STABLE SECURITY DEFINER` with `search_path=public`. |
+| 2. `SignUp.tsx` calls the RPC | ✅ Done | `src/pages/SignUp.tsx:553-563` uses `supabase.rpc('validate_registration_code', { p_code: registrationCode }).maybeSingle()` and derives `codeCompanyId` from the result. |
+| 3. Mark-as-used filters by `code`, not `id` | ✅ Done | `SignUp.tsx:609-613` — `.update({ used: true }).eq('code', registrationCode).eq('used', false)`. Satisfies the "verified JWT email = row email" UPDATE policy. |
+| 4. Invite form requires email | ✅ Done | `EmployeeManagement.tsx:268-273` validates email with regex before mutating; button disabled when empty (`:364`); insert normalises to `email.trim().toLowerCase()` (`:177`); `<Input type="email" required>` in the dialog. |
 
-Only two minor deltas vs. the prompt's exact wording:
+## One factual correction to the audit
 
-1. `social-webhook` returns **401** on invalid signature (prompt suggested 403). Both are correct-behavior rejects; Meta itself just cares that we don't 200. Cosmetic — I'll normalize it to 403 to match the audit exactly.
-2. The helper is named `verifyMetaSignature` / `verifyMetaSignedRequest` (prompt suggested `verifyMetaWebhookSignature`). Not renaming — that would churn imports for no functional gain.
+The audit claims `employee_registration_codes` has no `job_role` column — that's wrong. The live schema is:
 
-## The actually load-bearing check: is `META_APP_SECRET` set?
+```
+id, company_id, code, email, expires_at, used, created_at, job_role
+```
 
-None of the above closes the gap unless `META_APP_SECRET` is configured in the project's Cloud secrets. The helper explicitly `warn-and-skip`s when the env var is missing (safe rollout behavior). I'll verify presence with `fetch_secrets` in build mode. If missing, request it via `add_secret` — this is the Meta App Secret from Meta Developer dashboard → App Settings → Basic. Cannot be generated; must be pasted from Meta's UI.
+So the existing function correctly returns `erc.job_role` (used by `SignUp.tsx:597` to auto-assign a job type at signup). Rewriting the function per the audit's exact SQL would return `NULL::text` and **silently regress** the auto-assign-job-role feature. I recommend **not** applying audit Fix 1's rewrite verbatim — the current function is already correct.
+
+## Recommendations beyond the audit
+
+1. **Backfill risk — legacy null-email codes.** The audit correctly notes existing rows with `email IS NULL` are permanently unclaimable. Quick check I'd run in build mode:
+   ```sql
+   SELECT count(*) FROM employee_registration_codes
+   WHERE email IS NULL AND used = false AND expires_at > now();
+   ```
+   If any exist, either (a) mark them used to hide from admin UI, or (b) add a `NOT NULL` constraint on `email` going forward (migration). Ask me to do either.
+2. **Optional hardening**: the pending-invites query in `EmployeeManagement.tsx:149-155` reads the table directly. That's fine — the SELECT policy is scoped to `company_id = current user's company`. No change needed, just flagging that it's been re-audited.
 
 ## Plan
 
-1. Verify `META_APP_SECRET` presence with `fetch_secrets`.
-2. If missing: request it via `add_secret` (user pastes value from Meta dashboard). Explain where to find it in the message before the secret prompt.
-3. Normalize `social-webhook` reject status from 401 → 403 to exactly match the audit's stated behavior (one-line edit).
-4. Redeploy `social-webhook`. (No other function changes.)
+Nothing to code. If you want either of the follow-ups above (audit stale null-email codes, or add a `NOT NULL email` constraint), tell me which and I'll do it in one migration.
 
-## Files touched
+## Verification (spot-check, no code changes needed)
 
-- `supabase/functions/social-webhook/index.ts` — 401 → 403 on invalid-signature branch (one line).
-
-Nothing else. `_shared/meta-webhook-signature.ts`, `social-oauth-deauthorize/index.ts`, and `social-oauth-data-deletion/index.ts` are already correct.
-
-## Verification (after redeploy + secret set)
-
-- `curl -X POST` to `social-webhook` with no `X-Hub-Signature-256` → 403.
-- `curl -X POST` to `social-webhook` with a forged `sha256=deadbeef` header → 403.
-- `curl -F "signed_request=badsig.eyJ1c2VyX2lkIjoiOTk5In0" ...` to `social-oauth-deauthorize` → 200 body `{"success":true}`, **no** `social_accounts` row flipped to `is_active=false`.
-- Same forged POST to `social-oauth-data-deletion` → 200 with `{url, confirmation_code}`, **no** row deleted.
-- Verify the existing GET `hub.verify_token` handshake on `social-webhook` still returns the challenge (untouched code path).
+- Confirm live function definition matches real columns → done via `pg_get_functiondef`.
+- Confirm `SignUp.tsx` RPC wiring → confirmed at line 553.
+- Confirm mark-as-used filter → confirmed at line 610-613.
+- Confirm invite form email requirement → confirmed at lines 268-273.
