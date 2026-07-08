@@ -1,40 +1,39 @@
 
 ## Goal
-Every visitor who chats (Message Aura) or speaks (Talk to Aura) on the marketing site should have their name, email, and phone captured and saved as a lead under the Aura Intercept company (`auraintercept@gmail.com` → company `04c57cbe-…`).
+Extend the same "always capture visitor contact info as a lead" behavior that already exists on the Aura Intercept marketing site to every subscribed company's own AI receptionist — both text (embedded chat widget) and voice (ElevenLabs per-company agent) — so any visitor who chats or speaks with a company's Aura ends up as a lead **under that company's account**.
 
-## Current state (already in place)
-- **Text chat** (`LandingAIChat` → `landing-chat` → `landing-capture-lead`): the AI can emit a `[[LEAD]]{…}[[/LEAD]]` marker, which the client posts to `landing-capture-lead`, which inserts into `leads` with `company_id = 04c57cbe-…` (Aura Intercept).
-- **Voice chat** (`AuraAvatarChat` → ElevenLabs agent `agent_0501kh…` → `elevenlabs-post-call`): the webhook maps the agent to Aura Intercept's company and, when `data_collection_results` include name/phone, inserts a lead automatically.
-
-Gaps: the text prompt only collects contact info if the visitor volunteers it or agrees to a call, and there is no server-side safety net if the model forgets the `[[LEAD]]` marker. The voice agent's data-collection variables live in the ElevenLabs dashboard and need to be confirmed.
+## Current state
+- **Per-company text chat** (`chat-widget` → `widget-api?action=chat`): streams AI replies scoped to `company.id`, can `book_appointment`, but **never inserts into `leads`**. Contact info the visitor shares in chat is lost unless they complete a booking.
+- **Per-company voice chat** (ElevenLabs agent → `elevenlabs-post-call`): already resolves `company_id` via `tenant_integrations.elevenlabs_agent_id` and inserts a lead when `data_collection_results` contains a name or phone. Transcript regex fallback exists **only for Aura Intercept** today.
+- **Marketing site** (`landing-chat`, `landing-capture-lead`, voice fallback) already uses the shared `_shared/insert-landing-lead.ts` helper and captures leads under Aura Intercept — this is the pattern we mirror.
 
 ## Changes
 
-### 1. Message Aura (text) — proactive + guaranteed capture
-- **Prompt (`supabase/functions/_shared/aura-intercept-sales-prompt.ts`)**: rewrite step 8 so Aura asks for name, email, and phone naturally within the first 2–3 turns for every visitor ("Before I dig in, who am I chatting with? Name, best email, and mobile so our team can follow up either way?"). Keep it friendly, one ask at a time if the visitor pushes back, and always emit `[[LEAD]]…[[/LEAD]]` as soon as any two of {name, email, phone} are known — not only on "book a call".
-- **Server safety net (`supabase/functions/landing-chat/index.ts`)**: after streaming, scan the full user-message history with regex for email and E.164/US phone; if found (and no `[[LEAD]]` was emitted this turn), call the same insert path used by `landing-capture-lead` (extract into `_shared/insert-landing-lead.ts` so both functions share it). Include the last assistant message as `notes` and set `source = "message_aura_website"`. Idempotency: dedupe on `(company_id, lower(email))` OR `(company_id, phone)` within the last 24h before inserting.
-- **Client (`src/components/landing/LandingAIChat.tsx`)**: no UX change beyond the existing confirmation bubble; keep the `[[LEAD]]` stripping.
+### 1. Generalize the shared lead helper
+Rename/refactor `supabase/functions/_shared/insert-landing-lead.ts` into a company-agnostic helper `insertReceptionistLead({ company_id, name, email, phone, source, notes, industry, metadata })`. Keep the existing `AURA_INTERCEPT_COMPANY_ID` export and a thin `insertAuraInterceptLead()` wrapper so `landing-chat`, `landing-capture-lead`, and the Aura Intercept voice fallback keep working unchanged. Dedupe logic (24 h on email or phone digits, scoped to the passed `company_id`), `priority: high`, `score: 75`, and channel inference stay identical — only the hard-coded company id becomes a parameter.
 
-### 2. Talk to Aura (voice) — confirm + document capture
-- Verify (via `tenant_integrations`) that `agent_0501kh52gehge14vjscb5n8j8vhn` maps to Aura Intercept — confirmed. Post-call webhook already writes to `leads` for that company.
-- Update the ElevenLabs agent's **Data Collection** config (owner action in the ElevenLabs dashboard, not code) to require these variables from every call:
-  - `customer_name`
-  - `customer_phone`
-  - `customer_email`
-  Also add a system-prompt line in the agent's ElevenLabs prompt: "Early in every call, ask for the caller's name, best email, and mobile number and confirm them back." I will surface these exact instructions in the response so the owner can paste them in.
-- Add a defensive fallback in `elevenlabs-post-call/index.ts`: if `data_collection_results` is empty but the transcript contains an email or phone (regex scan across all `user` turns), still create the lead with whatever we found (name defaults to "Voice visitor").
+### 2. Per-company text chat — proactive capture in `widget-api`
+In `supabase/functions/widget-api/index.ts`, `action === 'chat'` branch:
+- Inject a small system-prompt addendum for every company chat that instructs Aura to naturally ask for the visitor's **name, best email, and mobile number** within the first 2–3 turns, and to keep going even if the visitor doesn't want to book. This is added on top of the existing agent-specific instructions (booking/quote/dispatch/etc.), not in place of them.
+- After the stream completes (both the tool-call and no-tool-call branches), run a **fire-and-forget safety net**:
+  - Concatenate the user turns from `messages`.
+  - Regex-scan for email + phone using the existing `extractContact()` helper.
+  - If any contact found, call `insertReceptionistLead({ company_id: company.id, source: 'chat_widget', notes: <last assistant reply, trimmed>, ... })`.
+- No change to the streamed response body or client contract.
 
-### 3. Shared insert helper
-- New `supabase/functions/_shared/insert-landing-lead.ts` exporting `insertAuraInterceptLead({ name, email, phone, source, notes, industry })` used by `landing-capture-lead`, `landing-chat` (new fallback), and `elevenlabs-post-call` (voice fallback). Centralises the `company_id`, dedupe, priority/score defaults.
+### 3. Per-company voice chat — extend the transcript fallback to all companies
+In `supabase/functions/elevenlabs-post-call/index.ts`, remove the `if (companyId === AURA_INTERCEPT_COMPANY_ID)` guard around the transcript regex fallback so **every** company benefits: if `data_collection_results` came back empty but the transcript contains an email or phone, insert a lead under that company via `insertReceptionistLead({ company_id: companyId, source: 'voice_post_call', ... })`. The existing `data_collection_results`-based lead insert (which already runs for all companies) is unchanged.
+
+### 4. ElevenLabs agent config (owner action, documented in the reply)
+The per-company voice agents each have their own ElevenLabs configuration. In the response I will list the exact **Data Collection variables** (`customer_name`, `customer_email`, `customer_phone`) and the **system-prompt line** ("Early in every call, ask for the caller's name, best email, and mobile number and confirm them back.") that the owner should add to each company's ElevenLabs agent so the primary capture path (not just the transcript fallback) works reliably. No code writes into ElevenLabs from our side.
 
 ## Technical details
-- Aura Intercept company_id: `04c57cbe-358e-4036-a3ad-b777a55f5be0` (already hard-coded in `landing-capture-lead`).
-- Regex: email `/[\w.+-]+@[\w-]+\.[\w.-]+/g`, phone `/(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g`.
-- Dedupe query: `select id from leads where company_id = $1 and (lower(email)=$2 or phone=$3) and created_at > now() - interval '24 hours' limit 1`.
-- All three sources tag `source` distinctly: `message_aura_website`, `talk_to_aura_website`, `voice_post_call` — Leads console can filter by source.
+- Dedupe stays scoped to `(company_id, email OR phone)` within 24 h — so Company A's leads never collide with Company B's or with Aura Intercept's.
+- Source tags: `chat_widget` (per-company text), `voice_post_call` (per-company voice fallback), `ai_receptionist` (per-company voice primary — already in place). Marketing-site sources (`message_aura_website`, `talk_to_aura_website`, `voice_post_call` under Aura Intercept's company id) are unchanged.
+- Rate limiting on `widget-api?action=chat` already exists; no new limits needed since the safety-net insert is fire-and-forget after a successful chat call.
+- No schema, RLS, or new tables required — `leads` already accepts inserts from edge functions (service role) and is filtered per company throughout the app.
 
 ## Out of scope
-- No new tables, RLS, or Stripe changes.
-- No change to customer-owned company chat widgets — this is only the marketing-site Aura.
-
-After you approve I'll implement the code changes and paste the exact ElevenLabs dashboard settings you need to update.
+- No UI changes to the chat widget itself.
+- No changes to the marketing-site Aura Intercept flow (that behavior is already live).
+- No new consent screen — existing widget disclosure covers this; if the user wants an explicit consent line added to the widget UI, that would be a follow-up.

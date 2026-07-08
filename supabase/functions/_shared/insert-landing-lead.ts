@@ -15,6 +15,10 @@ export interface LandingLeadInput {
   metadata?: Record<string, unknown>;
 }
 
+export interface ReceptionistLeadInput extends LandingLeadInput {
+  company_id: string;
+}
+
 function getAdminClient(): SupabaseClient {
   const url = Deno.env.get("SUPABASE_URL") ?? "";
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -35,7 +39,21 @@ function normPhone(p?: string | null): string | null {
 export async function insertAuraInterceptLead(
   input: LandingLeadInput,
 ): Promise<{ ok: boolean; id?: string; deduped?: boolean; error?: string }> {
+  return insertReceptionistLead({ ...input, company_id: AURA_INTERCEPT_COMPANY_ID });
+}
+
+/**
+ * Company-agnostic version of the lead capture helper. Used by per-company
+ * chat widget and voice receptionist safety nets so any visitor who shares
+ * an email or phone with a company's Aura ends up as a lead under that
+ * company's account (not Aura Intercept's).
+ */
+export async function insertReceptionistLead(
+  input: ReceptionistLeadInput,
+): Promise<{ ok: boolean; id?: string; deduped?: boolean; error?: string }> {
   const admin = getAdminClient();
+  const companyId = input.company_id;
+  if (!companyId) return { ok: false, error: "missing company_id" };
   const email = input.email?.trim().toLowerCase() || null;
   const phoneDigits = normPhone(input.phone);
   const name = (input.name?.trim() || "").slice(0, 120) || "Website visitor";
@@ -53,7 +71,7 @@ export async function insertAuraInterceptLead(
     const { data: existing } = await admin
       .from("leads")
       .select("id")
-      .eq("company_id", AURA_INTERCEPT_COMPANY_ID)
+      .eq("company_id", companyId)
       .gte("created_at", since)
       .or(orParts.join(","))
       .limit(1)
@@ -74,7 +92,7 @@ export async function insertAuraInterceptLead(
   const { data, error } = await admin
     .from("leads")
     .insert({
-      company_id: AURA_INTERCEPT_COMPANY_ID,
+      company_id: companyId,
       name,
       email,
       phone: input.phone?.trim() || null,
@@ -92,7 +110,7 @@ export async function insertAuraInterceptLead(
     .single();
 
   if (error) {
-    console.error("[insertAuraInterceptLead] insert error:", error);
+    console.error("[insertReceptionistLead] insert error:", error);
     return { ok: false, error: error.message };
   }
   return { ok: true, id: data?.id };

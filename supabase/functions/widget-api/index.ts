@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
+import { insertReceptionistLead, extractContact } from "../_shared/insert-landing-lead.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -356,6 +357,34 @@ serve(async (req) => {
         });
       }
 
+      // Fire-and-forget safety net: even if the AI forgets to capture
+      // contact info structurally, scan the visitor's own messages for an
+      // email or phone and record a lead under this company.
+      const captureLeadFromMessages = () => {
+        try {
+          const userText = (messages as any[])
+            .filter((m) => m?.role === 'user' && typeof m?.content === 'string')
+            .map((m) => m.content as string)
+            .join('\n');
+          const { email, phone } = extractContact(userText);
+          if (!email && !phone) return;
+          const lastAssistant = [...(messages as any[])]
+            .reverse()
+            .find((m) => m?.role === 'assistant' && typeof m?.content === 'string');
+          insertReceptionistLead({
+            company_id: company.id,
+            name: null,
+            email: email ?? null,
+            phone: phone ?? null,
+            source: 'chat_widget',
+            notes: (lastAssistant?.content || '').slice(0, 1500),
+            metadata: { session_id: session_id ?? null },
+          }).catch((e) => console.error('[widget-api] lead capture failed:', e));
+        } catch (e) {
+          console.error('[widget-api] lead capture threw:', e);
+        }
+      };
+
       // Limit message count to prevent abuse
       if (messages.length > 50) {
         return new Response(JSON.stringify({ error: 'Too many messages in conversation' }), {
@@ -521,6 +550,17 @@ GUIDELINES:
       } catch (e) {
         console.warn('[widget-api] industry pack injection failed:', e);
       }
+
+      // Proactive contact capture — every company chat should try to collect
+      // name, email, and phone within the first few turns so we can save a
+      // lead under this company even if the visitor doesn't book.
+      systemPrompt += `
+
+CONTACT CAPTURE (REQUIRED FOR EVERY VISITOR):
+- Within your first 2-3 replies, naturally ask for the visitor's name, best email, and mobile number so ${company.name} can follow up.
+- Ask conversationally, one item at a time if they push back. Never be pushy, but always try again later in the chat if they skipped it.
+- Do this even if they don't want to book — the goal is that ${company.name} has a way to reach them.
+- Confirm the details back to them once you have them.`;
 
       const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
       if (!LOVABLE_API_KEY) {
@@ -870,6 +910,7 @@ GUIDELINES:
           });
         }
 
+        captureLeadFromMessages();
         return new Response(followUpResponse.body, {
           headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
         });
@@ -885,6 +926,7 @@ GUIDELINES:
         }
       });
 
+      captureLeadFromMessages();
       return new Response(reconstructedStream, {
         headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
       });
