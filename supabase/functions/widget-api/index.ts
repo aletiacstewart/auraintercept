@@ -523,6 +523,17 @@ GUIDELINES:
         console.warn('[widget-api] industry pack injection failed:', e);
       }
 
+      // Proactive contact capture — every company chat should try to collect
+      // name, email, and phone within the first few turns so we can save a
+      // lead under this company even if the visitor doesn't book.
+      systemPrompt += `
+
+CONTACT CAPTURE (REQUIRED FOR EVERY VISITOR):
+- Within your first 2-3 replies, naturally ask for the visitor's name, best email, and mobile number so ${company.name} can follow up.
+- Ask conversationally, one item at a time if they push back. Never be pushy, but always try again later in the chat if they skipped it.
+- Do this even if they don't want to book — the goal is that ${company.name} has a way to reach them.
+- Confirm the details back to them once you have them.`;
+
       const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
       if (!LOVABLE_API_KEY) {
         return new Response(JSON.stringify({ error: 'AI not configured' }), {
