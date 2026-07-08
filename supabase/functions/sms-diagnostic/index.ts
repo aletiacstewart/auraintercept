@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendGuardedSms, normalizeE164US } from "../_shared/sms-guard.ts";
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -231,6 +232,14 @@ Deno.serve(async (req) => {
         JSON.stringify({ ok: false, error: 'companyId is required' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
+    }
+
+    const authz = await authorizeInternalRequest(req, companyId);
+    if (!authz.ok) {
+      return new Response(JSON.stringify({ ok: false, error: authz.error }), {
+        status: authz.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     if (mode === 'health') {
