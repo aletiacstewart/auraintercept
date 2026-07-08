@@ -71,6 +71,9 @@ serve(async (req) => {
       (data.notes ? `\nNotes: ${data.notes}` : "");
 
     await supabase.functions.invoke("send-staff-notification", {
+      headers: {
+        Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+      },
       body: {
         companyId: data.company_id,
         notificationType: "new_email",
