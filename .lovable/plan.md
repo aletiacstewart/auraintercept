@@ -1,46 +1,74 @@
-## Status check vs. Claude's audit
+## Status vs. audit prompt
 
-Good news: **3 of the 4 fixes are already in place** in the codebase from an earlier turn — `send-email-guarded`, `send-appointment-sms`, and `send-staff-notification` all already import and call `authorizeInternalRequest(req, companyId)`. `send-email-guarded` also already restricts `priority: 'critical'` to service callers, and `outbound-call` is already wired too.
+Confirmed by grep across `supabase/functions/*/index.ts`: only **`crm-sync-leads`** already imports `authorizeInternalRequest`. The other **15** functions listed in the audit have no ownership check today. Fix all 15 with the same shared helper.
 
-**But I found one real gap Claude's audit did not flag**, caused by adding the auth check to `send-staff-notification`:
+## Fix pattern (identical everywhere)
 
-- `supabase/functions/booking-actions/index.ts` (line ~605) calls `send-staff-notification` via a raw `fetch(...)` **without any `Authorization` header**. Before the auth check, that worked. Now it will silently 401 on every new booking — staff will stop getting "New Appointment Booked" alerts.
-- `verify-insurance` and `send-campaign` are fine — they use `supabase.functions.invoke` on a service-role client, which forwards the service-role bearer automatically and hits the `isService` fast path.
+```ts
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
-## What this plan does
+const authz = await authorizeInternalRequest(req, targetCompanyId);
+if (!authz.ok) {
+  return new Response(JSON.stringify({ error: authz.error }), {
+    status: authz.status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+```
 
-1. **Fix the regression in `booking-actions`** — add `Authorization: Bearer ${serviceRoleKey}` to the `send-staff-notification` fetch (mirroring the pattern already used a few lines down for the `ai-orchestrator` call).
-2. **Verify all four functions end-to-end** with curl + a dashboard smoke test against the acceptance checklist Claude provided, so we have proof instead of just "the import is there".
-3. **No re-implementation** of Fixes 1–4 — they are already committed. I'll re-read each one and only touch it if something is actually missing or wrong.
+Service-role callers pass the fast path automatically; dashboard JWTs are checked against `profiles.company_id`; `platform_admin` bypasses.
 
-## My additional suggestions (small, aligned with Claude)
+## Tier 1 — real writes / third-party actions
 
-- **Add a stub for `verify-insurance`**: it currently relies on `supabase.functions.invoke` forwarding the service key. That's fragile — if someone ever swaps that client to an anon-key client, staff notifications silently break with 401. Suggest passing an explicit `Authorization` header the same way `booking-actions` will, so the intent is obvious. Low risk, keeps future refactors safe.
-- **`outbound-call` currently has `verify_jwt = true`** in `supabase/config.toml`. That's fine (defense in depth), but it means an internal service-to-server caller would also need to send a bearer. No callers do that today, so no action needed — just flagging so we don't get surprised later if we add one.
-- **Do not** change `send-staff-notification` to service-only. Claude's rationale (future "send test notification" dashboard button) is correct; leave the full user-JWT+company-scope check in place.
+| Function | Body field | Where to insert the check |
+|---|---|---|
+| `generate-blog-batch` | `companyId` | right after parse, before company lookup |
+| `generate-social-batch` | `companyId` | right after parse |
+| `parse-faq-document` | `companyId` | after `if (!content || !companyId)` |
+| `parse-inventory-document` | `companyId` | after `if (!documentContent || !companyId)` |
+| `sync-company-workspace` | `body?.company_id` | after existing `company_id required` guard |
+| `initialize-company-agents` | `body?.company_id` (optional) | inside the `if (companyId)` branch. **Additionally** gate the "all companies" branch (when `companyId` is absent) to service-role or `platform_admin` only — otherwise any logged-in user can trigger a bulk re-init across every tenant |
+| `google-calendar-sync` | `companyId` (may be backfilled from `appointmentId`) | **after** the existing backfill (`if (!companyId && appointment) companyId = appointment.company_id`) and after the `!companyId` guard, before the connection lookup |
+| `sms-diagnostic` | `companyId` | after `if (!companyId)` guard, before mode branch |
+
+## Tier 2 — read-only AI generation (data exfil + gateway cost)
+
+Same pattern, right after `companyId` is parsed:
+
+- `generate-campaign-content`
+- `generate-website-content`
+- `generate-knowledge-base`
+- `generate-content-image`
+- `generate-campaign-series`
+
+## Tier 3 — job-scoped
+
+Both derive `company_id` from `lead_import_jobs`, so the check goes **after** the job is loaded:
+
+- `lead-import-parse` — after `const { data: job } = ... .eq("id", job_id).single()`, gate on `job.company_id` before setting status to `parsing`.
+- `lead-import-commit` — same placement, before setting status to `importing`.
+
+## Notes / recommendations beyond the audit
+
+1. **`initialize-company-agents` bulk mode is a real hole the audit under-specified.** When `company_id` is omitted the function currently iterates every company. Restrict that branch to `authz.ctx.isService || authz.ctx.roles.includes("platform_admin")`.
+2. **`google-calendar-sync` ordering matters** — the check must come after the appointment backfill, otherwise a caller who only sends `appointmentId` gets a false 403. The plan places it correctly.
+3. **`lead-import-parse` internally fires `lead-import-commit`** via `fetch` with a bearer. Verified it currently forwards the incoming caller's authorization header, so the child call will pass the new check as the same user. No extra work needed.
+4. **`sync-company-workspace` invokes `initialize-company-agents`** via `supabase.functions.invoke` on a service-role client — hits the service fast path, no regression.
+5. **No `crm-sync-leads` change** — already correct.
+
+## Deploy set
+
+After edits, deploy the 15 modified functions in one batch:
+
+`generate-blog-batch, generate-social-batch, parse-faq-document, parse-inventory-document, sync-company-workspace, initialize-company-agents, google-calendar-sync, sms-diagnostic, generate-campaign-content, generate-website-content, generate-knowledge-base, generate-content-image, generate-campaign-series, lead-import-parse, lead-import-commit`
+
+## Verification (spot-check, not exhaustive)
+
+- Unauthenticated `curl` to one Tier 1 (`generate-blog-batch`) and one Tier 2 (`generate-campaign-content`) → 401.
+- Authenticated `curl` as preview user with a forged foreign `companyId` on `sms-diagnostic` → 403.
+- `google-calendar-sync` with `appointmentId` only (no `companyId`) as the owning user → still succeeds (backfill + check ordering correct).
+- `lead-import-parse` with someone else's `job_id` → 403; own job → still parses and chains into commit.
 
 ## Files touched
 
-- `supabase/functions/booking-actions/index.ts` — add `Authorization` header to the `send-staff-notification` fetch (one small edit around line 605).
-- `supabase/functions/verify-insurance/index.ts` — optional: switch the `send-staff-notification` invoke to include an explicit service-role Authorization header for clarity.
-- No changes to the four target functions unless verification uncovers a gap.
-
-## Verification (must all pass before I call this done)
-
-For each of `send-email-guarded`, `send-appointment-sms`, `outbound-call`, `send-staff-notification`:
-
-- `curl` with **no** `Authorization` → `401`.
-- `curl` with `Authorization: Bearer <anon key>` and a valid `companyId` → `401`/`403`.
-- `curl` with `Authorization: Bearer <service role>` → succeeds (or reaches provider).
-
-Plus:
-
-- Trigger a booking through `booking-actions` end-to-end and confirm a `staff_notifications` row is created and the fetch to `send-staff-notification` returns 200 (regression fix).
-- Confirm `send-campaign` still successfully invokes `send-email-guarded` (unchanged, service path).
-- Confirm `send-email-guarded` called with `priority: "critical"` from a non-service context is downgraded to `normal` (already in code — just prove it).
-- Dashboard: send an SMS from `SMSChat.tsx` as a logged-in company_admin → still works for own company; forging Company B's `companyId` → `403`.
-
-## Deploy
-
-After edits, deploy the affected functions:
-`booking-actions`, `verify-insurance` (only if we make the optional edit).
+15 files under `supabase/functions/<name>/index.ts` (one small addition each: import + 6-line check block). No frontend, schema, or shared-lib changes.
