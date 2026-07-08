@@ -1,14 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { insertAuraInterceptLead } from "../_shared/insert-landing-lead.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-// Aura Intercept's own company — leads from the marketing site land here so the
-// internal sales team sees them in the standard leads console.
-const AURA_INTERCEPT_COMPANY_ID = "04c57cbe-358e-4036-a3ad-b777a55f5be0";
 
 // Per-IP rate limit (resets on cold start).
 const limiter = new Map<string, { count: number; resetAt: number }>();
@@ -76,37 +72,24 @@ serve(async (req) => {
       });
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const admin = createClient(supabaseUrl, serviceKey);
+    const result = await insertAuraInterceptLead({
+      name,
+      email: email || null,
+      phone: phone || null,
+      industry: industry || null,
+      notes: notes || null,
+      source,
+    });
 
-    const { data, error } = await admin
-      .from("leads")
-      .insert({
-        company_id: AURA_INTERCEPT_COMPANY_ID,
-        name,
-        email: email || null,
-        phone: phone || null,
-        source,
-        intent: "demo_request",
-        service_interest: industry || null,
-        notes: notes || null,
-        priority: "high",
-        status: "new",
-        score: 75,
-      })
-      .select("id")
-      .single();
-
-    if (error) {
-      console.error("[landing-capture-lead] insert error:", error);
+    if (!result.ok) {
+      console.error("[landing-capture-lead] insert error:", result.error);
       return new Response(JSON.stringify({ error: "Could not save lead" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ ok: true, id: data?.id }), {
+    return new Response(JSON.stringify({ ok: true, id: result.id, deduped: result.deduped }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
