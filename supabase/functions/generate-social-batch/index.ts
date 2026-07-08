@@ -3,6 +3,7 @@ import { guardedTavilyFetch } from '../_shared/tavily-guard.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -199,6 +200,14 @@ serve(async (req) => {
 
     if (!companyId) {
       throw new Error('Company ID is required');
+    }
+
+    const authz = await authorizeInternalRequest(req, companyId);
+    if (!authz.ok) {
+      return new Response(JSON.stringify({ error: authz.error }), {
+        status: authz.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
