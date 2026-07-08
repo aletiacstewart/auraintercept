@@ -214,6 +214,18 @@ Deno.serve(async (req: Request) => {
       }
       const reviewerId = authz.ctx.userId; // null for service-role callers
 
+      // approve/reject additionally require an admin role (service-role bypasses).
+      if (!authz.ctx.isService) {
+        const roles = authz.ctx.roles ?? [];
+        const isAdmin = roles.includes("platform_admin") || roles.includes("company_admin");
+        if (!isAdmin) {
+          return new Response(
+            JSON.stringify({ error: "Forbidden: requires company_admin" }),
+            { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          );
+        }
+      }
+
       if (op === "reject") {
         const { data, error } = await supabase
           .from("agent_proposed_actions")
