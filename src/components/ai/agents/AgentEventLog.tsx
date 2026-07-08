@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
+import { LEGACY_AGENT_MAP, normalizeAgentName } from '@/lib/subscriptionAgentConfig';
 import { 
   RefreshCw, 
   ArrowRight, 
@@ -43,11 +44,24 @@ export function AgentEventLog({ agentType, companyId }: AgentEventLogProps) {
     
     setLoading(true);
     try {
+      // Include legacy alias IDs that normalize to this consolidated
+      // operative, so historical events logged under the old 24-agent
+      // IDs (booking, followup, quoting, etc.) still show up here.
+      const canonical = normalizeAgentName(agentType);
+      const aliases = new Set<string>([agentType, canonical]);
+      for (const [legacy, consolidated] of Object.entries(LEGACY_AGENT_MAP)) {
+        if (consolidated === canonical) aliases.add(legacy);
+      }
+      const inList = Array.from(aliases)
+        .map((a) => `"${a}"`)
+        .join(',');
+      const orFilter = `source_agent.in.(${inList}),target_agent.in.(${inList})`;
+
       const { data, error } = await supabase
         .from('ai_agent_events')
         .select('*')
         .eq('company_id', companyId)
-        .or(`source_agent.eq.${agentType},target_agent.eq.${agentType}`)
+        .or(orFilter)
         .order('created_at', { ascending: false })
         .limit(50);
 

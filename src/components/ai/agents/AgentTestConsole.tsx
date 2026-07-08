@@ -107,6 +107,102 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'Schedule Request', message: "I'd like to schedule an appointment for next week" },
     { label: 'Price Inquiry', message: "How much does a routine AC maintenance cost?" },
   ],
+  // ==================== 10 CONSOLIDATED OPERATIVES ====================
+  customer_journey: [
+    { label: 'New Appointment', message: "I'd like to book an appointment for next Tuesday" },
+    { label: 'Reschedule', message: "I need to move my appointment from Monday to Wednesday" },
+    { label: 'Leave Feedback', message: "I'd like to leave feedback about my experience" },
+    { label: 'Request Review', message: "Could you share your feedback about our service?" },
+  ],
+  outreach: [
+    { label: 'Create Campaign', message: "I'd like to create a new marketing campaign" },
+    { label: 'Win-Back', message: "Identify and re-engage customers inactive for 90+ days" },
+    { label: 'New Lead', message: "Log a new lead from our website contact form" },
+    { label: 'Seasonal Promo', message: "Plan a spring tune-up reminder campaign" },
+  ],
+  creative_content: [
+    { label: 'Draft Post', message: "Draft a social post about our summer promotion" },
+    { label: 'Schedule Posts', message: "Schedule this week's social media posts" },
+    { label: 'Engagement Report', message: "How did last week's posts perform?" },
+  ],
+  web_presence: [
+    { label: 'Update Homepage', message: "Update the homepage hero copy for our new service" },
+    { label: 'SEO Check', message: "Run an SEO check on our services page" },
+    { label: 'Add Testimonial', message: "Add a new customer testimonial to the site" },
+  ],
+  field_navigation: [
+    { label: 'Optimize Route', message: "Optimize today's route for technician Mike" },
+    { label: 'ETA Update', message: "What's the current ETA for the technician?" },
+    { label: 'Check-in', message: "Technician has arrived at the job site" },
+  ],
+  business_finance: [
+    { label: 'Create Quote', message: "I'd like to create a new quote for a customer" },
+    { label: 'Create Invoice', message: "Create invoice for completed job #J-456" },
+    { label: 'Check Stock', message: "What's the current stock level for HVAC filters?" },
+  ],
+  analytics_intelligence: [
+    { label: 'Weekly Report', message: "Generate this week's performance summary" },
+    { label: 'Revenue Analysis', message: "View revenue analysis report" },
+    { label: 'Monthly Forecast', message: "Forecast demand for the next month" },
+  ],
+  // ==================== 14 INDUSTRY SPECIALISTS ====================
+  diagnostic: [
+    { label: 'Analyze Symptom', message: "Customer says their AC blows warm air — likely causes?" },
+    { label: 'Parts Suggest', message: "Suggest replacement parts for a leaking capacitor" },
+  ],
+  permit_code: [
+    { label: 'Permit Check', message: "Do I need a permit to replace a water heater in Austin, TX?" },
+    { label: 'Code Lookup', message: "What's the electrical code for a subpanel install here?" },
+  ],
+  site_survey: [
+    { label: 'Pre-Install', message: "Start a pre-install survey for a 3-ton mini-split" },
+    { label: 'Takeoff Math', message: "Calculate duct sizing for a 1,800 sq ft home" },
+  ],
+  insurance_claim: [
+    { label: 'Damage Report', message: "Document storm damage for an insurance claim" },
+    { label: 'Carrier Packet', message: "Prepare a claim packet for the customer's carrier" },
+  ],
+  listing_writer: [
+    { label: 'Draft Listing', message: "Write a listing description for a 3BR/2BA craftsman home" },
+    { label: 'Feature Highlights', message: "Highlight the top selling features of this property" },
+  ],
+  offer_drafter: [
+    { label: 'Draft Offer', message: "Draft an offer letter at asking with a 30-day close" },
+    { label: 'Counter-Offer', message: "Draft a counter-offer at $10K under asking" },
+  ],
+  comp_analyst: [
+    { label: 'Pull Comps', message: "Pull comparable sales for 123 Main St in the last 6 months" },
+    { label: 'Price Position', message: "Where should we price this listing?" },
+  ],
+  style_consultant: [
+    { label: 'Style Suggestion', message: "Suggest a cut and color for a client with round face shape" },
+    { label: 'Rebook Idea', message: "What treatment should we recommend at rebook?" },
+  ],
+  loyalty_coach: [
+    { label: 'At-Risk Clients', message: "Which regulars haven't rebooked in 60+ days?" },
+    { label: 'Rebook Outreach', message: "Draft personalized rebook messages for at-risk clients" },
+  ],
+  menu_writer: [
+    { label: 'Daily Special', message: "Write today's daily special copy for grilled salmon" },
+    { label: 'Dietary Callouts', message: "Add gluten-free and vegan callouts to our menu" },
+  ],
+  reservation_optimizer: [
+    { label: 'Maximize Covers', message: "Reshuffle tonight's reservations to maximize covers" },
+    { label: 'Fill Gaps', message: "Which time slots have gaps tonight?" },
+  ],
+  task_triager: [
+    { label: 'Sort Inbox', message: "Sort my inbound tasks by urgency and owner" },
+    { label: 'Due Today', message: "What's due today?" },
+  ],
+  calendar_optimizer: [
+    { label: 'Consolidate', message: "Suggest slot consolidations for tomorrow" },
+    { label: 'Travel Time', message: "Rebalance my day accounting for travel time" },
+  ],
+  review_responder: [
+    { label: 'Positive Review', message: "Draft an on-brand reply to a 5-star Google review" },
+    { label: 'Negative Review', message: "Draft a professional reply to a 2-star review" },
+  ],
+  // ==================== LEGACY ALIASES (kept for backward compat) ====================
   booking: [
     { label: 'New Appointment', message: "I'd like to book an appointment for next Tuesday" },
     { label: 'Check Availability', message: "What times are available this Friday afternoon?" },
