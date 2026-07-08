@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { loadIndustryPackForCompany, applyIndustryPackToPrompt } from "../_shared/industry-pack.ts";
 import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
+import { insertReceptionistLead, extractContact } from "../_shared/insert-landing-lead.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
