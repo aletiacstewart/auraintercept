@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import * as XLSX from "npm:xlsx@0.18.5";
+import * as XLSX from "https://esm.sh/xlsx@0.18.5";
 import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
 import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
