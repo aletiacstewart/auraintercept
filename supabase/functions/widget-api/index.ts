@@ -910,6 +910,7 @@ CONTACT CAPTURE (REQUIRED FOR EVERY VISITOR):
           });
         }
 
+        captureLeadFromMessages();
         return new Response(followUpResponse.body, {
           headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
         });
@@ -925,6 +926,7 @@ CONTACT CAPTURE (REQUIRED FOR EVERY VISITOR):
         }
       });
 
+      captureLeadFromMessages();
       return new Response(reconstructedStream, {
         headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
       });
