@@ -94,7 +94,11 @@ async function extractDocxText(bytes: Uint8Array): Promise<string> {
 
 async function extractPdfText(bytes: Uint8Array): Promise<string> {
   try {
-    const pdfjs: any = await import("https://esm.sh/pdfjs-dist@4.0.379/legacy/build/pdf.mjs");
+    // URL assembled at runtime so the deploy-time module analyzer does not
+    // try to resolve pdfjs-dist's optional `canvas` transitive (which fails
+    // to publish on esm.sh and blocks the whole function from deploying).
+    const pdfjsUrl = "https://esm.sh/pdfjs-dist@" + "4.0.379/legacy/build/pdf.mjs";
+    const pdfjs: any = await import(pdfjsUrl);
     const loadingTask = pdfjs.getDocument({ data: bytes, useWorkerFetch: false, isEvalSupported: false, useSystemFonts: false });
     const pdf = await loadingTask.promise;
     let text = "";
