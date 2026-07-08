@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { extractContact, insertAuraInterceptLead, AURA_INTERCEPT_COMPANY_ID } from "../_shared/insert-landing-lead.ts";
+import { extractContact, insertReceptionistLead } from "../_shared/insert-landing-lead.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -157,10 +157,10 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Safety-net for the Aura Intercept marketing voice widget: if data
-    // collection came back empty, scan the transcript for an email or phone
-    // and still save the visitor as a lead under Aura Intercept.
-    if (companyId === AURA_INTERCEPT_COMPANY_ID && !customerPhone && !customerEmail) {
+    // Safety net for every company's voice receptionist: if ElevenLabs did
+    // not return structured contact info, scan the transcript for an email
+    // or phone and still save the caller as a lead under that company.
+    if (!customerPhone && !customerEmail) {
       try {
         const transcriptText = Array.isArray(transcript)
           ? transcript
@@ -170,7 +170,8 @@ Deno.serve(async (req) => {
           : '';
         const { email: scannedEmail, phone: scannedPhone } = extractContact(transcriptText);
         if (scannedEmail || scannedPhone) {
-          await insertAuraInterceptLead({
+          await insertReceptionistLead({
+            company_id: companyId,
             name: customerName || 'Voice visitor',
             email: scannedEmail ?? null,
             phone: scannedPhone ?? null,
