@@ -167,15 +167,26 @@ export function useAIAgentOrchestrator() {
           c.agent_type === defaultAgent.type ||
           normalizeAgentName(c.agent_type) === defaultAgent.type
         );
-        const config =
-          matchingConfigs.find(c => c.agent_type === defaultAgent.type) ??
-          matchingConfigs[0];
-        if (config) {
+        if (matchingConfigs.length > 0) {
+          // Shallow-merge settings across every matching row so legacy sibling
+          // rows (e.g. both "booking" and "followup" for customer_journey)
+          // contribute their settings instead of one silently winning.
+          // Exact-typed row wins on key conflicts; legacy rows fill in gaps.
+          const exact = matchingConfigs.find(c => c.agent_type === defaultAgent.type);
+          const legacyRows = matchingConfigs.filter(c => c.agent_type !== defaultAgent.type);
+          const mergedSettings: Record<string, any> = {};
+          for (const c of legacyRows) {
+            Object.assign(mergedSettings, (c.settings as Record<string, any>) || {});
+          }
+          if (exact) {
+            Object.assign(mergedSettings, (exact.settings as Record<string, any>) || {});
+          }
+          const config = exact ?? matchingConfigs[0];
           const isEnabled = matchingConfigs.some(c => c.is_enabled);
           return {
             ...defaultAgent,
             is_enabled: isEnabled,
-            settings: (config.settings as Record<string, any>) || {},
+            settings: mergedSettings,
             config_id: config.id,
           };
         }
