@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import * as XLSX from "https://esm.sh/xlsx@0.18.5";
 import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
+import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -115,6 +116,14 @@ serve(async (req) => {
 
     const { data: job, error: jobErr } = await supabase.from("lead_import_jobs").select("*").eq("id", job_id).single();
     if (jobErr || !job) throw new Error("job not found");
+
+    const authz = await authorizeInternalRequest(req, job.company_id);
+    if (!authz.ok) {
+      return new Response(JSON.stringify({ ok: false, error: authz.error }), {
+        status: authz.status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     await supabase.from("lead_import_jobs").update({ status: "parsing" }).eq("id", job_id);
 
