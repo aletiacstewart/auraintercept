@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { loadCompanyWorkspace } from '../_shared/workspace.ts';
+import { authorizeInternalRequest } from '../_shared/internal-auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -31,6 +32,14 @@ Deno.serve(async (req) => {
     if (!companyId) {
       return new Response(JSON.stringify({ error: 'company_id required' }), {
         status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const authz = await authorizeInternalRequest(req, companyId);
+    if (!authz.ok) {
+      return new Response(JSON.stringify({ error: authz.error }), {
+        status: authz.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
