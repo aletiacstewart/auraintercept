@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { AURA_INTERCEPT_TEXT_PROMPT } from "../_shared/aura-intercept-sales-prompt.ts";
 import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
+import { extractContact, insertAuraInterceptLead } from "../_shared/insert-landing-lead.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -94,6 +95,34 @@ serve(async (req) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+    }
+
+    // Safety-net lead capture: if the visitor has pasted an email or phone
+    // number anywhere in the transcript, save a lead under Aura Intercept
+    // even if the model forgets to emit the [[LEAD]] marker. Best-effort,
+    // deduped in the helper so it never spams the leads console.
+    try {
+      const userText = (messages as Array<{ role: string; content: string }>)
+        .filter((m) => m.role === "user")
+        .map((m) => m.content)
+        .join("\n");
+      const { email, phone } = extractContact(userText);
+      if (email || phone) {
+        // Naive name pull: line like "I'm Jane Doe" / "This is Jane" / "my name is Jane"
+        const nameMatch = userText.match(
+          /(?:i['’ ]?m|i am|this is|my name is|name[:\s]+)\s+([A-Z][A-Za-z'’\-]+(?:\s+[A-Z][A-Za-z'’\-]+){0,3})/,
+        );
+        // Fire-and-forget — don't block the stream on the DB write.
+        insertAuraInterceptLead({
+          name: nameMatch?.[1]?.trim() ?? null,
+          email: email ?? null,
+          phone: phone ?? null,
+          source: "message_aura_website",
+          notes: userText.slice(-1500),
+        }).catch((e) => console.error("[landing-chat] safety-net insert failed:", e));
+      }
+    } catch (e) {
+      console.error("[landing-chat] safety-net scan error:", e);
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
