@@ -602,9 +602,13 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
 
   // Send staff notification for new booking
   if (appointment?.id) {
+    const staffNotifKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     fetch(`${supabaseUrl}/functions/v1/send-staff-notification`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${staffNotifKey}`,
+      },
       body: JSON.stringify({
         companyId,
         notificationType: 'new_booking',
