@@ -1,39 +1,46 @@
+## Status check vs. Claude's audit
 
-## Goal
-Extend the same "always capture visitor contact info as a lead" behavior that already exists on the Aura Intercept marketing site to every subscribed company's own AI receptionist — both text (embedded chat widget) and voice (ElevenLabs per-company agent) — so any visitor who chats or speaks with a company's Aura ends up as a lead **under that company's account**.
+Good news: **3 of the 4 fixes are already in place** in the codebase from an earlier turn — `send-email-guarded`, `send-appointment-sms`, and `send-staff-notification` all already import and call `authorizeInternalRequest(req, companyId)`. `send-email-guarded` also already restricts `priority: 'critical'` to service callers, and `outbound-call` is already wired too.
 
-## Current state
-- **Per-company text chat** (`chat-widget` → `widget-api?action=chat`): streams AI replies scoped to `company.id`, can `book_appointment`, but **never inserts into `leads`**. Contact info the visitor shares in chat is lost unless they complete a booking.
-- **Per-company voice chat** (ElevenLabs agent → `elevenlabs-post-call`): already resolves `company_id` via `tenant_integrations.elevenlabs_agent_id` and inserts a lead when `data_collection_results` contains a name or phone. Transcript regex fallback exists **only for Aura Intercept** today.
-- **Marketing site** (`landing-chat`, `landing-capture-lead`, voice fallback) already uses the shared `_shared/insert-landing-lead.ts` helper and captures leads under Aura Intercept — this is the pattern we mirror.
+**But I found one real gap Claude's audit did not flag**, caused by adding the auth check to `send-staff-notification`:
 
-## Changes
+- `supabase/functions/booking-actions/index.ts` (line ~605) calls `send-staff-notification` via a raw `fetch(...)` **without any `Authorization` header**. Before the auth check, that worked. Now it will silently 401 on every new booking — staff will stop getting "New Appointment Booked" alerts.
+- `verify-insurance` and `send-campaign` are fine — they use `supabase.functions.invoke` on a service-role client, which forwards the service-role bearer automatically and hits the `isService` fast path.
 
-### 1. Generalize the shared lead helper
-Rename/refactor `supabase/functions/_shared/insert-landing-lead.ts` into a company-agnostic helper `insertReceptionistLead({ company_id, name, email, phone, source, notes, industry, metadata })`. Keep the existing `AURA_INTERCEPT_COMPANY_ID` export and a thin `insertAuraInterceptLead()` wrapper so `landing-chat`, `landing-capture-lead`, and the Aura Intercept voice fallback keep working unchanged. Dedupe logic (24 h on email or phone digits, scoped to the passed `company_id`), `priority: high`, `score: 75`, and channel inference stay identical — only the hard-coded company id becomes a parameter.
+## What this plan does
 
-### 2. Per-company text chat — proactive capture in `widget-api`
-In `supabase/functions/widget-api/index.ts`, `action === 'chat'` branch:
-- Inject a small system-prompt addendum for every company chat that instructs Aura to naturally ask for the visitor's **name, best email, and mobile number** within the first 2–3 turns, and to keep going even if the visitor doesn't want to book. This is added on top of the existing agent-specific instructions (booking/quote/dispatch/etc.), not in place of them.
-- After the stream completes (both the tool-call and no-tool-call branches), run a **fire-and-forget safety net**:
-  - Concatenate the user turns from `messages`.
-  - Regex-scan for email + phone using the existing `extractContact()` helper.
-  - If any contact found, call `insertReceptionistLead({ company_id: company.id, source: 'chat_widget', notes: <last assistant reply, trimmed>, ... })`.
-- No change to the streamed response body or client contract.
+1. **Fix the regression in `booking-actions`** — add `Authorization: Bearer ${serviceRoleKey}` to the `send-staff-notification` fetch (mirroring the pattern already used a few lines down for the `ai-orchestrator` call).
+2. **Verify all four functions end-to-end** with curl + a dashboard smoke test against the acceptance checklist Claude provided, so we have proof instead of just "the import is there".
+3. **No re-implementation** of Fixes 1–4 — they are already committed. I'll re-read each one and only touch it if something is actually missing or wrong.
 
-### 3. Per-company voice chat — extend the transcript fallback to all companies
-In `supabase/functions/elevenlabs-post-call/index.ts`, remove the `if (companyId === AURA_INTERCEPT_COMPANY_ID)` guard around the transcript regex fallback so **every** company benefits: if `data_collection_results` came back empty but the transcript contains an email or phone, insert a lead under that company via `insertReceptionistLead({ company_id: companyId, source: 'voice_post_call', ... })`. The existing `data_collection_results`-based lead insert (which already runs for all companies) is unchanged.
+## My additional suggestions (small, aligned with Claude)
 
-### 4. ElevenLabs agent config (owner action, documented in the reply)
-The per-company voice agents each have their own ElevenLabs configuration. In the response I will list the exact **Data Collection variables** (`customer_name`, `customer_email`, `customer_phone`) and the **system-prompt line** ("Early in every call, ask for the caller's name, best email, and mobile number and confirm them back.") that the owner should add to each company's ElevenLabs agent so the primary capture path (not just the transcript fallback) works reliably. No code writes into ElevenLabs from our side.
+- **Add a stub for `verify-insurance`**: it currently relies on `supabase.functions.invoke` forwarding the service key. That's fragile — if someone ever swaps that client to an anon-key client, staff notifications silently break with 401. Suggest passing an explicit `Authorization` header the same way `booking-actions` will, so the intent is obvious. Low risk, keeps future refactors safe.
+- **`outbound-call` currently has `verify_jwt = true`** in `supabase/config.toml`. That's fine (defense in depth), but it means an internal service-to-server caller would also need to send a bearer. No callers do that today, so no action needed — just flagging so we don't get surprised later if we add one.
+- **Do not** change `send-staff-notification` to service-only. Claude's rationale (future "send test notification" dashboard button) is correct; leave the full user-JWT+company-scope check in place.
 
-## Technical details
-- Dedupe stays scoped to `(company_id, email OR phone)` within 24 h — so Company A's leads never collide with Company B's or with Aura Intercept's.
-- Source tags: `chat_widget` (per-company text), `voice_post_call` (per-company voice fallback), `ai_receptionist` (per-company voice primary — already in place). Marketing-site sources (`message_aura_website`, `talk_to_aura_website`, `voice_post_call` under Aura Intercept's company id) are unchanged.
-- Rate limiting on `widget-api?action=chat` already exists; no new limits needed since the safety-net insert is fire-and-forget after a successful chat call.
-- No schema, RLS, or new tables required — `leads` already accepts inserts from edge functions (service role) and is filtered per company throughout the app.
+## Files touched
 
-## Out of scope
-- No UI changes to the chat widget itself.
-- No changes to the marketing-site Aura Intercept flow (that behavior is already live).
-- No new consent screen — existing widget disclosure covers this; if the user wants an explicit consent line added to the widget UI, that would be a follow-up.
+- `supabase/functions/booking-actions/index.ts` — add `Authorization` header to the `send-staff-notification` fetch (one small edit around line 605).
+- `supabase/functions/verify-insurance/index.ts` — optional: switch the `send-staff-notification` invoke to include an explicit service-role Authorization header for clarity.
+- No changes to the four target functions unless verification uncovers a gap.
+
+## Verification (must all pass before I call this done)
+
+For each of `send-email-guarded`, `send-appointment-sms`, `outbound-call`, `send-staff-notification`:
+
+- `curl` with **no** `Authorization` → `401`.
+- `curl` with `Authorization: Bearer <anon key>` and a valid `companyId` → `401`/`403`.
+- `curl` with `Authorization: Bearer <service role>` → succeeds (or reaches provider).
+
+Plus:
+
+- Trigger a booking through `booking-actions` end-to-end and confirm a `staff_notifications` row is created and the fetch to `send-staff-notification` returns 200 (regression fix).
+- Confirm `send-campaign` still successfully invokes `send-email-guarded` (unchanged, service path).
+- Confirm `send-email-guarded` called with `priority: "critical"` from a non-service context is downgraded to `normal` (already in code — just prove it).
+- Dashboard: send an SMS from `SMSChat.tsx` as a logged-in company_admin → still works for own company; forging Company B's `companyId` → `403`.
+
+## Deploy
+
+After edits, deploy the affected functions:
+`booking-actions`, `verify-insurance` (only if we make the optional edit).
