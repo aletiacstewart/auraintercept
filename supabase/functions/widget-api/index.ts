@@ -357,6 +357,34 @@ serve(async (req) => {
         });
       }
 
+      // Fire-and-forget safety net: even if the AI forgets to capture
+      // contact info structurally, scan the visitor's own messages for an
+      // email or phone and record a lead under this company.
+      const captureLeadFromMessages = () => {
+        try {
+          const userText = (messages as any[])
+            .filter((m) => m?.role === 'user' && typeof m?.content === 'string')
+            .map((m) => m.content as string)
+            .join('\n');
+          const { email, phone } = extractContact(userText);
+          if (!email && !phone) return;
+          const lastAssistant = [...(messages as any[])]
+            .reverse()
+            .find((m) => m?.role === 'assistant' && typeof m?.content === 'string');
+          insertReceptionistLead({
+            company_id: company.id,
+            name: null,
+            email: email ?? null,
+            phone: phone ?? null,
+            source: 'chat_widget',
+            notes: (lastAssistant?.content || '').slice(0, 1500),
+            metadata: { session_id: session_id ?? null },
+          }).catch((e) => console.error('[widget-api] lead capture failed:', e));
+        } catch (e) {
+          console.error('[widget-api] lead capture threw:', e);
+        }
+      };
+
       // Limit message count to prevent abuse
       if (messages.length > 50) {
         return new Response(JSON.stringify({ error: 'Too many messages in conversation' }), {
