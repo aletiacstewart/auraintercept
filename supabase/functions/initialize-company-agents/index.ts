@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { authorizeInternalRequest } from '../_shared/internal-auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -76,6 +77,31 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const companyId: string | undefined = body?.company_id;
     const allCompanies: boolean = body?.all_companies === true;
+
+    // Authorize: bulk (all_companies) mode is restricted to service-role /
+    // platform_admin; single-company mode requires the caller to belong to
+    // that company (or be platform_admin / service-role).
+    if (allCompanies) {
+      const authz = await authorizeInternalRequest(req);
+      if (!authz.ok) {
+        return new Response(JSON.stringify({ error: authz.error }), {
+          status: authz.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const isPlatformAdmin = authz.ctx.isService || authz.ctx.roles.includes('platform_admin');
+      if (!isPlatformAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: bulk init requires platform_admin' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    } else if (companyId) {
+      const authz = await authorizeInternalRequest(req, companyId);
+      if (!authz.ok) {
+        return new Response(JSON.stringify({ error: authz.error }), {
+          status: authz.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
 
     let companies: Array<{ id: string; subscription_tier: string | null; industry_vertical: string | null; profile_key: string | null }> = [];
 
