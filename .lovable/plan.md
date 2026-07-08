@@ -1,76 +1,40 @@
-## Batch: 3 audits + Onboarding fee → 25% off (was 50%)
 
-### Part A — Onboarding fee: 50% OFF → 25% OFF
+## Goal
+Every visitor who chats (Message Aura) or speaks (Talk to Aura) on the marketing site should have their name, email, and phone captured and saved as a lead under the Aura Intercept company (`auraintercept@gmail.com` → company `04c57cbe-…`).
 
-**New numbers (25% off original, rounded to nearest $10):**
+## Current state (already in place)
+- **Text chat** (`LandingAIChat` → `landing-chat` → `landing-capture-lead`): the AI can emit a `[[LEAD]]{…}[[/LEAD]]` marker, which the client posts to `landing-capture-lead`, which inserts into `leads` with `company_id = 04c57cbe-…` (Aura Intercept).
+- **Voice chat** (`AuraAvatarChat` → ElevenLabs agent `agent_0501kh…` → `elevenlabs-post-call`): the webhook maps the agent to Aura Intercept's company and, when `data_collection_results` include name/phone, inserts a lead automatically.
 
-| Tier  | Original | Old sale (50% off) | New sale (25% off) |
-|-------|----------|--------------------|--------------------|
-| Core  | $497     | $249               | **$370**           |
-| Boost | $994     | $497               | **$750**           |
-| Pro   | $1,988   | $994               | **$1,490**         |
-| Elite | $3,979   | $1,990             | **$2,980**         |
+Gaps: the text prompt only collects contact info if the visitor volunteers it or agrees to a call, and there is no server-side safety net if the model forgets the `[[LEAD]]` marker. The voice agent's data-collection variables live in the ElevenLabs dashboard and need to be confirmed.
 
-**1. Single source of truth — `src/lib/launchPricing.ts`**
-Update `onboardingSale` values (249→370, 497→750, 994→1490, 1990→2980) and rewrite the docblock (lines 12–19) from "50% OFF" to "25% OFF" with the new table.
+## Changes
 
-**2. Hardcoded strings across the platform**
-Grep-driven sweep, replacing both the dollar amounts AND every "50% OFF" / "50% of beta monthly" phrase:
+### 1. Message Aura (text) — proactive + guaranteed capture
+- **Prompt (`supabase/functions/_shared/aura-intercept-sales-prompt.ts`)**: rewrite step 8 so Aura asks for name, email, and phone naturally within the first 2–3 turns for every visitor ("Before I dig in, who am I chatting with? Name, best email, and mobile so our team can follow up either way?"). Keep it friendly, one ask at a time if the visitor pushes back, and always emit `[[LEAD]]…[[/LEAD]]` as soon as any two of {name, email, phone} are known — not only on "book a call".
+- **Server safety net (`supabase/functions/landing-chat/index.ts`)**: after streaming, scan the full user-message history with regex for email and E.164/US phone; if found (and no `[[LEAD]]` was emitted this turn), call the same insert path used by `landing-capture-lead` (extract into `_shared/insert-landing-lead.ts` so both functions share it). Include the last assistant message as `notes` and set `source = "message_aura_website"`. Idempotency: dedupe on `(company_id, lower(email))` OR `(company_id, phone)` within the last 24h before inserting.
+- **Client (`src/components/landing/LandingAIChat.tsx`)**: no UX change beyond the existing confirmation bubble; keep the `[[LEAD]]` stripping.
 
-- `src/pages/Index.tsx` (lines 635, 667, 699, 729) — 4 pricing cards
-- `src/pages/Help.tsx` — onboarding lines in the pricing section
-- `src/pages/TermsOfService.tsx` (line 65) — legal onboarding fee disclosure
-- `src/components/audit/types.ts` (lines 268, 285, 302, 319) — `implementationFee` on all 4 tiers
-- `src/components/audit/AuditResults.tsx` (line 517) — trial disclosure sentence
-- `supabase/functions/_shared/aura-intercept-sales-prompt.ts` (lines 24–33) — voice sales prompt
-- `supabase/functions/ai-agent-chat/index.ts` (lines 3393, 3400, 3408, 3417) — tier tool comments (already reference the values in copy)
-- `supabase/functions/create-checkout/index.ts` (lines 15–41) — update comments; leave `onboarding_price_id` placeholders with a `TODO: replace with new 25%-off price IDs` marker (user will paste)
-- Any PDF/doc component under `src/components/documentation/*` that mentions onboarding dollars (PricingSummaryPDF, PlatformFAQPDF, CompanyOnboardingPDF, SalesPitchDataPDF, ComprehensiveGuidesPDF, MarketingSalesMasterPDF, IntegrationOnboardingPDF, PlatformDocumentPDF, CompanyGuidesPDF, WebsiteCopyPDF) — replace hardcoded 249/497/994/1990 in onboarding context and 50% wording
+### 2. Talk to Aura (voice) — confirm + document capture
+- Verify (via `tenant_integrations`) that `agent_0501kh52gehge14vjscb5n8j8vhn` maps to Aura Intercept — confirmed. Post-call webhook already writes to `leads` for that company.
+- Update the ElevenLabs agent's **Data Collection** config (owner action in the ElevenLabs dashboard, not code) to require these variables from every call:
+  - `customer_name`
+  - `customer_phone`
+  - `customer_email`
+  Also add a system-prompt line in the agent's ElevenLabs prompt: "Early in every call, ask for the caller's name, best email, and mobile number and confirm them back." I will surface these exact instructions in the response so the owner can paste them in.
+- Add a defensive fallback in `elevenlabs-post-call/index.ts`: if `data_collection_results` is empty but the transcript contains an email or phone (regex scan across all `user` turns), still create the lead with whatever we found (name defaults to "Voice visitor").
 
-**3. Copy phrase migration**
-Every occurrence of "50% OFF — Beta" / "50% off during Beta" / "50% of beta monthly" becomes "25% OFF — Beta" / "25% off during Beta" / "75% of original onboarding".
+### 3. Shared insert helper
+- New `supabase/functions/_shared/insert-landing-lead.ts` exporting `insertAuraInterceptLead({ name, email, phone, source, notes, industry })` used by `landing-capture-lead`, `landing-chat` (new fallback), and `elevenlabs-post-call` (voice fallback). Centralises the `company_id`, dedupe, priority/score defaults.
 
-**4. Memory update (`mem://index.md` Core rule)**
-Change: "Onboarding = 50% of beta monthly per tier" → "Onboarding = 25% OFF original (Core $370, Boost $750, Pro $1,490, Elite $2,980); originals struck through unchanged".
+## Technical details
+- Aura Intercept company_id: `04c57cbe-358e-4036-a3ad-b777a55f5be0` (already hard-coded in `landing-capture-lead`).
+- Regex: email `/[\w.+-]+@[\w-]+\.[\w.-]+/g`, phone `/(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g`.
+- Dedupe query: `select id from leads where company_id = $1 and (lower(email)=$2 or phone=$3) and created_at > now() - interval '24 hours' limit 1`.
+- All three sources tag `source` distinctly: `message_aura_website`, `talk_to_aura_website`, `voice_post_call` — Leads console can filter by source.
 
-**5. Stripe (blocked on user)**
-Leave `onboarding_price_id` values in `create-checkout/index.ts` untouched but add a clear `// TODO(pricing-update): replace with new 25%-off price IDs — user is creating in Stripe` comment above each. Ship copy/UX now; wire IDs in a follow-up once user pastes them.
+## Out of scope
+- No new tables, RLS, or Stripe changes.
+- No change to customer-owned company chat widgets — this is only the marketing-site Aura.
 
----
-
-### Part B — #1 Security scan
-
-Run `security--run_security_scan` and address anything actionable (RLS/GRANT drift, especially on recent tables touched by the trial/pricing/onboarding work). Update `security--update_memory` with any findings intentionally ignored.
-
-### Part C — #3 SEO sweep on public pages
-
-Add per-page `<title>`, `<meta description>`, and `<link rel="canonical">` via a lightweight `<SEO>` component (react-helmet-async pattern already present via `HelmetProvider`, or a tiny `useEffect` head mutator if not — will check first). Apply to:
-
-- `src/pages/Index.tsx` — home
-- `src/pages/ForBusiness.tsx`
-- `src/pages/OpportunityAudit.tsx` / `AuditReport.tsx`
-- `src/pages/Blog.tsx` + `src/pages/BlogPost.tsx` (dynamic per-post)
-- `src/pages/Contact.tsx`
-- `src/pages/TermsOfService.tsx`, `PrivacyPolicy.tsx` (if present)
-- `src/pages/SignUp.tsx`, `src/pages/Auth.tsx`
-
-Each: unique title (<60 chars), description (<160 chars), canonical to `https://auraintercept.ai<path>`. Ensure single `<h1>` per page.
-
-### Part D — #5 404 hygiene
-
-- `src/pages/NotFound.tsx`: add `<meta name="robots" content="noindex, nofollow">` via the same SEO helper, and log the bad path to `platform_issues` (issue_type `not_found`, low severity) so we can see where broken inbound links point.
-
----
-
-### Verification
-
-- `bun run build` clean
-- `tsgo --noEmit` clean
-- Playwright screenshot of `/` pricing cards + `/audit` implementation fee + `/terms-of-service` onboarding line — confirm all show new $370/$750/$1,490/$2,980 with "25% OFF — Beta"
-- Grep confirms zero remaining `50% OFF` / `50% of beta monthly` / old onboarding-fee amounts in an onboarding context
-- Security scan re-run shows no new criticals
-
-### Not doing (deferred)
-
-- Stripe price ID wiring in `create-checkout` (waiting on user)
-- Alt-text sweep on marketing images, bundle-size/lazy-route pass, mobile viewport pass — separate future batches
+After you approve I'll implement the code changes and paste the exact ElevenLabs dashboard settings you need to update.

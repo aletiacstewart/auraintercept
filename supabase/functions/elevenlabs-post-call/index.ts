@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { extractContact, insertAuraInterceptLead, AURA_INTERCEPT_COMPANY_ID } from "../_shared/insert-landing-lead.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -153,6 +154,37 @@ Deno.serve(async (req) => {
       const { error: leadErr } = await supabase.from('leads').insert(leadPayload);
       if (leadErr) {
         console.error('Failed to insert lead from receptionist call:', leadErr);
+      }
+    }
+
+    // Safety-net for the Aura Intercept marketing voice widget: if data
+    // collection came back empty, scan the transcript for an email or phone
+    // and still save the visitor as a lead under Aura Intercept.
+    if (companyId === AURA_INTERCEPT_COMPANY_ID && !customerPhone && !customerEmail) {
+      try {
+        const transcriptText = Array.isArray(transcript)
+          ? transcript
+              .filter((t: any) => t?.role === 'user' || t?.speaker === 'user')
+              .map((t: any) => t?.message || t?.text || '')
+              .join('\n')
+          : '';
+        const { email: scannedEmail, phone: scannedPhone } = extractContact(transcriptText);
+        if (scannedEmail || scannedPhone) {
+          await insertAuraInterceptLead({
+            name: customerName || 'Voice visitor',
+            email: scannedEmail ?? null,
+            phone: scannedPhone ?? null,
+            source: 'voice_post_call',
+            notes: summary || transcriptText.slice(-1500),
+            metadata: {
+              call_log_id: insertedCall?.id || null,
+              conversation_id: conversationId,
+              agent_id: agentId,
+            },
+          });
+        }
+      } catch (e) {
+        console.error('[elevenlabs-post-call] voice safety-net failed:', e);
       }
     }
 
