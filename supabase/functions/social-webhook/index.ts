@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
       if (!sig.ok) {
         console.warn("[social-webhook] signature rejected:", sig.reason);
         return new Response(JSON.stringify({ error: "invalid signature" }), {
-          status: 401,
+          status: 403,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
