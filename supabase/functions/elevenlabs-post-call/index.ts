@@ -132,6 +132,52 @@ Deno.serve(async (req) => {
 
     console.log(`Post-call log saved for company ${companyId}, conversation ${conversationId}`);
 
+    // ---- Automation: post-call review request ----
+    // If the call was substantive and the caller matches a recently completed
+    // job for this company (last 48h), fire the review request flow so the
+    // customer is asked without any human tapping "Complete Job" a second time.
+    try {
+      const durationSecs = Number(duration) || 0;
+      if (durationSecs >= 60 && customerPhone) {
+        const digits = String(customerPhone).replace(/\D/g, "").slice(-10);
+        if (digits.length === 10) {
+          const sinceIso = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+          const { data: recentJob } = await supabase
+            .from("job_assignments")
+            .select("id, updated_at, appointments:appointment_id(customer_phone, company_id)")
+            .eq("status", "completed")
+            .gte("updated_at", sinceIso)
+            .order("updated_at", { ascending: false })
+            .limit(25);
+
+          const match = (recentJob ?? []).find((r: any) => {
+            const p = String(r?.appointments?.customer_phone || "").replace(/\D/g, "").slice(-10);
+            return p === digits && r?.appointments?.company_id === companyId;
+          });
+
+          if (match?.id) {
+            const reviewResp = await fetch(
+              `${supabaseUrl}/functions/v1/send-review-request`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${supabaseKey}`,
+                  apikey: supabaseKey,
+                },
+                body: JSON.stringify({ jobAssignmentId: match.id }),
+              },
+            );
+            console.log(
+              `[elevenlabs-post-call] Review request dispatched for job ${match.id}: ${reviewResp.status}`,
+            );
+          }
+        }
+      }
+    } catch (reviewErr) {
+      console.error("[elevenlabs-post-call] review request dispatch failed:", reviewErr);
+    }
+
     // If the caller provided enough info to be useful, create/refresh a lead.
     // We only insert when we have at least a name or phone — anything less is noise.
     if (customerName || customerPhone) {
