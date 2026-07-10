@@ -46,7 +46,7 @@ const featureDescriptions: Record<string, string> = {
   'Service Management': 'Schedule, assign, and track every job, visit, or appointment in real time.',
   'Business Operations': 'One place for quotes, invoices, inventory, employees, and customer records.',
   'Analytics & Reports': 'Every KPI, dashboard, and forecast, answered in plain English when you ask.',
-  'AI Operatives Hub': 'Central control center for managing and monitoring all AI operatives.',
+  'AI Operatives Hub': 'Your hub for managing and monitoring all AI operatives.',
   'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers. No external dependencies required.',
   'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Voice infrastructure requires your own ElevenLabs + SignalWire accounts with a valid card on file — each provider bills you directly, separate from your Aura plan.',
   'Email Reminders': 'Automated email reminders for appointments, follow-ups, and important updates.',
