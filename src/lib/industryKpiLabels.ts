@@ -41,6 +41,18 @@ const OVERRIDES: Record<string, KpiLabelMap> = {
   personal_assistant: { Appointments: 'Sessions', Customers: 'Clients', Employees: 'Assistants' },
   veterinary:       { Appointments: 'Exams Scheduled', Customers: 'Patients', Employees: 'Veterinarians' },
   medical_practice: { Appointments: 'Visits Scheduled', Customers: 'Patients', Employees: 'Providers' },
+  medical_office:   { Appointments: 'Visits Scheduled', Customers: 'Patients', Employees: 'Providers' },
+  dental:           { Appointments: 'Visits Scheduled', Customers: 'Patients', Employees: 'Providers' },
+  chiropractic:     { Appointments: 'Adjustments', Customers: 'Patients', Employees: 'Providers' },
+  optometry:        { Appointments: 'Exams Scheduled', Customers: 'Patients', Employees: 'Providers' },
+  salon:            { Appointments: 'Chair Bookings', Customers: 'Clients', Employees: 'Stylists' },
+  fitness:          { Appointments: 'Classes Booked', Customers: 'Members', Employees: 'Trainers' },
+  physical_therapy: { Appointments: 'Sessions', Customers: 'Patients', Employees: 'Therapists' },
+  occupational_therapy: { Appointments: 'Sessions', Customers: 'Patients', Employees: 'Therapists' },
+  home_health:      { Appointments: 'Visits Scheduled', Customers: 'Patients', Employees: 'Caregivers' },
+  hospice:          { Appointments: 'Visits Scheduled', Customers: 'Patients', Employees: 'Caregivers' },
+  saas_platform:    { Appointments: 'Demos', Customers: 'Accounts', Leads: 'MQLs' },
+  professional:     { Appointments: 'Meetings', Customers: 'Clients', Employees: 'Team' },
 };
 
 export function getKpiLabelMap(pack: IndustryPack): KpiLabelMap {
@@ -83,6 +95,24 @@ const SIMPLE_KPI_BY_INDUSTRY: Record<string, CanonicalKpiTitle[]> = {
   pool_spa:           ['Appointments', 'Customers', 'Revenue (Month)', 'Open Quotes', 'Outstanding'],
   roofing:            ['Appointments', 'Open Quotes', 'Leads', 'Revenue (Month)', 'Outstanding'],
   solar:              ['Appointments', 'Open Quotes', 'Leads', 'Revenue (Month)', 'Customers'],
+  handyman:           ['Appointments', 'Open Quotes', 'Outstanding', 'Revenue (Month)', 'Customers'],
+  fencing:            ['Appointments', 'Open Quotes', 'Leads', 'Revenue (Month)', 'Customers'],
+  construction:       ['Appointments', 'Open Quotes', 'Leads', 'Revenue (Month)', 'Outstanding'],
+  security_systems:   ['Appointments', 'Customers', 'Open Quotes', 'Revenue (Month)', 'Outstanding'],
+  salon:              ['Appointments', 'Customers', 'Revenue (Month)', 'Messages', 'Employees'],
+  fitness:            ['Appointments', 'Customers', 'Revenue (Month)', 'Messages', 'Employees'],
+  dental:             ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  chiropractic:       ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  optometry:          ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  medical_office:     ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  medical_practice:   ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  veterinary:         ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  physical_therapy:   ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  occupational_therapy: ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  home_health:        ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  hospice:            ['Appointments', 'Customers', 'Outstanding', 'Revenue (Month)', 'Messages'],
+  saas_platform:      ['Leads', 'Customers', 'Revenue (Month)', 'Messages', 'Appointments'],
+  professional:       ['Appointments', 'Customers', 'Open Quotes', 'Revenue (Month)', 'Outstanding'],
 };
 
 export function getSimpleModeKpis(pack: IndustryPack): CanonicalKpiTitle[] {
