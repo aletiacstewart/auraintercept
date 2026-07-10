@@ -66,7 +66,7 @@ const featureDescriptions: Record<string, string> = {
   'Analytics & Reports': 'Every KPI, dashboard, and forecast, answered in plain English when you ask.',
   'Social Media': 'Write, schedule, and post on-brand content across your social accounts.',
   'Creative & Web Presence': 'Your website, blog, and SEO — built and updated by AI so you stay found.',
-  'AI Operatives Hub': 'Central control center for managing and monitoring all AI operatives.',
+ 'AI Operatives Hub': 'Your hub for managing and monitoring all AI operatives.',
   'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers. No external dependencies required.',
   'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Requires ElevenLabs for voice synthesis and SignalWire for telephony.',
   'ElevenLabs (Voice)': 'Required for Talk to Aura (Voice) features only (speech-based). NOT required for Message Aura (Text).',
