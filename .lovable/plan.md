@@ -1,6 +1,30 @@
-# Automation Gap Roadmap — Aura Intercept
+# Automation Gap Roadmap — Aura Intercept — ✅ COMPLETE
 
-Audit found **15 concrete gaps** where a manual click, missing cron, or unused agent capability is doing work that could run itself. Every proven edge function already exists — most gaps are just missing invocation triggers.
+All 15 items shipped. Cron jobs and triggers listed below are live.
+
+## Live cron jobs
+- `aura-crm-sync-leads` — every 4h
+- `aura-generate-social-batch` — Mon 07:00
+- `aura-missed-call-retry` — every 10 min
+- `aura-winback-scan` — daily 08:00
+- `aura-google-cal-inbound-sync` — every 30 min
+- `aura-campaign-series-dispatch` — every 5 min
+- `aura-integration-health-check` — daily 06:00
+- `aura-orchestrator-proposals` — every 15 min
+- `aura-analytics-weekly-run` — Mon 09:00
+
+## Live DB triggers
+- `trg_review_request_on_job_completion` — job_assignments → send-review-request
+- `trg_auto_dispatch_new_job` — job_assignments (new, no tech, dispatch_mode∈auto/hybrid) → booking-actions
+- `trg_inventory_low_stock_alert` — inventory_items ≤ min_quantity → staff_notifications
+- `trg_employee_welcome_on_profile` — new employee profile → send-company-welcome
+- `trg_kb_refresh_services` / `trg_kb_refresh_faqs` → generate-knowledge-base
+
+## New edge functions added
+missed-call-retry · winback-scan · google-calendar-inbound-sync · campaign-series-dispatch · integration-health-check · orchestrator-proposals · analytics-weekly-run
+
+## Post-call hook
+`elevenlabs-post-call` now fires send-review-request on completed-job calls ≥60s.
 
 Already automated (skipped): appointment reminders, lead follow-ups, weekly/monthly/quarterly digests, trial reminders, social post publishing, blog batch, agent event processing, cost alerts.
 
