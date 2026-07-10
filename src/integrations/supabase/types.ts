@@ -1911,6 +1911,51 @@ export type Database = {
           },
         ]
       }
+      company_setup_step_overrides: {
+        Row: {
+          company_id: string
+          completed_at: string
+          completed_by: string | null
+          created_at: string
+          id: string
+          step_id: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          completed_at?: string
+          completed_by?: string | null
+          created_at?: string
+          id?: string
+          step_id: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          completed_at?: string
+          completed_by?: string | null
+          created_at?: string
+          id?: string
+          step_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_setup_step_overrides_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_setup_step_overrides_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_engine_history: {
         Row: {
           channel: string
