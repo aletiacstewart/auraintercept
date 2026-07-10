@@ -32,6 +32,24 @@ export type Database = {
         }
         Relationships: []
       }
+      _edge_anon_key: {
+        Row: {
+          anon_key: string
+          id: number
+          updated_at: string
+        }
+        Insert: {
+          anon_key: string
+          id?: number
+          updated_at?: string
+        }
+        Update: {
+          anon_key?: string
+          id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       agent_performance_metrics: {
         Row: {
           agent_type: string
