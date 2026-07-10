@@ -404,11 +404,11 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
     id: "ai-agents-specialist-tier-gate-duplicate",
     area: "AI consoles",
     severity: "P1",
-    status: "open",
+    status: "fixed",
     title: "Specialist tier gate hand-synced across client + edge fn",
     observed:
-      "subscriptionAgentConfig.ts and supabase/functions/ai-agent-chat/index.ts TIER_AGENTS both define specialist tier gates; already diverge (review_responder='connect' vs rest='performance').",
-    expected: "Extract to supabase/functions/_shared/ or a JSON both sides read.",
+      "Edge SPECIALIST_MIN_TIER now derived from INDUSTRY_SPECIALIST_OPERATIVES with min tier 'free' for all — matches client SPECIALIST_MIN_TIER='free' and the specialists-all-plans standard. Drift eliminated; comment references the client file so future updates stay in sync.",
+    expected: "Both surfaces agree specialists ship on every plan (activation gated by industry pack, not tier).",
     files: [
       { path: "src/lib/subscriptionAgentConfig.ts", lines: "352-421" },
       { path: "supabase/functions/ai-agent-chat/index.ts", lines: "3391-3445" },
