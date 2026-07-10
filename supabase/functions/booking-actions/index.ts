@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { authorizeInternalRequest } from "../_shared/internal-auth.ts";
+import { verifyCronSecret } from "../_shared/cron-auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -206,14 +207,25 @@ serve(async (req) => {
   try {
     const { action, company_id, ...params } = await req.json();
 
-    // Only accept calls from trusted internal callers OR authenticated members of the
-    // target company. Prevents anonymous scraping of technician PII / booking creation.
-    const authz = await authorizeInternalRequest(req, company_id);
-    if (!authz.ok) {
-      return new Response(JSON.stringify({ success: false, error: authz.error }), {
-        status: authz.status,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // Accept either (a) the shared cron secret for pg trigger/cron callers, or
+    // (b) a trusted service-role / company-scoped user JWT. Prevents anonymous
+    // scraping of technician PII / booking creation.
+    if (req.headers.get("x-cron-secret")) {
+      const cron = await verifyCronSecret(req);
+      if (!cron.ok) {
+        return new Response(JSON.stringify({ success: false, error: cron.error }), {
+          status: cron.status ?? 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } else {
+      const authz = await authorizeInternalRequest(req, company_id);
+      if (!authz.ok) {
+        return new Response(JSON.stringify({ success: false, error: authz.error }), {
+          status: authz.status,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
