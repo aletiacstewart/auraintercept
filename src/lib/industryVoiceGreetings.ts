@@ -39,6 +39,10 @@ const PER_INDUSTRY: Record<string, string> = {
   hospice: 'Thanks for calling {company}. This is Aura — are you calling about a current patient, exploring services, or trying to reach our care team?',
   veterinary: 'Thanks for calling {company}. This is Aura — are you calling to schedule an exam, check on your pet, or speak with our team?',
   medical_practice: 'Thanks for calling {company}. This is Aura — are you calling to schedule a visit, check your results, or speak with our office?',
+  medical_office: 'Thanks for calling {company}. This is Aura — are you calling to schedule a visit, check your results, or speak with our office?',
+  dental: 'Thanks for calling {company}. This is Aura — would you like to book a cleaning, follow up on a treatment plan, or reach our office?',
+  chiropractic: 'Thanks for calling {company}. This is Aura — are you booking an adjustment, following up on care, or a new patient?',
+  optometry: 'Thanks for calling {company}. This is Aura — are you scheduling an eye exam, following up on eyewear, or a new patient?',
 };
 
 export function getIndustryVoiceGreeting(
