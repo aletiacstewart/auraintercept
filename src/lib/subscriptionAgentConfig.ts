@@ -324,6 +324,11 @@ export function normalizeTierName(tier: string): SubscriptionTier {
 
 // Legacy agent name mapping — maps old granular agent names to consolidated operatives
 export const LEGACY_AGENT_MAP: Record<string, string> = {
+  // Reception / intake variants
+  'receptionist': 'triage',
+  'emergency': 'triage',
+  'intake': 'triage',
+  'faq': 'triage',
   'booking': 'customer_journey',
   'followup': 'customer_journey',
   'review': 'customer_journey',
@@ -333,12 +338,15 @@ export const LEGACY_AGENT_MAP: Record<string, string> = {
   'quoting': 'business_finance',
   'invoice': 'business_finance',
   'inventory': 'business_finance',
+  'estimate': 'business_finance',
+  'payments': 'business_finance',
   'campaign': 'outreach',
   'lead': 'outreach',
   'marketing': 'outreach',
   'insights': 'analytics_intelligence',
   'revenue': 'analytics_intelligence',
   'forecast': 'analytics_intelligence',
+  'analytics': 'analytics_intelligence',
   'creative': 'creative_content',
   'social_content': 'creative_content',
   'social_scheduler': 'creative_content',
