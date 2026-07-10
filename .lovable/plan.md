@@ -1,80 +1,63 @@
-# Automation Gap Roadmap — Aura Intercept — ✅ COMPLETE
+# Full Platform Audit — Agents, Features, Automations
 
-All 15 items shipped. Cron jobs and triggers listed below are live.
+Goal: produce a single prioritized findings report covering everything that's declared, promised, or half-wired but not fully live. Output lands in `.lovable/audit-2026-07-10.md` and updates `src/lib/auditFindings.ts` so the in-app `/audit` surface reflects the new run.
 
-## Live cron jobs
-- `aura-crm-sync-leads` — every 4h
-- `aura-generate-social-batch` — Mon 07:00
-- `aura-missed-call-retry` — every 10 min
-- `aura-winback-scan` — daily 08:00
-- `aura-google-cal-inbound-sync` — every 30 min
-- `aura-campaign-series-dispatch` — every 5 min
-- `aura-integration-health-check` — daily 06:00
-- `aura-orchestrator-proposals` — every 15 min
-- `aura-analytics-weekly-run` — Mon 09:00
+## Scope
 
-## Live DB triggers
-- `trg_review_request_on_job_completion` — job_assignments → send-review-request
-- `trg_auto_dispatch_new_job` — job_assignments (new, no tech, dispatch_mode∈auto/hybrid) → booking-actions
-- `trg_inventory_low_stock_alert` — inventory_items ≤ min_quantity → staff_notifications
-- `trg_employee_welcome_on_profile` — new employee profile → send-company-welcome
-- `trg_kb_refresh_services` / `trg_kb_refresh_faqs` → generate-knowledge-base
+1. **AI Agents / Operatives (24-agent model)**
+   - Cross-check `src/lib/subscriptionAgentConfig.ts` operative roster against actual routes in `src/pages/ai-consoles/*`, `src/pages/operations/*`, and technician consoles.
+   - Flag operatives with no console entry, no system prompt, no metrics wiring (`useConsoleAgentMetrics`), or no handoff route in `EVENT_ROUTING`.
+   - Verify Specialist Operatives (14) each have industry-pack activation + prompt injection.
 
-## New edge functions added
-missed-call-retry · winback-scan · google-calendar-inbound-sync · campaign-series-dispatch · integration-health-check · orchestrator-proposals · analytics-weekly-run
+2. **Automations (cron + triggers + edge functions)**
+   - Enumerate every `supabase/functions/*` and check: has cron OR trigger OR user-invoked call site? Orphans = candidates.
+   - Cross-check `.lovable/plan.md` "live cron/triggers" list against actual `cron.job` rows and `pg_trigger` entries via `supabase--read_query`.
+   - Look for manual-only "Sync Now" / "Send Now" / "Run Now" buttons that should be scheduled.
 
-## Post-call hook
-`elevenlabs-post-call` now fires send-review-request on completed-job calls ≥60s.
+3. **Features declared in memory but missing/partial in code**
+   - Walk `mem://index.md` core rules + memory files, spot-check each against implementation (e.g. staff notification 4 channels, missed-call retry, campaign series dispatch, launch pricing toggle, industry pack coverage for all 28 packs, PWA scope rules, tier-gated widgets).
+   - Confirm every industry pack has: quote_template, invoice_template, empty states, KPI labels, prompt delta, role preview.
 
-Already automated (skipped): appointment reminders, lead follow-ups, weekly/monthly/quarterly digests, trial reminders, social post publishing, blog batch, agent event processing, cost alerts.
+4. **Onboarding & Setup**
+   - Fast-Start wizard → tier redirect, Guided Launch 4-state machine, ElevenLabs client tools config, Google OAuth manual steps, 10DLC signup step, welcome email trigger.
+   - Any setup checklist items with no completion writer.
 
----
+5. **Customer-facing (Aura chat, voice, SMS, booking, portal)**
+   - Verify hashtag SMS auto-responder, missed-call retry loop, bilingual auto-translate, unified booking 14-day scan, customer portal unification, public company listing RPC.
+   - Chat widget install methods (3), voice greetings per industry, review request post-call hook.
 
-## ⭐ Build These 5 First (High impact × S–M effort — invocation-only changes)
+6. **Field ops & dispatch**
+   - Auto-dispatch trigger fires for `auto`/`hybrid` modes; technician click-to-call; service-aware workflow (physical vs virtual); mobile FAB; PWA scope; inventory low-stock alert.
 
-| # | Title | Change | Effort |
-|---|---|---|---|
-| 1 | **Post-call voice review request** | Have `elevenlabs-post-call` invoke `send-review-request` on positive-sentiment calls over threshold duration | S |
-| 2 | **Review request on job completion** | DB trigger on `job_assignments` status→`completed` calls `send-review-request` via `pg_net` — removes reliance on tech tapping "Complete Job" in-app | S |
-| 3 | **CRM sync cron** | Add `aura-crm-sync-leads` at `0 */4 * * *` invoking existing `crm-sync-leads` function (currently "Sync Now" button only) | S |
-| 4 | **Weekly social content batch** | Add `aura-generate-social-batch` at `0 7 * * 1` invoking existing `generate-social-batch` (currently wizard-only) | S |
-| 5 | **Missed-call retry loop** | Add `aura-missed-call-retry` at `*/10 * * * *` querying `missed_call_callbacks WHERE status='pending' AND attempt_count<3 AND next_attempt_at<=now()` | M |
+7. **Marketing, content & analytics**
+   - Content Engine unified flow, social 3-tab console, weekly social batch cron, campaign series dispatch, blog auto-generation, analytics weekly run + proposed actions write path, NLP analytics interface, 8-tab dashboard suite.
 
----
+8. **Settings & integrations**
+   - Every integration (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Upload-Post, Google Cal, CRM providers): status check, health-check coverage, third-party disclaimer copy, tier lock/unlock badges.
 
-## Full Roadmap (grouped by impact × effort)
+9. **Tier gating & billing**
+   - Launch pricing toggle behavior, LEGACY_TIER_MAP grandfathering, onboarding_price_id TODO (still pointing at old 50% prices per memory), 3rd-party cost disclosure prompts, trial 60-day math.
 
-### High impact, Small–Medium effort
-6. **Auto-dispatch on new job** — `job_assignments` INSERT trigger where `technician_id IS NULL` runs `booking-actions` scoring. Respects existing `dispatch_mode: auto|manual|hybrid` agent config that is currently a no-op.
-7. **Winback campaigns** — `winback_offers` table exists with zero invocation. Add cron OR trigger on stale-customer appointments to call `send-campaign`.
-8. **agent_proposed_actions write path** — Approve/reject UI exists but nothing writes to the queue. Wire `ai-orchestrator` (already runs every 2min) to detect idle patterns: uncontacted lead >48h, appointment with no tech >2h, invoice unpaid >14d. (L effort but very high impact — unlocks the whole automation review UX.)
+10. **Cross-cutting hygiene**
+   - RLS + GRANTs on every public table (spot-check recent migrations).
+   - Edge functions returning `200 OK` wrapper on subscription checks.
+   - Console theme token usage (no raw hex outside marketing/dark surfaces).
+   - Canonical naming registry, no "Control Centers" / "enterprise" / "starter/connect" drift.
 
-### Medium impact
-9. **Inventory low-stock alert** — Trigger on `inventory_items` when `quantity_on_hand <= reorder_point` → staff notification / proposed action.
-10. **Knowledge base auto-refresh** — Trigger on `services`/`faqs` INSERT/UPDATE → debounced `generate-knowledge-base` (only runs during onboarding today).
-11. **Analytics operative auto-run** — `analytics_intelligence` (insights/performance/revenue/forecast) never fires automatically. Fold into weekly digest cron to produce `agent_proposed_actions` rows.
-12. **Google Calendar inbound sync cron** — Existing trigger pushes outbound only. Add `*/30 * * * *` cron to pull remote changes, removing manual "Sync" clicks.
-13. **Campaign series scheduling** — After `generate-campaign-series` writes rows, deferred `pg_net` call sends each at its `scheduled_at` (currently requires per-send manual click).
-14. **Tenant integration health check** — Daily cron iterates `tenant_integrations WHERE status='active'`, marks broken OAuth as `error`, notifies staff (broken tokens are currently discovered only when a user tries to use them).
-15. **Employee onboarding welcome** — Trigger on `profiles` INSERT where `role='employee'` sends welcome/onboarding link (mirrors existing `on_auth_user_created` pattern).
+## Method
 
----
+- Spawn 4 parallel `acp_subagent--explore` background tasks, one per major bucket (Agents+Automations, Features+Onboarding, Customer+FieldOps, Marketing+Settings+Billing+Hygiene). Each returns structured findings with `file:line` refs, severity (P0–P3), fix size (S/M/L), and status.
+- Run targeted DB reads via `supabase--read_query` for: `cron.job`, `pg_trigger` on flagged tables, `pg_policies` sampling, and orphan `public.agent_proposed_actions` cooldown state.
+- Merge into a single ranked list. Nothing gets fixed in this pass — audit only.
 
-## Technical Details
+## Deliverables
 
-**Cron pattern to follow:** Register jobs alongside the existing `aura-*` cron entries. The cron_shared_secret pattern is already in place; each new job uses `net.http_post` with the shared bearer.
+- `.lovable/audit-2026-07-10.md` — full narrative report grouped by area with counts, severity distribution, and a "Top 10 to fix next" section.
+- Updated `src/lib/auditFindings.ts` with new `AuditFinding` entries (status: `open`) so `/audit` shows the current state.
+- Chat summary: totals per severity, top gaps by area, recommended next slice to implement.
 
-**Trigger pattern to follow:** DB triggers should call `net.http_post` inside a `BEGIN...EXCEPTION WHEN OTHERS THEN RAISE WARNING` block (mirrors `sync_appointment_to_google_calendar` and `handle_company_signup_notify`) so a failing edge function never blocks the underlying DML.
+## Out of scope
 
-**Cost & safety:** Items 1–5 are cheap and reversible — each adds one cron entry or one trigger, and the target function already handles retries/tier gating. Items 7, 8, 11 need a rate-limit guard (per-company cooldown column) before they can safely fire on every event.
-
-**Out of scope:** Multi-location features (per project memory). Anything already covered by the confirmed cron list above.
-
----
-
-## What I need from you
-Pick a slice to implement:
-- **A)** All 5 quick wins (recommended — one migration + one edge function edit)
-- **B)** Just #1–#4 (pure cron/trigger, zero function code)
-- **C)** #8 (agent_proposed_actions write path) — biggest UX unlock, biggest scope
-- **D)** Different subset — tell me which numbers
+- Any code fix or migration — audit-only run.
+- Multi-location work (excluded per memory).
+- Re-verifying findings already marked `fixed` or `false_positive` in the existing `auditFindings.ts` unless a new signal contradicts them.
