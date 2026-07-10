@@ -62,6 +62,28 @@ const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   multi_track: PRO,
 };
 
+// Runtime assertion: our local `price` (cents) must match launchPricing.ts sale
+// amounts (mirrored here to avoid client-lib imports in edge). If Stripe price
+// objects drift from these, logStep will emit a WARNING at cold start so it
+// shows up in edge function logs — checkout still proceeds so a mismatch
+// never blocks live customers.
+const EXPECTED_MONTHLY_CENTS: Record<string, number> = {
+  starter: 49700,      // Core   $497
+  connect: 99400,      // Boost  $994
+  performance: 198800, // Pro    $1,988
+  command: 397900,     // Elite  $3,979
+};
+(() => {
+  for (const [tier, expected] of Object.entries(EXPECTED_MONTHLY_CENTS)) {
+    const actual = SUBSCRIPTION_TIERS[tier]?.price;
+    if (actual !== expected) {
+      console.warn(
+        `[CREATE-CHECKOUT] WARN price drift: tier=${tier} expected=${expected} actual=${actual} — update launchPricing.ts or Stripe price objects.`,
+      );
+    }
+  }
+})();
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
