@@ -20,7 +20,7 @@ const EDGE_FUNCTIONS = [
   "chat-widget", "check-subscription", "check-unsubscribe-alerts", "content-engine",
   "cost-alerts", "create-checkout", "create-company-admin", "create-onboarding-invite",
   "create-platform-admin", "crm-sync-leads", "crm-test-connection", "cron-health-check",
-  "customer-portal", "customer-register", "delete-users", "dispatch-integrations",
+  "customer-portal", "customer-register", "delete-users",
   "elevenlabs-aura-token", "elevenlabs-clone-voice", "elevenlabs-conversation-token",
   "elevenlabs-post-call", "elevenlabs-tts", "generate-blog-batch",
   "generate-blog-content", "generate-campaign-content", "generate-campaign-series",
@@ -42,7 +42,7 @@ const EDGE_FUNCTIONS = [
   "submit-onboarding", "super-switcher-magiclink", "sync-company-workspace",
   "test-voice-reminder", "translate-ui", "trial-reminders", "unsubscribe",
   "upload-onboarding-file", "validate-password", "verify-domain",
-  "verify-insurance", "voice-booking-agent", "voice-handler", "voice-navigator",
+  "voice-booking-agent", "voice-handler", "voice-navigator",
   "voice-post-prompt", "voice-swaig", "weekly-digest", "widget-api",
 ];
 
