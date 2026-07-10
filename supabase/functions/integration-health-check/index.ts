@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
   const { data: rows } = await supabase
     .from("tenant_integrations")
     .select(
-      "company_id, resend_api_key, signalwire_project_id, signalwire_api_token, signalwire_space_url, google_refresh_token, elevenlabs_api_key, stripe_secret_key"
+      "company_id, resend_api_key, signalwire_project_id, signalwire_api_token, signalwire_space_url, google_refresh_token, elevenlabs_api_key, stripe_secret_key, tavily_api_key"
     );
 
   const issues: Array<{ company_id: string; provider: string; reason: string }> = [];
@@ -65,6 +65,56 @@ Deno.serve(async (req) => {
         if (!resp.ok) issues.push({ company_id: r.company_id, provider: "signalwire", reason: `${resp.status}` });
       } catch (e) {
         issues.push({ company_id: r.company_id, provider: "signalwire", reason: e instanceof Error ? e.message : String(e) });
+      }
+    }
+
+    // Resend: list domains — verifies key auth without side effects
+    if (r.resend_api_key) {
+      try {
+        const resp = await fetch("https://api.resend.com/domains", {
+          headers: { Authorization: `Bearer ${r.resend_api_key}` },
+        });
+        if (!resp.ok) issues.push({ company_id: r.company_id, provider: "resend", reason: `${resp.status}` });
+      } catch (e) {
+        issues.push({ company_id: r.company_id, provider: "resend", reason: e instanceof Error ? e.message : String(e) });
+      }
+    }
+
+    // ElevenLabs: /v1/user auth check
+    if (r.elevenlabs_api_key) {
+      try {
+        const resp = await fetch("https://api.elevenlabs.io/v1/user", {
+          headers: { "xi-api-key": r.elevenlabs_api_key },
+        });
+        if (!resp.ok) issues.push({ company_id: r.company_id, provider: "elevenlabs", reason: `${resp.status}` });
+      } catch (e) {
+        issues.push({ company_id: r.company_id, provider: "elevenlabs", reason: e instanceof Error ? e.message : String(e) });
+      }
+    }
+
+    // Stripe: /v1/account
+    if (r.stripe_secret_key) {
+      try {
+        const resp = await fetch("https://api.stripe.com/v1/account", {
+          headers: { Authorization: `Bearer ${r.stripe_secret_key}` },
+        });
+        if (!resp.ok) issues.push({ company_id: r.company_id, provider: "stripe", reason: `${resp.status}` });
+      } catch (e) {
+        issues.push({ company_id: r.company_id, provider: "stripe", reason: e instanceof Error ? e.message : String(e) });
+      }
+    }
+
+    // Tavily: tiny search probe
+    if (r.tavily_api_key) {
+      try {
+        const resp = await fetch("https://api.tavily.com/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ api_key: r.tavily_api_key, query: "ping", max_results: 1 }),
+        });
+        if (!resp.ok) issues.push({ company_id: r.company_id, provider: "tavily", reason: `${resp.status}` });
+      } catch (e) {
+        issues.push({ company_id: r.company_id, provider: "tavily", reason: e instanceof Error ? e.message : String(e) });
       }
     }
   }
