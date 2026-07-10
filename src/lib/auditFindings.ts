@@ -443,10 +443,10 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
     id: "onboarding-setup-progress-no-writer",
     area: "Workflow handoffs",
     severity: "P1",
-    status: "open",
+    status: "fixed",
     title: "setup_progress is fully derived, no persisted writer",
     observed:
-      "No setup_progress/company_setup table; useSetupProgress.ts computes completion live from 6 tables every load. Admin cannot manually mark a step done.",
+      "Added company_setup_step_overrides table + setSetupStepOverride() writer. Overrides OR-merged over derived signals in useSetupProgress.",
     expected: "Persist completion in a dedicated table with a writer surface.",
     files: [{ path: "src/hooks/useSetupProgress.ts" }],
     fixSize: "M",
