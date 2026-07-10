@@ -225,12 +225,6 @@ verify_jwt = false
 [functions.cron-health-check]
 verify_jwt = false
 
-[functions.verify-insurance]
-verify_jwt = false
-
-[functions.dispatch-integrations]
-verify_jwt = false
-
 [functions.elevenlabs-aura-token]
 verify_jwt = false
 
