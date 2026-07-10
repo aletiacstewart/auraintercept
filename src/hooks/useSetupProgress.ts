@@ -22,6 +22,47 @@ export function triggerSetupProgressRefresh() {
   window.dispatchEvent(new CustomEvent(SETUP_PROGRESS_REFRESH_EVENT));
 }
 
+/**
+ * Manually mark a setup step complete (or clear the override) for the current
+ * company. Writes to `company_setup_step_overrides` and fires a refresh so
+ * SetupProgressBar recomputes immediately.
+ */
+export async function setSetupStepOverride(
+  companyId: string,
+  stepId: string,
+  completed: boolean,
+): Promise<{ error: string | null }> {
+  if (!companyId || !stepId) return { error: 'Missing company or step' };
+  try {
+    if (completed) {
+      const { data: userData } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from('company_setup_step_overrides')
+        .upsert(
+          {
+            company_id: companyId,
+            step_id: stepId,
+            completed_by: userData?.user?.id ?? null,
+            completed_at: new Date().toISOString(),
+          },
+          { onConflict: 'company_id,step_id' },
+        );
+      if (error) return { error: error.message };
+    } else {
+      const { error } = await supabase
+        .from('company_setup_step_overrides')
+        .delete()
+        .eq('company_id', companyId)
+        .eq('step_id', stepId);
+      if (error) return { error: error.message };
+    }
+    triggerSetupProgressRefresh();
+    return { error: null };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Unknown error' };
+  }
+}
+
 export interface SetupStep {
   id: string;
   label: string;
@@ -77,18 +118,22 @@ export function useSetupProgress(): SetupProgressState {
       setLoading(true);
 
       try {
-        const [companyRes, servicesRes, hoursRes, agentsRes, siteRes, integrationsRes] = await Promise.all([
+        const [companyRes, servicesRes, hoursRes, agentsRes, siteRes, integrationsRes, overridesRes] = await Promise.all([
           supabase.from('companies').select('name, contact_phone, business_phone, contact_address, address, public_app_url').eq('id', companyId).maybeSingle(),
           supabase.from('services').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('business_hours').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('ai_agent_configs').select('id, is_enabled').eq('company_id', companyId),
           supabase.from('smart_websites').select('id, is_published').eq('company_id', companyId).maybeSingle(),
           supabase.from('tenant_integrations').select('signalwire_phone_number, resend_api_key').eq('company_id', companyId).maybeSingle(),
+          supabase.from('company_setup_step_overrides').select('step_id').eq('company_id', companyId),
         ]);
 
         const company = companyRes.data as any;
         const integrations = integrationsRes.data as any;
         const site = siteRes.data as any;
+        const overrideSet = new Set<string>(
+          ((overridesRes.data as Array<{ step_id: string }> | null) ?? []).map((r) => r.step_id),
+        );
 
         const businessComplete = !!(
           company?.name &&
@@ -110,6 +155,9 @@ export function useSetupProgress(): SetupProgressState {
         const liveComplete = !!(site?.is_published || company?.public_app_url);
 
         const nextSteps: SetupStep[] = FALLBACK_STEPS.map((s) => {
+          // Manual override always wins — admins can mark a step done even if
+          // the derived signal doesn't reflect it yet.
+          if (overrideSet.has(s.id)) return { ...s, completed: true };
           switch (s.id) {
             case 'business':       return { ...s, completed: businessComplete };
             case 'services':       return { ...s, completed: servicesComplete };
