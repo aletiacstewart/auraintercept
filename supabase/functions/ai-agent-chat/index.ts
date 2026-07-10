@@ -3435,15 +3435,12 @@ serve(async (req) => {
       'task_triager', 'calendar_optimizer',
       'review_responder',
     ];
-    const SPECIALIST_MIN_TIER: Record<string, string> = {
-      diagnostic: 'performance', permit_code: 'performance',
-      site_survey: 'performance', insurance_claim: 'performance',
-      listing_writer: 'performance', offer_drafter: 'performance', comp_analyst: 'performance',
-      style_consultant: 'performance', loyalty_coach: 'performance',
-      menu_writer: 'performance', reservation_optimizer: 'performance',
-      task_triager: 'performance', calendar_optimizer: 'performance',
-      review_responder: 'connect',
-    };
+    // Specialist operatives ship with EVERY plan (including free trial). Activation is
+    // driven by the industry pack (extra_operatives), not by subscription tier.
+    // Keep in sync with src/lib/subscriptionAgentConfig.ts (SPECIALIST_MIN_TIER = 'free').
+    const SPECIALIST_MIN_TIER: Record<string, string> = Object.fromEntries(
+      INDUSTRY_SPECIALIST_OPERATIVES.map((op) => [op, 'free'])
+    );
 
     // Legacy tier name → canonical tier mapping
     const LEGACY_TIER_MAP: Record<string, string> = {
