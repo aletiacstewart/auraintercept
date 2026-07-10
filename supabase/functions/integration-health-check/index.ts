@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
   const { data: rows } = await supabase
     .from("tenant_integrations")
     .select(
-      "company_id, resend_api_key, signalwire_project_id, signalwire_api_token, signalwire_space_url, google_refresh_token, elevenlabs_api_key, stripe_secret_key, tavily_api_key"
+      "company_id, resend_api_key, signalwire_project_id, signalwire_api_token, signalwire_space_url, signalwire_campaign_status, google_refresh_token, elevenlabs_api_key, stripe_secret_key, tavily_api_key"
     );
 
   const issues: Array<{ company_id: string; provider: string; reason: string }> = [];
@@ -116,6 +116,18 @@ Deno.serve(async (req) => {
       } catch (e) {
         issues.push({ company_id: r.company_id, provider: "tavily", reason: e instanceof Error ? e.message : String(e) });
       }
+    }
+
+    // A2P 10DLC (SignalWire campaign registration): flag any tenant whose campaign
+    // status is in a terminal-bad state so SMS outreach isn't silently blocked.
+    // Only reports state — never re-registers.
+    const badA2P = new Set(["REJECTED", "FAILED", "EXPIRED", "SUSPENDED"]);
+    if (r.signalwire_campaign_status && badA2P.has(String(r.signalwire_campaign_status).toUpperCase())) {
+      issues.push({
+        company_id: r.company_id,
+        provider: "a2p_10dlc",
+        reason: `campaign status ${r.signalwire_campaign_status}`,
+      });
     }
   }
 
