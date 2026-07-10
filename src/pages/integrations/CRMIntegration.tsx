@@ -169,12 +169,17 @@ export default function CRMIntegration() {
                         <>
                           <Button size="sm" variant="outline" onClick={() => syncMut.mutate()} disabled={syncMut.isPending}>
                             {syncMut.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-                            <span className="ml-1">Sync now</span>
+                            <span className="ml-1">Force sync</span>
                           </Button>
                           <Button size="sm" variant="ghost" onClick={() => disconnectMut.mutate(conn.id)}>Disconnect</Button>
                         </>
                       )}
                     </div>
+                    {conn && (
+                      <p className="text-[10px] text-muted-foreground pt-1">
+                        Auto-syncs hourly via <code className="text-[10px]">aura-crm-sync-leads</code>. Use Force sync to run immediately.
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               );
