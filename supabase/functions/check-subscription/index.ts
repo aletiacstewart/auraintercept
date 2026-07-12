@@ -380,6 +380,7 @@ serve(async (req) => {
       in_trial: false,
       trial_ends_at: null,
       subscription_end: null,
+      lookup_failed: true,
       error: errorMessage,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

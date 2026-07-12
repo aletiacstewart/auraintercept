@@ -60,7 +60,14 @@ const AGENT_TYPES = {
   analytics_intelligence: { name: 'Analytics Intelligence Agent', category: 'analytics', phase: 5 },
 };
 
-// Event routing rules — which agents should receive which events
+// Event routing rules — which agents should receive which events.
+//
+// NOTE: EVENT_ROUTING intentionally covers only the 10 consolidated operatives.
+// The 14 industry specialist operatives (see INDUSTRY_SPECIALIST_OPERATIVES in
+// src/lib/subscriptionAgentConfig.ts) are request/response-only: they are
+// activated per industry pack and invoked by consolidated operatives via the
+// ai-agent-chat tool interface (e.g. `handoff_to_specialist`). They do not
+// subscribe to lifecycle events, so they must not appear here.
 const EVENT_ROUTING: Record<string, string[]> = {
   // Customer Portal events
   'triage_complete': ['customer_journey', 'dispatch', 'outreach'],
