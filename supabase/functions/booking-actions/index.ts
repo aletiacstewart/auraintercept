@@ -251,6 +251,9 @@ serve(async (req) => {
       case 'find_next_available':
         result = await findNextAvailable(supabase, company_id, params);
         break;
+      case 'auto_dispatch':
+        result = await autoDispatch(supabase, company_id, params);
+        break;
       default:
         throw new Error(`Unknown action: ${action}`);
     }
