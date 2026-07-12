@@ -44,6 +44,29 @@ Deno.serve(async (req) => {
 
     console.log(`[Review Request] Processing review request for job: ${jobAssignmentId}`);
 
+    // Idempotency guard: atomically claim the job by stamping
+    // review_request_sent_at. If another caller already claimed it, bail with
+    // a 200 and skip sending — prevents duplicate SMS/email when both the
+    // completion trigger and a follow-up call try to send.
+    const nowIso = new Date().toISOString();
+    const { data: claimed, error: claimErr } = await supabase
+      .from('job_assignments')
+      .update({ review_request_sent_at: nowIso })
+      .eq('id', jobAssignmentId)
+      .is('review_request_sent_at', null)
+      .select('id')
+      .maybeSingle();
+
+    if (claimErr) {
+      console.error('[Review Request] Idempotency claim failed:', claimErr);
+    } else if (!claimed) {
+      console.log(`[Review Request] Already sent for job ${jobAssignmentId}; skipping.`);
+      return new Response(
+        JSON.stringify({ success: true, skipped: 'already_sent', results: { sms: null, email: null } }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Fetch job assignment with related data including company review settings
     const { data: jobAssignment, error: jobError } = await supabase
       .from('job_assignments')
