@@ -341,7 +341,7 @@ export function useSpecialistMetrics(companyId: string | null | undefined) {
 
       const { data, error } = await supabase
         .from('ai_agent_logs')
-        .select('agent_type, status')
+        .select('agent_type, success')
         .eq('company_id', companyId)
         .in('agent_type', specialists)
         .gte('created_at', monthStart)
@@ -352,9 +352,9 @@ export function useSpecialistMetrics(companyId: string | null | undefined) {
       const perSpecialist: Record<string, number> = {};
       let success = 0;
       let errors = 0;
-      for (const row of data as Array<{ agent_type: string; status: string | null }>) {
+      for (const row of data as Array<{ agent_type: string; success: boolean | null }>) {
         perSpecialist[row.agent_type] = (perSpecialist[row.agent_type] ?? 0) + 1;
-        if (row.status === 'error' || row.status === 'failed') errors += 1;
+        if (row.success === false) errors += 1;
         else success += 1;
       }
 
