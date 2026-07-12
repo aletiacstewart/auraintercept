@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth } from 'date-fns';
+import { INDUSTRY_SPECIALIST_OPERATIVES } from '@/lib/subscriptionAgentConfig';
 
 interface BusinessOpsMetrics {
   quotesTotal: number;
