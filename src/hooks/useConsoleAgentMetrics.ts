@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth } from 'date-fns';
+import { INDUSTRY_SPECIALIST_OPERATIVES } from '@/lib/subscriptionAgentConfig';
 
 interface BusinessOpsMetrics {
   quotesTotal: number;
@@ -302,6 +303,67 @@ export function useSocialMetrics(companyId: string | null | undefined) {
         postsScheduled: contentRes.count ?? 0,
         postsPublished: contentPublishedRes.count ?? 0,
         customersReached: customersRes.count ?? 0,
+      };
+    },
+    enabled: !!companyId,
+    staleTime: 60_000,
+  });
+}
+
+interface SpecialistMetrics {
+  totalInvocations: number;
+  successCount: number;
+  errorCount: number;
+  activeSpecialists: number;
+  perSpecialist: Record<string, number>;
+}
+
+/**
+ * Metrics for the 14 industry specialist operatives.
+ * Derived from ai_agent_logs filtered to specialist agent_types.
+ * Used by SpecialistOperativesConsole to surface per-specialist activity.
+ */
+export function useSpecialistMetrics(companyId: string | null | undefined) {
+  return useQuery<SpecialistMetrics>({
+    queryKey: ['specialist-metrics', companyId],
+    queryFn: async () => {
+      const empty: SpecialistMetrics = {
+        totalInvocations: 0,
+        successCount: 0,
+        errorCount: 0,
+        activeSpecialists: 0,
+        perSpecialist: {},
+      };
+      if (!companyId) return empty;
+
+      const specialists = INDUSTRY_SPECIALIST_OPERATIVES as unknown as string[];
+      const monthStart = startOfMonth(new Date()).toISOString();
+
+      const { data, error } = await supabase
+        .from('ai_agent_logs')
+        .select('agent_type, success')
+        .eq('company_id', companyId)
+        .in('agent_type', specialists)
+        .gte('created_at', monthStart)
+        .limit(5000);
+
+      if (error || !data) return empty;
+
+      const perSpecialist: Record<string, number> = {};
+      let success = 0;
+      let errors = 0;
+      for (const row of data as Array<{ agent_type: string; success: boolean | null }>) {
+        perSpecialist[row.agent_type] = (perSpecialist[row.agent_type] ?? 0) + 1;
+        if (row.success === false) errors += 1;
+        else success += 1;
+      }
+
+      return {
+        totalInvocations: data.length,
+        successCount: success,
+        errorCount: errors,
+        activeSpecialists: Object.keys(perSpecialist).length,
+        perSpecialist,
       };
     },
     enabled: !!companyId,
