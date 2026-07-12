@@ -3893,6 +3893,7 @@ export type Database = {
           id: string
           notes: string | null
           parts_used: string | null
+          review_request_sent_at: string | null
           started_at: string | null
           status: string
           technician_lat: number | null
@@ -3925,6 +3926,7 @@ export type Database = {
           id?: string
           notes?: string | null
           parts_used?: string | null
+          review_request_sent_at?: string | null
           started_at?: string | null
           status?: string
           technician_lat?: number | null
@@ -3957,6 +3959,7 @@ export type Database = {
           id?: string
           notes?: string | null
           parts_used?: string | null
+          review_request_sent_at?: string | null
           started_at?: string | null
           status?: string
           technician_lat?: number | null

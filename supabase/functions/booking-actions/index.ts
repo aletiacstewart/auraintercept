@@ -251,6 +251,9 @@ serve(async (req) => {
       case 'find_next_available':
         result = await findNextAvailable(supabase, company_id, params);
         break;
+      case 'auto_dispatch':
+        result = await autoDispatch(supabase, company_id, params);
+        break;
       default:
         throw new Error(`Unknown action: ${action}`);
     }
@@ -742,5 +745,115 @@ async function findNextAvailable(supabase: any, companyId: string, params: any) 
     message: datesWithSlots.length > 0
       ? `Found ${datesWithSlots.length} upcoming date(s) with availability.`
       : 'No availability found in the next ' + max_days + ' days.',
+  };
+}
+/**
+ * Auto-dispatch: called by trg_auto_dispatch_new_job when a job_assignment row
+ * is inserted without an employee_id and the company's dispatch_mode is 'auto'
+ * or 'hybrid'. Picks the highest-scored technician and assigns them.
+ *
+ * Idempotent: if employee_id is already set (manual assignment beat us), no-op.
+ */
+async function autoDispatch(supabase: any, companyId: string, params: any) {
+  const { job_assignment_id, appointment_id } = params;
+  if (!job_assignment_id) {
+    return { success: false, error: 'job_assignment_id required' };
+  }
+
+  const { data: ja, error: jaErr } = await supabase
+    .from('job_assignments')
+    .select('id, employee_id, appointment_id, company_id, customer_lat, customer_lng, customer_address')
+    .eq('id', job_assignment_id)
+    .maybeSingle();
+
+  if (jaErr || !ja) {
+    return { success: false, error: 'job_assignment not found' };
+  }
+  if (ja.employee_id) {
+    return { success: true, skipped: 'already_assigned', employee_id: ja.employee_id };
+  }
+
+  // Pull appointment for service + customer context
+  const { data: appt } = await supabase
+    .from('appointments')
+    .select('id, service_type, customer_email, customer_phone, datetime')
+    .eq('id', ja.appointment_id ?? appointment_id)
+    .maybeSingle();
+
+  // Resolve eligible technicians: intersect service assignments (if any) with
+  // employees flagged as 'technician' in employee_job_assignments.
+  const { data: techJobs } = await supabase
+    .from('employee_job_assignments')
+    .select('employee_id')
+    .eq('company_id', companyId)
+    .eq('job_type', 'technician');
+
+  let eligibleIds: string[] = (techJobs ?? []).map((t: any) => t.employee_id);
+
+  if (appt?.service_type) {
+    const { data: svc } = await supabase
+      .from('services')
+      .select('id')
+      .eq('company_id', companyId)
+      .ilike('name', `%${appt.service_type}%`)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (svc?.id) {
+      const { data: svcAssign } = await supabase
+        .from('technician_service_assignments')
+        .select('technician_id')
+        .eq('company_id', companyId)
+        .eq('service_id', svc.id);
+      if (svcAssign && svcAssign.length > 0) {
+        const svcIds = svcAssign.map((s: any) => s.technician_id);
+        const intersect = eligibleIds.filter((id) => svcIds.includes(id));
+        if (intersect.length > 0) eligibleIds = intersect;
+      }
+    }
+  }
+
+  if (eligibleIds.length === 0) {
+    return { success: false, error: 'no_eligible_technicians' };
+  }
+
+  const scores = await calculateTechnicianScores(
+    supabase,
+    companyId,
+    eligibleIds,
+    appt?.customer_email ?? null,
+    appt?.customer_phone ?? null,
+    ja.customer_lat ?? null,
+    ja.customer_lng ?? null,
+  );
+
+  const ranked = Array.from(scores.values()).sort((a, b) => b.total_score - a.total_score);
+  const pick = ranked[0];
+  if (!pick) return { success: false, error: 'no_scored_technician' };
+
+  // Only claim the row if it's still unassigned (race guard).
+  const { data: updated, error: upErr } = await supabase
+    .from('job_assignments')
+    .update({
+      employee_id: pick.technician_id,
+      assigned_at: new Date().toISOString(),
+      status: 'assigned',
+    })
+    .eq('id', job_assignment_id)
+    .is('employee_id', null)
+    .select('id, employee_id')
+    .maybeSingle();
+
+  if (upErr) return { success: false, error: upErr.message };
+  if (!updated) {
+    return { success: true, skipped: 'race_lost' };
+  }
+
+  return {
+    success: true,
+    job_assignment_id,
+    employee_id: pick.technician_id,
+    technician_name: pick.technician_name,
+    total_score: pick.total_score,
   };
 }
