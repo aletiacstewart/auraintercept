@@ -12,6 +12,7 @@ import { PublicFooter } from '@/components/layout/PublicFooter';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 import { PricingComparisonTable } from '@/components/landing/PricingComparisonTable';
 import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
+import { TestimonialSection } from '@/components/marketing/TestimonialSection';
 import { SEO } from '@/components/seo/SEO';
 import { MAIN_INDUSTRY_CATEGORIES as MARKETING_INDUSTRY_CATEGORIES } from '@/lib/mainIndustryCategories';
 
@@ -541,6 +542,9 @@ export default function Index() {
         </div>
       </section>
 
+
+      {/* Testimonials */}
+      <TestimonialSection />
 
       {/* Industries */}
       <section style={{ padding: "56px 0", background: "rgba(0,229,255,0.02)" }}>
