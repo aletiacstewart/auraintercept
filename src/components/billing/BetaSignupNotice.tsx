@@ -50,10 +50,12 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
       </p>
 
       <p className={`text-foreground/80 leading-relaxed italic ${compact ? 'text-[10px]' : 'text-xs'}`}>
-        The onboarding fee is due at the start of your trial and covers account
-        configuration, AI agent setup, knowledge-base build-out, 3rd-party
-        activation, A2P 10DLC compliance filing, and your initial training
-        session. Non-refundable once onboarding begins. Beta docs, guides, and
+        The onboarding fee is invoiced on day 31 of your trial (after concierge
+        onboarding is complete) and covers account configuration, AI agent
+        setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC
+        compliance filing, and your initial training session. Your first monthly
+        plan fee is charged on day 61 (after the full 60-Day Live Trial).
+        Non-refundable once concierge onboarding begins. Beta docs, guides, and
         tutorials may occasionally lag the latest changes — check the homepage
         for the most current pricing and trial details.
       </p>
