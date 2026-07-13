@@ -1275,7 +1275,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <Text style={styles.subsectionTitle}>Closing Phrases</Text>
-      <BulletPoint>"Let's start your 60-Day Live Trial today. Your one-time onboarding fee is due at the start, then 30 days of concierge onboarding and 30 days of full live use before your monthly plan begins."</BulletPoint>
+      <BulletPoint>"Let's start your 60-Day Live Trial today. Your one-time onboarding fee is invoiced on day 31, your first monthly plan fee is charged on day 61, and you get 30 days of concierge onboarding plus 30 days of full live use."</BulletPoint>
       <BulletPoint>"What would it mean for your business to never miss another call?"</BulletPoint>
       <BulletPoint>"Every day without Aura is another day of missed opportunities."</BulletPoint>
     </Page>
