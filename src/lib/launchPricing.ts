@@ -79,15 +79,13 @@ export const LAUNCH_PRICING = {
  *
  * When true, no onboarding line item is added to checkout and all pricing UI
  * renders "No setup fee during beta" instead of the discounted onboarding
- * price. Flip back to `false` to restore the tier-specific onboarding charge.
+ * price. Now false because onboarding is deferred to day 31 of the 60-Day Live
+ * Trial and invoiced by the charge-onboarding-fee cron edge function.
  *
  * Mirrored in supabase/functions/create-checkout/index.ts as
  * ONBOARDING_FEE_WAIVED_GLOBALLY — keep both in sync.
- *
- * TODO: flip ONBOARDING_FEE_WAIVED_GLOBALLY back to false when exiting the
- * growth phase.
  */
-export const ONBOARDING_FEE_WAIVED_GLOBALLY = true;
+export const ONBOARDING_FEE_WAIVED_GLOBALLY = false;
 
 export interface OnboardingDisplay {
   waived: boolean;
