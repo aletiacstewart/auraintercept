@@ -43,6 +43,22 @@ const ELITE = {
   price_id: "price_1TmJ2tEGn9AqCo3ES4Mf3YHm",
   onboarding_price_id: "price_1TqgFFEGn9AqCo3Ei7axEGKc", // $2,980 one-time
 };
+
+/**
+ * GLOBAL onboarding-fee waiver (growth-phase switch).
+ *
+ * When true, the one-time onboarding line item is NEVER added, regardless of
+ * beta code. All existing beta-code logic (trial days, subscription metadata,
+ * `waive_onboarding_fee`) remains intact — this is an ADDITIONAL global switch.
+ *
+ * Mirrored in src/lib/launchPricing.ts as ONBOARDING_FEE_WAIVED_GLOBALLY —
+ * keep both in sync.
+ *
+ * TODO: flip ONBOARDING_FEE_WAIVED_GLOBALLY back to false when exiting the
+ * growth phase.
+ */
+const ONBOARDING_FEE_WAIVED_GLOBALLY = true;
+
 const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   // Canonical 4 tiers
   starter: CORE,
@@ -243,14 +259,26 @@ serve(async (req) => {
     const lineItems: Array<Stripe.Checkout.SessionCreateParams.LineItem> = [
       { price: selectedTier.price_id, quantity: 1 },
     ];
-    if (isFirstCheckout && selectedTier.onboarding_price_id) {
-      // Onboarding is now tier-specific (25% OFF original (rounded to nearest $10));
-      // legacy beta-cap branch removed. A beta code can still fully waive
-      // the onboarding fee via `beta_codes.waive_onboarding_fee`.
-      if (!betaWaiveOnboarding) {
-        lineItems.push({ price: selectedTier.onboarding_price_id, quantity: 1 });
-      }
+    // Onboarding line item — tier-specific (25% OFF original, rounded to nearest $10).
+    // Three ways to skip: not-a-first-checkout, global growth-phase waiver, or beta code.
+    let onboardingWaivedReason: "global" | "beta" | "not_first_checkout" | "none" = "none";
+    if (!isFirstCheckout) {
+      onboardingWaivedReason = "not_first_checkout";
+    } else if (ONBOARDING_FEE_WAIVED_GLOBALLY) {
+      onboardingWaivedReason = "global";
+    } else if (betaWaiveOnboarding) {
+      onboardingWaivedReason = "beta";
     }
+    if (onboardingWaivedReason === "none" && selectedTier.onboarding_price_id) {
+      lineItems.push({ price: selectedTier.onboarding_price_id, quantity: 1 });
+    }
+    logStep("Onboarding fee decision", {
+      isFirstCheckout,
+      globalWaiver: ONBOARDING_FEE_WAIVED_GLOBALLY,
+      betaWaiver: betaWaiveOnboarding,
+      charged: onboardingWaivedReason === "none",
+      waivedReason: onboardingWaivedReason,
+    });
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
@@ -262,6 +290,7 @@ serve(async (req) => {
         company_id: companyId,
         admin_user_id: user.id,
         tier: requestedTier,
+        onboarding_waived: onboardingWaivedReason === "none" ? "no" : onboardingWaivedReason,
         ...(betaCode ? { beta_code: betaCode, beta_trial: "true" } : {}),
       },
     };
