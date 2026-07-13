@@ -1,8 +1,10 @@
 ---
 name: Canonical 4-tier pricing model
-description: Monthly subscription (Standard + Beta) and tier IDs for Core/Boost/Pro/Elite. Onboarding fee = 1 month of plan (struck through) with 50% OFF during Beta, one-time, due at start of 60-Day Live Trial (first 30 days = onboarding window).
+description: Monthly subscription (Standard + Beta) and tier IDs for Core/Boost/Pro/Elite. Onboarding fee is GLOBALLY WAIVED during growth phase (ONBOARDING_FEE_WAIVED_GLOBALLY=true). Struck-through original stays for reference; sale copy reads "No setup fee during beta / Waived (beta)".
 type: feature
 ---
+**Growth-phase waiver (ACTIVE):** `ONBOARDING_FEE_WAIVED_GLOBALLY = true` in `src/lib/launchPricing.ts` and `supabase/functions/create-checkout/index.ts`. No onboarding line item is added to checkout and all UI must render "No setup fee during beta" (or "Waived (beta)" in comparison tables). Keep the struck-through original price visible; do NOT display the 25%-off sale price while the waiver is on. Route onboarding copy through `getOnboardingDisplay(tier)` helper. Flip both flags back to `false` (and revert copy) to restore the tier-specific charge.
+
 Canonical 4-tier growth ladder (Beta Pricing active — onboarding = 1 month of plan, 50% OFF during Beta):
 
 | Tier        | Standard (struck) | Beta (billed) | Annual Beta | Onboarding Original (struck = 1 mo) | Onboarding Beta (50% OFF) | Internal ID |
