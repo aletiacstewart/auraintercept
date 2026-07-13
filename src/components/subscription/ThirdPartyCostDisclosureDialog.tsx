@@ -99,7 +99,7 @@ interface Props {
 }
 
 export function ThirdPartyCostDisclosureDialog({ open, tierName, tierId, onConfirm, onCancel }: Props) {
-  // Onboarding fees per tier (one-time, due at start of 60-Day Live Trial; first 30 days = onboarding window).
+  // Onboarding fees per tier (one-time, invoiced on day 31 of the 60-Day Live Trial).
   // Sourced from launchPricing.ts so Beta Pricing toggle stays in sync everywhere.
   const isElite = tierId === 'command' || /elite/i.test(tierName);
   const isPro = !isElite && (tierId === 'performance' || /pro/i.test(tierName));
