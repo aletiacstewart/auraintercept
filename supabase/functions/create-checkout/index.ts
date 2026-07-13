@@ -270,9 +270,7 @@ serve(async (req) => {
     // (day 31 of the 60-Day Live Trial) by the charge-onboarding-fee cron.
     // We still record the pending fee on the company row so the cron knows
     // when and how much to charge.
-    const onboardingFeeCents = selectedTier.onboarding_price_id
-      ? { starter: 37000, connect: 75000, performance: 149000, command: 298000 }[requestedTier] ?? 0
-      : 0;
+    const onboardingFeeCents = selectedTier.onboarding_fee_cents ?? 0;
 
     let onboardingWaivedReason: "not_first_checkout" | "beta" | "none" = "none";
     if (!isFirstCheckout) {
