@@ -23,6 +23,8 @@ interface LandingAIChatProps {
   companyId?: string;
   /** Visitor fingerprint for tracking */
   visitorFingerprint?: string;
+  /** Optional industry label (e.g. "HVAC", "Plumbing") to bias the opening message. */
+  industryHint?: string;
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/landing-chat`;
@@ -67,12 +69,15 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   websiteId,
   companyId,
   visitorFingerprint,
+  industryHint,
 }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hi! I'm Aura. Ask me anything about our platform, features, pricing, or how we can help automate your service business!"
-    }
+      content: industryHint
+        ? `Hi! I'm Aura. Ask me how I'd answer calls, book jobs, and follow up with customers for a ${industryHint} business — or anything else about the platform.`
+        : "Hi! I'm Aura. Ask me anything about our platform, features, pricing, or how we can help automate your service business!",
+    },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
