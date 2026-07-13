@@ -367,7 +367,7 @@ export default function Index() {
             AURA INTERCEPT
           </h1>
           <p style={{ fontSize: 16, color: "rgba(200,230,255,0.85)", maxWidth: 500, margin: "0 auto", lineHeight: 1.6, textShadow: "0 2px 12px rgba(0,0,0,0.9)" }}>
-            The AI command center that runs your entire business — from first contact to final invoice.
+            Never miss another call, another job, or another 5-star review — Aura answers, books, and follows up so you don't have to.
           </p>
         </div>
 
