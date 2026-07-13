@@ -45,19 +45,20 @@ const ELITE = {
 };
 
 /**
- * GLOBAL onboarding-fee waiver (growth-phase switch).
+ * Onboarding fee schedule.
  *
- * When true, the one-time onboarding line item is NEVER added, regardless of
- * beta code. All existing beta-code logic (trial days, subscription metadata,
- * `waive_onboarding_fee`) remains intact — this is an ADDITIONAL global switch.
+ * The one-time onboarding fee is no longer collected at signup. It is recorded
+ * as pending in public.companies and invoiced on day 31 of the 60-Day Live
+ * Trial by the charge-onboarding-fee cron edge function. The first monthly
+ * plan fee is deferred to day 61 via a 60-day Stripe trial.
+ *
+ * Beta invite codes can still waive the onboarding fee entirely via the
+ * `waive_onboarding_fee` flag returned by validate_beta_code.
  *
  * Mirrored in src/lib/launchPricing.ts as ONBOARDING_FEE_WAIVED_GLOBALLY —
- * keep both in sync.
- *
- * TODO: flip ONBOARDING_FEE_WAIVED_GLOBALLY back to false when exiting the
- * growth phase.
+ * kept in sync; the global waiver is now false so deferred billing works.
  */
-const ONBOARDING_FEE_WAIVED_GLOBALLY = true;
+const ONBOARDING_FEE_WAIVED_GLOBALLY = false;
 
 const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   // Canonical 4 tiers
