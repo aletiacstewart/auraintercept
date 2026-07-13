@@ -301,9 +301,6 @@ const heroStats = [{
 }, {
   value: '24/7',
   label: 'Automation'
-}, {
-  value: '7+',
-  label: 'Control Centers (Consoles)'
 }];
 const subtitles = ['Booking & Scheduling', 'Service Management', 'Business Analytics', 'Customer Portal', 'AI Insights'];
 export default function Index() {
