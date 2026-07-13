@@ -896,7 +896,7 @@ const HowToUsePage = () => (
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Company / Legal Name:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Date Completed:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Tier Selected:')}</Text><View style={styles.formLine} /></View>
-    <Text style={styles.formNote}>{sanitizePdfText('(Beta Pricing: Core $497 (was $697) · Boost $994 (was $1,394) · Pro $1,988 (was $2,788) · Elite $3,979 (was $5,576) / month. Onboarding fee = 1 month of plan, 25% OFF during Beta: Core $370 (was $497) · Boost $750 (was $994) · Pro $1,490 (was $1,988) · Elite $2,980 (was $3,979), due at start.)')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('(Beta Pricing: Core $497 (was $697) · Boost $994 (was $1,394) · Pro $1,988 (was $2,788) · Elite $3,979 (was $5,576) / month. Onboarding fee = 1 month of plan, 25% OFF during Beta: Core $370 (was $497) · Boost $750 (was $994) · Pro $1,490 (was $1,988) · Elite $2,980 (was $3,979), invoiced on day 31; first monthly fee charged on day 61.)')}</Text>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Target Go-Live Date:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Primary Onboarding Contact:')}</Text><View style={styles.formLine} /></View>
 

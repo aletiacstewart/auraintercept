@@ -39,7 +39,7 @@ tier check or "Active" computation.
 ## Tiers (4 + free) — Beta Pricing (ACTIVE)
 
 Originals are struck through; beta price is what the customer pays.
-Onboarding = 50% of beta monthly, due at start of the 60-Day Live Trial.
+Onboarding = 25% OFF original one-month price, invoiced on day 31 of the 60-Day Live Trial. First monthly plan fee is charged on day 61.
 
 - **Aura Core** (`starter`) **$497/mo** (was $697) · **$249** onboarding (was $497)
   — 5 operatives: AI Receptionist, Customer Journey, Outreach, Creative

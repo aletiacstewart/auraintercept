@@ -494,7 +494,7 @@ const PlatformFAQPDF = () => {
 
         <FAQItem 
           question="What's included in the Aura Core tier specifically?"
-          answer={`Aura Core ($${SUBSCRIPTION_TIERS.aura_core?.price ?? 497}/mo Beta — was $697) is the entry-level tier with 8 Smart AI Agents, 3 Control Centers, and 10 employees. Perfect for solo operators, restaurants, salons, and single-location businesses. One-time onboarding fee: $370 (Beta, was $497), due at start of the 60-Day Live Trial.`}
+          answer={`Aura Core ($${SUBSCRIPTION_TIERS.aura_core?.price ?? 497}/mo Beta — was $697) is the entry-level tier with 8 Smart AI Agents, 3 Control Centers, and 10 employees. Perfect for solo operators, restaurants, salons, and single-location businesses. One-time onboarding fee: $370 (Beta, was $497), invoiced on day 31 of the 60-Day Live Trial; first monthly fee charged on day 61.`}
         />
 
         <View style={styles.warningBox}>
