@@ -69,13 +69,10 @@ export function TestimonialSection({
             >
               <CardContent className="p-5 flex flex-col h-full">
                 {t.isPlaceholder ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
-                    <Badge variant="outline" className="mb-3 text-[10px]">
+                  <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
+                    <Badge variant="outline" className="text-[10px]">
                       Early user — case study coming soon
                     </Badge>
-                    <p className="text-xs text-muted-foreground italic">
-                      "We're collecting our first customer stories and will publish them here as soon as they're ready."
-                    </p>
                   </div>
                 ) : (
                   <>
