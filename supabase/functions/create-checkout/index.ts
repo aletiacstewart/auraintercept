@@ -24,24 +24,28 @@ const CORE = {
   price: 49700,
   price_id: "price_1TmJ2pEGn9AqCo3ECdv8mh0A",
   onboarding_price_id: "price_1TqgFCEGn9AqCo3EFVk0SKZV", // $370 one-time
+  onboarding_fee_cents: 37000,
 };
 const BOOST = {
   name: "Aura Boost",
   price: 99400,
   price_id: "price_1TmJ2qEGn9AqCo3EpspZoDZK",
   onboarding_price_id: "price_1TqgFDEGn9AqCo3Emyd1SEf5", // $750 one-time
+  onboarding_fee_cents: 75000,
 };
 const PRO = {
   name: "Aura Pro",
   price: 198800,
   price_id: "price_1TmJ2rEGn9AqCo3EkxrT5Z09",
   onboarding_price_id: "price_1TqgFFEGn9AqCo3Ez36DpcJL", // $1,490 one-time
+  onboarding_fee_cents: 149000,
 };
 const ELITE = {
   name: "Aura Elite",
   price: 397900,
   price_id: "price_1TmJ2tEGn9AqCo3ES4Mf3YHm",
   onboarding_price_id: "price_1TqgFFEGn9AqCo3Ei7axEGKc", // $2,980 one-time
+  onboarding_fee_cents: 298000,
 };
 
 /**
