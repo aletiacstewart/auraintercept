@@ -18,7 +18,7 @@ import { getPackIdForBusinessType } from '@/lib/businessTypeRegistry';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/seo/SEO';
-import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
+import { LandingAIChat } from '@/components/landing/LandingAIChat';
 
 const STORAGE_KEY = 'aura.forbusiness.industry';
 
@@ -45,6 +45,17 @@ export default function ForBusiness() {
     const qs = new URLSearchParams({ mode: 'company', tab: 'signup', tier: 'command' });
     if (ind) qs.set('industry', ind);
     navigate(`/auth?${qs.toString()}`);
+  };
+
+  const scrollToLiveDemo = () => {
+    const el = document.getElementById('live-demo');
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Focus the chat input after the scroll settles.
+    window.setTimeout(() => {
+      const input = el.querySelector<HTMLInputElement>('input[type="text"], input:not([type])');
+      input?.focus();
+    }, 500);
   };
 
   useEffect(() => {
@@ -114,7 +125,28 @@ export default function ForBusiness() {
       </div>
 
       <main className="flex-1">
-        <IndustryHero content={content} onStartDemo={startLiveDemo} />
+        <IndustryHero
+          content={content}
+          onStartDemo={scrollToLiveDemo}
+          rightSlot={
+            <div
+              id="live-demo"
+              className="rounded-xl border border-border/60 bg-card shadow-lg p-4 h-[520px] lg:h-[560px] flex flex-col"
+            >
+              <div className="pb-3">
+                <h2 className="text-sm font-semibold text-foreground">
+                  Talk to Aura right now
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  See how she'd handle a real customer for a {content.label.toLowerCase()} business.
+                </p>
+              </div>
+              <div className="flex-1 min-h-0">
+                <LandingAIChat industryHint={content.label} />
+              </div>
+            </div>
+          }
+        />
         <IndustryValueProps content={content} />
         <RolePreviewRow industryId={industry} onTryDemo={startLiveDemo} />
         <IntegrationStatusPanel />
@@ -180,8 +212,8 @@ export default function ForBusiness() {
               60 days. Full access. Owner, technician, and customer views — all yours.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button size="lg" variant="gradient" onClick={startLiveDemo}>
-                <Sparkles className="w-5 h-5" /> Start your 60-day Live Demo
+              <Button size="lg" variant="gradient" onClick={scrollToLiveDemo}>
+                <Sparkles className="w-5 h-5" /> Talk to Aura now
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <a href="tel:+15127372424">
@@ -189,13 +221,20 @@ export default function ForBusiness() {
                 </a>
               </Button>
             </div>
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={startLiveDemo}
+                className="text-xs text-muted-foreground hover:text-primary underline underline-offset-4"
+              >
+                Skip demo — start signup
+              </button>
+            </div>
           </div>
         </section>
       </main>
 
       <PublicFooter />
-
-      <FloatingChatWidget autoOpenAfterMs={6000} autoOpenStorageKey="aura_autoopen_livedemo" />
     </div>
   );
 }
