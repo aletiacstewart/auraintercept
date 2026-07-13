@@ -239,11 +239,10 @@ serve(async (req) => {
     const isFirstCheckout = existingSubs.data.length === 0;
     logStep("Onboarding fee eligibility", { isFirstCheckout });
 
-    // Beta invite code validation (server-authoritative)
-    let betaTrialDays = 0;
+    // Beta invite code validation (server-authoritative). The trial length is
+    // fixed at 60 days so the first monthly fee lands on day 61; beta codes
+    // can still waive the deferred onboarding fee.
     let betaWaiveOnboarding = false;
-    let betaOnboardingCapCents: number | null = null;
-    let betaCapExpiresAt: Date | null = null;
     if (betaCode) {
       const { data: betaRows, error: betaErr } = await supabaseClient.rpc("validate_beta_code", { p_code: betaCode });
       const row = Array.isArray(betaRows) ? betaRows[0] : betaRows;
@@ -254,11 +253,8 @@ serve(async (req) => {
           status: 400,
         });
       }
-      betaTrialDays = row.trial_days || 60;
       betaWaiveOnboarding = !!row.waive_onboarding_fee;
-      betaOnboardingCapCents = typeof row.onboarding_fee_cap_cents === "number" ? row.onboarding_fee_cap_cents : null;
-      betaCapExpiresAt = row.onboarding_cap_expires_at ? new Date(row.onboarding_cap_expires_at) : null;
-      logStep("Beta code accepted", { betaCode, betaTrialDays, betaWaiveOnboarding, betaOnboardingCapCents, betaCapExpiresAt });
+      logStep("Beta code accepted", { betaCode, betaWaiveOnboarding });
     }
 
     const lineItems: Array<Stripe.Checkout.SessionCreateParams.LineItem> = [
