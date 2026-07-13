@@ -187,7 +187,7 @@ const sections: FeatureSection[] = [
       { name: 'Monthly Price (Beta Pricing)', starter: '~~$697~~ $497', connect: '~~$1,394~~ $994', performance: '~~$2,788~~ $1,988', command: '~~$5,576~~ $3,979' },
       { name: 'Annual Price', starter: '$4,771/year', connect: '$9,542/year', performance: '$19,085/year', command: '$38,198/year' },
       { name: 'Annual Savings', starter: 'Save ~$1,193', connect: 'Save ~$2,386', performance: 'Save ~$4,771', command: 'Save ~$9,550' },
-      { name: 'One-Time Onboarding Fee (25% OFF — Beta)', starter: '~~$497~~ $370', connect: '~~$994~~ $750', performance: '~~$1,988~~ $1,490', command: '~~$3,979~~ $2,980' },
+      { name: 'One-Time Onboarding Fee', starter: '~~$497~~ Waived (beta)', connect: '~~$994~~ Waived (beta)', performance: '~~$1,988~~ Waived (beta)', command: '~~$3,979~~ Waived (beta)' },
     ],
   },
 ];

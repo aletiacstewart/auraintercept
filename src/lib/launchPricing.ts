@@ -74,6 +74,50 @@ export const LAUNCH_PRICING = {
   } satisfies Record<TierKey, TierPricing>,
 };
 
+/**
+ * GLOBAL onboarding-fee waiver.
+ *
+ * When true, no onboarding line item is added to checkout and all pricing UI
+ * renders "No setup fee during beta" instead of the discounted onboarding
+ * price. Flip back to `false` to restore the tier-specific onboarding charge.
+ *
+ * Mirrored in supabase/functions/create-checkout/index.ts as
+ * ONBOARDING_FEE_WAIVED_GLOBALLY — keep both in sync.
+ *
+ * TODO: flip ONBOARDING_FEE_WAIVED_GLOBALLY back to false when exiting the
+ * growth phase.
+ */
+export const ONBOARDING_FEE_WAIVED_GLOBALLY = true;
+
+export interface OnboardingDisplay {
+  waived: boolean;
+  /** Short label for pricing cards, e.g. "No setup fee during beta". */
+  label: string;
+  /** Struck-through original price (always present so callers can keep the strike UI). */
+  original: number;
+  /** Effective sale price (0 when waived globally). */
+  sale: number;
+}
+
+/** Central helper for onboarding price copy. All surfaces should route through this. */
+export function getOnboardingDisplay(tier: TierKey): OnboardingDisplay {
+  const t = getTierPricing(tier);
+  if (ONBOARDING_FEE_WAIVED_GLOBALLY) {
+    return {
+      waived: true,
+      label: 'No setup fee during beta',
+      original: t.onboardingOriginal,
+      sale: 0,
+    };
+  }
+  return {
+    waived: false,
+    label: `${formatPrice(t.onboardingSale)} (was ${formatPrice(t.onboardingOriginal)})`,
+    original: t.onboardingOriginal,
+    sale: t.onboardingSale,
+  };
+}
+
 export function formatPrice(n: number): string {
   return `$${n.toLocaleString('en-US')}`;
 }
