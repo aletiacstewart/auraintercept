@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
@@ -11,8 +11,10 @@ import { IndustryROICalculator } from '@/components/marketing/IndustryROICalcula
 import { TestimonialSection } from '@/components/marketing/TestimonialSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Phone, AlertCircle, Zap, ArrowRight } from 'lucide-react';
+import { Sparkles, Phone, AlertCircle, Zap, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
+import { supabase } from '@/integrations/supabase/client';
 import { getIndustryContent } from '@/lib/industryMarketingContent';
 import { getPackIdForBusinessType } from '@/lib/businessTypeRegistry';
 import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianceNotice';
@@ -39,6 +41,32 @@ export default function ForBusiness() {
   const [industry, setIndustry] = useState<string>(initial);
 
   const expired = searchParams.get('expired') === '1';
+
+  const [showComparison, setShowComparison] = useState(false);
+  const pricingExpandedLogged = useRef(false);
+
+  const handleToggleComparison = () => {
+    setShowComparison(prev => {
+      const next = !prev;
+      if (next && !pricingExpandedLogged.current) {
+        pricingExpandedLogged.current = true;
+        try {
+          const fp = localStorage.getItem('aura_visitor_fingerprint');
+          if (fp) {
+            supabase.functions.invoke('log-site-event', {
+              body: {
+                interaction_type: 'pricing_expanded',
+                visitor_fingerprint: fp,
+              },
+            }).catch(() => {});
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+      return next;
+    });
+  };
 
   const startLiveDemo = () => {
     const ind = industry && industry !== 'default' ? industry : '';
@@ -170,35 +198,77 @@ export default function ForBusiness() {
               </h2>
               <p className="text-sm text-muted-foreground">Pick the tier that fits. Cancel anytime.</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
-              {PRICING_TIERS.map((t) => (
-                <Link
-                  key={t.name}
-                  to={`/auth?mode=company&tab=signup&tier=${t.tier}&industry=${industry}`}
-                  className="group"
+
+            {/* Primary CTA — one clear choice for first-time visitors */}
+            <div className="max-w-2xl mx-auto">
+              <Card className="border-2 border-primary/60 bg-gradient-to-br from-primary/10 via-background to-secondary/10 shadow-lg">
+                <CardContent className="p-6 md:p-8 text-center flex flex-col items-center gap-3">
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-semibold uppercase tracking-wider">
+                    Recommended
+                  </span>
+                  <h3 className="text-xl md:text-2xl font-bold text-foreground">
+                    Start your 60-day Live Demo on Aura Elite
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-md">
+                    No setup fee during beta. Cancel anytime.
+                  </p>
+                  <Button size="lg" variant="gradient" onClick={startLiveDemo} className="mt-1">
+                    <Sparkles className="w-5 h-5" />
+                    Start 60-day Live Demo
+                  </Button>
+                  <p className="text-xs text-muted-foreground max-w-md">
+                    You'll get every feature during the demo. Downgrade to any tier before day 60.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-center mt-4">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleToggleComparison}
+                  className="text-muted-foreground hover:text-primary gap-1.5"
                 >
-                  <Card className="border-border/60 hover:border-primary/60 hover:shadow-md transition-all h-full">
-                    <CardContent className="p-3 text-center flex flex-col items-center gap-1">
-                      <h3 className="text-sm font-semibold text-foreground">{t.name}</h3>
-                      <div className="leading-tight">
-                        <div className="text-[11px] text-muted-foreground line-through decoration-destructive/70">{t.originalPrice}</div>
-                        <div className="text-xl font-bold text-primary">
-                          {t.price}
-                          <span className="text-[10px] font-normal text-muted-foreground">/mo</span>
-                        </div>
-                        <div className="text-[9px] uppercase tracking-wide font-semibold text-primary">Beta Pricing</div>
-                      </div>
-                      <p className="text-[10px] text-muted-foreground leading-tight min-h-[24px]">
-                        {t.tagline}
-                      </p>
-                      <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-primary group-hover:underline">
-                        Choose plan <ArrowRight className="w-3 h-3" />
-                      </span>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                  {showComparison ? 'Hide plan comparison' : 'Compare all 4 plans'}
+                  {showComparison ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </Button>
+              </div>
             </div>
+
+            <Collapsible open={showComparison} onOpenChange={setShowComparison}>
+              <CollapsibleContent className="mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
+                  {PRICING_TIERS.map((t) => (
+                    <Link
+                      key={t.name}
+                      to={`/auth?mode=company&tab=signup&tier=${t.tier}&industry=${industry}`}
+                      className="group"
+                    >
+                      <Card className="border-border/60 hover:border-primary/60 hover:shadow-md transition-all h-full">
+                        <CardContent className="p-3 text-center flex flex-col items-center gap-1">
+                          <h3 className="text-sm font-semibold text-foreground">{t.name}</h3>
+                          <div className="leading-tight">
+                            <div className="text-[11px] text-muted-foreground line-through decoration-destructive/70">{t.originalPrice}</div>
+                            <div className="text-xl font-bold text-primary">
+                              {t.price}
+                              <span className="text-[10px] font-normal text-muted-foreground">/mo</span>
+                            </div>
+                            <div className="text-[9px] uppercase tracking-wide font-semibold text-primary">Beta Pricing</div>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground leading-tight min-h-[24px]">
+                            {t.tagline}
+                          </p>
+                          <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-primary group-hover:underline">
+                            Choose plan <ArrowRight className="w-3 h-3" />
+                          </span>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </div>
         </section>
 
