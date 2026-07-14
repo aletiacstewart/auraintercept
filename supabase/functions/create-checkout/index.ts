@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { TRIAL_DAYS, TRIAL_ONBOARDING_DAYS } from "../_shared/trial.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -51,18 +52,15 @@ const ELITE = {
 /**
  * Onboarding fee schedule.
  *
- * The one-time onboarding fee is no longer collected at signup. It is recorded
- * as pending in public.companies and invoiced on day 31 of the 60-Day Live
- * Trial by the charge-onboarding-fee cron edge function. The first monthly
- * plan fee is deferred to day 61 via a 60-day Stripe trial.
- *
- * Beta invite codes can still waive the onboarding fee entirely via the
- * `waive_onboarding_fee` flag returned by validate_beta_code.
+ * During Beta the one-time onboarding fee is waived automatically for every
+ * new signup — no code required. The plan-fee timing is unchanged (60-day
+ * trial, first monthly charge on day 61). Only the onboarding fee waiver is
+ * now the default; beta codes are repurposed to extend the trial length.
  *
  * Mirrored in src/lib/launchPricing.ts as ONBOARDING_FEE_WAIVED_GLOBALLY —
- * kept in sync; the global waiver is now false so deferred billing works.
+ * keep in sync.
  */
-const ONBOARDING_FEE_WAIVED_GLOBALLY = false;
+const ONBOARDING_FEE_WAIVED_GLOBALLY = true;
 
 const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   // Canonical 4 tiers
@@ -239,10 +237,12 @@ serve(async (req) => {
     const isFirstCheckout = existingSubs.data.length === 0;
     logStep("Onboarding fee eligibility", { isFirstCheckout });
 
-    // Beta invite code validation (server-authoritative). The trial length is
-    // fixed at 60 days so the first monthly fee lands on day 61; beta codes
-    // can still waive the deferred onboarding fee.
+    // Beta invite code validation (server-authoritative). Onboarding is now
+    // waived by default for every signup (see ONBOARDING_FEE_WAIVED_GLOBALLY),
+    // so beta codes are repurposed to EXTEND the trial length beyond the
+    // default 60 days via the code's trial_days value.
     let betaWaiveOnboarding = false;
+    let betaTrialDays: number | null = null;
     if (betaCode) {
       const { data: betaRows, error: betaErr } = await supabaseClient.rpc("validate_beta_code", { p_code: betaCode });
       const row = Array.isArray(betaRows) ? betaRows[0] : betaRows;
@@ -254,7 +254,10 @@ serve(async (req) => {
         });
       }
       betaWaiveOnboarding = !!row.waive_onboarding_fee;
-      logStep("Beta code accepted", { betaCode, betaWaiveOnboarding });
+      if (typeof row.trial_days === "number" && row.trial_days > 0) {
+        betaTrialDays = row.trial_days;
+      }
+      logStep("Beta code accepted", { betaCode, betaWaiveOnboarding, betaTrialDays });
     }
 
     const lineItems: Array<Stripe.Checkout.SessionCreateParams.LineItem> = [
@@ -268,7 +271,12 @@ serve(async (req) => {
     // when and how much to charge.
     const onboardingFeeCents = selectedTier.onboarding_fee_cents ?? 0;
 
-    let onboardingWaivedReason: "not_first_checkout" | "beta" | "none" = "none";
+    let onboardingWaivedReason:
+      | "not_first_checkout"
+      | "referral"
+      | "beta"
+      | "global_beta"
+      | "none" = "none";
     if (!isFirstCheckout) {
       onboardingWaivedReason = "not_first_checkout";
     } else if (betaWaiveOnboarding) {
@@ -291,10 +299,20 @@ serve(async (req) => {
       if (refData) {
         referralRow = refData as typeof referralRow;
         if (onboardingWaivedReason === "none") {
-          onboardingWaivedReason = "beta"; // reuse waived path — status becomes 'waived'
+          onboardingWaivedReason = "referral";
           logStep("Referral: waiving onboarding fee for new company", { referralId: refData.id });
         }
       }
+    }
+
+    // Global beta waiver — applies to every new signup when no more specific
+    // reason already applies. Priority order: not_first_checkout > referral >
+    // explicit beta code > global_beta. We keep distinct reasons so analytics
+    // can still see WHY a signup was waived even though the practical effect
+    // (waived) is now the default for everyone.
+    if (onboardingWaivedReason === "none" && ONBOARDING_FEE_WAIVED_GLOBALLY) {
+      onboardingWaivedReason = "global_beta";
+      logStep("Onboarding fee auto-waived under global Beta waiver");
     }
 
     const onboardingFeeStatus = onboardingWaivedReason !== "none" || onboardingFeeCents === 0
@@ -316,8 +334,9 @@ serve(async (req) => {
       success_url: `${origin}/dashboard/subscription?success=true`,
       cancel_url: `${origin}/dashboard/subscription?canceled=true`,
       subscription_data: {
-        // 60-day trial: first monthly plan fee is charged on day 61.
-        trial_period_days: 60,
+        // Default: 60-day trial (first monthly plan fee charged on day 61).
+        // A valid beta code may extend the trial via its trial_days value.
+        trial_period_days: betaTrialDays ?? TRIAL_DAYS,
         metadata: {
           company_id: companyId,
           ...(betaCode ? { beta_code: betaCode, beta_trial: "true" } : {}),
@@ -338,7 +357,12 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create(sessionParams);
 
     // Persist the deferred onboarding fee schedule on the company row.
-    const onboardingFeeDueAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    // Customer-facing docs say the fee is invoiced ON day 31 — that is, after
+    // the 30-day concierge onboarding window elapses. Use TRIAL_ONBOARDING_DAYS
+    // + 1 as the single source of truth (see _shared/trial.ts).
+    const onboardingFeeDueAt = new Date(
+      Date.now() + (TRIAL_ONBOARDING_DAYS + 1) * 24 * 60 * 60 * 1000,
+    ).toISOString();
     const { error: onboardingUpdateErr } = await supabaseClient
       .from("companies")
       .update({
@@ -386,22 +410,45 @@ serve(async (req) => {
           });
           const activeSub = subs.data[0];
           if (activeSub) {
-            const coupon = await stripe.coupons.create({
-              percent_off: 100,
-              duration: "once",
-              name: "Aura Referral — 1 month free",
-              metadata: { referral_id: referralRow.id },
-            });
-            await stripe.subscriptions.update(activeSub.id, { coupon: coupon.id });
-            await supabaseClient
-              .from("referrals")
-              .update({ status: "rewarded", rewarded_at: new Date().toISOString() })
-              .eq("id", referralRow.id);
-            logStep("Referral reward applied to referring company", {
-              referralId: referralRow.id,
-              subscriptionId: activeSub.id,
-              couponId: coupon.id,
-            });
+            // Referral reward: credit the referring company's Stripe customer
+            // balance by one month at their current tier.
+            //
+            // Why balance credits instead of `subscriptions.update({ coupon })`?
+            // Applying a coupon directly to a subscription REPLACES any
+            // previously-applied coupon before it is consumed by an invoice —
+            // so if two referrals convert in the same billing cycle, the
+            // second call silently overwrites the first and one reward is
+            // lost. Customer balance credits are additive: Stripe applies
+            // them to the next invoice(s) until exhausted, so multiple
+            // referral rewards in the same period stack correctly. Do NOT
+            // revert to the coupon approach.
+            const unitAmount = activeSub.items.data[0]?.price?.unit_amount ?? null;
+            if (unitAmount === null || unitAmount <= 0) {
+              logStep("Referral: skipping credit — referring subscription has no flat unit_amount (tiered/metered price)", {
+                referralId: referralRow.id,
+                subscriptionId: activeSub.id,
+              });
+            } else {
+              const balanceTx = await stripe.customers.createBalanceTransaction(
+                refCompany.stripe_customer_id,
+                {
+                  amount: -unitAmount, // negative = credit
+                  currency: "usd",
+                  description: `Aura Referral reward — 1 month free (referral ${referralRow.id})`,
+                  metadata: { referral_id: referralRow.id },
+                },
+              );
+              await supabaseClient
+                .from("referrals")
+                .update({ status: "rewarded", rewarded_at: new Date().toISOString() })
+                .eq("id", referralRow.id);
+              logStep("Referral reward credited to referring company balance", {
+                referralId: referralRow.id,
+                subscriptionId: activeSub.id,
+                balanceTxId: balanceTx.id,
+                amountCents: unitAmount,
+              });
+            }
           } else {
             logStep("Referral: referring company has no active subscription; left at converted");
           }
