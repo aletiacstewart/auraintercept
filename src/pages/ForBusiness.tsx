@@ -47,6 +47,14 @@ export default function ForBusiness() {
   const pricingExpandedLogged = useRef(false);
   const pricingViewedLogged = useRef(false);
   const pricingSectionRef = useRef<HTMLElement | null>(null);
+  const chatOpenedLogged = useRef(false);
+
+  // The inline chat is always mounted on this page — treat first mount as chat_opened.
+  useEffect(() => {
+    if (chatOpenedLogged.current) return;
+    chatOpenedLogged.current = true;
+    try { trackFunnelEvent('chat_opened', { pagePath: '/for-business' }); } catch { /* ignore */ }
+  }, []);
 
   const handleToggleComparison = () => {
     setShowComparison(prev => {
