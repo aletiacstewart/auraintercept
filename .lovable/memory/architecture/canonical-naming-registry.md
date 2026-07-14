@@ -95,9 +95,10 @@ Reports · Website. Customer-facing rollups for chat & dashboards.
 
 ## Trial & Pricing Copy
 
-- **60-Day Live Trial**, no credit card. **First 30 days = concierge
-  onboarding window, remaining 30 days = full live use.** Trial honors the
-  selected tier (no Elite preview). Reminders at 30/7/1 days remaining.
+- **60-Day Live Trial**. **First 30 days = concierge onboarding window,
+  remaining 30 days = full live use.** Onboarding fee invoiced on day 31;
+  first monthly plan fee charged on day 61. Trial honors the selected tier
+  (no Elite preview). Reminders at 7/3/1 days remaining.
 - **All** 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily,
   Stripe, A2P 10DLC, social) require the CUSTOMER'S OWN ACCOUNT + card on
   file. Each provider invoices the customer DIRECTLY and SEPARATELY from
