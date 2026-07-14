@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -299,14 +300,15 @@ const howItWorks = [{
 }];
 const heroStats = [{
   value: '24',
-  label: 'Smart AI Agents'
+  labelKey: 'heroStats.smartAgents'
 }, {
   value: '24/7',
-  label: 'Automation'
+  labelKey: 'heroStats.automation'
 }];
-const subtitles = ['Booking & Scheduling', 'Service Management', 'Business Analytics', 'Customer Portal', 'AI Insights'];
 export default function Index() {
   const navigate = useNavigate();
+  const { t } = useTranslation(['marketing']);
+  const subtitles = t('marketing:hero.rotatingSubtitles', { returnObjects: true }) as string[];
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
   const [showPlanComparison, setShowPlanComparison] = useState(false);
   const [hoveredConsole, setHoveredConsole] = useState<number | null>(null);
@@ -315,7 +317,7 @@ export default function Index() {
       setCurrentSubtitle(prev => (prev + 1) % subtitles.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [subtitles.length]);
 
   useEffect(() => {
     trackFunnelEvent('page_view', { pagePath: '/' });
@@ -369,11 +371,11 @@ export default function Index() {
 
         {/* TOP — Title + Tagline above the hero logo */}
         <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 900, margin: "0 auto", padding: "52px 24px 0", textAlign: "center" }}>
-          <h1 style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #00E5FF 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
+          <h1 data-no-translate style={{ fontSize: "clamp(38px, 7vw, 78px)", fontWeight: 900, letterSpacing: 2, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF 0%, #FFFFFF 30%, #00E5FF 60%, #00E5FF 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 40px rgba(0,229,255,0.4))" }}>
             AURA INTERCEPT
           </h1>
           <p style={{ fontSize: 16, color: "rgba(200,230,255,0.85)", maxWidth: 500, margin: "0 auto", lineHeight: 1.6, textShadow: "0 2px 12px rgba(0,0,0,0.9)" }}>
-            Never miss another call, another job, or another 5-star review — Aura answers, books, and follows up so you don't have to.
+            {t('marketing:hero.wordmarkTagline')}
           </p>
         </div>
 
@@ -387,16 +389,16 @@ export default function Index() {
               onClick={() => navigate('/for-business')}
               style={{ padding: "16px 36px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4), 0 4px 20px rgba(0,0,0,0.4)", letterSpacing: 1 }}
             >
-              See Aura answer a call
+              {t('marketing:hero.seeAuraAnswer')}
             </button>
           </div>
 
           {/* Stats trust bar */}
           <div style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" as const, marginBottom: 20 }}>
             {heroStats.map(s => (
-              <div key={s.label} style={{ textAlign: "center" as const }}>
+              <div key={s.labelKey} style={{ textAlign: "center" as const }}>
                 <div style={{ fontSize: 28, fontWeight: 900, background: "linear-gradient(135deg, #00E5FF, rgba(255,255,255,0.9))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{s.value}</div>
-                <div style={{ fontSize: 10, color: "rgba(0,229,255,0.45)", letterSpacing: 2, textTransform: "uppercase" as const, fontWeight: 500 }}>{s.label}</div>
+                <div style={{ fontSize: 10, color: "rgba(0,229,255,0.45)", letterSpacing: 2, textTransform: "uppercase" as const, fontWeight: 500 }}>{t(`marketing:${s.labelKey}`)}</div>
               </div>
             ))}
           </div>
@@ -415,13 +417,13 @@ export default function Index() {
         <div className="container max-w-6xl mx-auto px-6">
           <div className="text-center mb-10">
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 16 }}>
-              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Aura Agent Consoles</span>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>{t('marketing:sections.consolesTag')}</span>
             </div>
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              7 Powerful Control Centers (Consoles)
+              {t('marketing:sections.consolesTitle')}
             </h2>
             <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 480, margin: "0 auto" }}>
-              Purpose-built consoles give your team full control over AI operative operations.
+              {t('marketing:sections.consolesSubtitle')}
             </p>
           </div>
 
@@ -470,12 +472,12 @@ export default function Index() {
         <div className="container max-w-6xl mx-auto px-6">
           <div className="text-center mb-8">
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
-              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Under The Hood</span>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>{t('marketing:sections.underTheHood')}</span>
             </div>
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 8px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              24 AI Operatives
+              {t('marketing:sections.underTheHoodTitle')}
             </h2>
-            <p style={{ color: "#FFFFFF", fontSize: 14 }}>The operative network that powers every promise above.</p>
+            <p style={{ color: "#FFFFFF", fontSize: 14 }}>{t('marketing:sections.underTheHoodSubtitle')}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -486,8 +488,8 @@ export default function Index() {
                     <span className="absolute inset-0 rounded-md animate-ping opacity-40" style={{ background: `rgba(${category.neonRgb},0.5)` }} />
                     <category.icon className="w-3.5 h-3.5 text-white relative z-10" />
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: `rgb(${category.neonRgb})` }}>{category.name}</span>
-                  <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: `rgba(${category.neonRgb},0.15)`, color: `rgb(${category.neonRgb})`, border: `1px solid rgba(${category.neonRgb},0.3)`, letterSpacing: 0.5 }}>{category.agents.length} Agents</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: `rgb(${category.neonRgb})` }}>{t(`marketing:agentCategories.${category.id}.name`, category.name)}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: `rgba(${category.neonRgb},0.15)`, color: `rgb(${category.neonRgb})`, border: `1px solid rgba(${category.neonRgb},0.3)`, letterSpacing: 0.5 }}>{t('marketing:sections.agentsBadge', { count: category.agents.length })}</span>
                   <div style={{ flex: 1, height: 1, background: `rgba(${category.neonRgb},0.15)` }} />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -501,9 +503,9 @@ export default function Index() {
                           <span className="absolute inset-0 rounded animate-ping opacity-30" style={{ background: `rgba(${category.neonRgb},0.6)` }} />
                           <agent.icon className="w-3 h-3 text-white relative z-10" />
                         </div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: `rgb(${category.neonRgb})` }}>{agent.name}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: `rgb(${category.neonRgb})` }} data-no-translate>{agent.name}</span>
                       </div>
-                      <p style={{ fontSize: 10, color: "#FFFFFF", lineHeight: 1.5 }}>{agent.description}</p>
+                      <p style={{ fontSize: 10, color: "#FFFFFF", lineHeight: 1.5 }}>{t(`marketing:agents.${agent.name}`, agent.description)}</p>
                     </div>
                   ))}
                 </div>
@@ -518,13 +520,13 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
-              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Multi-Channel</span>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>{t('marketing:sections.multiChannelTag')}</span>
             </div>
             <h2 style={{ fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              Connect Everywhere Your Customers Are
+              {t('marketing:sections.multiChannelTitle')}
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 560, margin: "0 auto", lineHeight: 1.7, fontSize: 15 }}>
-              Voice, chat, email, SMS — one 24/7 workforce capturing every lead while your team is in the field.
+              {t('marketing:sections.multiChannelSubtitle')}
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -556,13 +558,13 @@ export default function Index() {
         <div className="container max-w-5xl mx-auto px-6">
           <div className="text-center mb-8">
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
-              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Industries</span>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>{t('marketing:sections.industriesTag')}</span>
             </div>
             <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 10px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              AI Automation for Field Service Industries
+              {t('marketing:sections.industriesTitle')}
             </h2>
             <p style={{ color: "#FFFFFF", fontSize: 14, maxWidth: 560, margin: "0 auto" }}>
-              25 industry categories. 185+ business types. White-label AI that intercepts every inquiry and books directly to your calendar.
+              {t('marketing:sections.industriesSubtitle')}
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
@@ -578,14 +580,14 @@ export default function Index() {
                   <span className="absolute inset-0 rounded-lg animate-ping opacity-25" style={{ background: "rgba(0,229,255,0.5)" }} />
                 </div>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#00E5FF", lineHeight: 1.2 }}>{cat.name}</div>
-                <div style={{ fontSize: 9, fontWeight: 600, color: "#00E5FF", opacity: 0.7, marginTop: 2 }}>{cat.count} business types</div>
+                <div style={{ fontSize: 9, fontWeight: 600, color: "#00E5FF", opacity: 0.7, marginTop: 2 }}>{t('marketing:sections.businessTypes', { count: cat.count })}</div>
                 <p style={{ fontSize: 9, color: "#FFFFFF", lineHeight: 1.3, marginTop: 4 }} className="hidden sm:block">{cat.description}</p>
               </button>
             ))}
           </div>
           <div className="text-center mt-10">
             <button onClick={() => navigate('/auth?mode=company')} style={{ padding: "14px 32px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg, #00E5FF, #00E5FF, #00B8D4, #00E5FF)", backgroundSize: "300% 300%", color: "white", animation: "border-shine 4s ease infinite", boxShadow: "0 0 30px rgba(0,229,255,0.4)", letterSpacing: 1 }}>
-              <Building2 className="inline w-4 h-4 mr-2" />START YOUR 60-DAY LIVE TRIAL →
+              <Building2 className="inline w-4 h-4 mr-2" />{t('marketing:sections.startTrialCta')}
             </button>
           </div>
         </div>
@@ -599,16 +601,16 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 20, background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.2)", marginBottom: 14 }}>
-              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>Subscription Plans</span>
+              <span style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase" as const, color: "#00E5FF", fontWeight: 600 }}>{t('marketing:sections.subscriptionPlansTag')}</span>
             </div>
             <h2 style={{ fontSize: "clamp(24px, 4vw, 38px)", fontWeight: 800, margin: "0 0 12px", background: "linear-gradient(135deg, #00F2FF, #FFFFFF, #00E5FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              Choose Your Command Level
+              {t('marketing:sections.subscriptionPlansTitle')}
             </h2>
             <p style={{ color: "#FFFFFF", maxWidth: 700, margin: "0 auto 12px", lineHeight: 1.7, fontSize: 15 }}>
-              Pick your automation level. Bring your own voice, SMS, email, research, payment, and social accounts — each billed directly by the provider, never marked up by us.
+              {t('marketing:sections.subscriptionPlansSubtitle')}
             </p>
             <Link to="/audit" style={{ fontSize: 13, color: "#00E5FF", fontWeight: 600 }} className="hover:underline">
-              We offer a complimentary audit to help determine which plans best fit your business needs →
+              {t('marketing:sections.auditLink')}
             </Link>
           </div>
 
