@@ -167,6 +167,79 @@ export function FunnelAnalytics() {
           </Card>
         </>
       )}
+      <CancellationReasonsPanel />
     </div>
+  );
+}
+
+const REASON_LABEL: Record<string, string> = {
+  too_expensive: 'Too expensive',
+  missing_feature: 'Missing a feature I need',
+  switching: 'Switching to another tool',
+  no_time: 'Not enough time to set up',
+  other: 'Other',
+};
+
+function CancellationReasonsPanel() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['cancellation-reasons'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('companies')
+        .select('cancellation_reason')
+        .not('cancellation_reason', 'is', null);
+      if (error) throw error;
+      const counts = new Map<string, number>();
+      for (const row of data ?? []) {
+        const r = (row.cancellation_reason as string | null) ?? 'other';
+        counts.set(r, (counts.get(r) ?? 0) + 1);
+      }
+      return Array.from(counts.entries())
+        .map(([reason, count]) => ({ reason, count }))
+        .sort((a, b) => b.count - a.count);
+    },
+  });
+
+  const total = (data ?? []).reduce((sum, r) => sum + r.count, 0);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Cancellation reasons</CardTitle>
+        <CardDescription>
+          Why customers canceled — captured in the in-app cancel dialog before Stripe portal handoff.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <Skeleton className="h-24" />
+        ) : !data || data.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No cancellations recorded yet.</p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Reason</TableHead>
+                <TableHead className="text-right">Count</TableHead>
+                <TableHead className="text-right">Share</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.map((row) => (
+                <TableRow key={row.reason}>
+                  <TableCell className="font-medium">
+                    {REASON_LABEL[row.reason] ?? row.reason}
+                  </TableCell>
+                  <TableCell className="text-right font-mono">{row.count}</TableCell>
+                  <TableCell className="text-right font-mono text-muted-foreground">
+                    {total > 0 ? `${Math.round((row.count / total) * 100)}%` : '—'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+    </Card>
   );
 }
