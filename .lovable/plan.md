@@ -1,88 +1,87 @@
-# Plan: Spanish coverage, data export, public status page
+# Review of your recommendations
 
-Six shippable prompts across three workstreams. Order below matches the "Suggested order" you specified.
+Before executing, three important corrections from the current codebase — a fair chunk of Part A is already built. Adjusting scope so we don't re-do existing work.
 
-## 1. A3 — Language toggle in mobile menu (5-min fix)
+**Already in place (confirmed):**
+- `companies.default_language` (`en|es|auto`) and `companies.supported_languages text[]` — exist since a June migration.
+- Spanish opt-in UI already exists at **Settings → AI Agent → Languages** (`AIAgentSettings.tsx`, `spanishEnabled` toggle).
+- `companies.elevenlabs_voice_id_es` column already exists (not `tenant_integrations` as your prompt guessed — the ES voice override lives on `companies`).
+- SignalWire phone handler (`voice-handler`) **already** registers `en-US` + `es-ES` in SWML, injects a language-switch directive into the system prompt, and localizes the greeting when default is `es`. SignalWire's AI auto-switches on caller's spoken language — no DTMF menu needed on that path.
+- `voice-handler` already references `company.ai_voice_greeting_es`, but the **column doesn't exist yet** (silent null → falls back to a generic Spanish line).
 
-- `src/components/layout/PublicHeader.tsx`: inside the mobile `DropdownMenuContent`, add `<LanguageToggle variant="compact" />` at the top (above the first `DropdownMenuItem`), wrapped in a non-focusable container so it doesn't behave as a menu item.
-- No other changes.
+**Actually missing:**
+- `ai_voice_greeting_es` column on `companies` (referenced but not created).
+- ElevenLabs Convai path (`elevenlabs-conversation-token`, used by browser voice + the Convai phone product) doesn't pass a language override or use the ES greeting/voice.
+- No industry-specific Spanish greetings library.
+- Platform's own `/blog` has zero posts; `generate-blog-content` / `generate-blog-batch` are hard-scoped to `company_id`.
+- Light-mode toggle doesn't exist (Tailwind `darkMode: 'class'` is set, but no light tokens or ThemeProvider).
 
-## 2. A1 — Translate homepage (`src/pages/Index.tsx`)
+## Part A — Bilingual phone AI (revised)
 
-- Read `src/pages/Index.tsx` and `src/pages/ForBusiness.tsx` to mirror the existing `t('...')` key style (namespace `marketing`, dot paths like `marketing.hero.title`).
-- Extend `src/locales/en/marketing.json` and `src/locales/es/marketing.json` with new keys covering:
-  - `hero.h1`, `hero.subtitle`, `hero.rotatingSubtitles` (array)
-  - `heroStats.*` labels
-  - `agentCategories.<id>.name` / `.description` for every entry
-  - Section headers: `sections.underTheHood`, `sections.multiChannel`, `sections.industries`, `sections.subscriptionPlans`
-  - Pricing card taglines + CTA text
-- Replace hardcoded JSX strings in `Index.tsx` with `t(...)` calls. Use `t('...', { returnObjects: true })` for arrays.
-- Wrap "Aura Intercept" / "AURA INTERCEPT" wordmarks with `data-no-translate` (same pattern already used in `PublicHeader.tsx`).
-- No layout/styling/logic changes.
+### A1. Fill the missing column + expose ES greeting field
+- Migration: add `companies.ai_voice_greeting_es text` (nullable). No other schema changes — everything else your prompt asked for already exists.
+- `AIAgentSettings.tsx`: add a Spanish greeting textarea directly under the existing English greeting, visible only when Spanish is enabled. Include a "Reset to industry default (ES)" button that pulls from the new library in A3.
+- Add an optional ES ElevenLabs voice picker in the same card, writing to the existing `companies.elevenlabs_voice_id_es`.
 
-## 3. C1 — Public status page v1 (manual)
+### A2. Wire language handling into ElevenLabs Convai path
+- `supabase/functions/elevenlabs-conversation-token/index.ts`:
+  - Also select `default_language`, `supported_languages`, `ai_voice_greeting_es`, `elevenlabs_voice_id_es` from `companies`.
+  - When `supported_languages` includes `es`:
+    - Append a language directive to `systemPrompt` telling the agent: *if the caller speaks or requests Spanish, continue the entire call in natural Spanish and use the Spanish greeting.*
+    - When `default_language === 'es'`, swap `firstMessage` to `ai_voice_greeting_es` (fallback to a generic ES line).
+  - Return a new `language` / `voiceIdEs` payload so `VoiceChat.tsx` / `AuraAvatarChat.tsx` can pass `overrides.agent.language` and `overrides.tts.voiceId` when the caller/UI locale is `es` (they already know how to send `overrides` per the bilingual-language-standard memory).
+- No DTMF menu — SignalWire already handles caller-driven language on the phone path, and Convai handles it via prompt + overrides. Your Prompt A2 fallback isn't needed given current infrastructure.
+- Manual verification step (post-deploy, before A3): place one real Spanish test call through the SignalWire number and one through the browser Convai widget; confirm greeting, mid-call switching, and voice quality.
 
-**Migration** (`service_status` + `status_incidents`):
+### A3. Industry-specific Spanish greetings
+- New `PER_INDUSTRY_ES` map in `src/lib/industryVoiceGreetings.ts` mirroring the existing 28-entry English map (natural, warm translations — not literal).
+- Export `getIndustryVoiceGreetingEs(industryId, companyName)` alongside the existing helper.
+- Fast Start launch step + the "Reset to industry default (ES)" button in A1 both use it to seed `ai_voice_greeting_es`.
 
-```text
-service_status(id, component, status CHECK IN operational|degraded|down,
-               updated_at, updated_by uuid)
-status_incidents(id, title, description, severity CHECK IN minor|major|critical,
-                 started_at, resolved_at, created_at)
-```
+## Part B — Platform blog generation
 
-- GRANT `SELECT` to `anon, authenticated`; `ALL` to `service_role`.
-- RLS: public SELECT `USING (true)`; INSERT/UPDATE/DELETE gated by `has_role(auth.uid(), 'platform_admin')`.
-- Seed 5 rows: `ai_receptionist`, `booking`, `billing`, `sms_email`, `customer_portal` = `operational`.
-- `updated_at` trigger on `service_status`.
+### B1. Add `target: 'platform'` mode
+- `supabase/functions/generate-blog-content/index.ts` and `generate-blog-batch/index.ts`: accept `target: 'company' | 'platform'` (default `'company'` — no behavior change for existing customer flows).
+- Platform mode:
+  - Requires caller to be `platform_admin` (check `has_role`).
+  - Skips company-specific enrichment (services/faqs/content profile lookups).
+  - Uses an AuraIntercept-voice system prompt (concise, buyer-focused — write it once in a shared const).
+  - Writes to `blog_posts` (the platform table `Blog.tsx` already reads) instead of `scheduled_blog_posts`.
+  - Batch mode supports scheduled publish dates by inserting with `published = false` + a `publish_at` timestamp; add a small daily cron (`platform-blog-publisher`) that flips `published = true` when `publish_at <= now()`. Only add `publish_at` if the column doesn't already exist on `blog_posts`.
+- Admin UI: new "Platform Blog" tab on `PlatformHealth.tsx` (already platform-admin gated) reusing `BlogContentWizard` / `BlogBatchWizard` with a `target="platform"` prop threaded through.
 
-**Pages/routes**:
-- `src/pages/StatusPage.tsx` — public route at `/status`, added to router alongside `/privacy-policy` and `/terms-of-service`. Renders components with green/yellow/red badges + last 10 incidents (empty-state message if none in 30d). Wrapped in `PublicHeader` + `PublicFooter`.
-- Admin editor: new tab `Status` in `src/pages/PlatformHealth.tsx` (already platform-admin only) with a simple table to change each component's status and a form to post/resolve incidents.
-- `src/components/layout/PublicFooter.tsx`: add "Status" link next to Privacy/Terms.
+### B2. Seed initial calendar
+- Using the admin wizard from B1, generate 10 posts targeting buyer intent, one per top-tier industry pulled from `mainIndustryCategories.ts`:
+  - "How much a missed call costs a {industry} business"
+  - "AI receptionist vs. answering service for {industry}"
+  - "{industry} scheduling software: what to look for"
+  - (Rotate templates across the 10 industries.)
+- Schedule two per week starting the day after B1 ships.
 
-## 4. B1 — Self-serve CSV data export
+## Part C — Light-mode toggle (scoped small)
 
-- Inspect `ExportReportForm.tsx` (or similar) to determine current CSV approach; reuse it. If none present, use client-side `papaparse` (already in dep tree — verify; if missing, use small manual CSV builder — no new deps).
-- New component `src/components/settings/DataExportPanel.tsx`:
-  - Buttons: Customers, Appointments, Invoices, Call & Chat Logs.
-  - Each queries the relevant table(s) via supabase client scoped to `company_id = get_user_company_id(auth.uid())` (relies on existing RLS; no schema change).
-  - Datasets → tables:
-    - Customers → `customers`
-    - Appointments → `appointments`
-    - Invoices → `invoices` (+ optionally join `invoice_line_items` in a second sheet, but v1 stays single-table)
-    - Logs → `call_logs` + `ai_agent_logs` (two separate CSVs, or a `dataset` selector)
-  - Triggers download of `aura-<dataset>-<YYYY-MM-DD>.csv`.
-- Mount in `src/pages/Settings.tsx` under a new accordion item "Export your data" inside the existing **Company** tab (keeps the 7-tab structure intact per the settings-consolidation memory).
-
-## 5. B2 — Trust reassurance line on ForBusiness
-
-- In `src/pages/ForBusiness.tsx`, near the IndustryValueProps / ROI section, add one line: "Your data is always yours — export everything, anytime, right from Settings." Link text → `/dashboard/settings?tab=company#export` (or scroll target if same-page not applicable; use a normal `Link`).
-- Add matching `t('marketing.dataOwnership')` key in en/es marketing.json.
-
-## 6. A2 — Industry-specific content translation (highest-traffic packs)
-
-- Read `src/lib/industryMarketingContent.ts`. Refactor `getIndustryContent(packId)` to accept an optional language OR read `i18n.language` internally, and return language-scoped content with English fallback.
-- Simplest shape: change map to `{ [packId]: { en: {...}, es?: {...} } }` and resolve with `content[packId]?.[lang] ?? content[packId]?.en`.
-- Add Spanish content for: `hvac`, `auto_repair`, `plumbing`, `electrical`, `salon`, `restaurant`.
-- Audit `IndustryROICalculator` and `PricingComparisonTable` components; extend `t()` coverage where missing (labels, unit suffixes, "per month", etc.), adding keys under `marketing.roi.*` and `marketing.pricing.*`.
-- No visual/logic changes; all other packs fall back to English silently.
+- Tailwind `darkMode: 'class'` is already configured, but there are no light tokens and no ThemeProvider. Do NOT redesign the site.
+- Scope: `Index.tsx` and `ForBusiness.tsx` only.
+- Add a minimal `ThemeProvider` (no extra deps — small custom hook) that toggles `light` class on `<html>` and persists to `localStorage` with dark as default.
+- Add `ThemeToggle` (sun/moon icon `Button variant="ghost"`) placed next to `LanguageToggle` in `PublicHeader.tsx` desktop + mobile.
+- In `src/index.css`, define a `.light` selector overriding only the specific semantic tokens used by the two target pages (background, foreground, muted, primary glow variants). Keep neon accent tokens shared where they read fine on both; only override where contrast breaks.
+- Explicitly out of scope this pass: dashboard, other public routes, marketing sub-pages. Follow-up ticket if the toggle proves used.
 
 ---
 
-## Technical notes
+## Execution order
+1. A1 → A2 → manual test call → A3
+2. B1 → B2
+3. C1
 
-- **Order of DB migrations**: only one new migration needed (status tables). B1 is client-side only; A1/A2/A3/B2 are frontend-only.
-- **Edge functions**: none needed. B1 uses direct table queries under existing RLS.
-- **CSV lib**: prefer existing pattern; if none, tiny inline `toCsv(rows)` helper (escape quotes, join with `\r\n`) — avoids new dep.
-- **Status page RLS**: public-read is intentional and safe (only component names + statuses, no PII).
-- **Admin status editor** lives in `PlatformHealth.tsx` (already `platform_admin`-gated) rather than a new page.
-- **i18n arrays**: `t(key, { returnObjects: true }) as string[]` for rotating subtitles.
-- **Deferred**: C2 (auto-monitoring hookup) — explicitly not in this batch per your instructions.
+## Technical notes
+- One migration total in Part A: `ALTER TABLE public.companies ADD COLUMN ai_voice_greeting_es text;` — no new RLS/grants needed (existing companies policies cover it).
+- B1 may need one migration if `blog_posts.publish_at` doesn't exist (check first; skip if it does).
+- No changes to `voice-handler` (already correct) — Part A is entirely about the Convai token function + UI.
+- Reuses existing i18n, existing `overrides` pattern in Convai clients, existing wizard components.
 
 ## Out of scope
-
-- Translating all 28 industry packs (only 6 in A2).
-- Automated status monitoring (C2 — later).
-- Scheduled or emailed exports (B1 is on-demand only).
-- Changing layout, styling, or business logic anywhere.
+- DTMF language menus (SignalWire + Convai both handle language dynamically).
+- Translating outbound SMS/reminder templates (already deferred in bilingual memory).
+- Site-wide light theme beyond Index/ForBusiness.
+- Automating platform blog SEO submission / social cross-post.

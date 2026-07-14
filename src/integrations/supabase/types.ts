@@ -1121,6 +1121,7 @@ export type Database = {
           address: string | null
           ai_agent_prompt: string | null
           ai_voice_greeting: string | null
+          ai_voice_greeting_es: string | null
           assignment_distance_weight: number | null
           assignment_history_weight: number | null
           assignment_max_distance_miles: number | null
@@ -1280,6 +1281,7 @@ export type Database = {
           address?: string | null
           ai_agent_prompt?: string | null
           ai_voice_greeting?: string | null
+          ai_voice_greeting_es?: string | null
           assignment_distance_weight?: number | null
           assignment_history_weight?: number | null
           assignment_max_distance_miles?: number | null
@@ -1439,6 +1441,7 @@ export type Database = {
           address?: string | null
           ai_agent_prompt?: string | null
           ai_voice_greeting?: string | null
+          ai_voice_greeting_es?: string | null
           assignment_distance_weight?: number | null
           assignment_history_weight?: number | null
           assignment_max_distance_miles?: number | null
