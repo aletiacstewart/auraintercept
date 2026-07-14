@@ -88,8 +88,7 @@ const DATASETS: Dataset[] = [
 ];
 
 export function DataExportPanel() {
-  const { profile } = useAuth() as any;
-  const companyId: string | undefined = profile?.company_id;
+  const { companyId } = useAuth();
   const [busy, setBusy] = useState<string | null>(null);
 
   const handleExport = async (ds: Dataset) => {
