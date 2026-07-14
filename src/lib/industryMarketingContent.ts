@@ -4,6 +4,8 @@ export interface IndustrySampleAppointment {
   notes: string;
 }
 
+// eslint-disable-next-line import/first
+
 export interface IndustrySampleLead {
   source: 'voice' | 'chat' | 'widget' | 'referral';
   intent: 'emergency' | 'quote' | 'booking' | 'inquiry';
@@ -714,13 +716,9 @@ export function getIndustryContent(id: string | null | undefined): IndustryConte
     return INDUSTRY_CONTENT[id] || INDUSTRY_CONTENT.other;
   })();
 
-  // Lazy-load Spanish overrides so English-only users pay nothing.
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const i18n = require('./i18n').default;
+    // Read the singleton i18next language without pulling react-i18next hooks.
     if (i18n?.language?.startsWith('es')) {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { mergeEsOverride } = require('./industryMarketingContentEs');
       return mergeEsOverride(base, base.id);
     }
   } catch {
