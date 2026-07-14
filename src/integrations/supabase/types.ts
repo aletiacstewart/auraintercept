@@ -5948,6 +5948,36 @@ export type Database = {
           },
         ]
       }
+      service_status: {
+        Row: {
+          component: string
+          display_name: string
+          id: string
+          note: string | null
+          status: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          component: string
+          display_name: string
+          id?: string
+          note?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          component?: string
+          display_name?: string
+          id?: string
+          note?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           category: string | null
@@ -6970,6 +7000,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      status_incidents: {
+        Row: {
+          component: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          resolved_at: string | null
+          severity: string
+          started_at: string
+          title: string
+        }
+        Insert: {
+          component?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          resolved_at?: string | null
+          severity?: string
+          started_at?: string
+          title: string
+        }
+        Update: {
+          component?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          resolved_at?: string | null
+          severity?: string
+          started_at?: string
+          title?: string
+        }
+        Relationships: []
       }
       subscription_events: {
         Row: {
