@@ -809,3 +809,100 @@ async function handleTestAgent(
     });
   }
 }
+
+// ---------------------------------------------------------------------------
+// Pipeline side-effects: updates customer_pipeline on lifecycle events.
+// No new operative — pipeline data is owned by outreach/customer_journey/
+// business_finance and read via ai-agent-chat tools.
+// ---------------------------------------------------------------------------
+
+const PIPELINE_EVENT_STAGE_MAP: Record<string, string | null> = {
+  lead_qualified: 'contacted',
+  lead_scored: 'contacted',
+  quote_sent: 'quoted',
+  quote_approved: 'quoted',
+  payment_received: 'won',
+  invoice_paid: 'won',
+  job_complete: 'won',
+  review_received: null, // touch last_activity_at only
+  churn_risk_detected: null, // sets next_action, no stage change
+};
+
+async function upsertPipelineForEvent(
+  supabase: any,
+  companyId: string,
+  eventType: string,
+  payload: any,
+) {
+  if (!(eventType in PIPELINE_EVENT_STAGE_MAP)) return;
+  if (!companyId) return;
+
+  const p = payload || {};
+  const customerProfileId: string | null =
+    p.customer_profile_id || p.customerProfileId || null;
+  const leadId: string | null = p.lead_id || p.leadId || null;
+
+  if (!customerProfileId && !leadId) {
+    console.log(`[Pipeline] skipping ${eventType} — no customer_profile_id or lead_id in payload`);
+    return;
+  }
+
+  // Find existing row keyed by customer_profile_id first, then lead_id
+  let existingId: string | null = null;
+  if (customerProfileId) {
+    const { data } = await supabase
+      .from('customer_pipeline')
+      .select('id, stage')
+      .eq('company_id', companyId)
+      .eq('customer_profile_id', customerProfileId)
+      .maybeSingle();
+    if (data?.id) existingId = data.id;
+  }
+  if (!existingId && leadId) {
+    const { data } = await supabase
+      .from('customer_pipeline')
+      .select('id, stage')
+      .eq('company_id', companyId)
+      .eq('lead_id', leadId)
+      .maybeSingle();
+    if (data?.id) existingId = data.id;
+  }
+
+  const targetStage = PIPELINE_EVENT_STAGE_MAP[eventType];
+  const nowIso = new Date().toISOString();
+  const patch: Record<string, any> = { last_activity_at: nowIso };
+
+  if (targetStage) patch.stage = targetStage;
+  if (typeof p.deal_value_cents === 'number') patch.deal_value_cents = p.deal_value_cents;
+
+  if (eventType === 'churn_risk_detected') {
+    patch.next_action = p.next_action || 'Send win-back offer (no contact 90+ days)';
+    patch.next_action_due_at = p.next_action_due_at || nowIso;
+  }
+
+  if (existingId) {
+    // Do not downgrade from won → quoted etc.
+    const stageRank: Record<string, number> = {
+      new: 0, contacted: 1, quoted: 2, won: 3, repeat_customer: 4, lost: -1,
+    };
+    if (patch.stage) {
+      const { data: cur } = await supabase
+        .from('customer_pipeline')
+        .select('stage')
+        .eq('id', existingId)
+        .maybeSingle();
+      if (cur?.stage && (stageRank[patch.stage] ?? 0) < (stageRank[cur.stage] ?? 0)) {
+        delete patch.stage;
+      }
+    }
+    await supabase.from('customer_pipeline').update(patch).eq('id', existingId);
+  } else {
+    await supabase.from('customer_pipeline').insert({
+      company_id: companyId,
+      customer_profile_id: customerProfileId,
+      lead_id: leadId,
+      stage: targetStage || 'new',
+      ...patch,
+    });
+  }
+}
