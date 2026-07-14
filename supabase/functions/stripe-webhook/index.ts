@@ -39,8 +39,7 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+  const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 
   const emitToOrchestrator = async (
     companyId: string,
@@ -95,6 +94,73 @@ Deno.serve(async (req) => {
           });
         } else {
           console.warn('[stripe-webhook] invoice.paid missing metadata.company_id', invoice.id);
+        }
+        break;
+      }
+      case 'invoice.payment_succeeded': {
+        // Payment recovered — clear past_due / grace / dunning state.
+        const invoice = event.data.object as Stripe.Invoice;
+        const subMeta = (invoice as any).subscription_details?.metadata as Record<string, string> | undefined;
+        const companyId = invoice.metadata?.company_id ?? subMeta?.company_id;
+        if (companyId) {
+          const { error } = await supabase
+            .from('companies')
+            .update({
+              payment_status: 'current',
+              payment_failed_at: null,
+              grace_period_ends_at: null,
+              dunning_reminders_sent: [],
+            })
+            .eq('id', companyId);
+          if (error) console.error('[stripe-webhook] payment_succeeded update failed:', error);
+          await emitToOrchestrator(companyId, 'payment_recovered', { invoice_id: invoice.id });
+        } else {
+          console.warn('[stripe-webhook] invoice.payment_succeeded missing metadata.company_id', invoice.id);
+        }
+        break;
+      }
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as Stripe.Invoice;
+        const subMeta = (invoice as any).subscription_details?.metadata as Record<string, string> | undefined;
+        const companyId = invoice.metadata?.company_id ?? subMeta?.company_id;
+        if (companyId) {
+          const now = new Date();
+          const graceEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+          const { error } = await supabase
+            .from('companies')
+            .update({
+              payment_status: 'past_due',
+              payment_failed_at: now.toISOString(),
+              grace_period_ends_at: graceEnd.toISOString(),
+              dunning_reminders_sent: [],
+            })
+            .eq('id', companyId);
+          if (error) console.error('[stripe-webhook] payment_failed update failed:', error);
+          await emitToOrchestrator(companyId, 'payment_failed', {
+            invoice_id: invoice.id,
+            amount_due: invoice.amount_due,
+            attempt_count: invoice.attempt_count,
+          });
+        } else {
+          console.warn('[stripe-webhook] invoice.payment_failed missing metadata.company_id', invoice.id);
+        }
+        break;
+      }
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription;
+        const companyId = (subscription.metadata as Record<string, string> | undefined)?.company_id;
+        if (companyId) {
+          const { error } = await supabase
+            .from('companies')
+            .update({ payment_status: 'canceled' })
+            .eq('id', companyId);
+          if (error) console.error('[stripe-webhook] subscription.deleted update failed:', error);
+          await emitToOrchestrator(companyId, 'subscription_canceled', {
+            subscription_id: subscription.id,
+            canceled_at: subscription.canceled_at,
+          });
+        } else {
+          console.warn('[stripe-webhook] subscription.deleted missing metadata.company_id', subscription.id);
         }
         break;
       }
