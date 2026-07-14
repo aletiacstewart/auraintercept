@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { trackFunnelEvent } from '@/lib/funnelTracking';
 import { ThirdPartyCostDisclosureDialog } from '@/components/subscription/ThirdPartyCostDisclosureDialog';
 import { BetaCodeInput, type BetaCodeResult } from '@/components/billing/BetaCodeInput';
 import { ThirdPartyFeeNotice } from '@/components/billing/ThirdPartyFeeNotice';
