@@ -21,6 +21,7 @@ import { MedicalComplianceNotice } from '@/components/marketing/MedicalComplianc
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/seo/SEO';
 import { LandingAIChat } from '@/components/landing/LandingAIChat';
+import { trackFunnelEvent } from '@/lib/funnelTracking';
 
 const STORAGE_KEY = 'aura.forbusiness.industry';
 
@@ -44,6 +45,16 @@ export default function ForBusiness() {
 
   const [showComparison, setShowComparison] = useState(false);
   const pricingExpandedLogged = useRef(false);
+  const pricingViewedLogged = useRef(false);
+  const pricingSectionRef = useRef<HTMLElement | null>(null);
+  const chatOpenedLogged = useRef(false);
+
+  // The inline chat is always mounted on this page — treat first mount as chat_opened.
+  useEffect(() => {
+    if (chatOpenedLogged.current) return;
+    chatOpenedLogged.current = true;
+    try { trackFunnelEvent('chat_opened', { pagePath: '/for-business' }); } catch { /* ignore */ }
+  }, []);
 
   const handleToggleComparison = () => {
     setShowComparison(prev => {
@@ -63,12 +74,14 @@ export default function ForBusiness() {
         } catch {
           /* ignore */
         }
+        try { trackFunnelEvent('pricing_expanded', { industry: industry !== 'default' ? industry : undefined, pagePath: '/for-business' }); } catch { /* ignore */ }
       }
       return next;
     });
   };
 
   const startLiveDemo = () => {
+    try { trackFunnelEvent('demo_cta_clicked', { industry: industry !== 'default' ? industry : undefined, pagePath: '/for-business' }); } catch { /* ignore */ }
     const ind = industry && industry !== 'default' ? industry : '';
     const qs = new URLSearchParams({ mode: 'company', tab: 'signup', tier: 'command' });
     if (ind) qs.set('industry', ind);
@@ -104,6 +117,39 @@ export default function ForBusiness() {
       setSearchParams(next, { replace: true });
     }
   }, [industry, searchParams, setSearchParams]);
+
+  // Fire page_view on mount and whenever industry changes.
+  useEffect(() => {
+    try {
+      trackFunnelEvent('page_view', {
+        pagePath: '/for-business',
+        industry: industry !== 'default' ? industry : undefined,
+      });
+    } catch { /* ignore */ }
+  }, [industry]);
+
+  // Fire pricing_viewed once when pricing section scrolls into view.
+  useEffect(() => {
+    const el = pricingSectionRef.current;
+    if (!el || pricingViewedLogged.current) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      pricingViewedLogged.current = true;
+      try { trackFunnelEvent('pricing_viewed', { industry: industry !== 'default' ? industry : undefined, pagePath: '/for-business' }); } catch { /* ignore */ }
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && !pricingViewedLogged.current) {
+          pricingViewedLogged.current = true;
+          try { trackFunnelEvent('pricing_viewed', { industry: industry !== 'default' ? industry : undefined, pagePath: '/for-business' }); } catch { /* ignore */ }
+          io.disconnect();
+          break;
+        }
+      }
+    }, { threshold: 0.25 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [industry]);
 
   // `industry` may be either a canonical pack id (e.g. 'hvac') or a raw
   // business-type key from the 185-type registry (e.g. 'hvac contractor').
@@ -190,7 +236,7 @@ export default function ForBusiness() {
         <TestimonialSection />
 
         {/* Pricing snapshot */}
-        <section className="py-10 bg-background">
+        <section ref={pricingSectionRef} className="py-10 bg-background">
           <div className="container max-w-6xl mx-auto px-4">
             <div className="text-center mb-6">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">

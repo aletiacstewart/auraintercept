@@ -6,6 +6,7 @@ import { LandingAIChat } from './LandingAIChat';
 import { UnifiedCustomerConsole } from '@/components/customer/UnifiedCustomerConsole';
 import { AuraAvatarChat } from '@/components/aura/AuraAvatarChat';
 import { supabase } from '@/integrations/supabase/client';
+import { trackFunnelEvent } from '@/lib/funnelTracking';
 
 interface FloatingChatWidgetProps {
   /** Website ID for tracking (Smart Website context) */
@@ -73,6 +74,7 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
     const handleOpen = useCallback(() => {
       setIsOpen(true);
       trackChatOpen();
+      try { trackFunnelEvent('chat_opened'); } catch { /* ignore */ }
     }, [trackChatOpen]);
 
     // Reset tracking when widget closes (for next session)
