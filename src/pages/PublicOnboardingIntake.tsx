@@ -452,7 +452,7 @@ export default function PublicOnboardingIntake() {
                           <div className="text-xs text-foreground mt-1">
                             One-time onboarding:{' '}
                             <span className="line-through text-muted-foreground">${p.originalOnboarding.toLocaleString()}</span>{' '}
-                            <span className="font-semibold text-primary">${p.onboarding.toLocaleString()}</span>
+                            <span className="font-semibold text-primary">$0 during Beta</span>
                           </div>
                         </button>
                       );
@@ -484,7 +484,7 @@ export default function PublicOnboardingIntake() {
                       : `$${plan.monthly.toLocaleString()}/mo`;
                     return (
                       <div className="text-xs text-foreground bg-background border border-border rounded p-2">
-                        Due at start of trial: <span className="font-semibold">${plan.onboarding.toLocaleString()}</span>. Then <span className="font-semibold">{recurring}</span> after the 60-Day Live Trial.
+                        Onboarding fee: <span className="font-semibold">$0 during Beta</span> (waived). Then <span className="font-semibold">{recurring}</span> after the 60-Day Live Trial.
                       </div>
                     );
                   })()}
@@ -496,7 +496,7 @@ export default function PublicOnboardingIntake() {
                       placeholder="billing@yourcompany.com"
                     />
                   </Field>
-                  <p className="text-[11px] text-muted-foreground -mt-2">We'll send the one-time onboarding invoice here. Subscription billing starts after the 60-Day Live Trial.</p>
+                  <p className="text-[11px] text-muted-foreground -mt-2">Onboarding fee is $0 during Beta — no invoice will be sent unless the Beta waiver ends before your trial. Subscription billing starts after the 60-Day Live Trial.</p>
                 </div>
 
                 <p className="text-sm text-muted-foreground">Review the full <a className="text-primary underline" href="https://auraintercept.ai/terms-of-service" target="_blank" rel="noreferrer">Terms of Service</a> and <a className="text-primary underline" href="https://auraintercept.ai/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
@@ -504,7 +504,7 @@ export default function PublicOnboardingIntake() {
                   ['agree_tos', 'I agree to the Aura Intercept Terms of Service.'],
                   ['agree_privacy', 'I have read and agree to the Privacy Policy.'],
                   ['agree_third_party', 'I understand each 3rd-party provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) bills me directly with my own account + credit card on file. Aura Intercept does not resell or mark up usage.'],
-                  ['agree_onboarding_fee', 'I understand the one-time onboarding fee is invoiced on day 31 of the 60-Day Live Trial (after concierge onboarding is complete), my first monthly plan fee is charged on day 61, and the onboarding fee is non-refundable once onboarding has been completed.'],
+                  ['agree_onboarding_fee', 'I understand the one-time onboarding fee is invoiced on day 31 of the 60-Day Live Trial (after concierge onboarding is complete), my first monthly plan fee is charged on day 61, and the onboarding fee is non-refundable.'],
                   ['agree_authority', 'I am authorized to sign this agreement on behalf of the company.'],
                 ].map(([key, label]) => (
                   <label key={key} className="flex items-start gap-2 text-sm">

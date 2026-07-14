@@ -86,7 +86,7 @@ export const LAUNCH_PRICING = {
  * Mirrored in supabase/functions/create-checkout/index.ts as
  * ONBOARDING_FEE_WAIVED_GLOBALLY — kept in sync.
  */
-export const ONBOARDING_FEE_WAIVED_GLOBALLY = false;
+export const ONBOARDING_FEE_WAIVED_GLOBALLY = true;
 
 export interface OnboardingDisplay {
   waived: boolean;
@@ -178,9 +178,14 @@ export function formatMonthlyCost(tier: TierKey): string {
     : `${formatPrice(t.original)}/mo`;
 }
 
-/** e.g. "$370 (was $497)" when beta active. */
+/** e.g. "$0 during Beta (was $497)" while the global waiver is on, or the
+ * discounted sale price when only launch pricing is active, or the original
+ * price otherwise. */
 export function formatOnboardingCost(tier: TierKey): string {
   const t = getTierPricing(tier);
+  if (ONBOARDING_FEE_WAIVED_GLOBALLY) {
+    return `$0 during Beta (was ${formatPrice(t.onboardingOriginal)})`;
+  }
   return LAUNCH_PRICING.active
     ? `${formatPrice(t.onboardingSale)} (was ${formatPrice(t.onboardingOriginal)})`
     : formatPrice(t.onboardingOriginal);
@@ -198,11 +203,18 @@ export function formatTierLabel(tier: TierKey): string {
   );
 }
 
-/** e.g. "$497/mo + $370 onboarding   (Beta — was $697/mo + $497 onboarding)". Used in sales voice prompts. */
+/** e.g. "$497/mo + $0 onboarding during Beta (was $697/mo + $497 onboarding)".
+ * Used in sales voice/text prompts. */
 export function formatSalesLine(tier: TierKey): string {
   const t = getTierPricing(tier);
   if (!LAUNCH_PRICING.active) {
     return `${formatPrice(t.original)}/mo + ${formatPrice(t.onboardingOriginal)} onboarding`;
+  }
+  if (ONBOARDING_FEE_WAIVED_GLOBALLY) {
+    return (
+      `${formatPrice(t.sale)}/mo + $0 onboarding during Beta ` +
+      `(was ${formatPrice(t.original)}/mo + ${formatPrice(t.onboardingOriginal)} onboarding)`
+    );
   }
   return (
     `${formatPrice(t.sale)}/mo + ${formatPrice(t.onboardingSale)} onboarding ` +

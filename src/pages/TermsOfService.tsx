@@ -68,7 +68,7 @@ export default function TermsOfService() {
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>Subscription plans range from <span className="line-through">$697 to $5,576</span> <strong>$497 to $3,979</strong> per month across 4 tiers (Aura Core, Aura Boost, Aura Pro, and Aura Elite). <em>Beta Pricing is currently active.</em></li>
               <li>Employee accounts vary by tier (10–Unlimited included). Additional employees: $25/month per 10 employees.</li>
-              <li><strong className="text-foreground">One-time onboarding fee</strong> is invoiced on day 31 of your 60-Day Live Trial (after concierge onboarding is complete). Your first monthly plan fee is charged on day 61 (after the full 60-Day Live Trial). The onboarding fee equals one month of your plan and is <strong>25% OFF during Beta</strong> — Aura Core <span className="line-through">$497</span> <strong>$370</strong>, Aura Boost <span className="line-through">$994</span> <strong>$750</strong>, Aura Pro <span className="line-through">$1,988</span> <strong>$1,490</strong>, Aura Elite <span className="line-through">$3,979</span> <strong>$2,980</strong>. Onboarding fees are non-refundable once onboarding is completed.</li>
+              <li><strong className="text-foreground">One-time onboarding fee</strong> is <strong className="text-primary">$0 during Beta</strong> — waived automatically for every new signup, no code required. The regular fee equals one month of your plan (Aura Core $497, Aura Boost $994, Aura Pro $1,988, Aura Elite $3,979) and would be invoiced on day 31 of your 60-Day Live Trial. Your first monthly plan fee is charged on day 61 (after the full 60-Day Live Trial). Onboarding fees are non-refundable.</li>
               <li>Payment is processed securely through Stripe. By subscribing, you authorize recurring charges to your designated payment method.</li>
             </ul>
 
@@ -97,7 +97,7 @@ export default function TermsOfService() {
             <h3 className="text-xl font-semibold mt-4 mb-3">Refund Policy</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li><strong className="text-foreground">Trial Period:</strong> Cancel any time during the 60-Day Live Trial at no charge — no refund is needed because no payment is taken during the trial.</li>
-              <li><strong className="text-foreground">Implementation Fee:</strong> Non-refundable once onboarding has been completed.</li>
+              <li><strong className="text-foreground">Implementation Fee:</strong> Non-refundable.</li>
               <li><strong className="text-foreground">After Trial:</strong> No refunds for partial billing periods.</li>
               <li><strong className="text-foreground">Third-Party Provider Charges:</strong> Charges billed directly by SignalWire, ElevenLabs, Resend, Tavily, Stripe, or any other provider are governed by that provider's terms and are not refundable by Aura Intercept.</li>
             </ul>

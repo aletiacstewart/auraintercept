@@ -32,9 +32,9 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
         All beta members get a{' '}
         <span className="font-semibold text-primary">60-Day Live Trial</span>{' '}
         (30 days concierge onboarding + 30 days full live use). During beta,
-        your one-time onboarding fee is{' '}
-        <span className="font-semibold text-primary">25% OFF the original one-month price</span>{' '}
-        (per tier, see below — Core $370, Boost $750, Pro $1,490, Elite $2,980), and you lock in{' '}
+        your one-time{' '}
+        <span className="font-semibold text-primary">onboarding fee is $0</span>{' '}
+        (waived automatically — no code needed), and you lock in{' '}
         <span className="font-semibold text-primary">Beta Pricing</span> on
         your monthly plan:
       </p>
@@ -50,14 +50,15 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
       </p>
 
       <p className={`text-foreground/80 leading-relaxed italic ${compact ? 'text-[10px]' : 'text-xs'}`}>
-        The onboarding fee is invoiced on day 31 of your trial (after concierge
-        onboarding is complete) and covers account configuration, AI agent
-        setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC
-        compliance filing, and your initial training session. Your first monthly
-        plan fee is charged on day 61 (after the full 60-Day Live Trial).
-        Non-refundable once concierge onboarding begins. Beta docs, guides, and
-        tutorials may occasionally lag the latest changes — check the homepage
-        for the most current pricing and trial details.
+        Concierge onboarding runs during days 1–30 of your trial and covers
+        account configuration, AI agent setup, knowledge-base build-out,
+        3rd-party activation, A2P 10DLC compliance filing, and your initial
+        training session. Your first monthly plan fee is charged on day 61
+        (after the full 60-Day Live Trial). The onboarding fee is waived
+        during Beta; the regular fee (equal to one month of your plan) is
+        non-refundable. Beta docs, guides, and tutorials may occasionally lag
+        the latest changes — check the homepage for the most current pricing
+        and trial details.
       </p>
     </div>
   );

@@ -238,7 +238,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>One-Time Onboarding Fee</Text>
         <Text style={styles.noticeText}>
-          Equals one month of your plan, with 25% OFF during Beta: Core $370 (was $497) · Boost $750 (was $994) · Pro $1,490 (was $1,988) · Elite $2,980 (was $3,979). Due at start of the 60-Day Live Trial. The first 30 days of the trial are dedicated to onboarding, then 30 days of full live use. Non-refundable once onboarding begins. Annual billing saves ~20% vs monthly (billed upfront).
+          Onboarding fee is $0 during Beta (waived automatically for every new signup). Regular onboarding fee equals one month of your plan: Core $497 · Boost $994 · Pro $1,988 · Elite $3,979. The first 30 days of the 60-Day Live Trial are dedicated to concierge onboarding, then 30 days of full live use. Non-refundable. Annual billing saves ~20% vs monthly (billed upfront).
         </Text>
       </View>
       <View style={styles.footer}>
