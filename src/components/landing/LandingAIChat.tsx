@@ -88,11 +88,6 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  // Fire chat_opened once per mount (component becoming visible = chat active).
-  useEffect(() => {
-    try { trackFunnelEvent('chat_opened'); } catch { /* ignore */ }
-  }, []);
-
   const lastIsVideo = messages[messages.length - 1]?.videoUrl;
   const showDemoVideo = useCallback(() => {
     setMessages(prev => {
