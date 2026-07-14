@@ -896,7 +896,7 @@ const HowToUsePage = () => (
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Company / Legal Name:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Date Completed:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Tier Selected:')}</Text><View style={styles.formLine} /></View>
-    <Text style={styles.formNote}>{sanitizePdfText('(Beta Pricing: Core $497 (was $697) · Boost $994 (was $1,394) · Pro $1,988 (was $2,788) · Elite $3,979 (was $5,576) / month. Onboarding fee = 1 month of plan, 25% OFF during Beta: Core $370 (was $497) · Boost $750 (was $994) · Pro $1,490 (was $1,988) · Elite $2,980 (was $3,979), invoiced on day 31; first monthly fee charged on day 61.)')}</Text>
+    <Text style={styles.formNote}>{sanitizePdfText('(Beta Pricing: Core $497 (was $697) · Boost $994 (was $1,394) · Pro $1,988 (was $2,788) · Elite $3,979 (was $5,576) / month. Onboarding fee: $0 during Beta (waived automatically). Regular fee equals one month of plan (Core $497 · Boost $994 · Pro $1,988 · Elite $3,979), invoiced on day 31, non-refundable; first monthly fee charged on day 61.)')}</Text>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Target Go-Live Date:')}</Text><View style={styles.formLine} /></View>
     <View style={styles.formRow}><Text style={styles.formLabel}>{sanitizePdfText('Primary Onboarding Contact:')}</Text><View style={styles.formLine} /></View>
 
@@ -1426,7 +1426,7 @@ const SmartWebsitePage = () => (
 
 const TOS_CLAUSES: Array<{ title: string; body: string }> = [
   { title: '1. Services', body: 'Aura Intercept provides an AI customer engagement and business operations platform ("Platform") accessed via subscription. Specific features available depend on the tier purchased (Core, Boost, Pro, or Elite).' },
-  { title: '2. Subscription & 60-Day Live Trial', body: 'A 60-Day Live Trial period applies; the platform is fully active during the trial. The one-time onboarding fee is invoiced on day 31 of the trial (after concierge onboarding is complete). Your first monthly plan fee is charged on day 61 (after the full 60-Day Live Trial). Cancellation must occur in writing before the next monthly billing date.' },
+  { title: '2. Subscription & 60-Day Live Trial', body: 'A 60-Day Live Trial period applies; the platform is fully active during the trial. The onboarding fee is $0 during Beta (waived automatically); if charged, the regular one-time fee is invoiced on day 31 of the trial. Your first monthly plan fee is charged on day 61. Cancellation must occur in writing before the next monthly billing date.' },
   { title: '3. Onboarding Fee', body: 'The one-time onboarding fee is $0 during Beta — waived automatically for every new signup, no code required. The regular fee equals one month of your plan (Core $497, Boost $994, Pro $1,988, Elite $3,979) and would be invoiced on day 31 of the 60-Day Live Trial and is non-refundable. The fee covers Concierge Onboarding services and platform configuration.' },
   { title: '4. Third-Party Provider Accounts & Pass-Through Billing', body: 'All paid third-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social scheduler, etc.) require Customer\'s own account and valid credit card. Each provider invoices Customer DIRECTLY and SEPARATELY from the Aura plan fee. Aura Intercept never resells or marks up third-party usage charges. A free Google Account may be connected via OAuth for Calendar sync at no additional cost.' },
   { title: '5. Concierge Onboarding Authorization', body: 'Customer authorizes Aura Intercept Concierge Onboarding to configure third-party accounts on Customer\'s behalf using Customer-provided credentials and payment methods. Customer remains responsible for all charges incurred on those accounts.' },
@@ -1482,10 +1482,10 @@ const TermsAcknowledgementPage = () => {
       </Text>
       <Text style={styles.subsectionTitle}>{sanitizePdfText('Plan Selection (check one)')}</Text>
       {[
-        { id: 'core',  label: 'Aura Core  — $497/mo (was $697)  ·  $370 one-time onboarding (25% OFF — was $497)' },
-        { id: 'boost', label: 'Aura Boost — $994/mo (was $1,394)  ·  $750 one-time onboarding (25% OFF — was $994)' },
-        { id: 'pro',   label: 'Aura Pro   — $1,988/mo (was $2,788) ·  $1,490 one-time onboarding (25% OFF — was $1,988)' },
-        { id: 'elite', label: 'Aura Elite — $3,979/mo (was $5,576) ·  $2,980 one-time onboarding (25% OFF — was $3,979)' },
+        { id: 'core',  label: 'Aura Core  — $497/mo (was $697)  ·  $0 onboarding during Beta (regular $497)' },
+        { id: 'boost', label: 'Aura Boost — $994/mo (was $1,394)  ·  $0 onboarding during Beta (regular $994)' },
+        { id: 'pro',   label: 'Aura Pro   — $1,988/mo (was $2,788) ·  $0 onboarding during Beta (regular $1,988)' },
+        { id: 'elite', label: 'Aura Elite — $3,979/mo (was $5,576) ·  $0 onboarding during Beta (regular $3,979)' },
       ].map((p) => (
         <View key={p.id} style={styles.optionRow}>
           <View style={styles.checkbox} />
