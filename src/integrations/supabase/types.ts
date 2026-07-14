@@ -4664,6 +4664,66 @@ export type Database = {
           },
         ]
       }
+      marketing_funnel_events: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          industry: string | null
+          page_path: string | null
+          referrer: string | null
+          session_id: string
+          tier: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          industry?: string | null
+          page_path?: string | null
+          referrer?: string | null
+          session_id: string
+          tier?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          industry?: string | null
+          page_path?: string | null
+          referrer?: string | null
+          session_id?: string
+          tier?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_funnel_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_funnel_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       missed_call_callbacks: {
         Row: {
           attempt_number: number | null
