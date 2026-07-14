@@ -86,7 +86,7 @@ export const LAUNCH_PRICING = {
  * Mirrored in supabase/functions/create-checkout/index.ts as
  * ONBOARDING_FEE_WAIVED_GLOBALLY — kept in sync.
  */
-export const ONBOARDING_FEE_WAIVED_GLOBALLY = false;
+export const ONBOARDING_FEE_WAIVED_GLOBALLY = true;
 
 export interface OnboardingDisplay {
   waived: boolean;
