@@ -15,6 +15,7 @@ import { DiyCostBreakdown } from '@/components/landing/DiyCostBreakdown';
 import { TestimonialSection } from '@/components/marketing/TestimonialSection';
 import { SEO } from '@/components/seo/SEO';
 import { MAIN_INDUSTRY_CATEGORIES as MARKETING_INDUSTRY_CATEGORIES } from '@/lib/mainIndustryCategories';
+import { trackFunnelEvent } from '@/lib/funnelTracking';
 
 const agentCategories = [{
   id: 'customer',
@@ -314,6 +315,10 @@ export default function Index() {
       setCurrentSubtitle(prev => (prev + 1) % subtitles.length);
     }, 3000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    trackFunnelEvent('page_view', { pagePath: '/' });
   }, []);
 
   const consoleNeons = [
