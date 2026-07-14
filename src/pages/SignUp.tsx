@@ -1466,7 +1466,7 @@ export default function SignUp() {
                             <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
                             {betaCode && (
                               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                60-Day Live Trial + Beta Onboarding = <span className="font-semibold">1 month of your plan at 25% OFF</span> (Core <span className="line-through">$497</span> $370 · Boost <span className="line-through">$994</span> $750 · Pro <span className="line-through">$1,988</span> $1,490 · Elite <span className="line-through">$3,979</span> $2,980) applied at checkout. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card — <span className="font-semibold">including during the trial</span>.
+                                60-Day Live Trial · <span className="font-semibold text-emerald-400">$0 onboarding during Beta</span> (waived automatically). Regular onboarding fee = 1 month of your plan (Core $497 · Boost $994 · Pro $1,988 · Elite $3,979), invoiced on day 31, non-refundable. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card — <span className="font-semibold">including during the trial</span>.
                               </p>
                             )}
                           </div>
