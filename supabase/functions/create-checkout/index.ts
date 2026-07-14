@@ -15,11 +15,12 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 
 // BETA PRICING (active, billed): Core $497 · Boost $994 · Pro $1,988 · Elite $3,979.
 // Standard (struck-through display only): $697 / $1,394 / $2,788 / $5,576.
-// Onboarding fee (Beta, one-time, 25% OFF original, rounded to nearest $10):
-//   Core $370 · Boost $750 · Pro $1,490 · Elite $2,980.
-// Onboarding price IDs updated 2026-07-07 to the new 25%-off amounts
-// ($370 / $750 / $1,490 / $2,980). Legacy 50%-off IDs are retained in commit
-// history only — do not use them for new checkouts.
+// Onboarding fee: $0 during Beta — WAIVED GLOBALLY (see
+// ONBOARDING_FEE_WAIVED_GLOBALLY below). The `onboarding_price_id` values
+// below point to the regular one-month-of-plan Stripe prices used post-Beta
+// (Core $370 IDs are legacy 25%-off IDs pending refresh to full-month
+// amounts). While the global waiver is on, no onboarding line item is added
+// to checkout so these price IDs are not attached to sessions.
 const CORE = {
   name: "Aura Core",
   price: 49700,
