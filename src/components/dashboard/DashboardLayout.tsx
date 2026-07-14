@@ -60,6 +60,7 @@ import {
   Search,
   Database,
 } from 'lucide-react';
+import { Kanban } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/aura-intercept-logo.png';
 import { differenceInDays, parseISO } from 'date-fns';
