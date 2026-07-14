@@ -49,6 +49,7 @@ export const PublicFooter = forwardRef<HTMLDivElement>((_, ref) => {
               <ul className="space-y-2 text-sm text-card-foreground/80">
                 <li><button onClick={() => navigate('/privacy-policy')} className="hover:text-card-foreground transition-colors">Privacy Policy</button></li>
                 <li><button onClick={() => navigate('/terms-of-service')} className="hover:text-card-foreground transition-colors">Terms of Service</button></li>
+                <li><button onClick={() => navigate('/status')} className="hover:text-card-foreground transition-colors">System Status</button></li>
               </ul>
             </div>
           </div>
