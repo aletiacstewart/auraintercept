@@ -1545,15 +1545,11 @@ export default function SignUp() {
                                   <Headphones className="w-3.5 h-3.5 text-primary" />
                                   One-Time Onboarding Fee (required)
                                   <span className="ml-auto inline-flex items-baseline gap-1.5">
-                                    <span className="text-primary font-bold">
-                                      {selectedTier
-                                        ? `$${{ starter: 370, connect: 750, performance: 1490, command: 2980 }[selectedTier].toLocaleString()}`
-                                        : 'from $370'}
-                                    </span>
+                                    <span className="text-primary font-bold">$0 during Beta</span>
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   Due at the start of your <span className="font-semibold text-foreground">60-Day Live Trial</span>. The <span className="font-semibold text-foreground">first 30 days are your onboarding window</span> — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Onboarding = 1 month of your plan, 25% OFF during Beta</span>: Core <span className="line-through">$497</span> $370 · Boost <span className="line-through">$994</span> $750 · Pro <span className="line-through">$1,988</span> $1,490 · Elite <span className="line-through">$3,979</span> $2,980.
+                                   The <span className="font-semibold text-foreground">first 30 days of your 60-Day Live Trial</span> are your onboarding window — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Onboarding fee is $0 during Beta</span> (waived automatically). Regular onboarding fee equals one month of your plan: Core $497 · Boost $994 · Pro $1,988 · Elite $3,979.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable.
