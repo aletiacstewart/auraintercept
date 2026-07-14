@@ -9,13 +9,14 @@
  *   Pro    | $2,788 / mo       | $1,988 / mo
  *   Elite  | $5,576 / mo       | $3,979 / mo
  *
- * Onboarding (one-time): equals ONE MONTH of the plan (struck-through original),
- * then 25% OFF during Beta — sale price billed (rounded to nearest $10):
- *   Tier   | Original (1 mo, struck) | Beta Sale (billed, 25% off)
- *   Core   | $497                    | $370
- *   Boost  | $994                    | $750
- *   Pro    | $1,988                  | $1,490
- *   Elite  | $3,979                  | $2,980
+ * Onboarding (one-time): equals ONE MONTH of the plan. During Beta the
+ * onboarding fee is WAIVED GLOBALLY ($0) via ONBOARDING_FEE_WAIVED_GLOBALLY
+ * below. Regular (post-Beta) fee per tier:
+ *   Tier   | Regular (1 mo, invoiced day 31)
+ *   Core   | $497
+ *   Boost  | $994
+ *   Pro    | $1,988
+ *   Elite  | $3,979
  * Annual = round(monthly × 12 × 0.8) (~20% savings).
  */
 
@@ -137,9 +138,10 @@ export function getOnboardingPrice(tier: TierKey): number {
   return LAUNCH_PRICING.active ? t.onboardingSale : t.onboardingOriginal;
 }
 
-/** Beta onboarding cap — DEPRECATED. Onboarding is now tier-specific
- * (25% OFF original, rounded to nearest $10), so there is no separate
- * cap to enforce. These exports remain for backward compatibility. */
+/** Beta onboarding cap — DEPRECATED. Onboarding is now $0 during Beta
+ * (waived globally) and equals one month of plan post-Beta, so there is
+ * no separate cap to enforce. These exports remain for backward
+ * compatibility. */
 export const BETA_ONBOARDING_CAP_CENTS = 0;
 export const BETA_ONBOARDING_CAP_AMOUNT = 0;
 export const BETA_ONBOARDING_CAP_EXPIRES_AT = '2026-08-01T00:00:00Z';
@@ -191,7 +193,7 @@ export function formatOnboardingCost(tier: TierKey): string {
     : formatPrice(t.onboardingOriginal);
 }
 
-/** e.g. "Aura Core ($497/mo · $370 onboarding · Beta Pricing — was $697/mo + $497 onboarding)". */
+/** e.g. "Aura Core ($497/mo · $0 onboarding during Beta — was $697/mo + $497 onboarding)". */
 export function formatTierLabel(tier: TierKey): string {
   const t = getTierPricing(tier);
   if (!LAUNCH_PRICING.active) {
