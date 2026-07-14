@@ -2,9 +2,21 @@
 // Used by:
 //   - supabase/functions/landing-chat   (Message Aura — website text chat)
 //   - ElevenLabs voice agent             (Talk to Aura — website voice + inbound phone number)
+//   - src/lib/auraInterceptSalesPrompt.ts (admin "Copy Talk to Aura sales prompt" button)
 //
-// This is for Aura Intercept's OWN sales experience only. Customer companies
-// get their own per-company prompts (configured during onboarding).
+// Pricing lines are derived from `./launch-pricing.ts` so flipping the Beta
+// flag or editing any tier number automatically flows into both channels.
+import {
+  formatPrice,
+  formatSalesLine,
+  getAnnualPrice,
+  getTierPricing,
+} from './launch-pricing.ts';
+
+const core = getTierPricing('starter');
+const boost = getTierPricing('connect');
+const pro = getTierPricing('performance');
+const elite = getTierPricing('command');
 
 const KNOWLEDGE_BASE = `KNOWLEDGE BASE — Aura Intercept
 
@@ -21,18 +33,18 @@ What it is:
   lead scoring, and marketing.
 
 Pricing — 4 Tiers (Beta Pricing is ACTIVE — quote the sale price first, mention the original was higher):
-- Aura Core — $497/mo + $0 onboarding during Beta (was $697/mo + $497 onboarding)
+- ${core.name} — ${formatSalesLine('starter')}
     8 Smart AI Agents · 3 Consoles · 10 employees.
     Best for solo operators, salons, restaurants, single-truck operations.
-- Aura Boost — $994/mo + $0 onboarding during Beta (was $1,394/mo + $994 onboarding)
+- ${boost.name} — ${formatSalesLine('connect')}
     12 Smart AI Agents (adds Dispatch, Route, ETA, Check-In) · 5 Consoles · 25 employees.
     Best for HVAC, plumbing, electrical, field-service crews.
-- Aura Pro — $1,988/mo + $0 onboarding during Beta (was $2,788/mo + $1,988 onboarding)
+- ${pro.name} — ${formatSalesLine('performance')}
     16 Smart AI Agents (adds Campaign, Outreach, Social Scheduler, Social Analytics) ·
     5 Consoles · 50 employees.
-- Aura Elite — $3,979/mo + $0 onboarding during Beta (was $5,576/mo + $3,979 onboarding)
+- ${elite.name} — ${formatSalesLine('command')}
     All 24 Smart AI Agents · all 7 Consoles + AI Operatives Hub · unlimited employees.
-- Annual: Core $4,771/yr · Boost $9,542/yr · Pro $19,085/yr · Elite $38,198/yr (~20% off).
+- Annual: Core ${formatPrice(getAnnualPrice('starter'))}/yr · Boost ${formatPrice(getAnnualPrice('connect'))}/yr · Pro ${formatPrice(getAnnualPrice('performance'))}/yr · Elite ${formatPrice(getAnnualPrice('command'))}/yr (~20% off).
 - Extra employees: $25/mo per 10 beyond the included amount.
 - Onboarding fee is $0 during Beta (waived automatically for every signup). Regular onboarding fee equals one month of your plan and is invoiced on day 31 of the 60-Day Live Trial,
   non-refundable.
