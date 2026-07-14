@@ -371,7 +371,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="Is there a Live Trial?"
-          answer="Yes — 60-Day Live Trial. First 30 days = concierge onboarding (setup, KB, 3rd-party activation, training). Remaining 30 days = fully live. Full tier access. Your one-time per-tier onboarding fee (25% off during Beta — Core $370 · Boost $750 · Pro $1,490 · Elite $2,980) is invoiced on day 31 of the trial. Your first monthly plan fee is charged on day 61."
+          answer="Yes — 60-Day Live Trial. First 30 days = concierge onboarding (setup, KB, 3rd-party activation, training). Remaining 30 days = fully live. Full tier access. Onboarding fee: $0 during Beta (waived automatically for every signup, no code required). Regular fee equals 1 month of your plan (Core $497 · Boost $994 · Pro $1,988 · Elite $3,979), invoiced on day 31 of the trial, non-refundable. Your first monthly plan fee is charged on day 61."
         />
         
         <FAQItem 
@@ -494,7 +494,7 @@ const PlatformFAQPDF = () => {
 
         <FAQItem 
           question="What's included in the Aura Core tier specifically?"
-          answer={`Aura Core ($${SUBSCRIPTION_TIERS.aura_core?.price ?? 497}/mo Beta — was $697) is the entry-level tier with 8 Smart AI Agents, 3 Control Centers, and 10 employees. Perfect for solo operators, restaurants, salons, and single-location businesses. One-time onboarding fee: $370 (Beta, was $497), invoiced on day 31 of the 60-Day Live Trial; first monthly fee charged on day 61.`}
+          answer={`Aura Core ($${SUBSCRIPTION_TIERS.aura_core?.price ?? 497}/mo Beta — was $697) is the entry-level tier with 8 Smart AI Agents, 3 Control Centers, and 10 employees. Perfect for solo operators, restaurants, salons, and single-location businesses. Onboarding fee: $0 during Beta (waived automatically); regular fee $497, invoiced on day 31 of the 60-Day Live Trial, non-refundable; first monthly fee charged on day 61.`}
         />
 
         <View style={styles.warningBox}>
@@ -618,7 +618,7 @@ const PlatformFAQPDF = () => {
         />
         <FAQItem
           question="What if my call volume is really high — could this get expensive?"
-          answer="At very high volume, yes, usage costs scale up — but so would a bundled flat-fee add-on charging for that same usage, just with a markup baked in. We're happy to walk through realistic numbers for your specific call volume before you commit."
+          answer="At very high volume, yes, usage costs scale up — but a competing flat-fee provider would just charge the same usage with a markup baked in. We're happy to walk through realistic numbers for your specific call volume before you commit."
         />
         <FAQItem
           question="Can I switch providers later if I find something cheaper?"
