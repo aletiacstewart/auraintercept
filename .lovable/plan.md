@@ -1,59 +1,36 @@
-# Reset Aura Intercept Blog & Regenerate Product-Focused Posts
+# Fix: `/blog` returns 401 "permission denied for table user_roles"
 
-## Goal
-Clear every existing post from the public Aura Intercept blog (`/blog`) and replace them with a fresh set of posts specifically about Aura Intercept — the platform, its services, the 10 operatives / 24 agents, pricing/trial, and third-party integration model.
+## Root cause
+`public.blog_posts` has two RLS policies:
 
-## Step 1 — Purge existing posts
-Delete all rows from `blog_posts` that belong to the Aura Intercept platform blog (rows with no `company_id`, i.e. platform-level posts surfaced at `/blog`). Company-tenant blog posts stay untouched.
+1. `Anyone can view published blog posts` — `FOR SELECT USING (published = true)` ✅
+2. `Platform admins can manage blog posts` — `FOR ALL` with `EXISTS (SELECT 1 FROM user_roles ...)` on role `public`
 
-- One DB delete scoped to platform rows only.
-- Confirm `/blog` renders the empty state after the delete.
+Because policy #2 is `FOR ALL`, Postgres also evaluates it during anonymous `SELECT`. The subquery hits `public.user_roles`, on which `anon` has no `SELECT` grant, so PostgREST returns `42501 permission denied for table user_roles` before the OR with policy #1 can save the request. `/blog` therefore shows the empty state even though 3 posts are `published = true`.
 
-## Step 2 — Seed a product-focused topic calendar
-Replace the generic "top-10-industries" seed in `PlatformBlogPanel.tsx` with an Aura-Intercept-specific topic set. Roughly 12 posts, scheduled 2× per week starting tomorrow 9am, covering:
+## Fix (single migration)
+Drop the old management policy and recreate it scoped to authenticated users, using the existing `SECURITY DEFINER` helper `public.has_role(...)` instead of a bare subquery on `user_roles`:
 
-**Platform & positioning**
-- What Aura Intercept actually is (AI operatives for service businesses)
-- The 10-operative / 24-agent model, plain-English
-- Cyber-Sentry design + why the "always-on control room" UI
+```sql
+DROP POLICY "Platform admins can manage blog posts" ON public.blog_posts;
 
-**Operatives / AI agents (one post each on the highest-value ones)**
-- Front Desk (AI receptionist + missed-call rescue)
-- On The Way (dispatch + technician workflow)
-- Billing (quotes, invoices, payments)
-- Lead Capture & Scoring (CRM + pipeline)
-- Content Engine (social + blog automation)
-- Conversational Intelligence (Message Aura / Talk to Aura)
-- Analytics operative (natural-language KPIs)
+CREATE POLICY "Platform admins can manage blog posts"
+  ON public.blog_posts
+  FOR ALL
+  TO authenticated
+  USING (public.has_role(auth.uid(), 'platform_admin'::public.app_role))
+  WITH CHECK (public.has_role(auth.uid(), 'platform_admin'::public.app_role));
+```
 
-**Services & workflows**
-- 60-Day Live Trial: how the 30d concierge + 30d live use works
-- Third-party pass-through model (SignalWire, ElevenLabs, Resend, Tavily, Stripe, Upload-Post) — no markups, no bundling
-- Industry template packs (28 verticals) and how packs shape prompts, forms, KPIs
-- Smart Website + embedded chat/booking widgets
+Effects:
+- Anon `SELECT` only evaluates policy #1 → returns published posts.
+- Authenticated non-admins: policy #1 still allows published-only reads; policy #2 no longer leaks the user_roles error.
+- Platform admins keep full manage access via `has_role` (SECURITY DEFINER bypasses the missing anon grant).
 
-Each seed entry provides `topic`, `keywords`, and a staggered `scheduledFor`. Kept in the same shape the existing panel already generates.
-
-## Step 3 — Generate the posts
-Use the existing `generate-platform-blog` edge function (already wired up in `PlatformBlogPanel`) — no function changes needed. Run it once with the new seed at target word count ~900. Posts land in `blog_posts` with `published_at` in the future; the existing `publish-scheduled-blog-posts` cron flips them live on schedule.
-
-Optionally flip the first 2–3 posts to `published = true` immediately so `/blog` isn't empty right after the purge.
-
-## Step 4 — Verify
-- Reload `/blog`: only the new Aura-Intercept posts appear.
-- Spot-check one post detail page renders.
-- Confirm scheduled posts have future `published_at` and `published = false`.
-
-## Technical notes
-- Files touched: `src/components/admin/PlatformBlogPanel.tsx` (new seed function).
-- No schema changes, no new edge functions, no changes to `Blog.tsx` or `BlogPost.tsx`.
-- Delete scope: `delete from blog_posts where company_id is null` (platform posts only). If any platform posts should be preserved, list their slugs before running.
+## Verify
+1. Anon `GET /rest/v1/blog_posts?published=eq.true` → 200 with 3 rows.
+2. Reload `/blog` → 3 Aura Intercept posts render.
+3. Admin blog panel still lists/edits/creates posts.
 
 ## Out of scope
-- Company/tenant blogs.
-- Blog UI/design changes.
-- SEO metadata changes beyond what the generator already writes.
-- New categories/tags schema.
-
-## Open question
-Do you want the first few posts published immediately, or should everything roll out on the 2×/week schedule starting tomorrow?
+Blog content, scheduling, or UI.
