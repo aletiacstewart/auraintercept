@@ -1204,6 +1204,10 @@ export type Database = {
           monthly_digest_time: string | null
           monthly_digest_timezone: string | null
           name: string
+          onboarding_fee_cents: number | null
+          onboarding_fee_due_at: string | null
+          onboarding_fee_status: string | null
+          onboarding_fee_stripe_invoice_id: string | null
           operating_model: string | null
           phone: string | null
           phone_number_setup_type: string | null
@@ -1353,6 +1357,10 @@ export type Database = {
           monthly_digest_time?: string | null
           monthly_digest_timezone?: string | null
           name: string
+          onboarding_fee_cents?: number | null
+          onboarding_fee_due_at?: string | null
+          onboarding_fee_status?: string | null
+          onboarding_fee_stripe_invoice_id?: string | null
           operating_model?: string | null
           phone?: string | null
           phone_number_setup_type?: string | null
@@ -1502,6 +1510,10 @@ export type Database = {
           monthly_digest_time?: string | null
           monthly_digest_timezone?: string | null
           name?: string
+          onboarding_fee_cents?: number | null
+          onboarding_fee_due_at?: string | null
+          onboarding_fee_status?: string | null
+          onboarding_fee_stripe_invoice_id?: string | null
           operating_model?: string | null
           phone?: string | null
           phone_number_setup_type?: string | null

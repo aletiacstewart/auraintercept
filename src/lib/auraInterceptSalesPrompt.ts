@@ -39,12 +39,13 @@ Pricing — 4 Tiers (Beta Pricing is ACTIVE — quote the sale price first, ment
 - ${elite.name} — ${formatSalesLine('command')}
     All 24 Smart AI Agents · all 7 Consoles + AI Operatives Hub · unlimited employees.
 - Annual: Core ${formatPrice(getAnnualPrice('starter'))}/yr · Boost ${formatPrice(getAnnualPrice('connect'))}/yr · Pro ${formatPrice(getAnnualPrice('performance'))}/yr · Elite ${formatPrice(getAnnualPrice('command'))}/yr (~20% off).
-- Onboarding fee = 25% OFF the original one-month price (rounded to nearest $10), due at start of the 60-Day Live Trial,
+- Onboarding fee = 25% OFF the original one-month price (rounded to nearest $10), invoiced on day 31 of the 60-Day Live Trial,
   non-refundable once concierge onboarding begins.
 
 60-Day Live Trial:
 - 30 days of concierge onboarding + 30 days of full live use.
-- Onboarding fee is due at the start of the trial.
+- Onboarding fee is invoiced on day 31 (after concierge onboarding is complete).
+- First monthly plan fee is charged on day 61 (after the full 60-Day Live Trial).
 
 3rd-party usage policy:
 - SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and social APIs are all

@@ -34,14 +34,15 @@ Pricing — 4 Tiers (Beta Pricing is ACTIVE — quote the sale price first, ment
     All 24 Smart AI Agents · all 7 Consoles + AI Operatives Hub · unlimited employees.
 - Annual: Core $4,771/yr · Boost $9,542/yr · Pro $19,085/yr · Elite $38,198/yr (~20% off).
 - Extra employees: $25/mo per 10 beyond the included amount.
-- Onboarding fee = 25% OFF the original one-month price (rounded to nearest $10), due at the start of the 60-Day Live Trial,
+- Onboarding fee = 25% OFF the original one-month price (rounded to nearest $10), invoiced on day 31 of the 60-Day Live Trial,
   non-refundable once concierge onboarding begins.
 
 60-Day Live Trial:
 - 30 days of concierge onboarding (we configure everything with you) +
   30 days of full live use of the platform.
-- Onboarding fee is due at the start of the trial.
-- The platform is fully live during the trial; cancel before day 60 and you only paid the onboarding fee.
+- Onboarding fee is invoiced on day 31 (after concierge onboarding is complete).
+- First monthly plan fee is charged on day 61 (after the full 60-Day Live Trial).
+- The platform is fully live during the trial; cancel before day 60 and you only pay the onboarding fee.
 
 3rd-party usage policy (BE TRANSPARENT — never say "bundled", "overage", or "absorbed"):
 - SignalWire (voice/SMS), ElevenLabs (voice), Resend (email), Tavily (research),

@@ -86,7 +86,7 @@ describe('content drift guard', () => {
 
   it('canonical Beta pricing values are present in launchPricing.ts', () => {
     const src = fs.readFileSync('src/lib/launchPricing.ts', 'utf-8');
-    for (const val of ['497', '994', '1988', '3979', '249', '1990']) {
+    for (const val of ['497', '994', '1988', '3979', '370', '750', '1490', '2980']) {
       expect(src, `Missing canonical pricing value ${val}`).toMatch(new RegExp(`\\b${val}\\b`));
     }
   });

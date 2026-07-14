@@ -514,7 +514,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart, answ
         <p className="text-xs text-muted-foreground text-center mt-8 max-w-lg mx-auto">
           This audit provides general recommendations based on your responses. 
           Actual results may vary based on your specific business operations and implementation.
-          All plans include a 60-Day Live Trial — the first 30 days are dedicated to onboarding, then 30 days of full live use. One-time onboarding fees (25% OFF original, due at start of trial): $370 (Core), $750 (Boost), $1,490 (Pro), $2,980 (Elite).
+          All plans include a 60-Day Live Trial — the first 30 days are dedicated to onboarding, then 30 days of full live use. One-time onboarding fees (25% OFF original, invoiced on day 31): $370 (Core), $750 (Boost), $1,490 (Pro), $2,980 (Elite). First monthly plan fee charged on day 61.
         </p>
       </div>
     </div>

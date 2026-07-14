@@ -127,7 +127,7 @@ export default function ForBusiness() {
               <Zap className="w-3 h-3" /> Dynamic Demo Page
             </span>
             <span className="text-xs text-muted-foreground">
-              Pick your industry and start your 60-Day Live Demo on Aura Elite — downgrade or cancel anytime before day 60.
+              Pick your industry and start your 60-Day Live Demo on Aura Elite. Onboarding fee is invoiced on day 31; your first monthly fee is charged on day 61. Downgrade or cancel anytime before day 60.
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -210,7 +210,7 @@ export default function ForBusiness() {
                     Start your 60-day Live Demo on Aura Elite
                   </h3>
                   <p className="text-sm text-muted-foreground max-w-md">
-                    No setup fee during beta. Cancel anytime.
+                    Onboarding fee invoiced on day 31. First monthly fee charged on day 61. Cancel anytime before day 60.
                   </p>
                   <Button size="lg" variant="gradient" onClick={startLiveDemo} className="mt-1">
                     <Sparkles className="w-5 h-5" />

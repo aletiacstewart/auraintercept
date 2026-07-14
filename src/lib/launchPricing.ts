@@ -77,21 +77,20 @@ export const LAUNCH_PRICING = {
 /**
  * GLOBAL onboarding-fee waiver.
  *
- * When true, no onboarding line item is added to checkout and all pricing UI
- * renders "No setup fee during beta" instead of the discounted onboarding
- * price. Flip back to `false` to restore the tier-specific onboarding charge.
+ * When true, no onboarding line item is added to checkout and pricing UI
+ * renders a waived label. Now false because onboarding is deferred to day 31
+ * of the 60-Day Live Trial and invoiced by the charge-onboarding-fee cron
+ * edge function. The first monthly plan fee is deferred to day 61 via a
+ * 60-day Stripe trial.
  *
  * Mirrored in supabase/functions/create-checkout/index.ts as
- * ONBOARDING_FEE_WAIVED_GLOBALLY — keep both in sync.
- *
- * TODO: flip ONBOARDING_FEE_WAIVED_GLOBALLY back to false when exiting the
- * growth phase.
+ * ONBOARDING_FEE_WAIVED_GLOBALLY — kept in sync.
  */
-export const ONBOARDING_FEE_WAIVED_GLOBALLY = true;
+export const ONBOARDING_FEE_WAIVED_GLOBALLY = false;
 
 export interface OnboardingDisplay {
   waived: boolean;
-  /** Short label for pricing cards, e.g. "No setup fee during beta". */
+  /** Short label for pricing cards. */
   label: string;
   /** Struck-through original price (always present so callers can keep the strike UI). */
   original: number;
@@ -112,7 +111,7 @@ export function getOnboardingDisplay(tier: TierKey): OnboardingDisplay {
   }
   return {
     waived: false,
-    label: `${formatPrice(t.onboardingSale)} (was ${formatPrice(t.onboardingOriginal)})`,
+    label: `${formatPrice(t.onboardingSale)} (was ${formatPrice(t.onboardingOriginal)}) — invoiced day 31`,
     original: t.onboardingOriginal,
     sale: t.onboardingSale,
   };

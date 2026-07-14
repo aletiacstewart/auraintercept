@@ -332,7 +332,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Message Aura (Text) + Talk to Aura (Voice)</FeatureItem>
         <FeatureItem>SMS/Email appointment reminders</FeatureItem>
         <FeatureItem>10 employee accounts included</FeatureItem>
-        <FeatureItem>$370 one-time onboarding fee (was $497, 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$370 one-time onboarding fee (was $497, 25% OFF — Beta; invoiced on day 31 of 60-Day Live Trial; first monthly fee on day 61)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI Service Platform</Text>
@@ -370,7 +370,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>25 employees included</FeatureItem>
-        <FeatureItem>$750 one-time onboarding fee (was $994, 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$750 one-time onboarding fee (was $994, 25% OFF — Beta; invoiced on day 31 of 60-Day Live Trial; first monthly fee on day 61)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI Service Platform</Text>
@@ -407,7 +407,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>50 employees included</FeatureItem>
-        <FeatureItem>$1,490 one-time onboarding fee (was $1,988, 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$1,490 one-time onboarding fee (was $1,988, 25% OFF — Beta; invoiced on day 31 of 60-Day Live Trial; first monthly fee on day 61)</FeatureItem>
       </View>
       <View style={styles.footer}>
         <Text>Aura Intercept - AI Service Platform</Text>
@@ -451,7 +451,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited employee accounts</FeatureItem>
         <FeatureItem>Enterprise access control</FeatureItem>
         <FeatureItem>All Industry Specialist Agents included</FeatureItem>
-        <FeatureItem>$2,980 one-time onboarding fee (was $3,979, 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding)</FeatureItem>
+        <FeatureItem>$2,980 one-time onboarding fee (was $3,979, 25% OFF — Beta; invoiced on day 31 of 60-Day Live Trial; first monthly fee on day 61)</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
       </View>
       <View style={styles.footer}>
@@ -578,10 +578,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Includes</Text>
         </View>
         {[
-          { tier: 'Aura Core', fee: '$370 (was $497)', includes: 'Guided setup · 25% OFF — Beta; due at start of 60-Day Live Trial; first 30 days = onboarding' },
-          { tier: 'Aura Boost', fee: '$750 (was $994)', includes: 'Onboarding, setup, training · 25% OFF — Beta; due at start of 60-Day Live Trial' },
-          { tier: 'Aura Pro', fee: '$1,490 (was $1,988)', includes: 'Onboarding, setup, training, industry tuning · 25% OFF — Beta; due at start of 60-Day Live Trial' },
-          { tier: 'Aura Elite', fee: '$2,980 (was $3,979)', includes: 'Enterprise onboarding, custom setup · 25% OFF — Beta; due at start of 60-Day Live Trial' },
+          { tier: 'Aura Core', fee: '$370 (was $497)', includes: 'Guided setup · 25% OFF — Beta; invoiced on day 31; first monthly fee on day 61' },
+          { tier: 'Aura Boost', fee: '$750 (was $994)', includes: 'Onboarding, setup, training · 25% OFF — Beta; invoiced on day 31; first monthly fee on day 61' },
+          { tier: 'Aura Pro', fee: '$1,490 (was $1,988)', includes: 'Onboarding, setup, training, industry tuning · 25% OFF — Beta; invoiced on day 31; first monthly fee on day 61' },
+          { tier: 'Aura Elite', fee: '$2,980 (was $3,979)', includes: 'Enterprise onboarding, custom setup · 25% OFF — Beta; invoiced on day 31; first monthly fee on day 61' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.tier}</Text>

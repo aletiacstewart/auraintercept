@@ -24,40 +24,45 @@ const CORE = {
   price: 49700,
   price_id: "price_1TmJ2pEGn9AqCo3ECdv8mh0A",
   onboarding_price_id: "price_1TqgFCEGn9AqCo3EFVk0SKZV", // $370 one-time
+  onboarding_fee_cents: 37000,
 };
 const BOOST = {
   name: "Aura Boost",
   price: 99400,
   price_id: "price_1TmJ2qEGn9AqCo3EpspZoDZK",
   onboarding_price_id: "price_1TqgFDEGn9AqCo3Emyd1SEf5", // $750 one-time
+  onboarding_fee_cents: 75000,
 };
 const PRO = {
   name: "Aura Pro",
   price: 198800,
   price_id: "price_1TmJ2rEGn9AqCo3EkxrT5Z09",
   onboarding_price_id: "price_1TqgFFEGn9AqCo3Ez36DpcJL", // $1,490 one-time
+  onboarding_fee_cents: 149000,
 };
 const ELITE = {
   name: "Aura Elite",
   price: 397900,
   price_id: "price_1TmJ2tEGn9AqCo3ES4Mf3YHm",
   onboarding_price_id: "price_1TqgFFEGn9AqCo3Ei7axEGKc", // $2,980 one-time
+  onboarding_fee_cents: 298000,
 };
 
 /**
- * GLOBAL onboarding-fee waiver (growth-phase switch).
+ * Onboarding fee schedule.
  *
- * When true, the one-time onboarding line item is NEVER added, regardless of
- * beta code. All existing beta-code logic (trial days, subscription metadata,
- * `waive_onboarding_fee`) remains intact — this is an ADDITIONAL global switch.
+ * The one-time onboarding fee is no longer collected at signup. It is recorded
+ * as pending in public.companies and invoiced on day 31 of the 60-Day Live
+ * Trial by the charge-onboarding-fee cron edge function. The first monthly
+ * plan fee is deferred to day 61 via a 60-day Stripe trial.
+ *
+ * Beta invite codes can still waive the onboarding fee entirely via the
+ * `waive_onboarding_fee` flag returned by validate_beta_code.
  *
  * Mirrored in src/lib/launchPricing.ts as ONBOARDING_FEE_WAIVED_GLOBALLY —
- * keep both in sync.
- *
- * TODO: flip ONBOARDING_FEE_WAIVED_GLOBALLY back to false when exiting the
- * growth phase.
+ * kept in sync; the global waiver is now false so deferred billing works.
  */
-const ONBOARDING_FEE_WAIVED_GLOBALLY = true;
+const ONBOARDING_FEE_WAIVED_GLOBALLY = false;
 
 const SUBSCRIPTION_TIERS: Record<string, typeof CORE> = {
   // Canonical 4 tiers
@@ -234,11 +239,10 @@ serve(async (req) => {
     const isFirstCheckout = existingSubs.data.length === 0;
     logStep("Onboarding fee eligibility", { isFirstCheckout });
 
-    // Beta invite code validation (server-authoritative)
-    let betaTrialDays = 0;
+    // Beta invite code validation (server-authoritative). The trial length is
+    // fixed at 60 days so the first monthly fee lands on day 61; beta codes
+    // can still waive the deferred onboarding fee.
     let betaWaiveOnboarding = false;
-    let betaOnboardingCapCents: number | null = null;
-    let betaCapExpiresAt: Date | null = null;
     if (betaCode) {
       const { data: betaRows, error: betaErr } = await supabaseClient.rpc("validate_beta_code", { p_code: betaCode });
       const row = Array.isArray(betaRows) ? betaRows[0] : betaRows;
@@ -249,35 +253,38 @@ serve(async (req) => {
           status: 400,
         });
       }
-      betaTrialDays = row.trial_days || 60;
       betaWaiveOnboarding = !!row.waive_onboarding_fee;
-      betaOnboardingCapCents = typeof row.onboarding_fee_cap_cents === "number" ? row.onboarding_fee_cap_cents : null;
-      betaCapExpiresAt = row.onboarding_cap_expires_at ? new Date(row.onboarding_cap_expires_at) : null;
-      logStep("Beta code accepted", { betaCode, betaTrialDays, betaWaiveOnboarding, betaOnboardingCapCents, betaCapExpiresAt });
+      logStep("Beta code accepted", { betaCode, betaWaiveOnboarding });
     }
 
     const lineItems: Array<Stripe.Checkout.SessionCreateParams.LineItem> = [
       { price: selectedTier.price_id, quantity: 1 },
     ];
-    // Onboarding line item — tier-specific (25% OFF original, rounded to nearest $10).
-    // Three ways to skip: not-a-first-checkout, global growth-phase waiver, or beta code.
-    let onboardingWaivedReason: "global" | "beta" | "not_first_checkout" | "none" = "none";
+
+    // Onboarding fee — tier-specific (25% OFF original, rounded to nearest $10).
+    // It is NOT added to the checkout line items because it is invoiced later
+    // (day 31 of the 60-Day Live Trial) by the charge-onboarding-fee cron.
+    // We still record the pending fee on the company row so the cron knows
+    // when and how much to charge.
+    const onboardingFeeCents = selectedTier.onboarding_fee_cents ?? 0;
+
+    let onboardingWaivedReason: "not_first_checkout" | "beta" | "none" = "none";
     if (!isFirstCheckout) {
       onboardingWaivedReason = "not_first_checkout";
-    } else if (ONBOARDING_FEE_WAIVED_GLOBALLY) {
-      onboardingWaivedReason = "global";
     } else if (betaWaiveOnboarding) {
       onboardingWaivedReason = "beta";
     }
-    if (onboardingWaivedReason === "none" && selectedTier.onboarding_price_id) {
-      lineItems.push({ price: selectedTier.onboarding_price_id, quantity: 1 });
-    }
+
+    const onboardingFeeStatus = onboardingWaivedReason !== "none" || onboardingFeeCents === 0
+      ? "waived"
+      : "pending";
+
     logStep("Onboarding fee decision", {
       isFirstCheckout,
-      globalWaiver: ONBOARDING_FEE_WAIVED_GLOBALLY,
       betaWaiver: betaWaiveOnboarding,
-      charged: onboardingWaivedReason === "none",
       waivedReason: onboardingWaivedReason,
+      onboardingFeeCents,
+      onboardingFeeStatus,
     });
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
@@ -286,22 +293,43 @@ serve(async (req) => {
       mode: "subscription",
       success_url: `${origin}/dashboard/subscription?success=true`,
       cancel_url: `${origin}/dashboard/subscription?canceled=true`,
+      subscription_data: {
+        // 60-day trial: first monthly plan fee is charged on day 61.
+        trial_period_days: 60,
+        metadata: {
+          company_id: companyId,
+          ...(betaCode ? { beta_code: betaCode, beta_trial: "true" } : {}),
+        },
+      },
+      // Always collect payment method during checkout so day-31 and day-61
+      // charges can run automatically without asking the customer again.
+      payment_method_collection: "if_required",
       metadata: {
         company_id: companyId,
         admin_user_id: user.id,
         tier: requestedTier,
         onboarding_waived: onboardingWaivedReason === "none" ? "no" : onboardingWaivedReason,
+        onboarding_fee_status: onboardingFeeStatus,
         ...(betaCode ? { beta_code: betaCode, beta_trial: "true" } : {}),
       },
     };
-    if (betaCode && betaTrialDays > 0) {
-      sessionParams.subscription_data = {
-        trial_period_days: betaTrialDays,
-        metadata: { beta_code: betaCode, beta_trial: "true", company_id: companyId },
-      };
-      sessionParams.payment_method_collection = "if_required";
-    }
     const session = await stripe.checkout.sessions.create(sessionParams);
+
+    // Persist the deferred onboarding fee schedule on the company row.
+    const onboardingFeeDueAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { error: onboardingUpdateErr } = await supabaseClient
+      .from("companies")
+      .update({
+        onboarding_fee_cents: onboardingFeeStatus === "waived" ? null : onboardingFeeCents,
+        onboarding_fee_due_at: onboardingFeeStatus === "waived" ? null : onboardingFeeDueAt,
+        onboarding_fee_status: onboardingFeeStatus,
+      })
+      .eq("id", companyId);
+    if (onboardingUpdateErr) {
+      logStep("Warning: failed to save onboarding fee schedule", { error: onboardingUpdateErr.message });
+    } else {
+      logStep("Saved onboarding fee schedule", { onboardingFeeCents, onboardingFeeDueAt, onboardingFeeStatus });
+    }
 
     // Mark code redeemed + flip company.beta_trial immediately so the UI
     // can reflect beta state even before Stripe webhook arrives.

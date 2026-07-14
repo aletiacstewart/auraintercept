@@ -39,20 +39,20 @@ tier check or "Active" computation.
 ## Tiers (4 + free) — Beta Pricing (ACTIVE)
 
 Originals are struck through; beta price is what the customer pays.
-Onboarding = 50% of beta monthly, due at start of the 60-Day Live Trial.
+Onboarding = 25% OFF original one-month price, invoiced on day 31 of the 60-Day Live Trial. First monthly plan fee is charged on day 61.
 
-- **Aura Core** (`starter`) **$497/mo** (was $697) · **$249** onboarding (was $497)
+- **Aura Core** (`starter`) **$497/mo** (was $697) · **$370** onboarding (was $497)
   — 5 operatives: AI Receptionist, Customer Journey, Outreach, Creative
   Content, Web Presence. Consoles: Customer Portal, Outreach & Sales
   Console, Creative & Web Presence, Social Media, Analytics & Reports,
   AI Operatives Hub. 10 employees.
-- **Aura Boost** (`connect`) **$994/mo** (was $1,394) · **$497** onboarding (was $994)
+- **Aura Boost** (`connect`) **$994/mo** (was $1,394) · **$750** onboarding (was $994)
   — Core + Dispatch + Field Navigation. Adds Field Operations Console.
   25 employees.
-- **Aura Pro** (`performance`) **$1,988/mo** (was $2,788) · **$994** onboarding (was $1,988)
+- **Aura Pro** (`performance`) **$1,988/mo** (was $2,788) · **$1,490** onboarding (was $1,988)
   — Boost + Business Finance + Analytics Intelligence + Admin. Adds
   Business Management. 50 employees.
-- **Aura Elite** (`command`) **$3,979/mo** (was $5,576) · **$1,990** onboarding (was $3,979)
+- **Aura Elite** (`command`) **$3,979/mo** (was $5,576) · **$2,980** onboarding (was $3,979)
   — All 10 operatives + industry specialists + all 8 consoles including
   AI Operatives Hub. Unlimited employees.
 
@@ -95,9 +95,10 @@ Reports · Website. Customer-facing rollups for chat & dashboards.
 
 ## Trial & Pricing Copy
 
-- **60-Day Live Trial**, no credit card. **First 30 days = concierge
-  onboarding window, remaining 30 days = full live use.** Trial honors the
-  selected tier (no Elite preview). Reminders at 30/7/1 days remaining.
+- **60-Day Live Trial**. **First 30 days = concierge onboarding window,
+  remaining 30 days = full live use.** Onboarding fee invoiced on day 31;
+  first monthly plan fee charged on day 61. Trial honors the selected tier
+  (no Elite preview). Reminders at 7/3/1 days remaining.
 - **All** 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily,
   Stripe, A2P 10DLC, social) require the CUSTOMER'S OWN ACCOUNT + card on
   file. Each provider invoices the customer DIRECTLY and SEPARATELY from
