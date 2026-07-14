@@ -527,10 +527,10 @@ const TIER_FIT = [
 const OBJECTIONS_EXTRA = [
   { q: '"What if AI says something wrong to my customer?"', a: 'Every operative supports human override and "validate before send" mode. KB-grounded answers + DOMPurify safety + explicit reject/approve UI for high-stakes actions.' },
   { q: '"We already use SignalWire / Stripe / Resend."', a: 'Perfect — we plug into your existing accounts. Aura never resells provider usage; you keep the same vendor relationships and bills.' },
-  { q: '"Onboarding fee feels steep."', a: 'It\'s a one-time concierge cost equal to one month — you get a 30-day live setup of voice, SMS, KB, agents, calendars, and integrations. Without it, most teams take 60–90 days to self-serve.' },
+  { q: '"Onboarding fee feels steep."', a: 'During Beta the onboarding fee is $0 — waived automatically for every new signup, no code required. Post-Beta it\'s a one-time concierge cost equal to one month, non-refundable — you get a 30-day live setup of voice, SMS, KB, agents, calendars, and integrations.' },
   { q: '"Will my staff resist AI?"', a: 'Aura is the receptionist that frees your staff for high-value work. Plain-English labels (Front Desk, Dispatch, Billing) make it feel like a teammate, not a robot.' },
   { q: '"What about multi-location?"', a: 'Aura runs one workspace per company. Customers with multiple brands or physical locations operate a separate Aura workspace per brand — there is no multi-location hierarchy.' },
-  { q: '"Can I cancel during the trial?"', a: 'Yes. Monthly billing only begins after day 60. The one-time onboarding fee is non-refundable since concierge work is performed in days 1–30.' },
+  { q: '"Can I cancel during the trial?"', a: 'Yes. Monthly billing only begins after day 60. During Beta the onboarding fee is $0 (waived); the regular fee is non-refundable.' },
   { q: '"How do you compare to ServiceTitan / Housecall Pro?"', a: 'Those are operations platforms; Aura is an AI layer that *runs* the operations — answering, booking, dispatching, marketing autonomously. Many customers run Aura alongside an existing FSM.' },
 ];
 
@@ -557,8 +557,7 @@ const TALKING_POINTS = [
 const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
 const onboardingLine = (key: 'starter' | 'connect' | 'performance' | 'command') => {
-  const t = getTierPricing(key);
-  return `${formatOnboardingCost(key)} one-time (25% OFF — was ${formatPrice(t.onboardingOriginal)})`;
+  return `${formatOnboardingCost(key)} one-time (waived during Beta)`;
 };
 const TIERS: Array<{ key: keyof typeof TIER_AGENT_CONFIG; onboarding: string; employees: string }> = [
   { key: 'starter', onboarding: onboardingLine('starter'), employees: '10 employees' },
@@ -1020,9 +1019,9 @@ const MarketingSalesMasterPDF: React.FC = () => (
       </Text></View>
       <Text style={s.h2}>Trial terms</Text>
       <Bullet>60-Day Live Trial — 30-day concierge onboarding + 30-day full live operation.</Bullet>
-      <Bullet>Onboarding fee (equal to one month of the chosen tier) is due at trial start and is non-refundable.</Bullet>
-      <Bullet>Monthly subscription billing begins on day 91.</Bullet>
-      <Bullet>Cancel any time during the trial; only the onboarding fee applies.</Bullet>
+      <Bullet>Onboarding fee is $0 during Beta (waived automatically). Regular fee equals one month of plan, invoiced on day 31, non-refundable.</Bullet>
+      <Bullet>First monthly plan fee is charged on day 61.</Bullet>
+      <Bullet>Cancel any time during the trial before day 60 to avoid the first monthly charge.</Bullet>
       <Text style={s.h2}>Data &amp; security</Text>
       <Bullet>RLS-protected database; SECURITY DEFINER RPCs for any public read.</Bullet>
       <Bullet>Customer secrets stored in encrypted vault; never logged.</Bullet>
