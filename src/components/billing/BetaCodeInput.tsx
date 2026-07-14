@@ -56,9 +56,13 @@ export function BetaCodeInput({ onApplied, applied, className }: Props) {
   };
 
   if (applied) {
-    const onboardingLine = applied.waive_onboarding_fee
-      ? 'Beta Onboarding: FREE'
-      : 'Beta onboarding = 50% of monthly (per tier)';
+    // Onboarding fee is $0 during Beta for every signup — regardless of code.
+    // Beta codes now differentiate on TRIAL LENGTH instead. Show that the
+    // applied code extends the trial beyond the default 60 days when it does.
+    const trialLine =
+      applied.trial_days && applied.trial_days > 60
+        ? `${applied.trial_days}-day Live Trial (extended from 60)`
+        : `${applied.trial_days || 60}-day Live Trial`;
     return (
       <div className={className}>
         <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/40 bg-primary/10 px-3 py-2">
@@ -69,7 +73,7 @@ export function BetaCodeInput({ onApplied, applied, className }: Props) {
                 {applied.code} applied
               </div>
               <div className="text-[11px] text-muted-foreground">
-                {applied.trial_days}-day Live Trial · {onboardingLine}
+                {trialLine} · Onboarding fee: $0 (Beta)
               </div>
             </div>
           </div>
