@@ -85,6 +85,9 @@ export default function ForBusiness() {
     const ind = industry && industry !== 'default' ? industry : '';
     const qs = new URLSearchParams({ mode: 'company', tab: 'signup', tier: 'command' });
     if (ind) qs.set('industry', ind);
+    // Carry a ?ref= referral code through to signup if present in the current URL.
+    const ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref) qs.set('ref', ref);
     navigate(`/auth?${qs.toString()}`);
   };
 

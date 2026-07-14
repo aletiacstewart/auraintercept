@@ -101,6 +101,7 @@ export default function SignUp() {
   const source = searchParams.get('source');
   const tierParam = searchParams.get('tier');
   const industryParam = searchParams.get('industry');
+  const refParam = searchParams.get('ref');
 
   // Live-Demo deep-link from /for-business: presence of ?industry= locks the
   // signup onto the 60-Day Live Demo on Aura Elite. Tier picker becomes read-only.
@@ -534,6 +535,26 @@ export default function SignUp() {
           pagePath: '/signup',
         });
       } catch { /* ignore */ }
+
+      // Referral attribution: if a ?ref= code came through, mark the referring
+      // record as signed_up and stamp this company as the referred party.
+      if (refParam) {
+        try {
+          const { data: refRow, error: refFindErr } = await supabase
+            .from('referrals')
+            .select('id, status, referred_company_id')
+            .eq('referral_code', refParam)
+            .maybeSingle();
+          if (!refFindErr && refRow && !refRow.referred_company_id) {
+            await supabase
+              .from('referrals')
+              .update({ referred_company_id: companyData.id, status: 'signed_up' })
+              .eq('id', refRow.id);
+          }
+        } catch (refErr) {
+          console.warn('Referral attribution failed (non-fatal):', refErr);
+        }
+      }
 
       toast({
         title: 'Welcome! 🎉',

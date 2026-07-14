@@ -17,6 +17,8 @@ import { toast } from 'sonner';
 import { Check, X, Crown, ExternalLink, Loader2, Clock, Sparkles, Users, Mail, MessageSquare, Mic, Info, Building } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
+import { CancelSubscriptionDialog } from '@/components/subscription/CancelSubscriptionDialog';
+import { ReferralCard } from '@/components/subscription/ReferralCard';
 import {
   Tooltip,
   TooltipContent,
@@ -272,7 +274,8 @@ const sections: FeatureSection[] = [
 ];
 
 export default function Subscription() {
-  const { user, userRole, inTrial, trialEndsAt } = useAuth();
+  const { user, userRole, inTrial, trialEndsAt, companyId } = useAuth();
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -407,6 +410,12 @@ export default function Subscription() {
     }
   };
 
+  // Cancel-flow: intercept the in-app cancel entry point, capture a one-question
+  // reason, then hand off to the same Stripe portal for the actual cancellation.
+  const handleCancelClicked = () => {
+    setCancelDialogOpen(true);
+  };
+
   const isSubscribed = subscription?.subscribed && !subscription?.in_trial;
   const isInTrial = subscription?.in_trial || inTrial;
   const currentTier = subscription?.tier || 'free';
@@ -509,20 +518,41 @@ export default function Subscription() {
           showAuraBar
           action={
             isSubscribed && canManageSubscription ? (
-              <Button 
-                variant="outline" 
-                onClick={handleManageSubscription}
-                disabled={portalLoading}
-              >
-                {portalLoading ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                )}
-                Manage Billing
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleManageSubscription}
+                  disabled={portalLoading}
+                >
+                  {portalLoading ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                  )}
+                  Manage Billing
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={handleCancelClicked}
+                  disabled={portalLoading}
+                  className="text-muted-foreground hover:text-destructive"
+                >
+                  Cancel
+                </Button>
+              </div>
             ) : undefined
           }
+        />
+
+        {isSubscribed && canManageSubscription && companyId && (
+          <ReferralCard companyId={companyId} />
+        )}
+
+        <CancelSubscriptionDialog
+          open={cancelDialogOpen}
+          onOpenChange={setCancelDialogOpen}
+          companyId={companyId}
+          onProceed={handleManageSubscription}
         />
 
         {/* Trial Status Banner */}
