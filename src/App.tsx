@@ -58,6 +58,7 @@ const AIAgent = lazy(() => import("./pages/AIAgent"));
 const CustomerPortalConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.CustomerPortalConsole })));
 const FieldOpsConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.FieldOpsConsole })));
 const BusinessManagementConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.BusinessManagementConsole })));
+const PipelineConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.PipelineConsole })));
 const MarketingSalesConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.MarketingSalesConsole })));
 const SocialMediaConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.SocialMediaConsole })));
 const AnalyticsConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.AnalyticsConsole })));
@@ -238,6 +239,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/ai-consoles/customer-portal" element={<ProtectedRoute><CustomerPortalConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/field-ops" element={<ProtectedRoute><FieldOpsConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/business-mgt-ops" element={<ProtectedRoute><BusinessManagementConsole /></ProtectedRoute>} />
+                <Route path="/dashboard/pipeline" element={<ProtectedRoute><PipelineConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/marketing-sales" element={<ProtectedRoute><MarketingSalesConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/social-media" element={<ProtectedRoute><SocialMediaConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/analytics" element={<ProtectedRoute><AnalyticsConsole /></ProtectedRoute>} />

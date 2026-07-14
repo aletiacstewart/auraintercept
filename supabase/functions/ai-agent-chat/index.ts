@@ -3296,6 +3296,68 @@ AGENT_TOOLS.customer_journey = [
   ...AGENT_TOOLS.review,
 ];
 
+// Pipeline tools — shared by outreach, customer_journey, and business_finance.
+// These read/write customer_pipeline so operatives can query a customer's
+// history and advance deal stage without each duplicating that logic.
+const PIPELINE_TOOLS = [
+  {
+    type: 'function',
+    function: {
+      name: 'get_customer_history',
+      description:
+        'Look up a compact customer summary: pipeline stage, deal value, last activity, and recent calls/quotes/jobs/payments/reviews. Pass one of customer_profile_id, phone, or email.',
+      parameters: {
+        type: 'object',
+        properties: {
+          customer_profile_id: { type: 'string' },
+          phone: { type: 'string' },
+          email: { type: 'string' },
+        },
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'update_pipeline_stage',
+      description: 'Advance or change a customer’s pipeline stage.',
+      parameters: {
+        type: 'object',
+        properties: {
+          customer_profile_id: { type: 'string' },
+          new_stage: {
+            type: 'string',
+            enum: ['new', 'contacted', 'quoted', 'won', 'lost', 'repeat_customer'],
+          },
+          note: { type: 'string' },
+        },
+        required: ['customer_profile_id', 'new_stage'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'suggest_next_action',
+      description:
+        'Return the currently stored next-action for a customer, or compute one on the fly (e.g. win-back after 90+ days of no contact).',
+      parameters: {
+        type: 'object',
+        properties: {
+          customer_profile_id: { type: 'string' },
+        },
+        required: ['customer_profile_id'],
+      },
+    },
+  },
+];
+
+for (const key of ['outreach', 'customer_journey', 'business_finance']) {
+  if (Array.isArray(AGENT_TOOLS[key])) {
+    AGENT_TOOLS[key].push(...PIPELINE_TOOLS);
+  }
+}
+
 // Helper function to get brand tone modifier for AI communication style
 function getBrandToneModifier(brandTone: string | null): string {
   switch (brandTone) {
@@ -8345,6 +8407,122 @@ async function executeAgentTool(
         scheduled_count: scheduledCount || 0,
         by_platform: platformStats,
         message: `Social media stats (${dateRange}): ${publishedCount || 0} published, ${pendingCount || 0} pending, ${scheduledCount || 0} scheduled.`,
+      };
+    }
+
+    // ---------------- Pipeline tools ----------------
+    case 'get_customer_history': {
+      let profileId: string | null = args.customer_profile_id || null;
+      const phoneDigits = (args.phone || '').replace(/\D/g, '');
+      const email = (args.email || '').trim().toLowerCase();
+
+      // Resolve profile if only phone/email were provided
+      if (!profileId && (phoneDigits || email)) {
+        let q = supabase.from('customer_profiles').select('id').eq('company_id', companyId).limit(1);
+        if (email) q = q.eq('email', email);
+        else if (phoneDigits) q = q.eq('phone', phoneDigits);
+        const { data } = await q.maybeSingle();
+        if (data?.id) profileId = data.id;
+      }
+
+      let pipeline: any = null;
+      if (profileId) {
+        const { data } = await supabase
+          .from('customer_pipeline')
+          .select('stage, deal_value_cents, last_activity_at, next_action, next_action_due_at, stage_changed_at')
+          .eq('company_id', companyId)
+          .eq('customer_profile_id', profileId)
+          .maybeSingle();
+        pipeline = data || null;
+      }
+
+      // Rolled-up recent activity
+      const [{ data: calls }, { data: quotes }, { data: invoices }, { data: reviews }] = await Promise.all([
+        phoneDigits
+          ? supabase.from('call_logs').select('started_at, direction, summary').eq('company_id', companyId)
+              .or(`from_number.eq.${args.phone},to_number.eq.${args.phone}`).order('started_at', { ascending: false }).limit(3)
+          : Promise.resolve({ data: [] }),
+        supabase.from('quotes').select('created_at, total_amount, status').eq('company_id', companyId).order('created_at', { ascending: false }).limit(3),
+        supabase.from('invoices').select('created_at, total_amount, status').eq('company_id', companyId).order('created_at', { ascending: false }).limit(3),
+        supabase.from('customer_feedback').select('created_at, rating, comment').eq('company_id', companyId).order('created_at', { ascending: false }).limit(3),
+      ]);
+
+      return {
+        success: true,
+        customer_profile_id: profileId,
+        pipeline,
+        recent: {
+          calls: calls || [],
+          quotes: quotes || [],
+          invoices: invoices || [],
+          reviews: reviews || [],
+        },
+      };
+    }
+
+    case 'update_pipeline_stage': {
+      const allowed = ['new', 'contacted', 'quoted', 'won', 'lost', 'repeat_customer'];
+      if (!allowed.includes(args.new_stage)) {
+        return { success: false, error: `Invalid stage: ${args.new_stage}` };
+      }
+      if (!args.customer_profile_id) {
+        return { success: false, error: 'customer_profile_id is required' };
+      }
+      const nowIso = new Date().toISOString();
+      const { data: existing } = await supabase
+        .from('customer_pipeline')
+        .select('id')
+        .eq('company_id', companyId)
+        .eq('customer_profile_id', args.customer_profile_id)
+        .maybeSingle();
+      const patch: Record<string, any> = { stage: args.new_stage, last_activity_at: nowIso };
+      if (args.note) patch.next_action = args.note;
+      if (existing?.id) {
+        await supabase.from('customer_pipeline').update(patch).eq('id', existing.id);
+        return { success: true, updated: true, pipeline_id: existing.id };
+      }
+      const { data: inserted } = await supabase.from('customer_pipeline').insert({
+        company_id: companyId,
+        customer_profile_id: args.customer_profile_id,
+        ...patch,
+      }).select('id').maybeSingle();
+      return { success: true, created: true, pipeline_id: inserted?.id };
+    }
+
+    case 'suggest_next_action': {
+      if (!args.customer_profile_id) {
+        return { success: false, error: 'customer_profile_id is required' };
+      }
+      const { data: row } = await supabase
+        .from('customer_pipeline')
+        .select('next_action, next_action_due_at, last_activity_at, stage')
+        .eq('company_id', companyId)
+        .eq('customer_profile_id', args.customer_profile_id)
+        .maybeSingle();
+      if (row?.next_action) {
+        return {
+          success: true,
+          source: 'stored',
+          next_action: row.next_action,
+          next_action_due_at: row.next_action_due_at,
+        };
+      }
+      // Compute using same 90-day cutoff as winback-scan
+      const cutoffMs = 90 * 24 * 60 * 60 * 1000;
+      const last = row?.last_activity_at ? new Date(row.last_activity_at).getTime() : 0;
+      if (last && Date.now() - last > cutoffMs) {
+        return {
+          success: true,
+          source: 'computed',
+          next_action: 'Send win-back offer — no contact in 90+ days',
+          next_action_due_at: new Date().toISOString(),
+        };
+      }
+      return {
+        success: true,
+        source: 'computed',
+        next_action: null,
+        message: 'No overdue action; customer is within active window.',
       };
     }
 

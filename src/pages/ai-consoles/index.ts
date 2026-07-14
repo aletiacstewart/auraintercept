@@ -12,3 +12,4 @@ export { default as RevenueAnalysisPage } from './RevenueAnalysisPage';
 export { default as DemandForecastPage } from './DemandForecastPage';
 export { default as CustomerInsightsPage } from './CustomerInsightsPage';
 export { default as KpiDashboardPage } from './KpiDashboardPage';
+export { default as PipelineConsole } from './PipelineConsole';

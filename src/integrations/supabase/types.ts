@@ -2477,6 +2477,80 @@ export type Database = {
           },
         ]
       }
+      customer_pipeline: {
+        Row: {
+          company_id: string
+          created_at: string
+          customer_profile_id: string | null
+          deal_value_cents: number | null
+          id: string
+          last_activity_at: string | null
+          lead_id: string | null
+          next_action: string | null
+          next_action_due_at: string | null
+          stage: string
+          stage_changed_at: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          customer_profile_id?: string | null
+          deal_value_cents?: number | null
+          id?: string
+          last_activity_at?: string | null
+          lead_id?: string | null
+          next_action?: string | null
+          next_action_due_at?: string | null
+          stage?: string
+          stage_changed_at?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          customer_profile_id?: string | null
+          deal_value_cents?: number | null
+          id?: string
+          last_activity_at?: string | null
+          lead_id?: string | null
+          next_action?: string | null
+          next_action_due_at?: string | null
+          stage?: string
+          stage_changed_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_pipeline_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_pipeline_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_pipeline_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "customer_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_pipeline_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_profiles: {
         Row: {
           address: string | null

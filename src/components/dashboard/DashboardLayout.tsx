@@ -60,6 +60,7 @@ import {
   Search,
   Database,
 } from 'lucide-react';
+import { Kanban } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/aura-intercept-logo.png';
 import { differenceInDays, parseISO } from 'date-fns';
@@ -136,6 +137,7 @@ const navGroups: NavGroup[] = [
     requiredTier: 'performance',
     items: [
       { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
+      { label: 'Pipeline', icon: Kanban, href: '/dashboard/pipeline', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
       { label: 'Analytics & Reports', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
       { label: 'Specialist Operatives', icon: Sparkles, href: '/dashboard/ai-consoles/specialists', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config', requiredTier: 'performance' },
     ],
