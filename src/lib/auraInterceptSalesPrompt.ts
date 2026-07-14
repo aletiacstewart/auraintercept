@@ -44,7 +44,7 @@ Pricing — 4 Tiers (Beta Pricing is ACTIVE — quote the sale price first, ment
 
 60-Day Live Trial:
 - 30 days of concierge onboarding + 30 days of full live use.
-- Onboarding fee is invoiced on day 31 (after concierge onboarding is complete).
+- Onboarding fee is invoiced on day 31 of the trial.
 - First monthly plan fee is charged on day 61 (after the full 60-Day Live Trial).
 
 3rd-party usage policy:
