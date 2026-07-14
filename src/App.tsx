@@ -58,6 +58,7 @@ const AIAgent = lazy(() => import("./pages/AIAgent"));
 const CustomerPortalConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.CustomerPortalConsole })));
 const FieldOpsConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.FieldOpsConsole })));
 const BusinessManagementConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.BusinessManagementConsole })));
+const PipelineConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.PipelineConsole })));
 const MarketingSalesConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.MarketingSalesConsole })));
 const SocialMediaConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.SocialMediaConsole })));
 const AnalyticsConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.AnalyticsConsole })));
