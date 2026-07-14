@@ -239,6 +239,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/ai-consoles/customer-portal" element={<ProtectedRoute><CustomerPortalConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/field-ops" element={<ProtectedRoute><FieldOpsConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/business-mgt-ops" element={<ProtectedRoute><BusinessManagementConsole /></ProtectedRoute>} />
+                <Route path="/dashboard/pipeline" element={<ProtectedRoute><PipelineConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/marketing-sales" element={<ProtectedRoute><MarketingSalesConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/social-media" element={<ProtectedRoute><SocialMediaConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/analytics" element={<ProtectedRoute><AnalyticsConsole /></ProtectedRoute>} />
