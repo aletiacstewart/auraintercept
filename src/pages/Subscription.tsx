@@ -840,7 +840,7 @@ export default function Subscription() {
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
                 <span className="text-muted-foreground">
-                  Onboarding Fee — <span className="text-emerald-500 font-semibold">Waived during beta.</span> No setup fee due today, only your monthly plan. <span className="opacity-75">(Standard: 1 month of your plan, 25% OFF during Beta — Core <span className="line-through">$497</span> $370 · Boost <span className="line-through">$994</span> $750 · Pro <span className="line-through">$1,988</span> $1,490 · Elite <span className="line-through">$3,979</span> $2,980.)</span>
+                  Onboarding Fee — <span className="text-emerald-500 font-semibold">$0 during Beta (waived automatically).</span> No setup fee due today, only your monthly plan. <span className="opacity-75">(Regular: 1 month of your plan — Core $497 · Boost $994 · Pro $1,988 · Elite $3,979 — invoiced on day 31, non-refundable.)</span>
                 </span>
               </div>
             </div>

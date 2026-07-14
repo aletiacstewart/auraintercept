@@ -645,7 +645,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$497</span> <span className="font-semibold">$370 — invoiced day 31</span></p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="font-semibold text-emerald-400">$0 during Beta (waived)</span></p>
               </CardContent>
             </Card>
 
@@ -677,7 +677,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$994</span> <span className="font-semibold">$750 — invoiced day 31</span></p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="font-semibold text-emerald-400">$0 during Beta (waived)</span></p>
               </CardContent>
             </Card>
 
@@ -709,7 +709,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$1,988</span> <span className="font-semibold">$1,490 — invoiced day 31</span></p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="font-semibold text-emerald-400">$0 during Beta (waived)</span></p>
               </CardContent>
             </Card>
 
@@ -739,7 +739,7 @@ export default function Index() {
                 <button onClick={() => setShowPlanComparison(!showPlanComparison)} className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors">
                   See More Details {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
-                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="line-through opacity-70">$3,979</span> <span className="font-semibold">$2,980 — invoiced day 31</span></p>
+                 <p className="text-[9px] text-emerald-400/80 mt-2 text-center">Platform only — providers billed separately · Onboarding: <span className="font-semibold text-emerald-400">$0 during Beta (waived)</span></p>
               </CardContent>
             </Card>
           </div>
@@ -789,7 +789,7 @@ export default function Index() {
                 </div>
                 <div className="rounded-md bg-black/20 p-3">
                   <p className="text-[11px] font-semibold text-primary uppercase tracking-wide mb-1">Onboarding Fee</p>
-                  <p className="text-[11px] text-white/85 leading-relaxed"><span className="font-semibold text-emerald-400">Waived during beta</span> — no setup fee due today, only your monthly plan. (Standard: 25% OFF the original one-month price — Core $370 · Boost $750 · Pro $1,490 · Elite $2,980.)</p>
+                  <p className="text-[11px] text-white/85 leading-relaxed"><span className="font-semibold text-emerald-400">$0 during Beta</span> — waived automatically for every new signup, no code required. (Regular: 1 month of your plan — Core $497 · Boost $994 · Pro $1,988 · Elite $3,979 — invoiced on day 31, non-refundable.)</p>
                 </div>
               </div>
 

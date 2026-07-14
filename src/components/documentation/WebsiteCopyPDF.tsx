@@ -490,11 +490,11 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Text style={styles.sectionSubtitle}>Complete copy for all subscription tiers</Text>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Core - $497/mo</Text>
+        <Text style={styles.copyLabel}>Aura Core - $497/mo (was $697)</Text>
         <Text style={styles.copyHeadline}>Smart Start Suite</Text>
         <Text style={styles.copyBody}>
           Your AI business assistant. Perfect for solo operators, restaurants, and single-location businesses.{'\n\n'}
-          - 4 AI Operatives{'\n'}
+          - 8 Smart AI Agents{'\n'}
           - 3 Control Centers{'\n'}
           - AI Receptionist (24/7){'\n'}
           - Booking, Follow-Up & Review Agents{'\n'}
@@ -504,11 +504,11 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Boost - $994/mo</Text>
+        <Text style={styles.copyLabel}>Aura Boost - $994/mo (was $1,394)</Text>
         <Text style={styles.copyHeadline}>Field Operations Power</Text>
         <Text style={styles.copyBody}>
           Built for service teams that dispatch. HVAC, plumbing, and field service businesses scale with intelligent routing.{'\n\n'}
-          - 6 AI Operatives{'\n'}
+          - 12 Smart AI Agents{'\n'}
           - 5 Control Centers{'\n'}
           - Dispatch, Route, ETA & Check-In Agents{'\n'}
           - Field Operations Console{'\n'}
@@ -524,11 +524,11 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Header title="Pricing Page Copy (Continued)" pageNum={6} />
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Pro - $1,988/mo</Text>
+        <Text style={styles.copyLabel}>Aura Pro - $1,988/mo (was $2,788)</Text>
         <Text style={styles.copyHeadline}>Growth & Outreach Engine</Text>
         <Text style={styles.copyBody}>
           Scale your brand with campaigns and social media for growing companies.{'\n\n'}
-          - 8 AI Operatives{'\n'}
+          - 16 Smart AI Agents{'\n'}
           - 5 Control Centers{'\n'}
           - Campaign & Outreach Agents{'\n'}
           - Social Scheduler Agent & Analytics{'\n'}
@@ -538,11 +538,11 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Elite - $3,979/mo</Text>
+        <Text style={styles.copyLabel}>Aura Elite - $3,979/mo (was $5,576)</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
-          Full command of your business. The complete 24 AI Operatives suite (organized into 10 operative roles) handles every operational task from marketing to advanced analytics & forecasting.{'\n\n'}
-          - All 24 AI Operatives{'\n'}
+          Full command of your business. All 24 Smart AI Agents (organized into 10 Operatives) handle every operational task from marketing to advanced analytics & forecasting.{'\n\n'}
+          - All 24 Smart AI Agents (10 Operatives){'\n'}
           - All 7 Control Centers + AI Operatives Hub{'\n'}
           - Admin, Quoting, Invoice & Inventory{'\n'}
           - Revenue, Forecast & Advanced Analytics{'\n'}
@@ -583,7 +583,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.faqCard}>
         <Text style={styles.faqQuestion}>How does pricing work? Are there any hidden fees?</Text>
-        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. There's a one-time onboarding fee equal to one month of your plan, with 25% OFF during Beta — invoiced on day 31 of your 60-Day Live Trial: Core $370 (was $497), Boost $750 (was $994), Pro $1,490 (was $1,988), Elite $2,980 (was $3,979). Your first monthly plan fee is charged on day 61. The first 30 days of the trial are your onboarding window — setup, training, and customization — then 30 days of full live use. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card on a per-use basis (per minute, per text, per email, per search, per transaction) — including during the trial. Aura never resells or marks up vendor charges.</Text>
+        <Text style={styles.faqAnswer}>Simple, transparent pricing. Your monthly subscription includes all features for your tier. Onboarding fee: $0 during Beta (waived automatically for every new signup, no code required). Regular one-time onboarding fee equals one month of your plan — Core $497, Boost $994, Pro $1,988, Elite $3,979 — invoiced on day 31 of your 60-Day Live Trial, non-refundable. Your first monthly plan fee is charged on day 61. The first 30 days of the trial are your onboarding window — setup, training, and customization — then 30 days of full live use. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card on a per-use basis (per minute, per text, per email, per search, per transaction) — including during the trial. Aura never resells or marks up vendor charges.</Text>
       </View>
 
       <View style={styles.faqCard}>
