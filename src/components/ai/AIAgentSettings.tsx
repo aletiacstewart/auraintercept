@@ -800,6 +800,60 @@ export const AIAgentSettings = () => {
             </p>
           </div>
 
+          {/* Spanish Voice Greeting (only when Spanish enabled) */}
+          {(spanishEnabled || defaultLanguage !== 'en') && (
+            <div className="space-y-2 rounded-md border border-border bg-muted/30 p-3">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="voice-greeting-es" className="flex items-center gap-2">
+                  <Volume2 className="h-4 w-4 text-white" />
+                  Spanish Voice Greeting
+                </Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={async () => {
+                    if (!companyId) return;
+                    const { data: c } = await supabase
+                      .from('companies')
+                      .select('industry_vertical, name')
+                      .eq('id', companyId)
+                      .maybeSingle();
+                    setVoiceGreetingEs(getIndustryVoiceGreetingEs(c?.industry_vertical, c?.name));
+                  }}
+                >
+                  Reset to industry default (ES)
+                </Button>
+              </div>
+              <Textarea
+                id="voice-greeting-es"
+                value={voiceGreetingEs}
+                onChange={(e) => setVoiceGreetingEs(e.target.value)}
+                placeholder="Gracias por llamar. Soy Aura, ¿en qué puedo ayudarle hoy?"
+                rows={3}
+                className="resize-none"
+              />
+              <p className="text-xs text-white">
+                Used when the caller speaks Spanish or when your default language is Spanish. Leave blank to fall back to a generic Spanish greeting.
+              </p>
+              <div className="pt-2 space-y-1">
+                <Label htmlFor="voice-id-es" className="text-xs">Spanish voice (optional override)</Label>
+                <Select value={voiceIdEs || 'default'} onValueChange={(v) => setVoiceIdEs(v === 'default' ? '' : v)}>
+                  <SelectTrigger id="voice-id-es"><SelectValue placeholder="Use default voice" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">Use default voice</SelectItem>
+                    {ELEVENLABS_VOICES.map(v => (
+                      <SelectItem key={v.id} value={v.id}>{v.name} — {v.description}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Pick a distinct voice for Spanish calls if your default voice doesn't sound natural in Spanish. Requires Spanish enabled on the ElevenLabs agent.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Agent System Prompt */}
           <div className="space-y-2">
             <Label htmlFor="agent-prompt" className="flex items-center gap-2">
