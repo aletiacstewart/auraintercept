@@ -1,10 +1,11 @@
+import i18n from './i18n';
+import { mergeEsOverride } from './industryMarketingContentEs';
+
 export interface IndustrySampleAppointment {
   service: string;
   whenOffsetHours: number; // hours from now (positive = future, negative = past)
   notes: string;
 }
-
-// eslint-disable-next-line import/first
 
 export interface IndustrySampleLead {
   source: 'voice' | 'chat' | 'widget' | 'referral';
