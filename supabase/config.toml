@@ -39,7 +39,7 @@ verify_jwt = true
 [functions.unsubscribe]
 verify_jwt = false
 
-[functions._seed-aura-blog]
+[functions.seed-aura-blog]
 verify_jwt = false
 
 [functions.campaign-track]
