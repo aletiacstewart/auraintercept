@@ -1145,6 +1145,8 @@ export type Database = {
           call_routing_mode: string
           callback_delay_seconds: number | null
           callback_retry_count: number | null
+          cancellation_feedback: string | null
+          cancellation_reason: string | null
           chat_widget_subtitle: string | null
           chat_widget_title: string | null
           contact_address: string | null
@@ -1165,6 +1167,7 @@ export type Database = {
           demo_email_opt_in: boolean
           demo_sms_opt_in: boolean
           dispatch_phone: string | null
+          dunning_reminders_sent: number[]
           elevenlabs_voice_id_es: string | null
           email: string | null
           email_caps: Json | null
@@ -1174,6 +1177,7 @@ export type Database = {
           emergency_sms_enabled: boolean | null
           emergency_surcharge: number | null
           followup_call_script: string | null
+          grace_period_ends_at: string | null
           id: string
           industry_config: Json
           industry_vertical: string | null
@@ -1209,6 +1213,8 @@ export type Database = {
           onboarding_fee_status: string | null
           onboarding_fee_stripe_invoice_id: string | null
           operating_model: string | null
+          payment_failed_at: string | null
+          payment_status: string
           phone: string | null
           phone_number_setup_type: string | null
           primary_color: string | null
@@ -1298,6 +1304,8 @@ export type Database = {
           call_routing_mode?: string
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
+          cancellation_feedback?: string | null
+          cancellation_reason?: string | null
           chat_widget_subtitle?: string | null
           chat_widget_title?: string | null
           contact_address?: string | null
@@ -1318,6 +1326,7 @@ export type Database = {
           demo_email_opt_in?: boolean
           demo_sms_opt_in?: boolean
           dispatch_phone?: string | null
+          dunning_reminders_sent?: number[]
           elevenlabs_voice_id_es?: string | null
           email?: string | null
           email_caps?: Json | null
@@ -1327,6 +1336,7 @@ export type Database = {
           emergency_sms_enabled?: boolean | null
           emergency_surcharge?: number | null
           followup_call_script?: string | null
+          grace_period_ends_at?: string | null
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
@@ -1362,6 +1372,8 @@ export type Database = {
           onboarding_fee_status?: string | null
           onboarding_fee_stripe_invoice_id?: string | null
           operating_model?: string | null
+          payment_failed_at?: string | null
+          payment_status?: string
           phone?: string | null
           phone_number_setup_type?: string | null
           primary_color?: string | null
@@ -1451,6 +1463,8 @@ export type Database = {
           call_routing_mode?: string
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
+          cancellation_feedback?: string | null
+          cancellation_reason?: string | null
           chat_widget_subtitle?: string | null
           chat_widget_title?: string | null
           contact_address?: string | null
@@ -1471,6 +1485,7 @@ export type Database = {
           demo_email_opt_in?: boolean
           demo_sms_opt_in?: boolean
           dispatch_phone?: string | null
+          dunning_reminders_sent?: number[]
           elevenlabs_voice_id_es?: string | null
           email?: string | null
           email_caps?: Json | null
@@ -1480,6 +1495,7 @@ export type Database = {
           emergency_sms_enabled?: boolean | null
           emergency_surcharge?: number | null
           followup_call_script?: string | null
+          grace_period_ends_at?: string | null
           id?: string
           industry_config?: Json
           industry_vertical?: string | null
@@ -1515,6 +1531,8 @@ export type Database = {
           onboarding_fee_status?: string | null
           onboarding_fee_stripe_invoice_id?: string | null
           operating_model?: string | null
+          payment_failed_at?: string | null
+          payment_status?: string
           phone?: string | null
           phone_number_setup_type?: string | null
           primary_color?: string | null
@@ -5445,6 +5463,71 @@ export type Database = {
           },
         ]
       }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string
+          id: string
+          referral_code: string
+          referred_company_id: string | null
+          referred_email: string | null
+          referring_company_id: string
+          rewarded_at: string | null
+          status: string
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code: string
+          referred_company_id?: string | null
+          referred_email?: string | null
+          referring_company_id: string
+          rewarded_at?: string | null
+          status?: string
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referred_company_id?: string | null
+          referred_email?: string | null
+          referring_company_id?: string
+          rewarded_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_referred_company_id_fkey"
+            columns: ["referred_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_referred_company_id_fkey"
+            columns: ["referred_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_referring_company_id_fkey"
+            columns: ["referring_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_referring_company_id_fkey"
+            columns: ["referring_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reminder_logs: {
         Row: {
           appointment_id: string
@@ -8016,6 +8099,10 @@ export type Database = {
           status: string
           updated_at: string
         }[]
+      }
+      get_or_create_referral_code: {
+        Args: { p_company_id: string }
+        Returns: string
       }
       get_public_industry_pack: {
         Args: { p_company_id: string }
