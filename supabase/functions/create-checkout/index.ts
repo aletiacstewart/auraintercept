@@ -275,6 +275,28 @@ serve(async (req) => {
       onboardingWaivedReason = "beta";
     }
 
+    // Referral lookup: on first checkout, waive the new company's onboarding
+    // fee if a referral row points at this company, and try to credit the
+    // referring company a free month via a Stripe coupon.
+    let referralRow:
+      | { id: string; referring_company_id: string; status: string }
+      | null = null;
+    if (isFirstCheckout) {
+      const { data: refData } = await supabaseClient
+        .from("referrals")
+        .select("id, referring_company_id, status")
+        .eq("referred_company_id", companyId)
+        .in("status", ["signed_up", "pending"])
+        .maybeSingle();
+      if (refData) {
+        referralRow = refData as typeof referralRow;
+        if (onboardingWaivedReason === "none") {
+          onboardingWaivedReason = "beta"; // reuse waived path — status becomes 'waived'
+          logStep("Referral: waiving onboarding fee for new company", { referralId: refData.id });
+        }
+      }
+    }
+
     const onboardingFeeStatus = onboardingWaivedReason !== "none" || onboardingFeeCents === 0
       ? "waived"
       : "pending";
@@ -339,6 +361,58 @@ serve(async (req) => {
         p_company_id: companyId,
       });
       if (redeemErr) logStep("Warning: redeem_beta_code failed", { error: redeemErr.message });
+    }
+
+    // Apply referral reward to the referring company (best-effort).
+    if (referralRow) {
+      try {
+        await supabaseClient
+          .from("referrals")
+          .update({ status: "converted", converted_at: new Date().toISOString() })
+          .eq("id", referralRow.id);
+        logStep("Referral marked converted", { referralId: referralRow.id });
+
+        const { data: refCompany } = await supabaseClient
+          .from("companies")
+          .select("stripe_customer_id")
+          .eq("id", referralRow.referring_company_id)
+          .maybeSingle();
+
+        if (refCompany?.stripe_customer_id) {
+          const subs = await stripe.subscriptions.list({
+            customer: refCompany.stripe_customer_id,
+            status: "active",
+            limit: 1,
+          });
+          const activeSub = subs.data[0];
+          if (activeSub) {
+            const coupon = await stripe.coupons.create({
+              percent_off: 100,
+              duration: "once",
+              name: "Aura Referral — 1 month free",
+              metadata: { referral_id: referralRow.id },
+            });
+            await stripe.subscriptions.update(activeSub.id, { coupon: coupon.id });
+            await supabaseClient
+              .from("referrals")
+              .update({ status: "rewarded", rewarded_at: new Date().toISOString() })
+              .eq("id", referralRow.id);
+            logStep("Referral reward applied to referring company", {
+              referralId: referralRow.id,
+              subscriptionId: activeSub.id,
+              couponId: coupon.id,
+            });
+          } else {
+            logStep("Referral: referring company has no active subscription; left at converted");
+          }
+        } else {
+          logStep("Referral: referring company has no stripe_customer_id; left at converted");
+        }
+      } catch (referralErr) {
+        logStep("Referral: reward application failed (left at converted)", {
+          error: referralErr instanceof Error ? referralErr.message : String(referralErr),
+        });
+      }
     }
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url, tier: requestedTier });
