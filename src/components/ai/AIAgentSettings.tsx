@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getIndustryVoiceGreeting } from '@/lib/industryVoiceGreetings';
+import { getIndustryVoiceGreeting, getIndustryVoiceGreetingEs } from '@/lib/industryVoiceGreetings';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -166,6 +166,8 @@ export const AIAgentSettings = () => {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [voiceGreeting, setVoiceGreeting] = useState('');
+  const [voiceGreetingEs, setVoiceGreetingEs] = useState('');
+  const [voiceIdEs, setVoiceIdEs] = useState<string>('');
   const [agentPrompt, setAgentPrompt] = useState('');
   const [selectedVoiceId, setSelectedVoiceId] = useState('JBFqnCBsd6RMkjVDRZzb');
   const [useCustomVoice, setUseCustomVoice] = useState(false);
@@ -200,7 +202,7 @@ export const AIAgentSettings = () => {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('ai_voice_greeting, ai_agent_prompt, missed_call_sms_template, missed_call_callback_script, reminder_call_script, followup_call_script, default_outbound_script, default_language, supported_languages' as any)
+        .select('ai_voice_greeting, ai_voice_greeting_es, elevenlabs_voice_id_es, ai_agent_prompt, missed_call_sms_template, missed_call_callback_script, reminder_call_script, followup_call_script, default_outbound_script, default_language, supported_languages' as any)
         .eq('id', companyId)
         .single();
 
@@ -232,6 +234,8 @@ export const AIAgentSettings = () => {
   useEffect(() => {
     if (company) {
       setVoiceGreeting(company.ai_voice_greeting || 'Hello! Thank you for calling. How can I assist you today?');
+      setVoiceGreetingEs((company as any).ai_voice_greeting_es || '');
+      setVoiceIdEs((company as any).elevenlabs_voice_id_es || '');
       setAgentPrompt(company.ai_agent_prompt || 'You are a helpful AI assistant for this business. Help callers with scheduling appointments, answering questions about services, and providing information about business hours.');
       setMissedCallSmsTemplate((company as any).missed_call_sms_template || '');
       setMissedCallCallbackScript((company as any).missed_call_callback_script || '');
@@ -276,6 +280,8 @@ export const AIAgentSettings = () => {
         .from('companies')
         .update({
           ai_voice_greeting: voiceGreeting,
+          ai_voice_greeting_es: voiceGreetingEs || null,
+          elevenlabs_voice_id_es: voiceIdEs || null,
           ai_agent_prompt: agentPrompt,
           missed_call_sms_template: missedCallSmsTemplate || null,
           missed_call_callback_script: missedCallCallbackScript || null,
