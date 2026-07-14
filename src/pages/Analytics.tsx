@@ -11,7 +11,8 @@ import { useSearchParams } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, DollarSign, Bot, TrendingUp, Sparkles, ClipboardList } from 'lucide-react';
+import { BarChart3, DollarSign, Bot, TrendingUp, Sparkles, ClipboardList, Filter } from 'lucide-react';
+import { FunnelAnalytics } from '@/components/analytics/FunnelAnalytics';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getPageHeader } from '@/lib/industryNavLabels';
 
@@ -46,10 +47,17 @@ export default function Analytics() {
                   <BarChart3 className="h-3.5 w-3.5" />
                   Platform
                 </TabsTrigger>
+                <TabsTrigger value="funnel" className="flex items-center gap-1.5">
+                  <Filter className="h-3.5 w-3.5" />
+                  Signup Funnel
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="platform">
                 <PlatformAnalytics />
+              </TabsContent>
+              <TabsContent value="funnel">
+                <FunnelAnalytics />
               </TabsContent>
             </Tabs>
           ) : effectiveCompanyId ? (
