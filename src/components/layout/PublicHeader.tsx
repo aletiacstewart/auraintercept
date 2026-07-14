@@ -62,7 +62,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
 >
             {t('nav.signIn')}
           </Button>
-          <Button className="gradient-primary" onClick={() => navigate('/signup?mode=company')}>
+          <Button className="btn-gradient" onClick={() => navigate('/signup?mode=company')}>
             {t('nav.startFreeTrial')}
           </Button>
         </div>
