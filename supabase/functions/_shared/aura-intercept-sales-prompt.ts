@@ -35,7 +35,7 @@ Pricing — 4 Tiers (Beta Pricing is ACTIVE — quote the sale price first, ment
 - Annual: Core $4,771/yr · Boost $9,542/yr · Pro $19,085/yr · Elite $38,198/yr (~20% off).
 - Extra employees: $25/mo per 10 beyond the included amount.
 - Onboarding fee = 25% OFF the original one-month price (rounded to nearest $10), invoiced on day 31 of the 60-Day Live Trial,
-  non-refundable once concierge onboarding begins.
+  non-refundable.
 
 60-Day Live Trial:
 - 30 days of concierge onboarding (we configure everything with you) +

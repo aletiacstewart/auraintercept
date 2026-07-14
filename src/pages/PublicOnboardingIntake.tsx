@@ -504,7 +504,7 @@ export default function PublicOnboardingIntake() {
                   ['agree_tos', 'I agree to the Aura Intercept Terms of Service.'],
                   ['agree_privacy', 'I have read and agree to the Privacy Policy.'],
                   ['agree_third_party', 'I understand each 3rd-party provider (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) bills me directly with my own account + credit card on file. Aura Intercept does not resell or mark up usage.'],
-                  ['agree_onboarding_fee', 'I understand the one-time onboarding fee is invoiced on day 31 of the 60-Day Live Trial (after concierge onboarding is complete), my first monthly plan fee is charged on day 61, and the onboarding fee is non-refundable once onboarding has been completed.'],
+                  ['agree_onboarding_fee', 'I understand the one-time onboarding fee is invoiced on day 31 of the 60-Day Live Trial (after concierge onboarding is complete), my first monthly plan fee is charged on day 61, and the onboarding fee is non-refundable.'],
                   ['agree_authority', 'I am authorized to sign this agreement on behalf of the company.'],
                 ].map(([key, label]) => (
                   <label key={key} className="flex items-start gap-2 text-sm">

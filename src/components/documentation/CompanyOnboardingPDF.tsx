@@ -1427,7 +1427,7 @@ const SmartWebsitePage = () => (
 const TOS_CLAUSES: Array<{ title: string; body: string }> = [
   { title: '1. Services', body: 'Aura Intercept provides an AI customer engagement and business operations platform ("Platform") accessed via subscription. Specific features available depend on the tier purchased (Core, Boost, Pro, or Elite).' },
   { title: '2. Subscription & 60-Day Live Trial', body: 'A 60-Day Live Trial period applies; the platform is fully active during the trial. The one-time onboarding fee is invoiced on day 31 of the trial (after concierge onboarding is complete). Your first monthly plan fee is charged on day 61 (after the full 60-Day Live Trial). Cancellation must occur in writing before the next monthly billing date.' },
-  { title: '3. Onboarding Fee', body: 'A one-time onboarding fee equal to one month of your plan applies, with 25% OFF during Beta: Core $370 (was $497), Boost $750 (was $994), Pro $1,490 (was $1,988), Elite $2,980 (was $3,979). It is invoiced on day 31 of the 60-Day Live Trial and is non-refundable once onboarding begins. The fee covers Concierge Onboarding services and platform configuration.' },
+  { title: '3. Onboarding Fee', body: 'A one-time onboarding fee equal to one month of your plan applies, with 25% OFF during Beta: Core $370 (was $497), Boost $750 (was $994), Pro $1,490 (was $1,988), Elite $2,980 (was $3,979). It is invoiced on day 31 of the 60-Day Live Trial and is non-refundable. The fee covers Concierge Onboarding services and platform configuration.' },
   { title: '4. Third-Party Provider Accounts & Pass-Through Billing', body: 'All paid third-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social scheduler, etc.) require Customer\'s own account and valid credit card. Each provider invoices Customer DIRECTLY and SEPARATELY from the Aura plan fee. Aura Intercept never resells or marks up third-party usage charges. A free Google Account may be connected via OAuth for Calendar sync at no additional cost.' },
   { title: '5. Concierge Onboarding Authorization', body: 'Customer authorizes Aura Intercept Concierge Onboarding to configure third-party accounts on Customer\'s behalf using Customer-provided credentials and payment methods. Customer remains responsible for all charges incurred on those accounts.' },
   { title: '6. Customer Data & Privacy', body: 'Customer retains ownership of all customer data uploaded to the Platform. Aura Intercept processes data per the Privacy Policy and applicable law (CCPA, GDPR where relevant). Customer is the data controller; Aura Intercept is the data processor.' },
@@ -1458,7 +1458,7 @@ const TermsOfServiceSummaryPage = () => (
     <View style={styles.infoBox}>
       <Text style={styles.infoBoxTitle}>{sanitizePdfText('Key Reminders')}</Text>
       <Text style={styles.infoBoxText}>
-        {sanitizePdfText('- 60-Day Live Trial: platform is fully active; onboarding fee invoiced on day 31 and non-refundable once onboarding begins; first monthly plan fee charged on day 61.\n- 3rd-Party Costs: SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and social platforms bill you directly on your own account and card.\n- Concierge Onboarding configures these accounts on your behalf using your credentials.\n- Cancel in writing before your next monthly billing date to avoid the next charge.')}
+        {sanitizePdfText('- 60-Day Live Trial: platform is fully active; onboarding fee invoiced on day 31 and non-refundable; first monthly plan fee charged on day 61.\n- 3rd-Party Costs: SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and social platforms bill you directly on your own account and card.\n- Concierge Onboarding configures these accounts on your behalf using your credentials.\n- Cancel in writing before your next monthly billing date to avoid the next charge.')}
       </Text>
     </View>
   </Page>
@@ -1470,7 +1470,7 @@ const TermsAcknowledgementPage = () => {
     'I have read and agree to the Aura Intercept Privacy Policy at auraintercept.ai/privacy-policy.',
     'I understand all 3rd-party providers (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social platforms) require my own account and credit card and will be invoiced to me DIRECTLY and SEPARATELY from my Aura plan fee.',
     'I authorize Aura Intercept Concierge Onboarding to configure these third-party accounts on my behalf using credentials I provide.',
-    'I agree to the 60-Day Live Trial terms; the tier-specific onboarding fee (1 month of plan, 25% OFF during Beta — Core $370 / Boost $750 / Pro $1,490 / Elite $2,980) is invoiced on day 31 of the trial, my first monthly plan fee is charged on day 61, and the onboarding fee is non-refundable once onboarding begins.',
+    'I agree to the 60-Day Live Trial terms; the tier-specific onboarding fee (1 month of plan, 25% OFF during Beta — Core $370 / Boost $750 / Pro $1,490 / Elite $2,980) is invoiced on day 31 of the trial, my first monthly plan fee is charged on day 61, and the onboarding fee is non-refundable.',
     'I confirm that I am an authorized signer with legal authority to bind the Company named below.',
   ];
   return (

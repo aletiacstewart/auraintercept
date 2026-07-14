@@ -55,7 +55,7 @@ export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignu
         setup, knowledge-base build-out, 3rd-party activation, A2P 10DLC
         compliance filing, and your initial training session. Your first monthly
         plan fee is charged on day 61 (after the full 60-Day Live Trial).
-        Non-refundable once concierge onboarding begins. Beta docs, guides, and
+        Non-refundable. Beta docs, guides, and
         tutorials may occasionally lag the latest changes — check the homepage
         for the most current pricing and trial details.
       </p>
