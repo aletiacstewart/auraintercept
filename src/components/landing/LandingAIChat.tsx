@@ -9,6 +9,7 @@ import { TermsAgreementCheckbox } from '@/components/auth/TermsAgreementCheckbox
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { cn } from '@/lib/utils';
 import auraWalkthrough from '@/assets/aura-walkthrough.mp4.asset.json';
+import { trackFunnelEvent } from '@/lib/funnelTracking';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -86,6 +87,11 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   });
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Fire chat_opened once per mount (component becoming visible = chat active).
+  useEffect(() => {
+    try { trackFunnelEvent('chat_opened'); } catch { /* ignore */ }
+  }, []);
 
   const lastIsVideo = messages[messages.length - 1]?.videoUrl;
   const showDemoVideo = useCallback(() => {
@@ -223,6 +229,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
     if (!input.trim() || isLoading || !termsAgreed) return;
 
     const userMessage: Message = { role: 'user', content: input.trim() };
+    try { trackFunnelEvent('chat_message_sent'); } catch { /* ignore */ }
     const wantsDemo = DEMO_INTENT_RE.test(userMessage.content) && !lastIsVideo;
     const baseMessages = [...messages, userMessage];
     const newMessages = wantsDemo ? [...baseMessages, DEMO_VIDEO_MESSAGE] : baseMessages;
