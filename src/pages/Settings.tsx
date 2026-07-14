@@ -16,6 +16,7 @@ import { ContactInfoSettings } from '@/components/company/ContactInfoSettings';
 import { SetupProgressBar } from '@/components/company/SetupProgressBar';
 import { VoiceOnboardingSettings } from '@/components/settings/VoiceOnboardingSettings';
 import { SystemSettings } from '@/components/settings/SystemSettings';
+import { DataExportPanel } from '@/components/settings/DataExportPanel';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageHeader } from '@/components/ui/page-header';
@@ -146,6 +147,17 @@ export default function Settings() {
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-4">
                       <PublicAppUrlSettings />
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="export" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <div className="text-left">
+                        <div className="text-base font-semibold">Export your data</div>
+                        <div className="text-sm text-muted-foreground font-normal">Download CSV files of your customers, appointments, invoices, and logs</div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4">
+                      <DataExportPanel />
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>

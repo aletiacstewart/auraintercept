@@ -79,6 +79,11 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 z-[60]">
+              <div className="px-2 py-1.5 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Language</span>
+                <LanguageToggle variant="compact" />
+              </div>
+              <DropdownMenuSeparator />
               {showHomeLink && (
                 <DropdownMenuItem onClick={() => navigate('/')}>
                   <Home className="w-4 h-4 mr-2" />

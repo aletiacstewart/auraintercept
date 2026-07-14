@@ -116,6 +116,7 @@ const PublicOnboardingIntake = lazy(() => import("./pages/PublicOnboardingIntake
 const CustomerPortalAppInstall = lazy(() => import("./pages/CustomerPortalAppInstall"));
 const PlatformIssues = lazy(() => import("./pages/PlatformIssues"));
 const PlatformHealth = lazy(() => import("./pages/PlatformHealth"));
+const StatusPage = lazy(() => import("./pages/StatusPage"));
 const OAuthGoogleCalendar = lazy(() => import("./pages/OAuthGoogleCalendar"));
 const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
 const SmartWebsite = lazy(() => import("./pages/SmartWebsite"));
@@ -200,6 +201,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/business-mgt-ops-app" element={<BusinessMgtOpsApp />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/status" element={<StatusPage />} />
                 <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
                 <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
                 <Route path="/customer-auth" element={<CustomerAuth />} />

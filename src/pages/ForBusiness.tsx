@@ -9,6 +9,7 @@ import { IndustryValueProps } from '@/components/marketing/IndustryValueProps';
 import { RolePreviewRow } from '@/components/marketing/RolePreviewRow';
 import { IndustryROICalculator } from '@/components/marketing/IndustryROICalculator';
 import { TestimonialSection } from '@/components/marketing/TestimonialSection';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, Phone, AlertCircle, Zap, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
@@ -35,6 +36,7 @@ const PRICING_TIERS = [
 export default function ForBusiness() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation(['marketing']);
   // Always default to generic Aura Intercept content. Only honor an explicit
   // ?industry= query param (e.g. from marketing links). Never read from
   // localStorage on load — that caused returning visitors to skip the default.
@@ -232,6 +234,11 @@ export default function ForBusiness() {
         <section className="py-10 bg-background">
           <div className="container max-w-6xl mx-auto px-4">
             <IndustryROICalculator industryId={industry} industryLabel={content.label} />
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              <Link to="/dashboard/settings?tab=company#export" className="hover:text-primary underline underline-offset-4">
+                {t('marketing:dataOwnership')}
+              </Link>
+            </p>
           </div>
         </section>
 

@@ -1,3 +1,6 @@
+import i18n from './i18n';
+import { mergeEsOverride } from './industryMarketingContentEs';
+
 export interface IndustrySampleAppointment {
   service: string;
   whenOffsetHours: number; // hours from now (positive = future, negative = past)
@@ -708,7 +711,19 @@ export const INDUSTRY_GROUPS = RAW_INDUSTRY_GROUPS
   .filter((g) => g.ids.length > 0);
 
 export function getIndustryContent(id: string | null | undefined): IndustryContent {
-  if (!id) return INDUSTRY_CONTENT.other;
-  if (!isIndustryVisible(id)) return INDUSTRY_CONTENT.other;
-  return INDUSTRY_CONTENT[id] || INDUSTRY_CONTENT.other;
+  const base = (() => {
+    if (!id) return INDUSTRY_CONTENT.other;
+    if (!isIndustryVisible(id)) return INDUSTRY_CONTENT.other;
+    return INDUSTRY_CONTENT[id] || INDUSTRY_CONTENT.other;
+  })();
+
+  try {
+    // Read the singleton i18next language without pulling react-i18next hooks.
+    if (i18n?.language?.startsWith('es')) {
+      return mergeEsOverride(base, base.id);
+    }
+  } catch {
+    /* i18n not initialized — fall back to English */
+  }
+  return base;
 }
