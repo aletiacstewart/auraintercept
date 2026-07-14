@@ -17,6 +17,8 @@ import { toast } from 'sonner';
 import { Check, X, Crown, ExternalLink, Loader2, Clock, Sparkles, Users, Mail, MessageSquare, Mic, Info, Building } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
+import { CancelSubscriptionDialog } from '@/components/subscription/CancelSubscriptionDialog';
+import { ReferralCard } from '@/components/subscription/ReferralCard';
 import {
   Tooltip,
   TooltipContent,
@@ -272,7 +274,8 @@ const sections: FeatureSection[] = [
 ];
 
 export default function Subscription() {
-  const { user, userRole, inTrial, trialEndsAt } = useAuth();
+  const { user, userRole, inTrial, trialEndsAt, companyId } = useAuth();
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -405,6 +408,12 @@ export default function Subscription() {
     } finally {
       setPortalLoading(false);
     }
+  };
+
+  // Cancel-flow: intercept the in-app cancel entry point, capture a one-question
+  // reason, then hand off to the same Stripe portal for the actual cancellation.
+  const handleCancelClicked = () => {
+    setCancelDialogOpen(true);
   };
 
   const isSubscribed = subscription?.subscribed && !subscription?.in_trial;
