@@ -518,20 +518,41 @@ export default function Subscription() {
           showAuraBar
           action={
             isSubscribed && canManageSubscription ? (
-              <Button 
-                variant="outline" 
-                onClick={handleManageSubscription}
-                disabled={portalLoading}
-              >
-                {portalLoading ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                )}
-                Manage Billing
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleManageSubscription}
+                  disabled={portalLoading}
+                >
+                  {portalLoading ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                  )}
+                  Manage Billing
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={handleCancelClicked}
+                  disabled={portalLoading}
+                  className="text-muted-foreground hover:text-destructive"
+                >
+                  Cancel
+                </Button>
+              </div>
             ) : undefined
           }
+        />
+
+        {isSubscribed && canManageSubscription && companyId && (
+          <ReferralCard companyId={companyId} />
+        )}
+
+        <CancelSubscriptionDialog
+          open={cancelDialogOpen}
+          onOpenChange={setCancelDialogOpen}
+          companyId={companyId}
+          onProceed={handleManageSubscription}
         />
 
         {/* Trial Status Banner */}
