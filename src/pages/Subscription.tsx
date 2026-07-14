@@ -292,9 +292,14 @@ export default function Subscription() {
   const trialProgressPercent = Math.min(((90 - trialDaysRemaining) / 90) * 100, 100);
 
   // Check for success/canceled params
+  const checkoutTracked = useRef(false);
   useEffect(() => {
     if (searchParams.get('success') === 'true') {
       toast.success('Subscription activated successfully!');
+      if (!checkoutTracked.current) {
+        checkoutTracked.current = true;
+        try { trackFunnelEvent('checkout_completed', { pagePath: '/dashboard/subscription' }); } catch { /* ignore */ }
+      }
     } else if (searchParams.get('canceled') === 'true') {
       toast.info('Checkout was canceled.');
     }
