@@ -41,18 +41,18 @@ tier check or "Active" computation.
 Originals are struck through; beta price is what the customer pays.
 Onboarding = 25% OFF original one-month price, invoiced on day 31 of the 60-Day Live Trial. First monthly plan fee is charged on day 61.
 
-- **Aura Core** (`starter`) **$497/mo** (was $697) · **$249** onboarding (was $497)
+- **Aura Core** (`starter`) **$497/mo** (was $697) · **$370** onboarding (was $497)
   — 5 operatives: AI Receptionist, Customer Journey, Outreach, Creative
   Content, Web Presence. Consoles: Customer Portal, Outreach & Sales
   Console, Creative & Web Presence, Social Media, Analytics & Reports,
   AI Operatives Hub. 10 employees.
-- **Aura Boost** (`connect`) **$994/mo** (was $1,394) · **$497** onboarding (was $994)
+- **Aura Boost** (`connect`) **$994/mo** (was $1,394) · **$750** onboarding (was $994)
   — Core + Dispatch + Field Navigation. Adds Field Operations Console.
   25 employees.
-- **Aura Pro** (`performance`) **$1,988/mo** (was $2,788) · **$994** onboarding (was $1,988)
+- **Aura Pro** (`performance`) **$1,988/mo** (was $2,788) · **$1,490** onboarding (was $1,988)
   — Boost + Business Finance + Analytics Intelligence + Admin. Adds
   Business Management. 50 employees.
-- **Aura Elite** (`command`) **$3,979/mo** (was $5,576) · **$1,990** onboarding (was $3,979)
+- **Aura Elite** (`command`) **$3,979/mo** (was $5,576) · **$2,980** onboarding (was $3,979)
   — All 10 operatives + industry specialists + all 8 consoles including
   AI Operatives Hub. Unlimited employees.
 
