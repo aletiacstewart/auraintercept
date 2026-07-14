@@ -3296,6 +3296,68 @@ AGENT_TOOLS.customer_journey = [
   ...AGENT_TOOLS.review,
 ];
 
+// Pipeline tools — shared by outreach, customer_journey, and business_finance.
+// These read/write customer_pipeline so operatives can query a customer's
+// history and advance deal stage without each duplicating that logic.
+const PIPELINE_TOOLS = [
+  {
+    type: 'function',
+    function: {
+      name: 'get_customer_history',
+      description:
+        'Look up a compact customer summary: pipeline stage, deal value, last activity, and recent calls/quotes/jobs/payments/reviews. Pass one of customer_profile_id, phone, or email.',
+      parameters: {
+        type: 'object',
+        properties: {
+          customer_profile_id: { type: 'string' },
+          phone: { type: 'string' },
+          email: { type: 'string' },
+        },
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'update_pipeline_stage',
+      description: 'Advance or change a customer’s pipeline stage.',
+      parameters: {
+        type: 'object',
+        properties: {
+          customer_profile_id: { type: 'string' },
+          new_stage: {
+            type: 'string',
+            enum: ['new', 'contacted', 'quoted', 'won', 'lost', 'repeat_customer'],
+          },
+          note: { type: 'string' },
+        },
+        required: ['customer_profile_id', 'new_stage'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'suggest_next_action',
+      description:
+        'Return the currently stored next-action for a customer, or compute one on the fly (e.g. win-back after 90+ days of no contact).',
+      parameters: {
+        type: 'object',
+        properties: {
+          customer_profile_id: { type: 'string' },
+        },
+        required: ['customer_profile_id'],
+      },
+    },
+  },
+];
+
+for (const key of ['outreach', 'customer_journey', 'business_finance']) {
+  if (Array.isArray(AGENT_TOOLS[key])) {
+    AGENT_TOOLS[key].push(...PIPELINE_TOOLS);
+  }
+}
+
 // Helper function to get brand tone modifier for AI communication style
 function getBrandToneModifier(brandTone: string | null): string {
   switch (brandTone) {
