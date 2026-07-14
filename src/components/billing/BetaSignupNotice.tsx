@@ -7,10 +7,10 @@ interface BetaSignupNoticeProps {
 
 /**
  * Unified BETA Sign-Up notice — explains 60-Day Live Trial, Beta Pricing,
- * tier-specific beta onboarding fee (25% OFF original, rounded to nearest $10), 3rd-party
- * billing pass-through, and what the
- * onboarding fee covers. Used on the public homepage (above pricing plans)
- * and on the company signup form (above the tier selector).
+ * global onboarding-fee waiver ($0 during Beta), 3rd-party billing
+ * pass-through, and what the onboarding fee covers. Used on the public
+ * homepage (above pricing plans) and on the company signup form (above the
+ * tier selector).
  */
 export function BetaSignupNotice({ variant = 'full', className = '' }: BetaSignupNoticeProps) {
   const compact = variant === 'compact';
