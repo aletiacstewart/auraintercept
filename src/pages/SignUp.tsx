@@ -88,6 +88,8 @@ const TIER_OPTIONS = [
 
 export default function SignUp() {
   const [searchParams] = useSearchParams();
+  // Fire auth_started once when the company signup page is opened.
+  const authStartedLogged = useRef(false);
   
   // Runtime guard for mode - prevents malformed values from falling through
   const rawMode = searchParams.get('mode');
