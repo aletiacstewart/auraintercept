@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
+import { trackFunnelEvent } from '@/lib/funnelTracking';
 import { Button } from '@/components/ui/button';
 import { SEO } from '@/components/seo/SEO';
 import { Input } from '@/components/ui/input';
@@ -177,6 +178,20 @@ export default function SignUp() {
       setBusinessIndustry(resolvedDemoPackId || industryParam);
     }
   }, [tierParam, industryParam, isLiveDemoFlow]);
+
+  // Fire auth_started once when this page opens for the company signup flow.
+  useEffect(() => {
+    if (authStartedLogged.current) return;
+    if (mode !== 'company') return;
+    authStartedLogged.current = true;
+    try {
+      trackFunnelEvent('auth_started', {
+        tier: tierParam ?? undefined,
+        industry: industryParam ?? undefined,
+        pagePath: '/signup',
+      });
+    } catch { /* ignore */ }
+  }, [mode, tierParam, industryParam]);
 
   const handlePlatformAdminSignup = async (e: React.FormEvent) => {
     e.preventDefault();
