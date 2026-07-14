@@ -1247,3 +1247,47 @@
 .dashboard-main textarea::placeholder {
   color: rgba(255,255,255,0.55) !important;
 }
+
+/* ============================================================
+   LIGHT THEME (opt-in, marketing pages only)
+   Applied via ThemeToggle on the / and /for-business routes.
+   Overrides the core semantic tokens; keeps sidebar dark so
+   nav consistency is preserved.
+   ============================================================ */
+.light {
+  --background: 210 40% 98%;
+  --foreground: 210 35% 12%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 210 35% 12%;
+  --card-muted: 210 15% 40%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 35% 12%;
+
+  --primary: 189 90% 42%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 189 90% 42%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 210 20% 94%;
+  --muted-foreground: 210 15% 38%;
+
+  --accent: 189 90% 42%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 210 20% 88%;
+  --input: 210 20% 88%;
+  --ring: 189 90% 42%;
+
+  --neon-cyan: 189 90% 42%;
+  --neon-green: 145 90% 34%;
+  --neon-purple: 270 70% 55%;
+
+  --shadow-glow: 0 0 20px hsl(189 90% 42% / 0.15);
+  --shadow-glow-accent: 0 0 20px hsl(189 90% 42% / 0.20);
+}

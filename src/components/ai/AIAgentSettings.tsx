@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getIndustryVoiceGreeting } from '@/lib/industryVoiceGreetings';
+import { getIndustryVoiceGreeting, getIndustryVoiceGreetingEs } from '@/lib/industryVoiceGreetings';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -166,6 +166,8 @@ export const AIAgentSettings = () => {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [voiceGreeting, setVoiceGreeting] = useState('');
+  const [voiceGreetingEs, setVoiceGreetingEs] = useState('');
+  const [voiceIdEs, setVoiceIdEs] = useState<string>('');
   const [agentPrompt, setAgentPrompt] = useState('');
   const [selectedVoiceId, setSelectedVoiceId] = useState('JBFqnCBsd6RMkjVDRZzb');
   const [useCustomVoice, setUseCustomVoice] = useState(false);
@@ -200,7 +202,7 @@ export const AIAgentSettings = () => {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('ai_voice_greeting, ai_agent_prompt, missed_call_sms_template, missed_call_callback_script, reminder_call_script, followup_call_script, default_outbound_script, default_language, supported_languages' as any)
+        .select('ai_voice_greeting, ai_voice_greeting_es, elevenlabs_voice_id_es, ai_agent_prompt, missed_call_sms_template, missed_call_callback_script, reminder_call_script, followup_call_script, default_outbound_script, default_language, supported_languages' as any)
         .eq('id', companyId)
         .single();
 
@@ -232,6 +234,8 @@ export const AIAgentSettings = () => {
   useEffect(() => {
     if (company) {
       setVoiceGreeting(company.ai_voice_greeting || 'Hello! Thank you for calling. How can I assist you today?');
+      setVoiceGreetingEs((company as any).ai_voice_greeting_es || '');
+      setVoiceIdEs((company as any).elevenlabs_voice_id_es || '');
       setAgentPrompt(company.ai_agent_prompt || 'You are a helpful AI assistant for this business. Help callers with scheduling appointments, answering questions about services, and providing information about business hours.');
       setMissedCallSmsTemplate((company as any).missed_call_sms_template || '');
       setMissedCallCallbackScript((company as any).missed_call_callback_script || '');
@@ -276,6 +280,8 @@ export const AIAgentSettings = () => {
         .from('companies')
         .update({
           ai_voice_greeting: voiceGreeting,
+          ai_voice_greeting_es: voiceGreetingEs || null,
+          elevenlabs_voice_id_es: voiceIdEs || null,
           ai_agent_prompt: agentPrompt,
           missed_call_sms_template: missedCallSmsTemplate || null,
           missed_call_callback_script: missedCallCallbackScript || null,
@@ -793,6 +799,60 @@ export const AIAgentSettings = () => {
               This is what the AI agent will say when someone calls your business. Keep it friendly and concise.
             </p>
           </div>
+
+          {/* Spanish Voice Greeting (only when Spanish enabled) */}
+          {(spanishEnabled || defaultLanguage !== 'en') && (
+            <div className="space-y-2 rounded-md border border-border bg-muted/30 p-3">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="voice-greeting-es" className="flex items-center gap-2">
+                  <Volume2 className="h-4 w-4 text-white" />
+                  Spanish Voice Greeting
+                </Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={async () => {
+                    if (!companyId) return;
+                    const { data: c } = await supabase
+                      .from('companies')
+                      .select('industry_vertical, name')
+                      .eq('id', companyId)
+                      .maybeSingle();
+                    setVoiceGreetingEs(getIndustryVoiceGreetingEs(c?.industry_vertical, c?.name));
+                  }}
+                >
+                  Reset to industry default (ES)
+                </Button>
+              </div>
+              <Textarea
+                id="voice-greeting-es"
+                value={voiceGreetingEs}
+                onChange={(e) => setVoiceGreetingEs(e.target.value)}
+                placeholder="Gracias por llamar. Soy Aura, ¿en qué puedo ayudarle hoy?"
+                rows={3}
+                className="resize-none"
+              />
+              <p className="text-xs text-white">
+                Used when the caller speaks Spanish or when your default language is Spanish. Leave blank to fall back to a generic Spanish greeting.
+              </p>
+              <div className="pt-2 space-y-1">
+                <Label htmlFor="voice-id-es" className="text-xs">Spanish voice (optional override)</Label>
+                <Select value={voiceIdEs || 'default'} onValueChange={(v) => setVoiceIdEs(v === 'default' ? '' : v)}>
+                  <SelectTrigger id="voice-id-es"><SelectValue placeholder="Use default voice" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">Use default voice</SelectItem>
+                    {ELEVENLABS_VOICES.map(v => (
+                      <SelectItem key={v.id} value={v.id}>{v.name} — {v.description}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Pick a distinct voice for Spanish calls if your default voice doesn't sound natural in Spanish. Requires Spanish enabled on the ElevenLabs agent.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Agent System Prompt */}
           <div className="space-y-2">

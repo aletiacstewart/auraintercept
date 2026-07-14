@@ -11,6 +11,7 @@ import {
 import logo from '@/assets/aura-intercept-logo.png';
 import { useTranslation } from 'react-i18next';
 import { LanguageToggle } from '@/components/common/LanguageToggle';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 
 interface PublicHeaderProps {
   showHomeLink?: boolean;
@@ -38,6 +39,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-3">
           <LanguageToggle variant="ghost" />
+          <ThemeToggle />
           {showHomeLink && (
             <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/')}>
               <Home className="w-4 h-4 mr-1" />
@@ -82,6 +84,10 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
               <div className="px-2 py-1.5 flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">Language</span>
                 <LanguageToggle variant="compact" />
+              </div>
+              <div className="px-2 py-1.5 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Theme</span>
+                <ThemeToggle />
               </div>
               <DropdownMenuSeparator />
               {showHomeLink && (

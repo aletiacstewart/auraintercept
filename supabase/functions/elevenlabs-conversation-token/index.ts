@@ -32,6 +32,10 @@ Deno.serve(async (req) => {
     let elevenLabsApiKey = '';
     let firstMessage = '';
     let systemPrompt = '';
+    let language: string | undefined;
+    let firstMessageEs: string | undefined;
+    let voiceIdEs: string | undefined;
+    let supportedLanguages: string[] = [];
 
     if (companyId) {
       const { data: integration, error } = await supabase
@@ -50,13 +54,30 @@ Deno.serve(async (req) => {
       // Fetch company greeting and prompt for overrides
       const { data: company } = await supabase
         .from('companies')
-        .select('ai_voice_greeting, ai_agent_prompt, name')
+        .select('ai_voice_greeting, ai_voice_greeting_es, ai_agent_prompt, name, default_language, supported_languages, elevenlabs_voice_id_es')
         .eq('id', companyId)
         .maybeSingle();
 
       if (company) {
-        firstMessage = company.ai_voice_greeting || `Hello! I'm the AI assistant for ${company.name}. How can I help you?`;
+        const defaultLang: string = (company as any).default_language || 'en';
+        supportedLanguages = Array.isArray((company as any).supported_languages)
+          ? (company as any).supported_languages
+          : ['en'];
+        const includesEs = supportedLanguages.includes('es') || defaultLang === 'es' || defaultLang === 'auto';
+
+        const enGreeting = company.ai_voice_greeting || `Hello! I'm the AI assistant for ${company.name}. How can I help you?`;
+        const esGreeting = (company as any).ai_voice_greeting_es
+          || `Gracias por llamar a ${company.name}. Soy Aura, ¿en qué puedo ayudarle hoy?`;
+
+        firstMessage = defaultLang === 'es' ? esGreeting : enGreeting;
         systemPrompt = company.ai_agent_prompt || '';
+
+        if (includesEs) {
+          firstMessageEs = esGreeting;
+          voiceIdEs = (company as any).elevenlabs_voice_id_es || undefined;
+          language = defaultLang === 'es' ? 'es' : 'en';
+          systemPrompt += `\n\nLANGUAGE: This business supports both English and Spanish. Detect the caller's language from their first words. If they speak Spanish, continue the entire conversation fluently in natural, warm Spanish. If they speak English, stay in English. If they explicitly ask to switch languages, switch immediately and stay in the new language. When speaking Spanish, use this opening line instead of the English greeting: "${esGreeting}"`;
+        }
       }
     }
 
@@ -113,7 +134,17 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ token, signed_url, agentId: elevenLabsAgentId, firstMessage, systemPrompt }),
+      JSON.stringify({
+        token,
+        signed_url,
+        agentId: elevenLabsAgentId,
+        firstMessage,
+        systemPrompt,
+        language,
+        firstMessageEs,
+        voiceIdEs,
+        supportedLanguages,
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {

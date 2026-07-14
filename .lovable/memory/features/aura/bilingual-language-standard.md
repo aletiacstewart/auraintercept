@@ -18,6 +18,12 @@ Resolution order:
 
 **Phone (SignalWire SWML):** `voice-handler` registers both `en-US` and `es-ES` entries in the SWML `languages` array when the company supports Spanish (or `default_language` is `es`/`auto`), with a language directive appended to the system prompt. Greeting is localized to Spanish when default is `es`.
 
+**ElevenLabs Convai (`elevenlabs-conversation-token`):** returns `firstMessage`, `firstMessageEs`, `voiceIdEs`, `language`, `supportedLanguages` and appends a language-switch directive to `systemPrompt` when Spanish is supported. Clients pass those through as `overrides` on `startSession`.
+
+**Spanish greeting:** stored per company in `companies.ai_voice_greeting_es`. Fast Start seeds it via `getIndustryVoiceGreetingEs(industryVertical, name)` from `src/lib/industryVoiceGreetings.ts` (mirrors the English `PER_INDUSTRY` map for all 28 packs). Settings → AI Agent shows a Spanish greeting textarea and a "Reset to industry default (ES)" button whenever Spanish is enabled.
+
+**Spanish voice override:** optional `companies.elevenlabs_voice_id_es` picked in Settings → AI Agent; used only when a caller/session switches to Spanish.
+
 UI: configured in **Settings → AI Agent → Languages** card (`AIAgentSettings.tsx`).
 
 TODO (deferred): translate outbound SMS / reminder / missed-call copy via a per-language template lookup keyed off `customer.preferred_language ?? company.default_language`.
