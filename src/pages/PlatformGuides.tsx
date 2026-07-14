@@ -132,10 +132,10 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '10 min',
         steps: [
-          'Aura Core (Beta Pricing: $497/mo, was $697): 5 AI Operatives · 3 Consoles — Receptionist, Customer Journey, Outreach, Creative Content, Web Presence',
-          'Aura Boost (Beta Pricing: $994/mo, was $1,394): 7 AI Operatives · 5 Consoles — All Core + Dispatch + Field Navigation',
-          'Aura Pro (Beta Pricing: $1,988/mo, was $2,788): 24 AI Operatives · 7 Consoles — All Boost + Business Finance, Analytics Intelligence, Admin',
-          'Aura Elite (Beta Pricing: $3,979/mo, was $5,576): All 24 AI Operatives (organized into 10 operative roles) · 7 Consoles + AI Operatives Hub + Advanced Analytics & Forecasting',
+          'Aura Core (Beta Pricing: $497/mo, was $697): 8 Smart AI Agents · 3 Consoles — Receptionist, Customer Journey, Outreach, Creative Content, Web Presence',
+          'Aura Boost (Beta Pricing: $994/mo, was $1,394): 12 Smart AI Agents · 5 Consoles — All Core + Dispatch + Field Navigation',
+          'Aura Pro (Beta Pricing: $1,988/mo, was $2,788): 16 Smart AI Agents · 5 Consoles — All Boost + Business Finance, Analytics Intelligence, Admin',
+          'Aura Elite (Beta Pricing: $3,979/mo, was $5,576): All 24 Smart AI Agents (10 Operatives) · 7 Consoles + AI Operatives Hub + Advanced Analytics & Forecasting',
           'Employee limits: 10 (Core), 25 (Boost), 50 (Pro), Unlimited (Elite)',
           'Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim) auto-activate on Pro and Elite based on selected industry',
           'All tiers include API Access and Chat Widget'
