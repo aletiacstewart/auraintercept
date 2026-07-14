@@ -526,6 +526,15 @@ export default function SignUp() {
         console.warn('Welcome email failed (non-fatal):', welcomeErr);
       }
 
+      try {
+        trackFunnelEvent('signup_completed', {
+          tier: tierToPersist,
+          industry: canonicalIndustry,
+          companyId: companyData.id,
+          pagePath: '/signup',
+        });
+      } catch { /* ignore */ }
+
       toast({
         title: 'Welcome! 🎉',
         description: betaCode
