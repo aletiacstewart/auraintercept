@@ -222,6 +222,14 @@ async function handleEmitEvent(
   
   // Get target agents for this event type
   const targetAgents = EVENT_ROUTING[eventType] || [];
+
+  // Pipeline side-effect: keep customer_pipeline in sync with lifecycle events.
+  // Runs alongside normal event fanout — no new operative required.
+  try {
+    await upsertPipelineForEvent(supabase, companyId, eventType, payload);
+  } catch (pipelineErr) {
+    console.error('[Orchestrator] pipeline upsert failed:', pipelineErr);
+  }
   
   // Get enabled agents for this company
   const { data: configs } = await supabase
