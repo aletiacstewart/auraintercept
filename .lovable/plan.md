@@ -1,36 +1,41 @@
-# Fix: `/blog` returns 401 "permission denied for table user_roles"
+## Video Blog Page for Aura Intercept Promo Videos
 
-## Root cause
-`public.blog_posts` has two RLS policies:
+Create a new public page `/video-blog` that showcases promo videos, starting with the uploaded video from Charles Perez (Owner).
 
-1. `Anyone can view published blog posts` — `FOR SELECT USING (published = true)` ✅
-2. `Platform admins can manage blog posts` — `FOR ALL` with `EXISTS (SELECT 1 FROM user_roles ...)` on role `public`
+### What to build
 
-Because policy #2 is `FOR ALL`, Postgres also evaluates it during anonymous `SELECT`. The subquery hits `public.user_roles`, on which `anon` has no `SELECT` grant, so PostgREST returns `42501 permission denied for table user_roles` before the OR with policy #1 can save the request. `/blog` therefore shows the empty state even though 3 posts are `published = true`.
+1. **Upload the video as a Lovable Asset**
+   - Upload `user-uploads://2026-07-11-123239750.mp4` via `lovable-assets create` → `src/assets/charles-perez-promo.mp4.asset.json`
 
-## Fix (single migration)
-Drop the old management policy and recreate it scoped to authenticated users, using the existing `SECURITY DEFINER` helper `public.has_role(...)` instead of a bare subquery on `user_roles`:
+2. **New page: `src/pages/VideoBlog.tsx`**
+   - Uses `PublicHeader` + `PublicFooter` (same shell as `/blog`)
+   - `SEO` tags (title: "Video Blog | Aura Intercept", description, path `/video-blog`)
+   - Hero section matching `/blog` styling (gradient bg, H1 "Aura Intercept Video Blog", subtitle)
+   - Grid of video cards (responsive: 1 / 2 / 3 columns)
+   - Each card shows:
+     - Video thumbnail (native `<video>` with `preload="metadata"` so first frame shows, `object-contain` in a 16:9 container with dark bg — so the **entire video is visible, not cropped**)
+     - Title, author/role line ("Charles Perez — Owner"), short description, date
+     - Play overlay icon
+   - Clicking a card opens a **modal viewer** (shadcn `Dialog`) with a larger `<video controls autoPlay>` sized to fit viewport (`max-h-[85vh]`, `object-contain`, black letterbox background)
+   - Videos defined in a local `PROMO_VIDEOS` array (no DB) — easy to add more later
 
-```sql
-DROP POLICY "Platform admins can manage blog posts" ON public.blog_posts;
+3. **Video entry (first one)**
+   - Title: "Aura Intercept in Action"
+   - Author: "Charles Perez — Owner"
+   - Date: today
+   - Source: the uploaded asset URL
 
-CREATE POLICY "Platform admins can manage blog posts"
-  ON public.blog_posts
-  FOR ALL
-  TO authenticated
-  USING (public.has_role(auth.uid(), 'platform_admin'::public.app_role))
-  WITH CHECK (public.has_role(auth.uid(), 'platform_admin'::public.app_role));
-```
+4. **Routing**
+   - Add `<Route path="/video-blog" element={<VideoBlog />} />` in `src/App.tsx`
+   - Add a "Video Blog" link in `PublicFooter` (and optionally next to Blog in header if there's room — will confirm placement matches existing nav)
 
-Effects:
-- Anon `SELECT` only evaluates policy #1 → returns published posts.
-- Authenticated non-admins: policy #1 still allows published-only reads; policy #2 no longer leaks the user_roles error.
-- Platform admins keep full manage access via `has_role` (SECURITY DEFINER bypasses the missing anon grant).
+### Technical notes
 
-## Verify
-1. Anon `GET /rest/v1/blog_posts?published=eq.true` → 200 with 3 rows.
-2. Reload `/blog` → 3 Aura Intercept posts render.
-3. Admin blog panel still lists/edits/creates posts.
+- Use `AspectRatio` (shadcn) or `aspect-video` Tailwind class with `object-contain` + `bg-black` to guarantee full video visibility regardless of source aspect ratio.
+- Modal: shadcn `Dialog` with `DialogContent` widened (`max-w-5xl`), video autoplays on open and pauses/unmounts on close.
+- No DB / edge function changes — pure frontend page, matching the codebase's `/blog` styling conventions.
+- Uses design tokens only (no hardcoded colors) per Cyber-Sentry standard.
 
-## Out of scope
-Blog content, scheduling, or UI.
+### Out of scope
+
+- No admin UI to upload new promo videos (videos added by editing the `PROMO_VIDEOS` array + running `lovable-assets create`). Can be added later if wanted.
