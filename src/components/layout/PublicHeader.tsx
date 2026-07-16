@@ -112,6 +112,10 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
                 <Mail className="w-4 h-4 mr-2" />
                 {t('nav.contact')}
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/video-blog')}>
+                <Video className="w-4 h-4 mr-2" />
+                Video Blog
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigate('/signin')}>
                 <LogIn className="w-4 h-4 mr-2" />
