@@ -58,9 +58,9 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
             <Mail className="w-4 h-4 mr-1" />
             {t('nav.contact')}
           </Button>
-          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/video-blog')}>
+          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/lead-capture')}>
             <Video className="w-4 h-4 mr-1" />
-            Video Blog
+            Lead Capture
           </Button>
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/signin')}
 >
@@ -112,9 +112,9 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
                 <Mail className="w-4 h-4 mr-2" />
                 {t('nav.contact')}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/video-blog')}>
+              <DropdownMenuItem onClick={() => navigate('/lead-capture')}>
                 <Video className="w-4 h-4 mr-2" />
-                Video Blog
+                Lead Capture
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigate('/signin')}>
