@@ -58,6 +58,10 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
             <Mail className="w-4 h-4 mr-1" />
             {t('nav.contact')}
           </Button>
+          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/video-blog')}>
+            <Video className="w-4 h-4 mr-1" />
+            Video Blog
+          </Button>
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/signin')}
 >
             {t('nav.signIn')}
