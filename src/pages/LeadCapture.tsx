@@ -31,24 +31,24 @@ const PROMO_VIDEOS: PromoVideo[] = [
   },
 ];
 
-export default function VideoBlog() {
+export default function LeadCapture() {
   const [active, setActive] = useState<PromoVideo | null>(null);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <SEO
-        title="Video Blog | Aura Intercept"
-        description="Promo videos, product walkthroughs, and founder updates from Aura Intercept."
-        path="/video-blog"
+        title="Lead Capture | Aura Intercept"
+        description="See how Aura Intercept captures leads, calls, and bookings on autopilot."
+        path="/lead-capture"
       />
       <PublicHeader />
 
       <main className="flex-1">
         <section className="py-16 md:py-24 bg-gradient-to-b from-primary/5 to-background">
           <div className="container max-w-6xl mx-auto px-6 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Aura Intercept Video Blog</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Aura Intercept Lead Capture</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Product walkthroughs, founder updates, and promo videos from the Aura Intercept team.
+              Watch how Aura Intercept turns every call, chat, and visit into a booked opportunity.
             </p>
           </div>
         </section>

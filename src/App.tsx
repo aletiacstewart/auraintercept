@@ -28,7 +28,7 @@ import ForBusiness from "./pages/ForBusiness";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
-import VideoBlog from "./pages/VideoBlog";
+import LeadCapture from "./pages/LeadCapture";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 // Lazy: everything else. Each named-export module wraps a `.then(m => ({ default: m.X }))`.
@@ -213,7 +213,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/about" element={<Navigate to="/" replace />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
-                <Route path="/video-blog" element={<VideoBlog />} />
+                <Route path="/lead-capture" element={<LeadCapture />} />
                 {/* All Dashboard Routes - Protected */}
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/dashboard/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
