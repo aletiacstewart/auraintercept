@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, ClipboardCheck, Sparkles, Menu, LogIn, Rocket, Mail } from 'lucide-react';
+import { Home, ClipboardCheck, Sparkles, Menu, LogIn, Rocket, Mail, Video } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
