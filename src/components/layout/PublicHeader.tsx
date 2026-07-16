@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, ClipboardCheck, Sparkles, Menu, LogIn, Rocket, Mail } from 'lucide-react';
+import { Home, ClipboardCheck, Sparkles, Menu, LogIn, Rocket, Mail, Video } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,6 +58,10 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
             <Mail className="w-4 h-4 mr-1" />
             {t('nav.contact')}
           </Button>
+          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/video-blog')}>
+            <Video className="w-4 h-4 mr-1" />
+            Video Blog
+          </Button>
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/signin')}
 >
             {t('nav.signIn')}
@@ -107,6 +111,10 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
               <DropdownMenuItem onClick={() => navigate('/contact')}>
                 <Mail className="w-4 h-4 mr-2" />
                 {t('nav.contact')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/video-blog')}>
+                <Video className="w-4 h-4 mr-2" />
+                Video Blog
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigate('/signin')}>
