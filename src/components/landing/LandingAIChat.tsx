@@ -76,7 +76,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
     {
       role: 'assistant',
       content: industryHint
-        ? `Hi! I'm Aura. Ask me how I'd answer calls, book jobs, and follow up with customers for a ${industryHint} business — or anything else about the platform.`
+        ? `Hi! I'm Aura. Ask me how I'd answer calls, book jobs, and follow up with customers for your ${industryHint} business — or anything else about the platform.`
         : "Hi! I'm Aura. Ask me anything about our platform, features, pricing, or how we can help automate your service business!",
     },
   ]);
