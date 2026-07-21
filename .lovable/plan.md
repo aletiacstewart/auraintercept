@@ -1,41 +1,28 @@
-## Video Blog Page for Aura Intercept Promo Videos
+## Problem
+The embedded Aura chat greeting in `LandingAIChat.tsx` uses an unconditional article:
 
-Create a new public page `/video-blog` that showcases promo videos, starting with the uploaded video from Charles Perez (Owner).
+> "follow up with customers for a ${industryHint} business"
 
-### What to build
+When `industryHint` is set to a value like `"your"`, the message renders as:
 
-1. **Upload the video as a Lovable Asset**
-   - Upload `user-uploads://2026-07-11-123239750.mp4` via `lovable-assets create` → `src/assets/charles-perez-promo.mp4.asset.json`
+> "follow up with customers for a your business"
 
-2. **New page: `src/pages/VideoBlog.tsx`**
-   - Uses `PublicHeader` + `PublicFooter` (same shell as `/blog`)
-   - `SEO` tags (title: "Video Blog | Aura Intercept", description, path `/video-blog`)
-   - Hero section matching `/blog` styling (gradient bg, H1 "Aura Intercept Video Blog", subtitle)
-   - Grid of video cards (responsive: 1 / 2 / 3 columns)
-   - Each card shows:
-     - Video thumbnail (native `<video>` with `preload="metadata"` so first frame shows, `object-contain` in a 16:9 container with dark bg — so the **entire video is visible, not cropped**)
-     - Title, author/role line ("Charles Perez — Owner"), short description, date
-     - Play overlay icon
-   - Clicking a card opens a **modal viewer** (shadcn `Dialog`) with a larger `<video controls autoPlay>` sized to fit viewport (`max-h-[85vh]`, `object-contain`, black letterbox background)
-   - Videos defined in a local `PROMO_VIDEOS` array (no DB) — easy to add more later
+This is the typo the user is seeing.
 
-3. **Video entry (first one)**
-   - Title: "Aura Intercept in Action"
-   - Author: "Charles Perez — Owner"
-   - Date: today
-   - Source: the uploaded asset URL
+## Plan
+1. Update the assistant greeting in `src/components/landing/LandingAIChat.tsx` to remove the stray article.
+   - Change the interpolated greeting from:
+     ```ts
+     `Hi! I'm Aura. Ask me how I'd answer calls, book jobs, and follow up with customers for a ${industryHint} business — or anything else about the platform.`
+     ```
+   - To:
+     ```ts
+     `Hi! I'm Aura. Ask me how I'd answer calls, book jobs, and follow up with customers for your ${industryHint} business — or anything else about the platform.`
+     ```
+   - This removes the "a" and makes the sentence read naturally for any industry hint.
 
-4. **Routing**
-   - Add `<Route path="/video-blog" element={<VideoBlog />} />` in `src/App.tsx`
-   - Add a "Video Blog" link in `PublicFooter` (and optionally next to Blog in header if there's room — will confirm placement matches existing nav)
+2. Verify the change by running the typecheck/test suite to ensure no regressions.
 
-### Technical notes
-
-- Use `AspectRatio` (shadcn) or `aspect-video` Tailwind class with `object-contain` + `bg-black` to guarantee full video visibility regardless of source aspect ratio.
-- Modal: shadcn `Dialog` with `DialogContent` widened (`max-w-5xl`), video autoplays on open and pauses/unmounts on close.
-- No DB / edge function changes — pure frontend page, matching the codebase's `/blog` styling conventions.
-- Uses design tokens only (no hardcoded colors) per Cyber-Sentry standard.
-
-### Out of scope
-
-- No admin UI to upload new promo videos (videos added by editing the `PROMO_VIDEOS` array + running `lovable-assets create`). Can be added later if wanted.
+## Out of scope
+- The similar marketing copy in `src/pages/ForBusiness.tsx` ("See how she'd handle a real customer for a {content.label} business") is not a message from Aura and is not changed unless requested.
+- No backend or prompt changes are needed; this is a single UI string fix.
