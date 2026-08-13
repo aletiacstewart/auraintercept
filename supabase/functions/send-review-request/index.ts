@@ -28,6 +28,7 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  let releaseClaimOnError: (() => Promise<void>) | null = null;
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -55,6 +56,7 @@ Deno.serve(async (req) => {
         console.error('[Review Request] Failed to release idempotency claim:', e);
       }
     };
+    releaseClaimOnError = releaseClaim;
 
     // Idempotency guard: atomically claim the job by stamping
     // review_request_sent_at. If another caller already claimed it, bail with
@@ -335,12 +337,7 @@ The ${companyName} Team`;
 
   } catch (error: unknown) {
     console.error('[Review Request] Error:', error);
-    try {
-      await supabase
-        .from('job_assignments')
-        .update({ review_request_sent_at: null })
-        .eq('id', jobAssignmentId);
-    } catch { /* noop */ }
+    if (releaseClaimOnError) await releaseClaimOnError();
     const errorMessage = error instanceof Error ? error.message : 'Failed to send review request';
     return new Response(
       JSON.stringify({ error: errorMessage }),
