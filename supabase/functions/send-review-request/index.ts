@@ -28,6 +28,7 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  let releaseClaimOnError: (() => Promise<void>) | null = null;
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -43,6 +44,19 @@ Deno.serve(async (req) => {
     }
 
     console.log(`[Review Request] Processing review request for job: ${jobAssignmentId}`);
+
+    // Releases the idempotency claim so a later invocation can retry delivery.
+    const releaseClaim = async () => {
+      try {
+        await supabase
+          .from('job_assignments')
+          .update({ review_request_sent_at: null })
+          .eq('id', jobAssignmentId);
+      } catch (e) {
+        console.error('[Review Request] Failed to release idempotency claim:', e);
+      }
+    };
+    releaseClaimOnError = releaseClaim;
 
     // Idempotency guard: atomically claim the job by stamping
     // review_request_sent_at. If another caller already claimed it, bail with
@@ -104,6 +118,7 @@ Deno.serve(async (req) => {
 
     if (jobError || !jobAssignment) {
       console.error('Job assignment fetch error:', jobError);
+      await releaseClaim();
       return new Response(
         JSON.stringify({ error: 'Job assignment not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -117,6 +132,7 @@ Deno.serve(async (req) => {
     // Check if review requests are enabled
     if (company?.review_request_enabled === false) {
       console.log('[Review Request] Review requests are disabled for this company');
+      await releaseClaim();
       return new Response(
         JSON.stringify({ success: true, message: 'Review requests disabled', results: { sms: null, email: null } }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -307,13 +323,21 @@ The ${companyName} Team`;
     // Log the review request
     console.log(`[Review Request] Completed for job ${jobAssignmentId}:`, results);
 
+    // If nothing actually went out, release the claim so a later retry can send.
+    const anyDelivered = Boolean(results.sms?.success || results.email?.success);
+    if (!anyDelivered) {
+      console.warn(`[Review Request] No channel delivered for job ${jobAssignmentId}; releasing claim for retry.`);
+      await releaseClaim();
+    }
+
     return new Response(
-      JSON.stringify({ success: true, results }),
+      JSON.stringify({ success: anyDelivered, delivered: anyDelivered, results }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error: unknown) {
     console.error('[Review Request] Error:', error);
+    if (releaseClaimOnError) await releaseClaimOnError();
     const errorMessage = error instanceof Error ? error.message : 'Failed to send review request';
     return new Response(
       JSON.stringify({ error: errorMessage }),
