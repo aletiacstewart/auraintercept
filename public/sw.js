@@ -43,11 +43,18 @@ self.addEventListener('fetch', function (event) {
       try {
         const fresh = await fetch(req);
         if (fresh && fresh.ok) {
+          // Cache in the background so the response streams to the page
+          // immediately (no awaiting the body read here).
           const cloned = fresh.clone();
           const headers = new Headers(cloned.headers);
           headers.set('sw-cached-at', String(Date.now()));
-          const body = await cloned.blob();
-          cache.put(req, new Response(body, { status: fresh.status, headers }));
+          const cachePut = cloned
+            .blob()
+            .then((body) =>
+              cache.put(req, new Response(body, { status: fresh.status, headers }))
+            )
+            .catch(() => {});
+          if (event.waitUntil) event.waitUntil(cachePut);
         }
         return fresh;
       } catch (err) {
