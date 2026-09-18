@@ -5,6 +5,7 @@ import { publishToLinkedIn } from "../_shared/social-platforms/linkedin.ts";
 import { publishToGoogleBusiness } from "../_shared/social-platforms/google-business.ts";
 import { ensureFreshTokens } from "../_shared/social-platforms/token-refresh.ts";
 import { SocialPostRequest, SocialPostResult } from "../_shared/social-platforms/types.ts";
+import { profileUsernameFor, publishViaUploadPost } from "../_shared/upload-post.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
