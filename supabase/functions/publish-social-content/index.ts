@@ -5,6 +5,7 @@ import { publishToLinkedIn } from "../_shared/social-platforms/linkedin.ts";
 import { publishToGoogleBusiness } from "../_shared/social-platforms/google-business.ts";
 import { ensureFreshTokens } from "../_shared/social-platforms/token-refresh.ts";
 import { SocialPostRequest, SocialPostResult } from "../_shared/social-platforms/types.ts";
+import { profileUsernameFor, publishViaUploadPost } from "../_shared/upload-post.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -67,6 +68,44 @@ Deno.serve(async (req) => {
     const content = draft.edited_content || draft.generated_content;
     const imageUrl = draft.image_url;
     const companyId = draft.company_id;
+
+    // --- Upload-Post gateway (preferred when the company has it enabled) -----
+    const { data: upIntegration } = await supabase
+      .from("tenant_integrations")
+      .select("upload_post_api_key, upload_post_profile, upload_post_enabled")
+      .eq("company_id", companyId)
+      .maybeSingle();
+
+    const upKey = upIntegration?.upload_post_api_key || Deno.env.get("UPLOAD_POST_API_KEY");
+
+    if (upIntegration?.upload_post_enabled && upKey) {
+      const upResult = await publishViaUploadPost({
+        apiKey: upKey,
+        username: upIntegration.upload_post_profile || profileUsernameFor(companyId),
+        platforms: [platform],
+        content,
+        imageUrl,
+        externalId: draftId,
+      });
+
+      if (upResult.success) {
+        await supabase
+          .from("social_content_drafts")
+          .update({
+            status: "published",
+            published_at: new Date().toISOString(),
+            api_metadata: { via: "upload_post", response: upResult.body },
+          })
+          .eq("id", draftId);
+
+        return new Response(
+          JSON.stringify({ success: true, platform, via: "upload_post", response: upResult.body }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      console.error("[publish-social-content] Upload-Post failed, falling back:", upResult.error);
+    }
 
     // Get fresh access token
     const tokenResult = await ensureFreshTokens(companyId, platform, supabase);
