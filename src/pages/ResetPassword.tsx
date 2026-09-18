@@ -82,7 +82,7 @@ export default function ResetPassword() {
       <main className="flex-1 flex items-center justify-center p-4 py-12">
         <Card className="w-full max-w-md border-border/50 shadow-lg">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl gradient-primary">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
               <KeyRound className="h-6 w-6 text-primary-foreground" />
             </div>
             <CardTitle>Choose a new password</CardTitle>
@@ -120,7 +120,7 @@ export default function ResetPassword() {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full gradient-primary" disabled={isSaving}>
+                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isSaving}>
                   {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {isSaving ? 'Updating…' : 'Update password'}
                 </Button>

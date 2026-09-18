@@ -123,27 +123,27 @@ export default function SignIn() {
             <CardHeader className="text-center pb-4">
               <div className="flex flex-wrap justify-center gap-2 text-sm mb-4">
                 <Button variant={mode === 'customer' ? 'default' : 'ghost'} size="sm"
-                  className={mode === 'customer' ? 'gradient-primary' : ''}
+                  className={mode === 'customer' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}
                   onClick={() => navigate('/signin?mode=customer')}>
                   <UserCircle className="w-4 h-4 mr-1" /> Customer
                 </Button>
                 <Button variant={mode === 'employee' ? 'default' : 'ghost'} size="sm"
-                  className={mode === 'employee' ? 'gradient-primary' : ''}
+                  className={mode === 'employee' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}
                   onClick={() => navigate('/signin?mode=employee')}>
                   <Users className="w-4 h-4 mr-1" /> Employee
                 </Button>
                 <Button variant={mode === 'company' ? 'default' : 'ghost'} size="sm"
-                  className={mode === 'company' ? 'gradient-primary' : ''}
+                  className={mode === 'company' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}
                   onClick={() => navigate('/signin?mode=company')}>
                   <Building2 className="w-4 h-4 mr-1" /> Company
                 </Button>
                 <Button variant={mode === 'platform_admin' ? 'default' : 'ghost'} size="sm"
-                  className={mode === 'platform_admin' ? 'gradient-primary' : ''}
+                  className={mode === 'platform_admin' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}
                   onClick={() => navigate('/signin?mode=platform_admin')}>
                   <Shield className="w-4 h-4 mr-1" /> Platform Admin
                 </Button>
               </div>
-              <div className="mx-auto w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-3">
+              <div className="mx-auto w-12 h-12 rounded-xl bg-primary flex items-center justify-center mb-3">
                 <Icon className="w-6 h-6 text-primary-foreground" />
               </div>
               <CardTitle className="text-xl">{meta.title}</CardTitle>
@@ -164,7 +164,7 @@ export default function SignIn() {
                 <div className="flex justify-end">
                   <ForgotPasswordDialog />
                 </div>
-                <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isLoading}>
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
