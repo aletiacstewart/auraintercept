@@ -25,7 +25,10 @@ export default function ResetPassword() {
     const verifyRecoverySession = async () => {
       const { data } = await supabase.auth.getSession();
       if (mounted) {
-        setIsValidRecovery(Boolean(data.session));
+        const hasRecoveryMarker =
+          window.location.hash.includes('type=recovery') ||
+          new URLSearchParams(window.location.search).get('type') === 'recovery';
+        setIsValidRecovery(Boolean(data.session) && hasRecoveryMarker);
         setIsChecking(false);
       }
     };

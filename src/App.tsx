@@ -19,6 +19,7 @@ import { useDeploymentAutoReload } from "@/hooks/useDeploymentAutoReload";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import SignIn from "./pages/SignIn";
+import ResetPassword from "./pages/ResetPassword";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
