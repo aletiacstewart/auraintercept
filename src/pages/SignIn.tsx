@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
@@ -32,6 +32,7 @@ export default function SignIn() {
   const mode: AuthMode = rawMode && VALID_MODES.includes(rawMode as AuthMode) ? (rawMode as AuthMode) : 'company';
   const source = searchParams.get('source');
   const nextRaw = searchParams.get('next');
+  const resetSucceeded = searchParams.get('reset') === 'success';
   // Only accept same-origin relative paths, per app-mcp-server-authoring redirect rules.
   const nextPath = nextRaw && nextRaw.startsWith('/') && !nextRaw.startsWith('//') ? nextRaw : null;
   const navigate = useNavigate();
@@ -43,6 +44,12 @@ export default function SignIn() {
 
   const meta = MODE_META[mode];
   const Icon = meta.icon;
+
+  useEffect(() => {
+    if (resetSucceeded) {
+      toast({ title: 'Password updated', description: 'Sign in with your new password.' });
+    }
+  }, [resetSucceeded, toast]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
