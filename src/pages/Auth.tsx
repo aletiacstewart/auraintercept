@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 /**
  * /auth — legacy entry point.
@@ -14,6 +14,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
  */
 export default function Auth() {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,9 +33,10 @@ export default function Auth() {
     const params = new URLSearchParams(searchParams);
     params.delete('tab');
     const qs = params.toString();
-    const target = `${goSignIn ? '/signin' : '/signup'}${qs ? `?${qs}` : ''}`;
+    const destination = mode === 'reset' ? '/reset-password' : goSignIn ? '/signin' : '/signup';
+    const target = `${destination}${qs ? `?${qs}` : ''}${location.hash}`;
     navigate(target, { replace: true });
-  }, [searchParams, navigate]);
+  }, [searchParams, location.hash, navigate]);
 
   return null;
 }

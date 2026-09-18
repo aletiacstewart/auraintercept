@@ -191,6 +191,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/signin" element={<SignIn />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/audit" element={<OpportunityAudit />} />
                 <Route path="/for-business" element={<ForBusiness />} />
