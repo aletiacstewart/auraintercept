@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -44,9 +44,33 @@ interface ChannelConfig {
   description: string;
 }
 
+interface UploadPostAccount {
+  platform: string;
+  username?: string | null;
+}
+
+interface UploadPostStatus {
+  accounts?: UploadPostAccount[];
+}
+
+const SOCIAL_PLATFORM_LABELS: Record<string, string> = {
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  linkedin: 'LinkedIn',
+  tiktok: 'TikTok',
+  youtube: 'YouTube',
+  threads: 'Threads',
+  x: 'X (Twitter)',
+  twitter: 'X (Twitter)',
+  pinterest: 'Pinterest',
+  google_business: 'Google Business',
+};
+
+const normalizePlatform = (platform: string) => platform.toLowerCase().replace(/[\s-]+/g, '_');
+
 const CHANNELS: ChannelConfig[] = [
   { id: 'website', label: 'Website', icon: Globe, color: 'text-cyan-400', description: 'Headlines, copy, CTAs' },
-  { id: 'social', label: 'Social Media', icon: Share2, color: 'text-pink-400', description: '6 platform variations' },
+  { id: 'social', label: 'Social Media', icon: Share2, color: 'text-pink-400', description: 'Connected Upload-Post accounts' },
   { id: 'campaign', label: 'Email Campaign', icon: Mail, color: 'text-amber-400', description: 'Subject, body, CTA' },
   { id: 'blog', label: 'Blog Post', icon: FileText, color: 'text-green-400', description: 'SEO-optimized article' },
   { id: 'sms', label: 'SMS Templates', icon: MessageSquare, color: 'text-purple-400', description: '160-char messages' },
@@ -86,6 +110,28 @@ export function MultiChannelGenerator() {
   });
 
   const effectiveCompanyId = companyId || profile?.company_id;
+
+  const { data: uploadPostStatus, isLoading: isLoadingSocialAccounts } = useQuery<UploadPostStatus>({
+    queryKey: ['upload-post-status', effectiveCompanyId],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke('upload-post', {
+        body: { action: 'status', companyId: effectiveCompanyId },
+      });
+      if (error) throw error;
+      return data as UploadPostStatus;
+    },
+    enabled: !!effectiveCompanyId,
+  });
+
+  const connectedSocialPlatforms = Array.from(new Set(
+    (uploadPostStatus?.accounts ?? []).map((account) => normalizePlatform(account.platform)),
+  ));
+
+  useEffect(() => {
+    if (!isLoadingSocialAccounts && connectedSocialPlatforms.length === 0) {
+      setSelectedChannels((current) => current.filter((channel) => channel !== 'social'));
+    }
+  }, [isLoadingSocialAccounts, connectedSocialPlatforms.length]);
 
   // Track content generation in history
   const trackGeneration = useMutation({
@@ -179,6 +225,9 @@ export function MultiChannelGenerator() {
             contentType: 'general',
             topic: topic.trim(),
             companyId: effectiveCompanyId,
+            additionalContext: channel === 'social'
+              ? { socialPlatforms: connectedSocialPlatforms }
+              : undefined,
           },
         });
 
@@ -194,7 +243,17 @@ export function MultiChannelGenerator() {
       responses.forEach((response, index) => {
         const channel = selectedChannels[index];
         if (response.status === 'fulfilled') {
-          newResults[channel] = response.value.data.content;
+          const generatedContent = response.value.data.content;
+          if (channel === 'social' && generatedContent && typeof generatedContent === 'object') {
+            const allowed = new Set(connectedSocialPlatforms);
+            newResults[channel] = Object.fromEntries(
+              Object.entries(generatedContent as Record<string, unknown>).filter(([platform]) =>
+                allowed.has(normalizePlatform(platform)),
+              ),
+            );
+          } else {
+            newResults[channel] = generatedContent;
+          }
           successCount++;
           // Track generation
           trackGeneration.mutate({ channel, content: response.value.data.content });
@@ -674,27 +733,41 @@ export function MultiChannelGenerator() {
           <div className="space-y-3">
             <Label>Select Channels</Label>
             <div className="grid grid-cols-1 gap-2">
-              {CHANNELS.map(({ id, label, icon: Icon, color, description }) => (
+              {CHANNELS.map(({ id, label, icon: Icon, color, description }) => {
+                const socialUnavailable = id === 'social' && !isLoadingSocialAccounts && connectedSocialPlatforms.length === 0;
+                const channelDescription = id === 'social'
+                  ? isLoadingSocialAccounts
+                    ? 'Checking connected accounts...'
+                    : connectedSocialPlatforms.length > 0
+                      ? connectedSocialPlatforms.map((platform) => SOCIAL_PLATFORM_LABELS[platform] ?? platform.replace(/_/g, ' ')).join(', ')
+                      : 'Connect accounts in the Accounts tab'
+                  : description;
+
+                return (
                 <div
                   key={id}
-                  className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                  className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                    socialUnavailable ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+                  } ${
                     selectedChannels.includes(id) 
                       ? 'border-primary bg-primary/5' 
                       : 'border-border hover:border-primary/50'
                   }`}
-                  onClick={() => toggleChannel(id)}
+                  onClick={() => !socialUnavailable && toggleChannel(id)}
                 >
                   <Checkbox
                     checked={selectedChannels.includes(id)}
-                    onCheckedChange={() => toggleChannel(id)}
+                    disabled={socialUnavailable || (id === 'social' && isLoadingSocialAccounts)}
+                    onCheckedChange={() => !socialUnavailable && toggleChannel(id)}
                   />
                   <Icon className={`h-4 w-4 ${color}`} />
                   <div className="flex-1">
                     <p className="text-sm font-medium">{label}</p>
-                    <p className="text-xs text-muted-foreground">{description}</p>
+                    <p className="text-xs text-muted-foreground">{channelDescription}</p>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

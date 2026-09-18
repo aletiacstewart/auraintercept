@@ -191,8 +191,11 @@ Include: headline, subheadline, body copy, and CTA
 Format: JSON with fields: headline, subheadline, body, cta`,
 
       social: `Generate social media content for: ${topic}
-Platforms: Instagram, Facebook, LinkedIn, TikTok, Google Business, SMS
+Platforms: ${Array.isArray(additionalContext?.socialPlatforms) && additionalContext.socialPlatforms.length > 0
+  ? additionalContext.socialPlatforms.join(", ")
+  : "No connected social platforms"}
 For each platform, include optimized copy with appropriate length, hashtags (where applicable), and tone.
+Return content ONLY for the platforms listed above. Use the exact platform keys provided.
 Format: JSON with platform keys containing: post, hashtags (array), character_count`,
 
       campaign: `Generate email/SMS marketing campaign content for: ${topic}
