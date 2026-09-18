@@ -202,6 +202,13 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
         </div>
       )}
 
+      {/* Accounts tab — Upload-Post connection */}
+      {activeTab === 'accounts' && (
+        <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 py-3 sm:px-4 sm:py-4">
+          <UploadPostPanel companyId={effectiveCompanyId} companyLogoUrl={company?.logo_url} />
+        </div>
+      )}
+
       {activeTab === 'chat' && (
         <>
           <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 pt-3 pb-32 sm:px-4 sm:pt-4">
