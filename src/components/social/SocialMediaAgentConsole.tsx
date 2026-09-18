@@ -17,15 +17,17 @@ import { ContentEngineDashboard } from '@/components/content-engine/ContentEngin
 import { ContentEngineCalendar } from '@/components/content-engine/ContentEngineCalendar';
 import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
 import { IndustryTemplateSelector } from '@/components/social/IndustryTemplateSelector';
+import { UploadPostPanel } from '@/components/social/UploadPostPanel';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
-  Share2, 
+  Share2, Link2,
 } from 'lucide-react';
 
-// Simplified quick actions - 2 clear entry points
+// Simplified quick actions - 3 clear entry points
 const QUICK_ACTIONS = [
   { id: 'create-content', label: 'Create Content', icon: Share2, message: 'Open multi-channel content generator', featureColor: 'text-pink-400' },
   { id: 'my-posts', label: 'My Posts', icon: Share2, message: 'View saved drafts and posts', featureColor: 'text-pink-400' },
+  { id: 'accounts', label: 'Accounts', icon: Link2, message: 'Connect social accounts for automatic posting', featureColor: 'text-pink-400' },
 ];
 
 // Tab configuration
