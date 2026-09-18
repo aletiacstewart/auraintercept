@@ -242,12 +242,21 @@ export function GoogleCalendarSettings() {
               {connection.last_error && (
                 <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
                   <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm font-medium text-destructive">Sync Error</p>
                     <p className="text-xs text-muted-foreground">{connection.last_error}</p>
+                    <Button
+                      size="sm"
+                      className="mt-3"
+                      onClick={handleConnect}
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Reconnect Google Calendar
+                    </Button>
                   </div>
                 </div>
               )}
+
 
               <div className="flex flex-wrap gap-2">
                 <Button
