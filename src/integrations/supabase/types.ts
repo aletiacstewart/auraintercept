@@ -7496,6 +7496,12 @@ export type Database = {
           twilio_auth_token: string | null
           twilio_phone_number: string | null
           updated_at: string
+          upload_post_accounts: Json
+          upload_post_api_key: string | null
+          upload_post_auto_publish: boolean
+          upload_post_enabled: boolean
+          upload_post_profile: string | null
+          upload_post_synced_at: string | null
           use_platform_tts: boolean | null
         }
         Insert: {
@@ -7563,6 +7569,12 @@ export type Database = {
           twilio_auth_token?: string | null
           twilio_phone_number?: string | null
           updated_at?: string
+          upload_post_accounts?: Json
+          upload_post_api_key?: string | null
+          upload_post_auto_publish?: boolean
+          upload_post_enabled?: boolean
+          upload_post_profile?: string | null
+          upload_post_synced_at?: string | null
           use_platform_tts?: boolean | null
         }
         Update: {
@@ -7630,6 +7642,12 @@ export type Database = {
           twilio_auth_token?: string | null
           twilio_phone_number?: string | null
           updated_at?: string
+          upload_post_accounts?: Json
+          upload_post_api_key?: string | null
+          upload_post_auto_publish?: boolean
+          upload_post_enabled?: boolean
+          upload_post_profile?: string | null
+          upload_post_synced_at?: string | null
           use_platform_tts?: boolean | null
         }
         Relationships: [
