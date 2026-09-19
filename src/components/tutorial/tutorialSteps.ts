@@ -1,4 +1,14 @@
-import { type TutorialStep } from '@/hooks/useTutorial';
+export interface TutorialStep {
+  id: string;
+  title: string;
+  description: string;
+  tip?: string;
+  tryIt?: string;
+  targetSelector: string;
+  route?: string;
+  position?: 'top' | 'bottom' | 'left' | 'right';
+}
+
 
 // ─── SHARED STEPS (all roles/plans) ───────────────────────────────────────────
 
