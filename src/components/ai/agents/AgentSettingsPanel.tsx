@@ -33,6 +33,17 @@ interface AgentSettingsPanelProps {
   configFields: ConfigField[];
   currentSettings: Record<string, any>;
   onSave: (settings: Record<string, any>) => Promise<void>;
+  /** Wording applied from the ready-made prompt library. */
+  presetPrompt?: { value: string; nonce: number } | null;
+}
+
+/** The field a ready-made prompt should land in. */
+function findPromptField(configFields: ConfigField[]): ConfigField | undefined {
+  return (
+    configFields.find(
+      (f) => f.type === 'textarea' && /prompt|instruction|script|greeting|persona/i.test(f.key),
+    ) ?? configFields.find((f) => f.type === 'textarea')
+  );
 }
 
 export function AgentSettingsPanel({
@@ -40,6 +51,7 @@ export function AgentSettingsPanel({
   configFields,
   currentSettings,
   onSave,
+  presetPrompt,
 }: AgentSettingsPanelProps) {
   const [settings, setSettings] = useState<Record<string, any>>({});
   const [saving, setSaving] = useState(false);
@@ -54,6 +66,16 @@ export function AgentSettingsPanel({
     setSettings(initial);
     setHasChanges(false);
   }, [currentSettings, configFields]);
+
+  // Apply a template picked in the prompt library.
+  useEffect(() => {
+    if (!presetPrompt?.value) return;
+    const field = findPromptField(configFields);
+    if (!field) return;
+    setSettings((prev) => ({ ...prev, [field.key]: presetPrompt.value }));
+    setHasChanges(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presetPrompt?.nonce]);
 
   const handleChange = (key: string, value: any) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
