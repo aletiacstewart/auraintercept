@@ -62,8 +62,7 @@ ${renderTierSection()}
 - Analytics: /dashboard/analytics
 - Settings: /dashboard/settings
 - Integrations: /dashboard/integrations
-- Social Media Integration: /dashboard/integrations/social
-- AI Research (Tavily): /dashboard/integrations/tavily
+- Social posting (Upload-Post): /dashboard/integrations
 
 ## Common Troubleshooting
 - **Voice not working**: Requires ElevenLabs + SignalWire integrations configured in Settings > Integrations

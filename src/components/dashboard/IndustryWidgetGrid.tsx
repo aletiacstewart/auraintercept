@@ -165,7 +165,7 @@ const WIDGET_REGISTRY: Record<string, WidgetSpec> = {
     cta: { label: 'Open customers', route: '/dashboard/customers' } },
   calendar_sync: { label: 'Calendar Sync', icon: Clock,
     description: 'Calendars connected & syncing.',
-    cta: { label: 'Manage calendars', route: '/dashboard/integrations/calendar' } },
+    cta: { label: 'Manage calendars', route: '/dashboard/integrations?open=google_calendar' } },
 };
 
 export function IndustryWidgetGrid() {

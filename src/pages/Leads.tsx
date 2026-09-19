@@ -174,7 +174,7 @@ export default function Leads() {
                 </Link>
               </Button>
               <Button variant="outline" size="sm" asChild>
-                <Link to="/dashboard/integrations/crm">
+                <Link to="/dashboard/integrations?open=crm">
                   <Database className="w-4 h-4 mr-2" />
                   Connect CRM
                 </Link>

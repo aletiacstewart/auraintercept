@@ -163,14 +163,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Integrations',
     items: [
-      { label: 'All Integrations', icon: Puzzle, href: '/dashboard/3rd-party-overview', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'AI Research', icon: Search, href: '/dashboard/integrations/tavily', roles: ['platform_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'Phone & SMS', icon: PhoneCall, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'Social Media Setup', icon: Share2, href: '/dashboard/integrations/social', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
-      { label: 'CRM', icon: Database, href: '/dashboard/integrations/crm', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'Connections', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
     ],
   },
   {
@@ -571,13 +564,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                       : item.href === '/dashboard/dispatch-field-ops-install' ? 'nav-dispatch-ops-install'
                       : item.href === '/dashboard/ai-agents' ? 'nav-ai-operatives'
                       : item.href === '/dashboard/knowledge' ? 'nav-knowledge-base'
-                      : item.href === '/dashboard/3rd-party-overview' ? 'nav-integrations-overview'
-                      : item.href === '/dashboard/integrations/voice' ? 'nav-voice-agent'
-                      : item.href === '/dashboard/integrations/sms' ? 'nav-voice-sms'
-                      : item.href === '/dashboard/integrations/email' ? 'nav-email'
-                      : item.href === '/dashboard/integrations/calendar' ? 'nav-calendar'
-                      : item.href === '/dashboard/integrations/social' ? 'nav-social-integration'
-                      : item.href === '/dashboard/integrations/tavily' ? 'nav-ai-research'
+                      : item.href === '/dashboard/integrations' ? 'nav-integrations-overview'
                       : item.href === '/dashboard/subscription' ? 'nav-subscription'
                       : item.href === '/dashboard/subscription-analytics' ? 'nav-subscription-analytics'
                       : item.href === '/dashboard/platform-guides' ? 'nav-platform-guides'

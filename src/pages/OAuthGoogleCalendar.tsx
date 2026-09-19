@@ -61,7 +61,7 @@ export default function OAuthGoogleCalendar() {
           // Store current path so we can return after login
           localStorage.setItem(
             "gcal-return-url",
-            window.location.origin + "/dashboard/integrations/calendar"
+            window.location.origin + "/dashboard/integrations?open=google_calendar"
           );
           window.location.href = "/auth";
           return;
@@ -70,7 +70,7 @@ export default function OAuthGoogleCalendar() {
         // Store return URL for after OAuth completes
         localStorage.setItem(
           "gcal-return-url",
-          window.location.origin + "/dashboard/integrations/calendar"
+          window.location.origin + "/dashboard/integrations?open=google_calendar"
         );
 
         const response = await fetch(

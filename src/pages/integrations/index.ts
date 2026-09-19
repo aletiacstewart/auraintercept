@@ -1,7 +1,0 @@
-// Integration page exports
-export { default as VoiceIntegration } from './VoiceIntegration';
-export { default as SMSIntegration } from './SMSIntegration';
-export { default as EmailIntegration } from './EmailIntegration';
-export { default as CalendarIntegration } from './CalendarIntegration';
-export { default as SocialMediaIntegration } from './SocialMediaIntegration';
-export { default as TavilyIntegration } from './TavilyIntegration';

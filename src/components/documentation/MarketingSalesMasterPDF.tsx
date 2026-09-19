@@ -311,14 +311,14 @@ const FEATURES_DETAIL: Array<{
   items: Array<{ name: string; value: string; route?: string; tier: string; who: string; dep?: string }>;
 }> = [
   { area: 'Voice & Telephony', items: [
-    { name: 'AI Voice Receptionist', value: 'Answers, qualifies, and routes calls 24/7.', route: '/dashboard/integrations/voice', tier: 'Core', who: 'Caller / Admin', dep: 'SignalWire + ElevenLabs' },
+    { name: 'AI Voice Receptionist', value: 'Answers, qualifies, and routes calls 24/7.', route: '/dashboard/integrations', tier: 'Core', who: 'Caller / Admin', dep: 'SignalWire + ElevenLabs' },
     { name: 'Call History & Recording', value: 'Searchable call log with transcripts.', route: '/dashboard/calls', tier: 'Core', who: 'Admin', dep: 'SignalWire' },
     { name: 'CFNA (Call Forward No-Answer)', value: 'Forward existing number to Aura on missed calls.', tier: 'Core', who: 'Admin', dep: 'Phone provider' },
     { name: 'Missed-Call Auto-Followup', value: 'Instant SMS recovery for missed calls.', tier: 'Core', who: 'Caller', dep: 'SignalWire' },
   ]},
   { area: 'SMS & Messaging', items: [
     { name: 'AI SMS Handler', value: 'Two-way SMS with intent routing.', route: '/dashboard/messages', tier: 'Core', who: 'Customer / Admin', dep: 'SignalWire + A2P 10DLC' },
-    { name: 'Keyword Auto-Responder', value: 'Hashtag triggers bypass AI for instant replies.', route: '/dashboard/integrations/sms', tier: 'Core', who: 'Admin' },
+    { name: 'Keyword Auto-Responder', value: 'Hashtag triggers bypass AI for instant replies.', route: '/dashboard/integrations', tier: 'Core', who: 'Admin' },
     { name: 'SMS Logs', value: 'Per-conversation history, deliverability stats.', route: '/dashboard/sms-logs', tier: 'Core', who: 'Admin' },
   ]},
   { area: 'Email', items: [
@@ -383,11 +383,10 @@ const FEATURES_DETAIL: Array<{
     { name: 'Staff Alerts (4 channels)', value: 'Push, email, SMS, in-app bell.', route: '/dashboard/notifications', tier: 'Core', who: 'Staff' },
   ]},
   { area: 'Integrations', items: [
-    { name: 'Voice Integration', value: 'SignalWire setup + number provisioning.', route: '/dashboard/integrations/voice', tier: 'Core', who: 'Admin' },
-    { name: 'SMS Integration', value: '10DLC registration + keyword setup.', route: '/dashboard/integrations/sms', tier: 'Core', who: 'Admin' },
-    { name: 'Email Integration', value: 'Resend domain verification.', route: '/dashboard/integrations/email', tier: 'Core', who: 'Admin' },
-    { name: 'Calendar Integration', value: 'Google OAuth flow.', route: '/dashboard/integrations/calendar', tier: 'Core', who: 'Admin' },
-    { name: 'Tavily Integration', value: 'Research key + caps.', route: '/dashboard/integrations/tavily', tier: 'Core', who: 'Admin' },
+    { name: 'Voice Integration', value: 'SignalWire setup + number provisioning.', route: '/dashboard/integrations', tier: 'Core', who: 'Admin' },
+    { name: 'SMS Integration', value: '10DLC registration + keyword setup.', route: '/dashboard/integrations', tier: 'Core', who: 'Admin' },
+    { name: 'Email Integration', value: 'Resend domain verification.', route: '/dashboard/integrations', tier: 'Core', who: 'Admin' },
+    { name: 'Calendar Integration', value: 'Google OAuth flow.', route: '/dashboard/integrations', tier: 'Core', who: 'Admin' },
   ]},
 ];
 

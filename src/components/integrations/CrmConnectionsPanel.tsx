@@ -1,11 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { PageContainer } from "@/components/ui/page-container";
-import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,11 +10,11 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, Database, ExternalLink, Loader2, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
+import { ExternalLink, Loader2, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { CRM_PROVIDERS, type CrmProviderId, getCrmProvider } from "@/lib/crmProviders";
 
-export default function CRMIntegration() {
+export function CrmConnectionsPanel() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [openProvider, setOpenProvider] = useState<CrmProviderId | null>(null);
@@ -116,20 +112,8 @@ export default function CRMIntegration() {
   const provider = openProvider ? getCrmProvider(openProvider) : null;
 
   return (
-    <DashboardLayout>
-      <PageContainer>
-        <div className="space-y-6 animate-fade-in">
-          <PageHeader
-            icon={Database}
-            title="CRM Integration"
-            description="Connect your CRM to sync leads two ways"
-            featureColor="integrations"
-            action={
-              <Button variant="ghost" size="icon" asChild>
-                <Link to="/dashboard/3rd-party-overview"><ArrowLeft className="w-4 h-4" /></Link>
-              </Button>
-            }
-          />
+    <>
+        <div className="space-y-6">
 
           <Alert>
             <AlertCircle className="w-4 h-4" />
@@ -260,7 +244,6 @@ export default function CRMIntegration() {
             )}
           </SheetContent>
         </Sheet>
-      </PageContainer>
-    </DashboardLayout>
+    </>
   );
 }

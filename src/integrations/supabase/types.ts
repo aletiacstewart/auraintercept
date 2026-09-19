@@ -3611,6 +3611,7 @@ export type Database = {
           label: string
           min_tier_per_extra: Json
           profile_key: string | null
+          quickstart: Json
           quote_template: Json
           service_catalog: Json
           service_type_options: Json
@@ -3640,6 +3641,7 @@ export type Database = {
           label: string
           min_tier_per_extra?: Json
           profile_key?: string | null
+          quickstart?: Json
           quote_template?: Json
           service_catalog?: Json
           service_type_options?: Json
@@ -3669,6 +3671,7 @@ export type Database = {
           label?: string
           min_tier_per_extra?: Json
           profile_key?: string | null
+          quickstart?: Json
           quote_template?: Json
           service_catalog?: Json
           service_type_options?: Json
@@ -5258,6 +5261,7 @@ export type Database = {
           current_longitude: number | null
           email: string | null
           email_notifications_enabled: boolean | null
+          first_steps_state: Json
           full_name: string | null
           home_address: string | null
           home_latitude: number | null
@@ -5266,6 +5270,8 @@ export type Database = {
           location_updated_at: string | null
           must_change_password: boolean | null
           onboarding_completed_at: string | null
+          onboarding_progress: number
+          onboarding_skipped_at: string | null
           phone: string | null
           phone_number: string | null
           preferred_language: string
@@ -5287,6 +5293,7 @@ export type Database = {
           current_longitude?: number | null
           email?: string | null
           email_notifications_enabled?: boolean | null
+          first_steps_state?: Json
           full_name?: string | null
           home_address?: string | null
           home_latitude?: number | null
@@ -5295,6 +5302,8 @@ export type Database = {
           location_updated_at?: string | null
           must_change_password?: boolean | null
           onboarding_completed_at?: string | null
+          onboarding_progress?: number
+          onboarding_skipped_at?: string | null
           phone?: string | null
           phone_number?: string | null
           preferred_language?: string
@@ -5316,6 +5325,7 @@ export type Database = {
           current_longitude?: number | null
           email?: string | null
           email_notifications_enabled?: boolean | null
+          first_steps_state?: Json
           full_name?: string | null
           home_address?: string | null
           home_latitude?: number | null
@@ -5324,6 +5334,8 @@ export type Database = {
           location_updated_at?: string | null
           must_change_password?: boolean | null
           onboarding_completed_at?: string | null
+          onboarding_progress?: number
+          onboarding_skipped_at?: string | null
           phone?: string | null
           phone_number?: string | null
           preferred_language?: string
@@ -8217,6 +8229,7 @@ export type Database = {
           label: string
           min_tier_per_extra: Json
           profile_key: string | null
+          quickstart: Json
           quote_template: Json
           service_catalog: Json
           service_type_options: Json

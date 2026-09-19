@@ -182,61 +182,17 @@ const adminSteps: TutorialStep[] = [
     position: 'right',
   },
 
-  // Integrations
+  // Connections
   {
     id: 'integrations-overview',
-    title: '3rd Party Integrations Overview',
-    description: 'Connect the external services that power your AI Operatives: voice (ElevenLabs), SMS & phone (SignalWire), email (Resend), calendar (Google), and AI research (Tavily). Social media posting uses the built-in Manual Bridge — no API setup required.',
-    tryIt: 'Click 3rd Party Overview to see all available integrations and their current setup status.',
+    title: 'Connections',
+    description: 'One page for everything Aura plugs into: your calendar, your business number for calls and texts (SignalWire), email (Resend), the AI voice (ElevenLabs), card payments (Stripe), social posting (Upload-Post) and your CRM. Each one opens a short setup pop-up.',
+    tryIt: 'Click Connections to see what is already connected and what still needs attention.',
     targetSelector: '[data-tour-id="nav-integrations-overview"]',
     route: '/dashboard',
     position: 'right',
   },
-  {
-    id: 'voice-integration',
-    title: 'Voice Agent — ElevenLabs',
-    description: 'Connect ElevenLabs for natural, human-sounding AI voice conversations. Your AI Receptionist answers every incoming call with a chosen voice, 24/7 — no hold times.',
-    tip: 'Choose from dozens of voice options or clone your own. The voice operative handles calls even when your office is closed.',
-    targetSelector: '[data-tour-id="nav-voice-agent"]',
-    route: '/dashboard',
-    position: 'right',
-  },
-  {
-    id: 'sms-integration',
-    title: 'Voice & SMS — SignalWire',
-    description: 'Set up phone numbers for inbound and outbound calling plus two-way SMS. Handles appointment confirmations, reminders, win-back messages, and emergency alerts.',
-    tip: 'SignalWire provides the phone infrastructure. Get a local or toll-free number and configure call routing rules here.',
-    targetSelector: '[data-tour-id="nav-voice-sms"]',
-    route: '/dashboard',
-    position: 'right',
-  },
-  {
-    id: 'email-integration',
-    title: 'Email — Resend',
-    description: 'Configure transactional email for appointment confirmations, reminders, marketing campaigns, review requests, and follow-up sequences using Resend\'s reliable delivery.',
-    tip: 'Use your own domain for best deliverability. Add your domain in Resend and paste the API key here.',
-    targetSelector: '[data-tour-id="nav-email"]',
-    route: '/dashboard',
-    position: 'right',
-  },
-  {
-    id: 'calendar-integration',
-    title: 'Calendar — Google',
-    description: 'Sync appointments bidirectionally with Google Calendar. New bookings automatically appear on your calendar, and events created in Google Calendar sync back to the platform.',
-    tip: 'Use the same email address for your Aura account and Google Calendar for automatic sync detection.',
-    targetSelector: '[data-tour-id="nav-calendar"]',
-    route: '/dashboard',
-    position: 'right',
-  },
-  {
-    id: 'tavily-integration',
-    title: 'AI Research — Tavily',
-    description: 'Supercharge your AI Operatives with real-time web research. Tavily lets operatives find current information when generating blog posts, social content, and answering complex customer questions.',
-    tip: 'Get a free Tavily API key at tavily.com. It significantly improves the quality of AI-generated content.',
-    targetSelector: '[data-tour-id="nav-ai-research"]',
-    route: '/dashboard',
-    position: 'right',
-  },
+
 
   // Help
   {
