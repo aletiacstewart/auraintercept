@@ -283,7 +283,9 @@ export default function IntegrationSetupWizard() {
                   <div className="space-y-4">
                     {active.id === 'signalwire' && <SignalWireSetupGuide />}
                     {active.id === 'resend' && <ResendSetupGuide />}
-                    {active.id === 'elevenlabs' && <ElevenLabsSetupGuide />}
+                    {active.id === 'elevenlabs' && companyId && (
+                      <ElevenLabsSetupGuide companyId={companyId} agentId={(integrations?.elevenlabs_agent_id as string) || undefined} />
+                    )}
 
                     {active.fields.map((field) => (
                       <div key={field.key} className="space-y-2">
