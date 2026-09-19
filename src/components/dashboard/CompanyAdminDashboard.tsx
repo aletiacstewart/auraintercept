@@ -13,6 +13,7 @@ import { HOW_TO_USE } from '@/lib/howToUseContent';
 import { useNavigate } from 'react-router-dom';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
 import { DashboardSetupNav } from './DashboardSetupNav';
+import { FirstStepsNudgeCard } from '@/components/onboarding/FirstStepsNudgeCard';
 import { DashboardOnboardingHub } from './DashboardOnboardingHub';
 import { AuraCommandCenter } from './AuraCommandCenter';
 import { AuraTodayStrip } from './AuraTodayStrip';
@@ -308,6 +309,8 @@ export function CompanyAdminDashboard() {
             </div>
           }
         />
+
+        <FirstStepsNudgeCard />
 
         {/* Setup nav + onboarding hub: only show in Pro mode (or always, when still relevant) */}
         {!isSimple && (
