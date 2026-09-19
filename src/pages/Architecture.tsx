@@ -244,7 +244,6 @@ ${tierStyles}`
     
     subgraph Hooks["Hook Layer"]
         useMultiAgent["useMultiAgent\nChat"]
-        useAIAgent["useAIAgent"]
         useOrchestrator["useAIAgent\nOrchestrator"]
     end
     
@@ -265,7 +264,7 @@ ${tierStyles}`
     class BO,AR elite
     class AIHub pro
     class ChatBubble,FloatingInput,QuickActions,WelcomeScreen,GlassHeader system
-    class useMultiAgent,useAIAgent,useOrchestrator system
+    class useMultiAgent,useOrchestrator system
     class ChatFn,OrchestratorFn external
 ${tierStyles}`
   },
