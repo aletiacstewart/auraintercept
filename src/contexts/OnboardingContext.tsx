@@ -1,6 +1,26 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { onboarding as track } from '@/lib/analytics';
+
+/** Local record of which onboarding events have already been reported. */
+function trackedKey(companyId: string) {
+  return `aura-onboarding-tracked-${companyId}`;
+}
+function readTracked(companyId: string): Set<string> {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(trackedKey(companyId)) || '[]') as string[]);
+  } catch {
+    return new Set();
+  }
+}
+function writeTracked(companyId: string, set: Set<string>) {
+  try {
+    localStorage.setItem(trackedKey(companyId), JSON.stringify([...set]));
+  } catch {
+    /* storage unavailable — tracking is best-effort */
+  }
+}
 
 export type FirstStepId = 'business_type' | 'calendar' | 'communications' | 'team' | 'test_workflow';
 
