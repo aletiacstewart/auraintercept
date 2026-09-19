@@ -4,7 +4,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
-import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { WidgetPreview } from '@/components/widget/WidgetPreview';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';

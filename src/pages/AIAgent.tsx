@@ -5,7 +5,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
-import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { AIAgentSettings } from '@/components/ai/AIAgentSettings';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
