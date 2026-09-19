@@ -84,9 +84,9 @@ export const INTEGRATIONS: IntegrationDef[] = [
     setupKind: 'credentials',
     fields: [
       { key: 'signalwire_project_id', label: 'Project ID', placeholder: 'Project ID', type: 'text', required: true },
-      { key: 'signalwire_api_token', label: 'API Token', placeholder: 'PT...', type: 'password', required: true },
-      { key: 'signalwire_space_url', label: 'Space URL', placeholder: 'yourspace.signalwire.com', type: 'text', required: true },
-      { key: 'signalwire_phone_number', label: 'Phone Number', placeholder: '+15551234567', type: 'text', required: true, helpText: 'Use E.164 format' },
+      { key: 'signalwire_api_token', label: 'API Token', placeholder: 'PT...', type: 'password', required: true, pattern: '^PT[A-Za-z0-9]{10,}$', patternError: 'SignalWire API tokens start with PT followed by letters and numbers' },
+      { key: 'signalwire_space_url', label: 'Space URL', placeholder: 'yourspace.signalwire.com', type: 'text', required: true, pattern: '^[a-zA-Z0-9-]+\\.signalwire\\.com$', patternError: 'Use just the space address, like yourspace.signalwire.com' },
+      { key: 'signalwire_phone_number', label: 'Phone Number', placeholder: '+15551234567', type: 'text', required: true, helpText: 'Include the country code, like +15551234567', pattern: '^\\+[1-9]\\d{7,14}$', patternError: 'Start with + and the country code, like +15551234567' },
     ],
     connectedFlags: ['has_signalwire'],
     docsUrl: 'https://signalwire.com',
@@ -104,7 +104,7 @@ export const INTEGRATIONS: IntegrationDef[] = [
     category: 'essential',
     setupKind: 'credentials',
     fields: [
-      { key: 'resend_api_key', label: 'API Key', placeholder: 're_...', type: 'password', required: true, helpText: 'Get from resend.com/api-keys' },
+      { key: 'resend_api_key', label: 'API Key', placeholder: 're_...', type: 'password', required: true, helpText: 'Get from resend.com/api-keys', pattern: '^re_[A-Za-z0-9_-]{10,}$', patternError: 'Resend keys start with re_ — copy the key itself, not its name' },
     ],
     connectedFlags: ['has_resend'],
     docsUrl: 'https://resend.com/api-keys',
@@ -122,8 +122,8 @@ export const INTEGRATIONS: IntegrationDef[] = [
     category: 'optional',
     setupKind: 'credentials',
     fields: [
-      { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'sk_...', type: 'password', required: true, helpText: 'Get from elevenlabs.io · must start with sk_' },
-      { key: 'elevenlabs_agent_id', label: 'Agent ID', placeholder: 'agent_...', type: 'text' },
+      { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'sk_...', type: 'password', required: true, helpText: 'ElevenLabs \u2192 profile \u2192 API Keys \u2192 create a key, then copy the secret value (starts with sk_). The short key ID shown in the list will not work.', pattern: '^sk_[A-Za-z0-9]{20,}$', patternError: 'That looks like a key ID, not the key. Copy the value that starts with sk_' },
+      { key: 'elevenlabs_agent_id', label: 'Agent ID', placeholder: 'agent_...', type: 'text', pattern: '^agent_[A-Za-z0-9]{6,}$', patternError: 'Agent IDs start with agent_' },
     ],
     connectedFlags: ['has_elevenlabs'],
     docsUrl: 'https://elevenlabs.io',
@@ -141,8 +141,8 @@ export const INTEGRATIONS: IntegrationDef[] = [
     category: 'optional',
     setupKind: 'credentials',
     fields: [
-      { key: 'stripe_publishable_key', label: 'Publishable Key', placeholder: 'pk_live_...', type: 'text', required: true },
-      { key: 'stripe_secret_key', label: 'Secret Key', placeholder: 'sk_live_...', type: 'password', required: true },
+      { key: 'stripe_publishable_key', label: 'Publishable Key', placeholder: 'pk_live_...', type: 'text', required: true, pattern: '^pk_(live|test)_[A-Za-z0-9]{10,}$', patternError: 'Publishable keys start with pk_live_ or pk_test_' },
+      { key: 'stripe_secret_key', label: 'Secret Key', placeholder: 'sk_live_...', type: 'password', required: true, pattern: '^(sk|rk)_(live|test)_[A-Za-z0-9]{10,}$', patternError: 'Secret keys start with sk_live_ or sk_test_' },
     ],
     connectedFlags: ['has_stripe'],
     docsUrl: 'https://dashboard.stripe.com/apikeys',
