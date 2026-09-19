@@ -8,6 +8,7 @@
  * actually rendered — that filtering lives in `DashboardSidebar`.
  */
 import {
+  Rocket,
   LayoutDashboard,
   Building2,
   Users,
