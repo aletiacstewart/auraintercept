@@ -333,6 +333,10 @@ export default function AIAgentsHub() {
                       is_enabled: m.is_enabled,
                       available: isAvailable(m.type),
                     }))}
+                    missingIntegrations={
+                      isPlatformAdmin ? [] : missingFor(job.requiredIntegrations)
+                    }
+                    onConnect={() => navigate('/dashboard/integrations')}
                     onEnable={() => handleEnableJob(members)}
                     onToggleMember={async (type, enabled) => {
                       await toggleAgent(type, enabled);
