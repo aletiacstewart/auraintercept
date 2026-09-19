@@ -27,6 +27,6 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium-dashboard-visual', testDir: './tests/visual', use: { ...devices['Desktop Chrome'] } },
-    { name: 'chromium-e2e', testDir: './tests/e2e', use: { ...devices['Desktop Chrome'] } },
+    { name: 'chromium-e2e', testDir: './tests/e2e', use: { ...devices['Desktop Chrome'], channel: 'chromium' } },
   ],
 });
