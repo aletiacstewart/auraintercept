@@ -139,6 +139,11 @@ export function DashboardSidebar({ collapsed = false }: { collapsed?: boolean })
             return false;
           }
           if (isPlatformAdmin) return true;
+          // Business-type gate: skipped while the pack is still resolving so
+          // the menu never flickers items in and out.
+          if (item.requiredFeature && !industryLoading && !isFeatureEnabled(item.requiredFeature)) {
+            return false;
+          }
           if (item.requiredTier && subscriptionTier && !isAtLeastTier(item.requiredTier)) return false;
           if (userRole === 'employee' && item.requiredJobTypes) {
             return item.requiredJobTypes.some((jt) => hasJobType(jt as never));
@@ -164,6 +169,14 @@ export function DashboardSidebar({ collapsed = false }: { collapsed?: boolean })
 
   return (
     <nav className="space-y-1 px-2 py-1">
+      {!collapsed && !industryLoading && (
+        <p
+          className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          title={`${industryLabel} dashboard`}
+        >
+          {industryLabel} Dashboard
+        </p>
+      )}
       {filteredGroups.map((group) => (
         <div key={group.label} className="space-y-0.5">
           {!collapsed && (
