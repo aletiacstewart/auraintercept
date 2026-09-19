@@ -236,10 +236,6 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                   >
                     View saved drafts & posts
                   </button>
-                  <span className="text-muted-foreground/40">·</span>
-                  <IndustryTemplateSelector
-                    onSelectTemplate={(template) => setInputValue(template)}
-                  />
                 </div>
               </div>
             ) : (
