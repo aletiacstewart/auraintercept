@@ -27,7 +27,14 @@ import { ResendSetupGuide } from '@/components/integrations/ResendSetupGuide';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
 import { CrmConnectionsPanel } from '@/components/integrations/CrmConnectionsPanel';
 import { UploadPostPanel } from '@/components/social/UploadPostPanel';
-import { INTEGRATIONS, CATEGORY_LABELS, resolveCategory, type IntegrationCategory, type IntegrationDef } from '@/lib/integrationConfig';
+import {
+  INTEGRATIONS,
+  CATEGORY_LABELS,
+  resolveCategory,
+  validateIntegrationField,
+  type IntegrationCategory,
+  type IntegrationDef,
+} from '@/lib/integrationConfig';
 import { useIndustryConfig } from '@/hooks/useIndustryConfig';
 
 const CATEGORY_ORDER: IntegrationCategory[] = ['essential', 'recommended', 'optional'];
