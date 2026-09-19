@@ -474,7 +474,5 @@ export function SpecialistOperativesPanel() {
             </div>
           </Card>
         </div>
-      </PageContainer>
-    </DashboardLayout>
   );
 }
