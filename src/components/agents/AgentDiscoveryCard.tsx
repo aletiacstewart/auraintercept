@@ -20,9 +20,13 @@ interface AgentDiscoveryCardProps {
   agent: AgentType;
   members: DiscoveryMemberAgent[];
   canManage: boolean;
+  /** Connections this job needs that the company has not set up yet. */
+  missingIntegrations?: string[];
   onEnable: () => void;
   onToggleMember: (agentType: string, enabled: boolean) => void;
   onLearnMore: (agentType: string) => void;
+  /** Sends the user to the Connections page to set a missing service up. */
+  onConnect?: (integration: string) => void;
 }
 
 /**
@@ -34,14 +38,17 @@ export function AgentDiscoveryCard({
   agent,
   members,
   canManage,
+  missingIntegrations = [],
   onEnable,
   onToggleMember,
   onLearnMore,
+  onConnect,
 }: AgentDiscoveryCardProps) {
   const [expanded, setExpanded] = useState(false);
   const enabledCount = members.filter((m) => m.is_enabled).length;
   const allEnabled = members.length > 0 && enabledCount === members.length;
   const anyAvailable = members.some((m) => m.available);
+  const blockedByConnection = missingIntegrations.length > 0;
 
   return (
     <Card className={cn('flex flex-col', allEnabled && 'border-primary/40')}>
@@ -66,12 +73,34 @@ export function AgentDiscoveryCard({
         </div>
 
         <div className="mb-3 flex flex-wrap gap-1.5">
-          {agent.requiredIntegrations.map((i) => (
-            <Badge key={i} variant="outline" className="text-[10px] capitalize">
-              Needs {i}
-            </Badge>
-          ))}
+          {agent.requiredIntegrations.map((i) => {
+            const missing = missingIntegrations.includes(i);
+            return (
+              <Badge
+                key={i}
+                variant={missing ? 'destructive' : 'outline'}
+                className="text-[10px] capitalize"
+              >
+                {missing ? `Set up ${i}` : `Uses ${i}`}
+              </Badge>
+            );
+          })}
         </div>
+
+        {blockedByConnection && (
+          <p className="mb-3 text-xs text-muted-foreground">
+            Turn this on after you set up {missingIntegrations.join(' and ')}.{' '}
+            {onConnect && (
+              <button
+                type="button"
+                className="font-medium text-primary hover:underline"
+                onClick={() => onConnect(missingIntegrations[0])}
+              >
+                Set it up now
+              </button>
+            )}
+          </p>
+        )}
 
         <button
           type="button"
@@ -110,7 +139,12 @@ export function AgentDiscoveryCard({
           <Button variant="outline" size="sm" onClick={() => onLearnMore(members[0]?.type)}>
             Learn More
           </Button>
-          <Button size="sm" disabled={allEnabled || !anyAvailable || !canManage} onClick={onEnable}>
+          <Button
+            size="sm"
+            disabled={allEnabled || !anyAvailable || !canManage || blockedByConnection}
+            title={blockedByConnection ? `Needs ${missingIntegrations.join(' and ')}` : undefined}
+            onClick={onEnable}
+          >
             {allEnabled ? 'Active' : 'Enable'}
           </Button>
         </div>

@@ -8,6 +8,7 @@
  * actually rendered — that filtering lives in `DashboardSidebar`.
  */
 import {
+  Rocket,
   LayoutDashboard,
   Building2,
   Users,
@@ -45,6 +46,7 @@ import {
   Receipt,
 } from 'lucide-react';
 import type { SubscriptionTier } from '@/lib/subscriptionAgentConfig';
+import type { FeatureKey } from '@/lib/industryConfig';
 
 export type NavRole = 'platform_admin' | 'company_admin' | 'employee' | 'technician' | 'customer';
 
@@ -62,6 +64,12 @@ export interface NavItem {
   external?: boolean;
   featureColor?: string;
   requiredTier?: SubscriptionTier;
+  /**
+   * Business-type gate. When set, the item only appears if the company's
+   * industry pack lists this feature. Core items (dashboard, agents, settings,
+   * connections, team, billing, help) deliberately carry no gate.
+   */
+  requiredFeature?: FeatureKey;
   tourId?: string;
   submenu?: NavSubItem[];
 }
@@ -88,34 +96,34 @@ const COMPANY_GROUPS: NavGroup[] = [
     label: 'Customers',
     requiredTier: 'starter',
     items: [
-      { label: 'Scheduling', icon: Calendar, href: '/dashboard/appointments', featureColor: 'text-feature-appointments', requiredTier: 'starter', tourId: 'nav-my-schedule' },
-      { label: 'Leads', icon: Target, href: '/dashboard/leads', featureColor: 'text-feature-customers', requiredTier: 'starter', tourId: 'nav-leads' },
-      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'starter', tourId: 'nav-customer-portal' },
-      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', featureColor: 'text-feature-customers', requiredTier: 'starter', tourId: 'nav-customer-website-app' },
+      { label: 'Scheduling', icon: Calendar, href: '/dashboard/appointments', featureColor: 'text-feature-appointments', requiredTier: 'starter', requiredFeature: 'scheduling', tourId: 'nav-my-schedule' },
+      { label: 'Leads', icon: Target, href: '/dashboard/leads', featureColor: 'text-feature-customers', requiredTier: 'starter', requiredFeature: 'marketing', tourId: 'nav-leads' },
+      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'starter', requiredFeature: 'customer_portal', tourId: 'nav-customer-portal' },
+      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', featureColor: 'text-feature-customers', requiredTier: 'starter', requiredFeature: 'customer_portal', tourId: 'nav-customer-website-app' },
     ],
   },
   {
     label: 'Operations',
     requiredTier: 'connect',
     items: [
-      { label: 'Technician View', icon: Truck, href: '/dashboard/ai-consoles/field-ops', requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'connect', tourId: 'nav-field-ops' },
-      { label: 'Dispatch View', icon: Map, href: '/dashboard/dispatch-field-ops', featureColor: 'text-feature-fieldops', requiredTier: 'connect', tourId: 'nav-dispatch-ops' },
+      { label: 'Technician View', icon: Truck, href: '/dashboard/ai-consoles/field-ops', requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'connect', requiredFeature: 'field_ops', tourId: 'nav-field-ops' },
+      { label: 'Dispatch View', icon: Map, href: '/dashboard/dispatch-field-ops', featureColor: 'text-feature-fieldops', requiredTier: 'connect', requiredFeature: 'field_ops', tourId: 'nav-dispatch-ops' },
     ],
   },
   {
     label: 'Business',
     requiredTier: 'performance',
     items: [
-      { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance', tourId: 'nav-business-mgt-ops' },
-      { label: 'Pipeline', icon: Kanban, href: '/dashboard/pipeline', featureColor: 'text-feature-platform', requiredTier: 'performance' },
+      { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance', requiredFeature: 'invoicing', tourId: 'nav-business-mgt-ops' },
+      { label: 'Pipeline', icon: Kanban, href: '/dashboard/pipeline', featureColor: 'text-feature-platform', requiredTier: 'performance', requiredFeature: 'marketing' },
     ],
   },
   {
     label: 'Marketing',
     requiredTier: 'starter',
     items: [
-      { label: 'Outreach & Sales', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', featureColor: 'text-feature-platform', requiredTier: 'starter', tourId: 'nav-marketing-sales' },
-      { label: 'Social Media', icon: Share2, href: '/dashboard/ai-consoles/social-media', featureColor: 'text-feature-platform', requiredTier: 'connect', tourId: 'nav-social-media' },
+      { label: 'Outreach & Sales', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', featureColor: 'text-feature-platform', requiredTier: 'starter', requiredFeature: 'marketing', tourId: 'nav-marketing-sales' },
+      { label: 'Social Media', icon: Share2, href: '/dashboard/ai-consoles/social-media', featureColor: 'text-feature-platform', requiredTier: 'connect', requiredFeature: 'marketing', tourId: 'nav-social-media' },
       { label: 'Website', icon: Globe, href: '/dashboard/smart-website', featureColor: 'text-feature-platform', requiredTier: 'starter', tourId: 'nav-web-presence' },
     ],
   },
@@ -166,6 +174,7 @@ const PLATFORM_GROUPS: NavGroup[] = [
         submenu: [
           { label: 'Industry Packs', href: '/dashboard/admin/industry-packs', icon: Package },
           { label: 'Feature Flags', href: '/dashboard/admin/feature-flags', icon: Flag },
+          { label: 'Onboarding', href: '/dashboard/admin/onboarding', icon: Rocket },
           { label: 'System Health', href: '/dashboard/admin/system-health', icon: Activity },
         ],
       },

@@ -18,6 +18,7 @@ import { IntegrationHealthTab } from '@/components/integrations/IntegrationHealt
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { IntegrationCard, type IntegrationStatus } from '@/components/integrations/IntegrationCard';
+import { onboarding as track } from '@/lib/analytics';
 import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { CalDAVSubscription } from '@/components/integrations/CalDAVSubscription';
 import { GoogleCalendarSettings } from '@/components/integrations/GoogleCalendarSettings';
@@ -40,7 +41,7 @@ import { useIndustryConfig } from '@/hooks/useIndustryConfig';
 const CATEGORY_ORDER: IntegrationCategory[] = ['essential', 'recommended', 'optional'];
 
 export default function IntegrationSetupWizard() {
-  const { companyId } = useAuth();
+  const { companyId, user } = useAuth();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const { requiredIntegrations, label } = useIndustryConfig();
@@ -115,6 +116,8 @@ export default function IntegrationSetupWizard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['integrations'] });
+      queryClient.invalidateQueries({ queryKey: ['connected-integrations'] });
+      if (active) void track.integrationConnected({ userId: user?.id, companyId }, active.id);
       toast.success('Saved. Aura can use this now.');
       setActive(null);
       setFormData({});

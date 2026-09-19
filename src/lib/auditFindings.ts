@@ -371,9 +371,9 @@ export const AUDIT_FINDINGS: AuditFinding[] = [
     area: "Settings & integrations",
     severity: "P1",
     status: "fixed",
-    title: "integration-health-check only probes Google Calendar + SignalWire",
+    title: "Connection health checks cover every live provider",
     observed:
-      "Extended to probe Resend, ElevenLabs, Stripe, Tavily, and A2P 10DLC campaign status (7/8). Upload-Post deferred (no API-key column yet).",
+      "integration-health-check probes Google Calendar, SignalWire, Resend, ElevenLabs, Stripe and A2P 10DLC campaign status, writing each result to integration_health_logs. Upload-Post deferred (no API-key column yet).",
     expected: "Lightweight probe per provider fetched.",
     files: [{ path: "supabase/functions/integration-health-check/index.ts" }],
     fixSize: "M",

@@ -25,6 +25,8 @@ import {
 
 import { useAIAgentOrchestrator } from '@/hooks/useAIAgentOrchestrator';
 import { useAuth } from '@/contexts/AuthContext';
+import { useConnectedIntegrations } from '@/hooks/useConnectedIntegrations';
+import { onboarding as track } from '@/lib/analytics';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { useAgentReviewCount } from '@/hooks/useAgentReviewCount';
@@ -100,6 +102,7 @@ export default function AIAgentsHub() {
   } = useSubscription();
   const { count: reviewCount } = useAgentReviewCount();
   const { data: metrics } = useAgentPerformanceMetrics(companyId);
+  const { missing: missingFor } = useConnectedIntegrations(companyId);
 
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') ?? 'discover');
   const [configAgent, setConfigAgent] = useState<string | null>(null);
@@ -194,6 +197,7 @@ export default function AIAgentsHub() {
     }
     for (const m of toEnable) {
       await toggleAgent(m.type, true);
+      void track.agentEnabled({ userId: user?.id, companyId }, m.type);
     }
     await refetch();
     toast.success(`${toEnable.length} agent${toEnable.length > 1 ? 's' : ''} turned on.`);
@@ -333,6 +337,10 @@ export default function AIAgentsHub() {
                       is_enabled: m.is_enabled,
                       available: isAvailable(m.type),
                     }))}
+                    missingIntegrations={
+                      isPlatformAdmin ? [] : missingFor(job.requiredIntegrations)
+                    }
+                    onConnect={() => navigate('/dashboard/integrations')}
                     onEnable={() => handleEnableJob(members)}
                     onToggleMember={async (type, enabled) => {
                       await toggleAgent(type, enabled);

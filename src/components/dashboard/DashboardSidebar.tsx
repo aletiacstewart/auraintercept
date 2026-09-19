@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { useIndustryConfig } from '@/hooks/useIndustryConfig';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useCompanyProfile } from '@/hooks/useCompanyProfile';
 import { navItemAllowedByProfile } from '@/lib/profileConsoleMap';
@@ -48,6 +49,11 @@ export function DashboardSidebar({ collapsed = false }: { collapsed?: boolean })
   const { subscriptionTier, isAtLeastTier } = useSubscription();
   const { jobTypes, hasJobType } = useEmployeeJobRole();
   const { pack: industryPack } = useIndustryPack();
+  const {
+    loading: industryLoading,
+    label: industryLabel,
+    isFeatureEnabled,
+  } = useIndustryConfig();
   const { workspace } = useWorkspace();
   const { spec: profileSpec } = useCompanyProfile();
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
@@ -133,6 +139,11 @@ export function DashboardSidebar({ collapsed = false }: { collapsed?: boolean })
             return false;
           }
           if (isPlatformAdmin) return true;
+          // Business-type gate: skipped while the pack is still resolving so
+          // the menu never flickers items in and out.
+          if (item.requiredFeature && !industryLoading && !isFeatureEnabled(item.requiredFeature)) {
+            return false;
+          }
           if (item.requiredTier && subscriptionTier && !isAtLeastTier(item.requiredTier)) return false;
           if (userRole === 'employee' && item.requiredJobTypes) {
             return item.requiredJobTypes.some((jt) => hasJobType(jt as never));
@@ -158,6 +169,14 @@ export function DashboardSidebar({ collapsed = false }: { collapsed?: boolean })
 
   return (
     <nav className="space-y-1 px-2 py-1">
+      {!collapsed && !industryLoading && (
+        <p
+          className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          title={`${industryLabel} dashboard`}
+        >
+          {industryLabel} Dashboard
+        </p>
+      )}
       {filteredGroups.map((group) => (
         <div key={group.label} className="space-y-0.5">
           {!collapsed && (

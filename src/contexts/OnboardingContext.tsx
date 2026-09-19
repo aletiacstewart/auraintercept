@@ -1,6 +1,26 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { onboarding as track } from '@/lib/analytics';
+
+/** Local record of which onboarding events have already been reported. */
+function trackedKey(companyId: string) {
+  return `aura-onboarding-tracked-${companyId}`;
+}
+function readTracked(companyId: string): Set<string> {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(trackedKey(companyId)) || '[]') as string[]);
+  } catch {
+    return new Set();
+  }
+}
+function writeTracked(companyId: string, set: Set<string>) {
+  try {
+    localStorage.setItem(trackedKey(companyId), JSON.stringify([...set]));
+  } catch {
+    /* storage unavailable — tracking is best-effort */
+  }
+}
 
 export type FirstStepId = 'business_type' | 'calendar' | 'communications' | 'team' | 'test_workflow';
 
@@ -131,13 +151,48 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         | null;
 
       setState(stored);
-      setSignals({
+      const nextSignals = {
         business_type: !!companyRes.data?.industry_vertical,
         calendar: (calendarRes.data?.length ?? 0) > 0,
         communications: !!(integ?.has_signalwire || integ?.has_resend || integ?.signalwire_phone_number),
         team: (teamRes.count ?? 0) > 1,
         test_workflow: (apptRes.count ?? 0) > 0 || (quoteRes.count ?? 0) > 0,
-      });
+      };
+      setSignals(nextSignals);
+
+      // Report milestones once each (per browser) so the admin onboarding
+      // dashboard can measure completion and time-to-first-action.
+      const ids = { userId: user.id, companyId };
+      const seen = readTracked(companyId);
+      if (!seen.has('onboarding_started')) {
+        seen.add('onboarding_started');
+        localStorage.setItem(`aura-onboarding-start-${companyId}`, String(Date.now()));
+        void track.started(ids);
+      }
+      for (const [stepId, done] of Object.entries(nextSignals)) {
+        const key = `step:${stepId}`;
+        if (done && !seen.has(key)) {
+          seen.add(key);
+          void track.stepCompleted(ids, stepId);
+        }
+      }
+      if ((apptRes.count ?? 0) > 0 && !seen.has('first_booking')) {
+        seen.add('first_booking');
+        void track.firstBooking(ids);
+      }
+      if ((quoteRes.count ?? 0) > 0 && !seen.has('first_quote')) {
+        seen.add('first_quote');
+        void track.firstQuote(ids);
+      }
+      const allDone = Object.values(nextSignals).every(Boolean);
+      if (allDone && !seen.has('finished')) {
+        seen.add('finished');
+        const startedAt = Number(localStorage.getItem(`aura-onboarding-start-${companyId}`) || 0);
+        const minutes = startedAt ? Math.round((Date.now() - startedAt) / 60000) : undefined;
+        void track.finished(ids, minutes);
+      }
+      writeTracked(companyId, seen);
+
       setLoading(false);
     })();
     return () => {
@@ -179,9 +234,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const skipStep = useCallback(
     async (id: FirstStepId) => {
       const skipped = Array.from(new Set([...(state.skipped ?? []), id]));
+      void track.stepSkipped({ userId: user?.id, companyId }, id);
       await persist({ ...state, skipped }, progressPercent);
     },
-    [state, persist, progressPercent],
+    [state, persist, progressPercent, user?.id, companyId],
   );
 
   const unskipStep = useCallback(

@@ -84,6 +84,7 @@ const LeadsImport = lazy(() => import("./pages/LeadsImport"));
 const Help = lazy(() => import("./pages/Help"));
 const IndustryPacksAdmin = lazy(() => import("./pages/admin/IndustryPacksAdmin"));
 const FeatureFlagsAdmin = lazy(() => import("./pages/admin/FeatureFlagsAdmin"));
+const OnboardingAnalyticsAdmin = lazy(() => import("./pages/admin/OnboardingAnalytics"));
 const SystemHealthAdmin = lazy(() => import("./pages/admin/SystemHealthAdmin"));
 const SuperSwitcher = lazy(() => import("./pages/SuperSwitcher"));
 const BusinessOperations = lazy(() => import("./pages/BusinessOperations"));
@@ -263,6 +264,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/video-prompts" element={<Navigate to="/dashboard/platform-guides?tab=video" replace />} />
                 <Route path="/dashboard/admin/feature-flags" element={<ProtectedRoute requiredRole="platform_admin"><FeatureFlagsAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/system-health" element={<ProtectedRoute requiredRole="platform_admin"><SystemHealthAdmin /></ProtectedRoute>} />
+                <Route path="/dashboard/admin/onboarding" element={<ProtectedRoute requiredRole="platform_admin"><OnboardingAnalyticsAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs/:id" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/super-switcher" element={<ProtectedRoute requiredRole="platform_admin"><SuperSwitcher /></ProtectedRoute>} />
