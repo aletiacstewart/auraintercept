@@ -3380,6 +3380,54 @@ export type Database = {
           },
         ]
       }
+      feature_flags: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          description: string | null
+          enabled: boolean
+          flag_name: string
+          id: string
+          rollout_percentage: number
+          updated_at: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          flag_name: string
+          id?: string
+          rollout_percentage?: number
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          flag_name?: string
+          id?: string
+          rollout_percentage?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_flags_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feature_flags_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       google_calendar_connections: {
         Row: {
           access_token: string | null
