@@ -173,6 +173,7 @@ const PLATFORM_GROUPS: NavGroup[] = [
         submenu: [
           { label: 'Industry Packs', href: '/dashboard/admin/industry-packs', icon: Package },
           { label: 'Feature Flags', href: '/dashboard/admin/feature-flags', icon: Flag },
+          { label: 'Onboarding', href: '/dashboard/admin/onboarding', icon: Rocket },
           { label: 'System Health', href: '/dashboard/admin/system-health', icon: Activity },
         ],
       },

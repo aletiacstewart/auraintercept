@@ -84,6 +84,7 @@ const LeadsImport = lazy(() => import("./pages/LeadsImport"));
 const Help = lazy(() => import("./pages/Help"));
 const IndustryPacksAdmin = lazy(() => import("./pages/admin/IndustryPacksAdmin"));
 const FeatureFlagsAdmin = lazy(() => import("./pages/admin/FeatureFlagsAdmin"));
+const OnboardingAnalyticsAdmin = lazy(() => import("./pages/admin/OnboardingAnalytics"));
 const SystemHealthAdmin = lazy(() => import("./pages/admin/SystemHealthAdmin"));
 const SuperSwitcher = lazy(() => import("./pages/SuperSwitcher"));
 const BusinessOperations = lazy(() => import("./pages/BusinessOperations"));
