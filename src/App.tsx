@@ -63,15 +63,12 @@ const PipelineConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ de
 const MarketingSalesConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.MarketingSalesConsole })));
 const SocialMediaConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.SocialMediaConsole })));
 const NewLeadPage = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.NewLeadPage })));
-const SpecialistOperativesConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.SpecialistOperativesConsole })));
 const AskAura = lazy(() => import("./pages/AskAura"));
 const OperationsRouter = lazy(() => import("./pages/operations/OperationsRouter"));
 const VideoConsole = lazy(() => import("./pages/VideoConsole"));
 const AIAgentsHub = lazy(() => import("./pages/AIAgentsHub"));
 const Automation = lazy(() => import("./pages/Automation"));
-const AIAgentGuide = lazy(() => import("./pages/AIAgentGuide"));
 const AuditReport = lazy(() => import("./pages/AuditReport"));
-const AgentDetailPage = lazy(() => import("./pages/AgentDetailPage"));
 const ContentEngineConsole = lazy(() => import("./pages/ContentEngineConsole"));
 const Widget = lazy(() => import("./pages/Widget"));
 const CallHistory = lazy(() => import("./pages/CallHistory"));
