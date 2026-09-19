@@ -20,7 +20,25 @@ export interface IntegrationFieldDef {
   type: 'text' | 'password';
   required?: boolean;
   helpText?: string;
+  /** Regex (source string) the value must match before it can be saved. */
+  pattern?: string;
+  /** Plain-English message shown when the value does not match `pattern`. */
+  patternError?: string;
 }
+
+/**
+ * Validates one credential field.
+ * @returns a plain-English problem, or null when the value is acceptable.
+ */
+export function validateIntegrationField(field: IntegrationFieldDef, rawValue: string | undefined): string | null {
+  const value = (rawValue ?? '').trim();
+  if (!value) return field.required ? `${field.label} is required` : null;
+  if (field.pattern && !new RegExp(field.pattern).test(value)) {
+    return field.patternError ?? `${field.label} does not look right`;
+  }
+  return null;
+}
+
 
 export interface IntegrationDef {
   id: string;
