@@ -429,17 +429,20 @@ export default function Campaigns() {
             {[1, 2, 3].map(i => <Skeleton key={i} className="h-32" />)}
           </div>
         ) : campaigns?.length === 0 ? (
-          <Card>
-            <CardContent className="py-6">
-              <AuraEmptyState
-                icon={Megaphone}
-                title="No campaigns yet"
-                description="Create your first marketing campaign to reach customers by email or SMS."
-                actionLabel="New campaign"
-                onAction={() => setDialogOpen(true)}
-              />
-            </CardContent>
-          </Card>
+          <EmptyStateGuide
+            title="No campaigns yet"
+            description="Reach your customers by email or text with your first campaign."
+            action={{
+              label: 'New campaign',
+              onClick: () => setDialogOpen(true),
+              icon: <Megaphone className="h-5 w-5" />,
+            }}
+            tips={[
+              'Start with a simple offer to past customers',
+              'Keep texts short — one clear next step',
+              'Aura can write the message for you',
+            ]}
+          />
         ) : (
           <div className="grid gap-4">
             {campaigns?.map(campaign => {
