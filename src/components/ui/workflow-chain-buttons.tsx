@@ -109,8 +109,23 @@ interface WorkflowChainButtonsProps {
 export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chains, onTrigger }) => {
   const navigate = useNavigate();
   const [pending, setPending] = React.useState<WorkflowChain | null>(null);
+  const [introOpen, setIntroOpen] = React.useState(false);
   const { companyId } = useAuth();
   const qc = useQueryClient();
+
+  // First-visit guided intro: opens once per browser, never blocks the page.
+  React.useEffect(() => {
+    try {
+      if (!localStorage.getItem(INTRO_SEEN_KEY)) setIntroOpen(true);
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleIntroChange = (open: boolean) => {
+    setIntroOpen(open);
+    if (!open) {
+      try { localStorage.setItem(INTRO_SEEN_KEY, '1'); } catch { /* ignore */ }
+    }
+  };
 
   const { data: pendingCount = 0 } = useQuery({
     queryKey: ['workflow-pending-actions', companyId],
