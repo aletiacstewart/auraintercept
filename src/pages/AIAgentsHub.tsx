@@ -25,6 +25,8 @@ import {
 
 import { useAIAgentOrchestrator } from '@/hooks/useAIAgentOrchestrator';
 import { useAuth } from '@/contexts/AuthContext';
+import { useConnectedIntegrations } from '@/hooks/useConnectedIntegrations';
+import { onboarding as track } from '@/lib/analytics';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { useAgentReviewCount } from '@/hooks/useAgentReviewCount';
@@ -100,6 +102,7 @@ export default function AIAgentsHub() {
   } = useSubscription();
   const { count: reviewCount } = useAgentReviewCount();
   const { data: metrics } = useAgentPerformanceMetrics(companyId);
+  const { missing: missingFor } = useConnectedIntegrations(companyId);
 
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') ?? 'discover');
   const [configAgent, setConfigAgent] = useState<string | null>(null);

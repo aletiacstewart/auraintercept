@@ -115,6 +115,8 @@ export default function IntegrationSetupWizard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['integrations'] });
+      queryClient.invalidateQueries({ queryKey: ['connected-integrations'] });
+      if (active) void track.integrationConnected({ userId: user?.id, companyId }, active.id);
       toast.success('Saved. Aura can use this now.');
       setActive(null);
       setFormData({});
