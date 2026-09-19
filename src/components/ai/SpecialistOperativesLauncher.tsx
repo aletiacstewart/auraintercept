@@ -65,8 +65,10 @@ export function SpecialistOperativesLauncher({
   const industrySet = new Set(pack?.extra_operatives ?? []);
 
   // Restrict the visible specialists to those opted-in by this industry pack.
-  // Platform admins see the full requested set so they can preview everything.
-  const visible = isPlatformAdmin ? show : show.filter((id) => industrySet.has(id));
+  // Platform admins only see the full requested set when their own pack has none.
+  const scoped = show.filter((id) => industrySet.has(id));
+  const visible = scoped.length > 0 ? scoped : (isPlatformAdmin ? show : scoped);
+
 
   // If the company's industry pack opts into no specialists, hide the launcher
   // entirely instead of surfacing irrelevant operatives (e.g. SaaS, Professional).
