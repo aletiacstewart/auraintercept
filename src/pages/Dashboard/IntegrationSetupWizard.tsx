@@ -13,7 +13,8 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, EyeOff, Loader2, Puzzle, Rss, Server, Zap } from 'lucide-react';
+import { Activity, Eye, EyeOff, Loader2, Puzzle, Rss, Server, Zap } from 'lucide-react';
+import { IntegrationHealthTab } from '@/components/integrations/IntegrationHealthTab';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { IntegrationCard, type IntegrationStatus } from '@/components/integrations/IntegrationCard';
@@ -193,47 +194,62 @@ export default function IntegrationSetupWizard() {
             those services for your company.
           </div>
 
-          <Card className="guide-card guide-card-primary">
-            <CardContent className="py-4">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-medium text-card-foreground">Essential setup</span>
-                <span className={cn('text-sm font-bold', progress === 100 ? 'text-green-400' : 'text-primary')}>{progress}%</span>
-              </div>
-              <Progress value={progress} className="h-2" />
-              <p className="mt-2 text-xs text-muted-foreground">
-                {essentialConnected} of {grouped.essential.length} essentials connected · tailored for {label}
-              </p>
-            </CardContent>
-          </Card>
+          <Tabs defaultValue="connections" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="connections">Connections</TabsTrigger>
+              <TabsTrigger value="health" className="gap-2">
+                <Activity className="h-4 w-4" /> Health
+              </TabsTrigger>
+            </TabsList>
 
-          {CATEGORY_ORDER.map((category) => {
-            const items = grouped[category];
-            if (!items.length) return null;
-            return (
-              <section key={category} className="space-y-3">
-                <div>
-                  <h2 className="text-lg font-semibold text-foreground">{CATEGORY_LABELS[category].title}</h2>
-                  <p className="text-sm text-muted-foreground">{CATEGORY_LABELS[category].description}</p>
-                </div>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {items.map((integration) => (
-                    <IntegrationCard
-                      key={integration.id}
-                      integration={integration}
-                      status={statusFor(integration)}
-                      loading={isLoading}
-                      onSetup={openSetup}
-                    />
-                  ))}
-                </div>
-              </section>
-            );
-          })}
+            <TabsContent value="connections" className="space-y-6">
+              <Card className="guide-card guide-card-primary">
+                <CardContent className="py-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm font-medium text-card-foreground">Essential setup</span>
+                    <span className={cn('text-sm font-bold', progress === 100 ? 'text-green-400' : 'text-primary')}>{progress}%</span>
+                  </div>
+                  <Progress value={progress} className="h-2" />
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {essentialConnected} of {grouped.essential.length} essentials connected · tailored for {label}
+                  </p>
+                </CardContent>
+              </Card>
 
-          <CarrierForwardingGuide
-            auraNumber={(integrations?.signalwire_phone_number as string) || ''}
-            companyId={companyId}
-          />
+              {CATEGORY_ORDER.map((category) => {
+                const items = grouped[category];
+                if (!items.length) return null;
+                return (
+                  <section key={category} className="space-y-3">
+                    <div>
+                      <h2 className="text-lg font-semibold text-foreground">{CATEGORY_LABELS[category].title}</h2>
+                      <p className="text-sm text-muted-foreground">{CATEGORY_LABELS[category].description}</p>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {items.map((integration) => (
+                        <IntegrationCard
+                          key={integration.id}
+                          integration={integration}
+                          status={statusFor(integration)}
+                          loading={isLoading}
+                          onSetup={openSetup}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+
+              <CarrierForwardingGuide
+                auraNumber={(integrations?.signalwire_phone_number as string) || ''}
+                companyId={companyId}
+              />
+            </TabsContent>
+
+            <TabsContent value="health">
+              <IntegrationHealthTab />
+            </TabsContent>
+          </Tabs>
         </div>
 
         <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
