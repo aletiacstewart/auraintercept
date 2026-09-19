@@ -53,6 +53,8 @@ export interface IndustryPack {
   inventory_taxonomy: { label?: string; categories?: string[]; units?: string[] };
   quote_template: Record<string, unknown>;
   invoice_template: Record<string, unknown>;
+  /** Quick-start config: recommended agents, connections, feature emphasis. */
+  quickstart?: Record<string, unknown> | null;
 }
 
 export interface ServiceCatalogEntry {
