@@ -140,7 +140,6 @@ export const PAGE_ROUTES: Record<string, string> = {
   'ai agents': '/dashboard/ai-agents',
   'knowledge base': '/dashboard/knowledge',
   'knowledge': '/dashboard/knowledge',
-  'calculators': '/dashboard/calculators',
   'profile': '/technician/profile',
   'install app': '/technician/install',
   
@@ -163,10 +162,8 @@ export const PAGE_ROUTES: Record<string, string> = {
   'calendar integration': '/dashboard/integrations/calendar',
   
   // Platform Resources Section
-  'platform issues': '/dashboard/platform-issues',
   'platform guides': '/dashboard/platform-guides',
   'help': '/dashboard/help',
-  'architecture': '/dashboard/architecture',
   'export docs': '/dashboard/export-docs',
   
   // Other pages

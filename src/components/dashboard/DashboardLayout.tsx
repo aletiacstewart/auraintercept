@@ -99,7 +99,7 @@ interface NavGroup {
 
 // Simplified navigation: collapsed Console+Install pairs (install lives inside each console),
 // merged marketing groups, merged field-ops groups, trimmed integrations.
-// Power-user surfaces (AI Operatives Hub, Calculators, Architecture, Export Docs, AI Research)
+// Power-user surfaces (AI Operatives Hub, Platform Guides, Export Docs, AI Research)
 // are platform_admin only to reduce SMB owner cognitive load.
 const navGroups: NavGroup[] = [
   {
@@ -157,7 +157,6 @@ const navGroups: NavGroup[] = [
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'AI Operatives Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Automation', icon: Bot, href: '/dashboard/automation', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
-      { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
       { label: 'Install App', icon: Puzzle, href: '/technician/install', roles: ['employee'] },
     ],
@@ -180,11 +179,8 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Live Demo Superadmin', icon: UserCog, href: '/dashboard/super-switcher', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
-      { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['company_admin', 'employee'], featureColor: 'text-feature-overview' },
-      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
-      { label: 'Platform Brief', icon: FileText, href: '/dashboard/platform-brief', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
     ],
   },
 ];
@@ -576,7 +572,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                       : item.href === '/dashboard/dispatch-field-ops-install' ? 'nav-dispatch-ops-install'
                       : item.href === '/dashboard/ai-agents' ? 'nav-ai-operatives'
                       : item.href === '/dashboard/knowledge' ? 'nav-knowledge-base'
-                      : item.href === '/dashboard/calculators' ? 'nav-calculators'
                       : item.href === '/dashboard/3rd-party-overview' ? 'nav-integrations-overview'
                       : item.href === '/dashboard/integrations/voice' ? 'nav-voice-agent'
                       : item.href === '/dashboard/integrations/sms' ? 'nav-voice-sms'
@@ -586,11 +581,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                       : item.href === '/dashboard/integrations/tavily' ? 'nav-ai-research'
                       : item.href === '/dashboard/subscription' ? 'nav-subscription'
                       : item.href === '/dashboard/subscription-analytics' ? 'nav-subscription-analytics'
-                      : item.href === '/dashboard/platform-issues' ? 'nav-platform-issues'
                       : item.href === '/dashboard/platform-guides' ? 'nav-platform-guides'
                       : item.href === '/dashboard/help' ? 'nav-help'
                       : item.href === '/dashboard/ai-agent-demo' ? 'nav-ai-agent-demo'
-                      : item.href === '/dashboard/architecture' ? 'nav-architecture'
                       : item.href === '/dashboard/export-docs' ? 'nav-export-docs'
                       : undefined;
 

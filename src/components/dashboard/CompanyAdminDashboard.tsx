@@ -248,7 +248,6 @@ export function CompanyAdminDashboard() {
     { label: 'Knowledge Base', icon: FileText, colorClass: 'bg-primary/15 text-primary', href: '/dashboard/knowledge' },
     { label: 'Inventory', icon: Package, colorClass: 'bg-feature-inventory/15 text-feature-inventory', href: '/dashboard/inventory', requiredTier: 'multi_track' as SubscriptionTier },
     { label: 'Campaigns', icon: Megaphone, colorClass: 'bg-feature-marketing/15 text-feature-marketing', href: '/dashboard/campaigns', requiredTier: 'command' as SubscriptionTier },
-    { label: 'Calculators', icon: DollarSign, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/calculators' },
     { label: 'Integrations', icon: Puzzle, colorClass: 'bg-muted text-foreground', href: '/dashboard/3rd-party-overview' },
   ];
 
