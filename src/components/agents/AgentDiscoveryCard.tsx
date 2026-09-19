@@ -73,12 +73,34 @@ export function AgentDiscoveryCard({
         </div>
 
         <div className="mb-3 flex flex-wrap gap-1.5">
-          {agent.requiredIntegrations.map((i) => (
-            <Badge key={i} variant="outline" className="text-[10px] capitalize">
-              Needs {i}
-            </Badge>
-          ))}
+          {agent.requiredIntegrations.map((i) => {
+            const missing = missingIntegrations.includes(i);
+            return (
+              <Badge
+                key={i}
+                variant={missing ? 'destructive' : 'outline'}
+                className="text-[10px] capitalize"
+              >
+                {missing ? `Set up ${i}` : `Uses ${i}`}
+              </Badge>
+            );
+          })}
         </div>
+
+        {blockedByConnection && (
+          <p className="mb-3 text-xs text-muted-foreground">
+            Turn this on after you set up {missingIntegrations.join(' and ')}.{' '}
+            {onConnect && (
+              <button
+                type="button"
+                className="font-medium text-primary hover:underline"
+                onClick={() => onConnect(missingIntegrations[0])}
+              >
+                Set it up now
+              </button>
+            )}
+          </p>
+        )}
 
         <button
           type="button"
