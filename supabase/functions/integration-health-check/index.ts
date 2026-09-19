@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { requireCronSecret } from "../_shared/cron-auth.ts";
+import { probeTenantIntegrations, type TenantIntegrationRow } from "../_shared/integration-probes.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,8 +8,9 @@ const corsHeaders = {
 };
 
 // Daily sweep: verify each active tenant integration is still reachable.
-// If credentials look broken, mark status='error' and drop a staff notification.
-// Only inspects credential presence + lightweight probes; no destructive calls.
+// Records every result in integration_health_logs so the Connections page can
+// show real history, and notifies staff about broken credentials.
+// Only lightweight probes; no destructive calls.
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const denied = await requireCronSecret(req, corsHeaders);
@@ -22,113 +24,36 @@ Deno.serve(async (req) => {
   const { data: rows } = await supabase
     .from("tenant_integrations")
     .select(
-      "company_id, resend_api_key, signalwire_project_id, signalwire_api_token, signalwire_space_url, signalwire_campaign_status, google_refresh_token, elevenlabs_api_key, stripe_secret_key, tavily_api_key"
+      "company_id, resend_api_key, signalwire_project_id, signalwire_api_token, signalwire_space_url, signalwire_campaign_status, google_refresh_token, elevenlabs_api_key, stripe_secret_key"
     );
 
+  const checkedAt = new Date().toISOString();
+  const logRows: Record<string, unknown>[] = [];
   const issues: Array<{ company_id: string; provider: string; reason: string }> = [];
 
   for (const r of rows ?? []) {
-    // Google OAuth: probe refresh
-    if (r.google_refresh_token) {
-      const clientId = Deno.env.get("GOOGLE_OAUTH_CLIENT_ID");
-      const clientSecret = Deno.env.get("GOOGLE_OAUTH_CLIENT_SECRET");
-      if (clientId && clientSecret) {
-        try {
-          const resp = await fetch("https://oauth2.googleapis.com/token", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-              client_id: clientId,
-              client_secret: clientSecret,
-              refresh_token: r.google_refresh_token,
-              grant_type: "refresh_token",
-            }),
-          });
-          if (!resp.ok) issues.push({ company_id: r.company_id, provider: "google_calendar", reason: `oauth ${resp.status}` });
-        } catch (e) {
-          issues.push({ company_id: r.company_id, provider: "google_calendar", reason: e instanceof Error ? e.message : String(e) });
-        }
-      }
-    }
-
-    // SignalWire: hit the account endpoint (HEAD-ish GET with basic auth)
-    if (r.signalwire_project_id && r.signalwire_api_token && r.signalwire_space_url) {
-      try {
-        const resp = await fetch(
-          `https://${r.signalwire_space_url}/api/laml/2010-04-01/Accounts/${r.signalwire_project_id}.json`,
-          {
-            headers: {
-              Authorization: `Basic ${btoa(`${r.signalwire_project_id}:${r.signalwire_api_token}`)}`,
-            },
-          }
-        );
-        if (!resp.ok) issues.push({ company_id: r.company_id, provider: "signalwire", reason: `${resp.status}` });
-      } catch (e) {
-        issues.push({ company_id: r.company_id, provider: "signalwire", reason: e instanceof Error ? e.message : String(e) });
-      }
-    }
-
-    // Resend: list domains — verifies key auth without side effects
-    if (r.resend_api_key) {
-      try {
-        const resp = await fetch("https://api.resend.com/domains", {
-          headers: { Authorization: `Bearer ${r.resend_api_key}` },
-        });
-        if (!resp.ok) issues.push({ company_id: r.company_id, provider: "resend", reason: `${resp.status}` });
-      } catch (e) {
-        issues.push({ company_id: r.company_id, provider: "resend", reason: e instanceof Error ? e.message : String(e) });
-      }
-    }
-
-    // ElevenLabs: /v1/user auth check
-    if (r.elevenlabs_api_key) {
-      try {
-        const resp = await fetch("https://api.elevenlabs.io/v1/user", {
-          headers: { "xi-api-key": r.elevenlabs_api_key },
-        });
-        if (!resp.ok) issues.push({ company_id: r.company_id, provider: "elevenlabs", reason: `${resp.status}` });
-      } catch (e) {
-        issues.push({ company_id: r.company_id, provider: "elevenlabs", reason: e instanceof Error ? e.message : String(e) });
-      }
-    }
-
-    // Stripe: /v1/account
-    if (r.stripe_secret_key) {
-      try {
-        const resp = await fetch("https://api.stripe.com/v1/account", {
-          headers: { Authorization: `Bearer ${r.stripe_secret_key}` },
-        });
-        if (!resp.ok) issues.push({ company_id: r.company_id, provider: "stripe", reason: `${resp.status}` });
-      } catch (e) {
-        issues.push({ company_id: r.company_id, provider: "stripe", reason: e instanceof Error ? e.message : String(e) });
-      }
-    }
-
-    // Tavily: tiny search probe
-    if (r.tavily_api_key) {
-      try {
-        const resp = await fetch("https://api.tavily.com/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ api_key: r.tavily_api_key, query: "ping", max_results: 1 }),
-        });
-        if (!resp.ok) issues.push({ company_id: r.company_id, provider: "tavily", reason: `${resp.status}` });
-      } catch (e) {
-        issues.push({ company_id: r.company_id, provider: "tavily", reason: e instanceof Error ? e.message : String(e) });
-      }
-    }
-
-    // A2P 10DLC (SignalWire campaign registration): flag any tenant whose campaign
-    // status is in a terminal-bad state so SMS outreach isn't silently blocked.
-    // Only reports state — never re-registers.
-    const badA2P = new Set(["REJECTED", "FAILED", "EXPIRED", "SUSPENDED"]);
-    if (r.signalwire_campaign_status && badA2P.has(String(r.signalwire_campaign_status).toUpperCase())) {
-      issues.push({
-        company_id: r.company_id,
-        provider: "a2p_10dlc",
-        reason: `campaign status ${r.signalwire_campaign_status}`,
+    const results = await probeTenantIntegrations(r as TenantIntegrationRow);
+    for (const res of results) {
+      logRows.push({
+        company_id: res.company_id,
+        integration_name: res.integration_name,
+        status: res.status,
+        last_sync: res.status === "connected" ? checkedAt : null,
+        error_message: res.error_message,
+        checked_at: checkedAt,
       });
+      if (res.status === "error") {
+        issues.push({
+          company_id: res.company_id,
+          provider: res.integration_name,
+          reason: res.error_message ?? "unknown",
+        });
+      }
     }
+  }
+
+  if (logRows.length) {
+    await supabase.from("integration_health_logs").insert(logRows);
   }
 
   // Fan out one staff notification per company/provider issue.
@@ -143,7 +68,8 @@ Deno.serve(async (req) => {
     });
   }
 
-  return new Response(JSON.stringify({ checked: rows?.length ?? 0, issues: issues.length, details: issues }), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+  return new Response(
+    JSON.stringify({ checked: rows?.length ?? 0, logged: logRows.length, issues: issues.length, details: issues }),
+    { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
 });
