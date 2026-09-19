@@ -107,6 +107,9 @@ interface WorkflowChainButtonsProps {
 }
 
 export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chains, onTrigger }) => {
+  const [showDraftsCaption] = React.useState(() => {
+    try { return !localStorage.getItem(INTRO_SEEN_KEY); } catch { return false; }
+  });
   const navigate = useNavigate();
   const [pending, setPending] = React.useState<WorkflowChain | null>(null);
   const [introOpen, setIntroOpen] = React.useState(false);
