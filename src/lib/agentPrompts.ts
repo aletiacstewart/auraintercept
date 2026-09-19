@@ -88,7 +88,7 @@ they'd like it done. Offer to book a time on the spot if they're ready.
 Never argue or push. If they're not ready, say we'll check back and note when.`,
     },
   ],
-  customer_support: [
+  customer_service: [
     {
       tone: 'professional',
       label: 'Professional',
@@ -116,7 +116,7 @@ If you're not sure, say so and get a real person involved — that's always bett
 than a guess. Keep replies short enough to read on a phone.`,
     },
   ],
-  dispatch: [
+  field_ops: [
     {
       tone: 'professional',
       label: 'Professional',
@@ -223,5 +223,5 @@ export function renderAgentPrompt(template: string, ctx: PromptContext): string 
 /** Templates for an agent job type, falling back to customer support. */
 export function getPromptTemplates(jobTypeId?: string | null): PromptTemplate[] {
   if (jobTypeId && AGENT_PROMPTS[jobTypeId]) return AGENT_PROMPTS[jobTypeId];
-  return AGENT_PROMPTS.customer_support;
+  return AGENT_PROMPTS.customer_service;
 }
