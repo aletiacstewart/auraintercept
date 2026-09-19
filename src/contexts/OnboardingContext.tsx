@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { onboarding as track } from '@/lib/analytics';
@@ -234,9 +234,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const skipStep = useCallback(
     async (id: FirstStepId) => {
       const skipped = Array.from(new Set([...(state.skipped ?? []), id]));
+      void track.stepSkipped({ userId: user?.id, companyId }, id);
       await persist({ ...state, skipped }, progressPercent);
     },
-    [state, persist, progressPercent],
+    [state, persist, progressPercent, user?.id, companyId],
   );
 
   const unskipStep = useCallback(
