@@ -137,7 +137,7 @@ export function TTSProviderSettings({
         {/* Test Voice Button */}
         <div className="flex items-center justify-between pt-2">
           <Button variant="ghost" size="sm" asChild>
-            <a href="/dashboard/integrations">
+            <a href="/dashboard/3rd-party-overview">
               Manage integration <ExternalLink className="w-3 h-3 ml-1" />
             </a>
           </Button>

@@ -244,7 +244,7 @@ export function IntakeAnalytics({ companyId }: IntakeAnalyticsProps) {
             structured data automatically.
           </p>
           <Button asChild variant="outline">
-            <Link to="/dashboard/settings">Configure industry</Link>
+            <Link to="/dashboard/quick-setup">Configure industry</Link>
           </Button>
         </CardContent>
       </Card>

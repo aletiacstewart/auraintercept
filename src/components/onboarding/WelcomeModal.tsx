@@ -117,7 +117,7 @@ export function WelcomeModal({
             icon: Bot,
             title: "Configure AI Agents",
             description: "Activate your AI workforce",
-            link: '/dashboard/ai-operatives-hub'
+            link: '/dashboard/ai-agents'
           },
           {
             icon: Phone,
@@ -151,7 +151,7 @@ export function WelcomeModal({
           icon: MessageSquare,
           title: "AI Assistant",
           description: "Get help anytime",
-          link: '/dashboard/ai-operatives-hub'
+          link: '/dashboard/ai-agents'
         }
       ],
       tips: [

@@ -245,7 +245,7 @@ export function MissedCallSettings() {
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-sm">
                 Call routing requires{' '}
-                <Link to="/integrations" className="text-secondary underline hover:no-underline">
+                <Link to="/dashboard/3rd-party-overview" className="text-secondary underline hover:no-underline">
                   SignalWire integration
                 </Link>{' '}
                 to be configured.

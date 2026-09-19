@@ -110,7 +110,7 @@ export function LaunchProgressCard() {
           variant="ghost" 
           size="sm" 
           className="w-full justify-between text-primary hover:text-primary hover:bg-primary/10"
-          onClick={() => navigate('/dashboard/launch-timeline')}
+          onClick={() => navigate('/dashboard/quick-setup')}
         >
           <span>View Full Timeline</span>
           <ArrowRight className="h-4 w-4" />

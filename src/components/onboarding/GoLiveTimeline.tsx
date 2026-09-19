@@ -109,7 +109,7 @@ export const DEFAULT_MILESTONES: Omit<Milestone, 'isComplete'>[] = [
     description: 'Call your AI receptionist',
     targetDay: 8, 
     phase: 'testing', 
-    href: '/dashboard/agent',
+    href: '/dashboard/ai-agents',
     icon: <TestTube className="h-4 w-4" />
   },
   { 
@@ -192,7 +192,7 @@ export function GoLiveTimeline({
               variant="link" 
               size="sm" 
               className="h-auto p-0 text-xs"
-              onClick={() => navigate('/dashboard/launch')}
+              onClick={() => navigate('/dashboard/quick-setup')}
             >
               View full timeline →
             </Button>

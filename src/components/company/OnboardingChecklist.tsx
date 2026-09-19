@@ -218,7 +218,7 @@ export function OnboardingChecklist() {
                 Your AI agent is fully configured and ready to assist customers
               </p>
             </div>
-            <Button variant="outline" onClick={() => navigate('/dashboard/agent')}>
+            <Button variant="outline" onClick={() => navigate('/dashboard/ai-agents')}>
               Test AI Agent
             </Button>
           </div>

@@ -341,7 +341,7 @@ export function ReminderSettings() {
             <AlertTriangle className="h-4 w-4 text-amber-600" />
             <AlertDescription className="text-sm">
               Voice call reminders require{' '}
-              <Link to="/integrations" className="text-secondary underline hover:no-underline">
+              <Link to="/dashboard/3rd-party-overview" className="text-secondary underline hover:no-underline">
                 SignalWire and ElevenLabs integrations
               </Link>{' '}
               to be configured.

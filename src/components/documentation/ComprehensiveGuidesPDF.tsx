@@ -429,18 +429,17 @@ const guideCategories = [
         tips: ['Stripe handles all PCI compliance']
       },
       {
-        title: 'Social Media Integration (Platform OAuth)',
+        title: 'Social Media Integration (Upload-Post)',
         duration: '10 min',
         steps: [
-          'Social media uses platform-level OAuth (one-time setup by platform admin)',
-          'Platform admin registers master apps for Meta, LinkedIn, TikTok, Google',
-          'Navigate to Integrations → Social Media → Platform Credentials Settings',
-          'Enter Client ID and Secret for each platform',
-          'Once configured, tenants connect with one-click "Connect with [Platform]" buttons',
-          'Tenant tokens stored securely per-company',
-          'Supports Instagram, Facebook, LinkedIn, TikTok, Google Business'
+          'Social publishing runs through Upload-Post — no per-platform developer apps required',
+          'Navigate to Integrations → Social Media',
+          'Paste your Upload-Post API key (or use the platform key) and click Connect accounts',
+          'Link Facebook, Instagram, LinkedIn, TikTok, YouTube and Google Business on the Upload-Post page',
+          'Accounts and credentials stay isolated per company',
+          'Copy & Post (manual, zero setup) remains available on every plan'
         ],
-        tips: ['Platform admin does this once; tenants just click Connect', 'Meta requires Business Verification for production use']
+        tips: ['Upload-Post is optional and billed directly to the customer by Upload-Post', 'Copy & Post needs no setup at all']
       },
       {
         title: 'Tavily AI Research',
@@ -1012,19 +1011,19 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         <Text style={styles.categoryTitle}>Subscription Tiers (4-Tier Growth Ladder)</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Core ($497/mo, was $697): 4 AI Operatives · 3 Consoles · 10 employees</Text>
+          <Text style={styles.bulletText}>Aura Core ($497/mo, was $697): 8 Smart AI Agents (5 operatives) · 3 Consoles · 10 employees</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Boost ($994/mo, was $1,394): 6 AI Operatives · 5 Consoles · 25 employees</Text>
+          <Text style={styles.bulletText}>Aura Boost ($994/mo, was $1,394): 12 Smart AI Agents (7 operatives) · 5 Consoles · 25 employees</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Pro ($1,988/mo, was $2,788): 8 AI Operatives · 5 Consoles · 50 employees</Text>
+          <Text style={styles.bulletText}>Aura Pro ($1,988/mo, was $2,788): 16 Smart AI Agents (10 operatives) · 5 Consoles · 50 employees</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Aura Elite ($3,979/mo, was $5,576): All 24 AI Operatives · 7 Consoles + AI Operatives Hub · Unlimited employees</Text>
+          <Text style={styles.bulletText}>Aura Elite ($3,979/mo, was $5,576): All 24 Smart AI Agents (10 operatives) · 7 Consoles + AI Operatives Hub · Unlimited employees</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>

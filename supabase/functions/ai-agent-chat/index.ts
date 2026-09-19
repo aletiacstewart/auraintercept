@@ -4092,17 +4092,30 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       },
     ];
 
+    // Some agents (e.g. customer_journey) are a union of several legacy agent
+    // tool sets, which can repeat shared tools such as handoff_to_agent. The
+    // gateway rejects duplicate function declarations with a 400, so dedupe by
+    // function name, keeping the first declaration.
+    const seenToolNames = new Set<string>();
+    const dedupedTools = (tools as any[]).filter((t: any) => {
+      const name = t?.function?.name;
+      if (!name) return true;
+      if (seenToolNames.has(name)) return false;
+      seenToolNames.add(name);
+      return true;
+    });
+
     // Call Lovable AI Gateway
     // Use the shared gateway wrapper so 429/5xx transparently fall back to
     // the next model in the same family before we return an error.
     const gatewayCall = await callAIGatewayWithFallback({
       model: selectedModel,
       messages,
-      tools: isPhoneChannel ? tools.filter((t: any) => {
+      tools: isPhoneChannel ? dedupedTools.filter((t: any) => {
         // Phone: only allow handoff -- no data tools that trigger follow-up loops
         const name = t.function?.name;
         return name === 'handoff_to_agent';
-      }) : tools,
+      }) : dedupedTools,
       tool_choice: 'auto',
       temperature: 0.7,
       max_tokens: isPhoneChannel ? 150 : 1000,
@@ -4250,10 +4263,10 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
           body: JSON.stringify({
             model: selectedModel,
             messages,
-            tools: isPhoneChannel ? tools.filter((t: any) => {
+            tools: isPhoneChannel ? dedupedTools.filter((t: any) => {
               const name = t.function?.name;
               return name === 'handoff_to_agent';
-            }) : tools,
+            }) : dedupedTools,
             tool_choice: 'auto',
             temperature: 0.7,
             max_tokens: isPhoneChannel ? 150 : 1000,

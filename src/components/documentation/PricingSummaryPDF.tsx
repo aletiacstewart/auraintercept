@@ -185,25 +185,25 @@ const PricingSummaryPDF = () => (
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA CORE</Text>
           <Text style={styles.summaryPrice}>$497</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>4 AI Operatives · 3 Consoles</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>8 Smart AI Agents (5 operatives) · 3 Consoles</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA BOOST</Text>
           <Text style={styles.summaryPrice}>$994</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>6 AI Operatives · 5 Consoles</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>12 Smart AI Agents (7 operatives) · 5 Consoles</Text>
         </View>
         <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6, color: colors.accent }}>AURA PRO</Text>
           <Text style={styles.summaryPrice}>$1,988</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>8 AI Operatives · 5 Consoles</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>16 Smart AI Agents (10 operatives) · 5 Consoles</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA ELITE</Text>
           <Text style={styles.summaryPrice}>$3,979</Text>
           <Text style={styles.summaryLabel}>per month (was $5,576)</Text>
-          <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All 24 AI Operatives</Text>
+          <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All 24 Smart AI Agents (10 operatives)</Text>
         </View>
       </View>
 
@@ -217,7 +217,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Elite</Text>
         </View>
         {[
-          { feature: 'AI Operatives', core: '4', boost: '6', pro: '8', elite: 'All 10' },
+          { feature: 'AI Operatives', core: '5', boost: '7', pro: '10', elite: 'All 10' },
           { feature: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
           { feature: 'Employees', core: '10', boost: '25', pro: '50', elite: 'Unlimited' },
           { feature: 'Talk to Aura (Voice)', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
@@ -264,7 +264,7 @@ const PricingSummaryPDF = () => (
           { category: 'Annual Price', core: '$4,771', boost: '$9,542', pro: '$19,085', elite: '$38,198' },
           { category: 'One-Time Onboarding Fee', core: '$0 (Beta)', boost: '$0 (Beta)', pro: '$0 (Beta)', elite: '$0 (Beta)' },
           { category: '', core: '', boost: '', pro: '', elite: '' },
-          { category: 'AI Operatives', core: '4', boost: '6', pro: '8', elite: 'All 10' },
+          { category: 'AI Operatives', core: '5', boost: '7', pro: '10', elite: 'All 10' },
           { category: 'Consoles', core: '3', boost: '5', pro: '5', elite: 'All 7' },
           { category: 'Employees', core: '10', boost: '25', pro: '50', elite: 'Unlimited' },
           { category: '', core: '', boost: '', pro: '', elite: '' },
@@ -276,7 +276,7 @@ const PricingSummaryPDF = () => (
           { category: 'Business Ops', core: '-', boost: '-', pro: '-', elite: 'Yes' },
           { category: 'Marketing Console', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
           { category: 'Analytics Console', core: '-', boost: '-', pro: '-', elite: 'Yes' },
-          { category: 'AI Operatives Hub', core: '-', boost: '-', pro: '-', elite: 'Yes' },
+          { category: 'AI Operatives Hub', core: 'Yes', boost: 'Yes', pro: 'Yes', elite: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={row.category === '' ? { height: 6 } : (i % 2 === 0 ? styles.tableRow : styles.tableRowAlt)}>
             {row.category !== '' && (
@@ -435,9 +435,9 @@ const PricingSummaryPDF = () => (
           enterprise operations. Custom implementation and onboarding included.
         </Text>
       </View>
-      <Text style={styles.subsectionTitle}>Included AI Operatives (All 10)</Text>
+      <Text style={styles.subsectionTitle}>Included Smart AI Agents (All 24)</Text>
       <Text style={styles.paragraph}>
-        Full access to all 24 AI Operatives (organized into 10 operative roles): everything in Pro plus Admin, Quoting, Invoice, Inventory, Insights, Performance, Revenue, and Forecast capabilities.
+        Full access to all 24 Smart AI Agents (organized into 10 operative roles): everything in Pro plus Admin, Quoting, Invoice, Inventory, Insights, Performance, Revenue, and Forecast capabilities.
       </Text>
       <Text style={styles.subsectionTitle}>Consoles (All 7 + AI Operatives Hub)</Text>
       <View style={styles.featureList}>

@@ -758,7 +758,7 @@ const PlatformFAQPDF = () => {
         
         <FAQItem 
           question="What's in the Field Operations console?"
-          answer="Field Operations is a mobile-optimized console for technicians with: Accept Job, Get Directions, Mark En Route, Update ETA, Arrive & Start, Complete Job, Generate Quote, Generate Invoice, and Contact Dispatch. Available on Boost and above (Field Ops agents)."
+          answer="Field Operations is a mobile-optimized console for technicians with: Accept Job, Get Directions, Mark En Route, Update ETA, Arrive & Start, Complete Job, Generate Quote, Generate Invoice, and Contact Dispatch. Available on Aura Core and above (Field Ops agents)."
         />
         
         <FAQItem 

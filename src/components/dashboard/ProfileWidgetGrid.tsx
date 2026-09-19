@@ -42,7 +42,7 @@ const W: Record<string, WidgetSpec> = {
   completed_vs_remaining: { label: 'Completed vs Remaining', icon: Activity, description: 'Route progress in real time.', route: '/dashboard/dispatch-field-ops' },
   subscription_status: { label: 'Subscriptions', icon: Repeat, description: 'Active recurring customers.', route: '/dashboard/customers' },
   upcoming_renewals: { label: 'Upcoming Renewals', icon: RefreshCcw, description: 'Renewals coming this week.', route: '/dashboard/customers' },
-  seasonal_campaign: { label: 'Seasonal Campaign', icon: Sparkles, description: 'Active seasonal outreach.', route: '/dashboard/marketing-sales-ops' },
+  seasonal_campaign: { label: 'Seasonal Campaign', icon: Sparkles, description: 'Active seasonal outreach.', route: '/dashboard/ai-consoles/marketing-sales' },
   review_score: { label: 'Review Score', icon: Star, description: 'Latest review pulse.', route: '/dashboard/quick-setup?tab=reviews' },
   winback_candidates: { label: 'Winback Candidates', icon: Users, description: 'Lapsed customers to re-engage.', route: '/dashboard/customers' },
 
@@ -53,7 +53,7 @@ const W: Record<string, WidgetSpec> = {
   material_inventory: { label: 'Material Inventory', icon: Package, description: 'On-hand materials.', route: '/dashboard/inventory' },
   revenue_pipeline: { label: 'Revenue Pipeline', icon: Wallet, description: 'Forecasted revenue by stage.', route: '/dashboard/analytics' },
   completion_rate: { label: 'Completion Rate', icon: Trophy, description: 'On-time completion %.', route: '/dashboard/analytics' },
-  before_after_gallery: { label: 'Before / After', icon: ImageIcon, description: 'Project photo gallery.', route: '/dashboard/social-media-ops' },
+  before_after_gallery: { label: 'Before / After', icon: ImageIcon, description: 'Project photo gallery.', route: '/dashboard/ai-consoles/social-media' },
 
   // Profile D — Solo / Appointment
   todays_appointments: { label: "Today's Appointments", icon: CalendarDays, description: 'Calendar for today.', route: '/dashboard/appointments' },
@@ -67,8 +67,8 @@ const W: Record<string, WidgetSpec> = {
   lead_pipeline: { label: 'Lead Pipeline', icon: Users, description: 'Hot, warm, cold leads.', route: '/dashboard/leads' },
   todays_showings: { label: "Today's Showings", icon: CalendarDays, description: 'Booked showings today.', route: '/dashboard/appointments' },
   lead_response_time: { label: 'Lead Response Time', icon: Activity, description: 'Avg time-to-first-response.', route: '/dashboard/analytics' },
-  listing_campaigns: { label: 'Listing Campaigns', icon: Sparkles, description: 'Active marketing campaigns.', route: '/dashboard/marketing-sales-ops' },
-  social_post_scheduler: { label: 'Social Schedule', icon: CalendarRange, description: 'Upcoming social posts.', route: '/dashboard/social-media-ops' },
+  listing_campaigns: { label: 'Listing Campaigns', icon: Sparkles, description: 'Active marketing campaigns.', route: '/dashboard/ai-consoles/marketing-sales' },
+  social_post_scheduler: { label: 'Social Schedule', icon: CalendarRange, description: 'Upcoming social posts.', route: '/dashboard/ai-consoles/social-media' },
   review_referral_tracker: { label: 'Reviews & Referrals', icon: Star, description: 'Reviews and referral activity.', route: '/dashboard/referrals' },
   revenue_closed: { label: 'Revenue Closed', icon: Wallet, description: 'Closed-won revenue.', route: '/dashboard/analytics' },
 

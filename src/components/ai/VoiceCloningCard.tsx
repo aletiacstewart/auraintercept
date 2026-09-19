@@ -164,7 +164,7 @@ export function VoiceCloningCard({ hasElevenLabs }: VoiceCloningCardProps) {
             <AlertDescription className="flex items-center justify-between">
               <span>Configure ElevenLabs API key in Integrations to enable voice cloning.</span>
               <Button variant="link" size="sm" className="h-auto p-0" asChild>
-                <a href="/dashboard/integrations">
+                <a href="/dashboard/3rd-party-overview">
                   Go to Integrations <ExternalLink className="w-3 h-3 ml-1" />
                 </a>
               </Button>
