@@ -173,14 +173,26 @@ export default function IntegrationSetupWizard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, integrations]);
 
+  /** Field-level problems, keyed by field. Only shown once a field has been touched or save was attempted. */
+  const fieldErrors = useMemo(() => {
+    const errors: Record<string, string> = {};
+    (active?.fields ?? []).forEach((f) => {
+      const problem = validateIntegrationField(f, formData[f.key]);
+      if (problem) errors[f.key] = problem;
+    });
+    return errors;
+  }, [active, formData]);
+
   const handleSave = () => {
     if (!active) return;
-    const missing = active.fields.filter((f) => f.required && !formData[f.key]).map((f) => f.label);
-    if (missing.length) {
-      toast.error(`Still needed: ${missing.join(', ')}`);
+    setShowErrors(true);
+    const problems = Object.values(fieldErrors);
+    if (problems.length) {
+      toast.error(problems[0]);
       return;
     }
-    saveMutation.mutate(formData);
+    const trimmed = Object.fromEntries(Object.entries(formData).map(([k, v]) => [k, typeof v === 'string' ? v.trim() : v]));
+    saveMutation.mutate(trimmed);
   };
 
   return (
