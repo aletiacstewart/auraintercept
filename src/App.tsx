@@ -56,7 +56,6 @@ const CalendarIntegration = lazy(() => import("./pages/integrations").then(m => 
 const SocialMediaIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.SocialMediaIntegration })));
 const TavilyIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.TavilyIntegration })));
 const KnowledgeBase = lazy(() => import("./pages/KnowledgeBase"));
-const AIAgent = lazy(() => import("./pages/AIAgent"));
 const CustomerPortalConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.CustomerPortalConsole })));
 const FieldOpsConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.FieldOpsConsole })));
 const BusinessManagementConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.BusinessManagementConsole })));
@@ -64,15 +63,12 @@ const PipelineConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ de
 const MarketingSalesConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.MarketingSalesConsole })));
 const SocialMediaConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.SocialMediaConsole })));
 const NewLeadPage = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.NewLeadPage })));
-const SpecialistOperativesConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.SpecialistOperativesConsole })));
 const AskAura = lazy(() => import("./pages/AskAura"));
 const OperationsRouter = lazy(() => import("./pages/operations/OperationsRouter"));
 const VideoConsole = lazy(() => import("./pages/VideoConsole"));
 const AIAgentsHub = lazy(() => import("./pages/AIAgentsHub"));
 const Automation = lazy(() => import("./pages/Automation"));
-const AIAgentGuide = lazy(() => import("./pages/AIAgentGuide"));
 const AuditReport = lazy(() => import("./pages/AuditReport"));
-const AgentDetailPage = lazy(() => import("./pages/AgentDetailPage"));
 const ContentEngineConsole = lazy(() => import("./pages/ContentEngineConsole"));
 const Widget = lazy(() => import("./pages/Widget"));
 const CallHistory = lazy(() => import("./pages/CallHistory"));
@@ -223,7 +219,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/integrations/tavily" element={<ProtectedRoute><TavilyIntegration /></ProtectedRoute>} />
                 <Route path="/dashboard/integrations/crm" element={<ProtectedRoute><CRMIntegration /></ProtectedRoute>} />
                 <Route path="/dashboard/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-agent" element={<ProtectedRoute><AIAgent /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-agent" element={<Navigate to="/dashboard/ai-agents" replace />} />
                 <Route path="/dashboard/ai-consoles/customer-portal" element={<ProtectedRoute><CustomerPortalConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/field-ops" element={<ProtectedRoute><FieldOpsConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/business-mgt-ops" element={<ProtectedRoute><BusinessManagementConsole /></ProtectedRoute>} />
@@ -232,7 +228,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/ai-consoles/social-media" element={<ProtectedRoute><SocialMediaConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/analytics" element={<Navigate to="/dashboard/analytics?tab=overview" replace />} />
                 <Route path="/dashboard/ai-consoles/new-lead" element={<ProtectedRoute><NewLeadPage /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-consoles/specialists" element={<ProtectedRoute><SpecialistOperativesConsole /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/specialists" element={<Navigate to="/dashboard/ai-agents?tab=discover" replace />} />
                 {/* Analytics & Reports now consolidated into Business Operations */}
                 <Route path="/dashboard/analytics-reports" element={<ProtectedRoute><BusinessOperations /></ProtectedRoute>} />
                 {/* Legacy routes redirect to Analytics & Reports */}
@@ -244,8 +240,9 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/ai-consoles/customer-insights" element={<Navigate to="/dashboard/analytics?tab=customers" replace />} />
                 <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<Navigate to="/dashboard/analytics?tab=reports" replace />} />
                 <Route path="/dashboard/ai-agents" element={<ProtectedRoute><AIAgentsHub /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-agent-guide" element={<ProtectedRoute><AIAgentGuide /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-agents/:agentId" element={<ProtectedRoute><AgentDetailPage /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-agent-guide" element={<Navigate to="/dashboard/ai-agents" replace />} />
+                <Route path="/dashboard/ai-agents/:agentId" element={<ProtectedRoute><AIAgentsHub /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-agents/:agentId/settings" element={<ProtectedRoute><AIAgentsHub /></ProtectedRoute>} />
                 <Route path="/dashboard/content-engine" element={<ProtectedRoute><ContentEngineConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/customer-website-app" element={<ProtectedRoute><Widget /></ProtectedRoute>} />
                 <Route path="/dashboard/calls" element={<ProtectedRoute><CallHistory /></ProtectedRoute>} />

@@ -158,7 +158,7 @@ export function EmployeeDashboard() {
     hasJobType('customer_service') || hasJobType('billing_specialist') || hasJobType('manager');
 
   const defaultAIAction = !hasSpecializedRole ? [
-    { label: 'AI Assistant', icon: Bot, href: '/dashboard/ai-agent', gradient: 'from-purple-500 to-purple-600' },
+    { label: 'AI Assistant', icon: Bot, href: '/technician/ai-console', gradient: 'from-purple-500 to-purple-600' },
   ] : [];
 
   const profileAction = [

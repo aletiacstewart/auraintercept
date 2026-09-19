@@ -4,5 +4,4 @@ export { default as BusinessManagementConsole } from './BusinessManagementConsol
 export { default as MarketingSalesConsole } from './MarketingSalesConsole';
 export { default as SocialMediaConsole } from './SocialMediaConsole';
 export { default as NewLeadPage } from './NewLeadPage';
-export { default as SpecialistOperativesConsole } from './SpecialistOperativesConsole';
 export { default as PipelineConsole } from './PipelineConsole';
