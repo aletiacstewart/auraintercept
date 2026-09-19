@@ -59,7 +59,7 @@ ${renderTierSection()}
 - Outreach & Sales: /dashboard/ai-consoles/outreach-sales
 - Social Media: /dashboard/ai-consoles/social-media
 - Creative & Web Presence: /dashboard/ai-consoles/creative-web-presence
-- Analytics: /dashboard/ai-consoles/analytics-reports
+- Analytics: /dashboard/analytics
 - Settings: /dashboard/settings
 - Integrations: /dashboard/integrations
 - Social Media Integration: /dashboard/integrations/social

@@ -138,7 +138,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
       { label: 'Pipeline', icon: Kanban, href: '/dashboard/pipeline', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
-      { label: 'Analytics & Reports', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Analytics & Reports', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
       { label: 'Specialist Operatives', icon: Sparkles, href: '/dashboard/ai-consoles/specialists', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config', requiredTier: 'performance' },
     ],
   },
@@ -562,7 +562,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                       : item.href === '/dashboard/customer-portal-app-install' ? 'nav-customer-portal-install'
                       : item.href === '/dashboard/ai-consoles/business-mgt-ops' ? 'nav-business-mgt-ops'
                       : item.href === '/dashboard/business-mgt-ops-install' ? 'nav-business-mgt-install'
-                      : item.href === '/dashboard/ai-consoles/analytics' ? 'nav-analytics-reports'
+                      : item.href === '/dashboard/analytics' ? 'nav-analytics-reports'
                       : item.href === '/dashboard/ai-consoles/marketing-sales' ? 'nav-marketing-sales'
                       : item.href === '/dashboard/ai-consoles/social-media' ? 'nav-social-media'
                       : item.href === '/dashboard/smart-website' ? 'nav-web-presence'

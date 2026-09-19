@@ -36,7 +36,7 @@ export const NAV_HREF_TO_CONSOLE: Record<string, ConsoleId> = {
   '/dashboard/ai-consoles/social-media': 'C5',
 
   // C6 — analytics & reports
-  '/dashboard/ai-consoles/analytics': 'C6',
+  '/dashboard/analytics': 'C6',
 };
 
 /**
