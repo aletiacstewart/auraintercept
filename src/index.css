@@ -1291,3 +1291,41 @@
   --shadow-glow: 0 0 20px hsl(189 90% 42% / 0.15);
   --shadow-glow-accent: 0 0 20px hsl(189 90% 42% / 0.20);
 }
+
+/* Product tour (Shepherd.js) themed with app tokens — no default purple. */
+.shepherd-element.aura-tour-step {
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--primary) / 0.25);
+  border-radius: 0.75rem;
+  box-shadow: 0 0 24px hsl(var(--primary) / 0.18);
+  max-width: 22rem;
+}
+.aura-tour-step .shepherd-header {
+  background: transparent;
+  padding: 1rem 1rem 0.25rem;
+}
+.aura-tour-step .shepherd-title {
+  color: hsl(var(--primary));
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.aura-tour-step .shepherd-text {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem 1rem;
+}
+.aura-tour-step .shepherd-footer { padding: 0 1rem 1rem; }
+.aura-tour-step .shepherd-button {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+}
+.aura-tour-step .shepherd-button.shepherd-button-secondary {
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+}
+.aura-tour-step .shepherd-cancel-icon { color: hsl(var(--muted-foreground)); }
+.shepherd-modal-overlay-container { opacity: 0.6; }
+.aura-tour-step .shepherd-arrow::before { background: hsl(var(--card)); }
