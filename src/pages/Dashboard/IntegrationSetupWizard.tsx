@@ -48,6 +48,8 @@ export default function IntegrationSetupWizard() {
   const [active, setActive] = useState<IntegrationDef | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [showErrors, setShowErrors] = useState(false);
 
   const { data: integrations, isLoading } = useQuery({
     queryKey: ['integrations', companyId],
@@ -157,6 +159,8 @@ export default function IntegrationSetupWizard() {
       });
       setFormData(existing);
     }
+    setTouched({});
+    setShowErrors(false);
     setActive(integration);
   };
 
@@ -173,14 +177,26 @@ export default function IntegrationSetupWizard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, integrations]);
 
+  /** Field-level problems, keyed by field. Only shown once a field has been touched or save was attempted. */
+  const fieldErrors = useMemo(() => {
+    const errors: Record<string, string> = {};
+    (active?.fields ?? []).forEach((f) => {
+      const problem = validateIntegrationField(f, formData[f.key]);
+      if (problem) errors[f.key] = problem;
+    });
+    return errors;
+  }, [active, formData]);
+
   const handleSave = () => {
     if (!active) return;
-    const missing = active.fields.filter((f) => f.required && !formData[f.key]).map((f) => f.label);
-    if (missing.length) {
-      toast.error(`Still needed: ${missing.join(', ')}`);
+    setShowErrors(true);
+    const problems = Object.values(fieldErrors);
+    if (problems.length) {
+      toast.error(problems[0]);
       return;
     }
-    saveMutation.mutate(formData);
+    const trimmed = Object.fromEntries(Object.entries(formData).map(([k, v]) => [k, typeof v === 'string' ? v.trim() : v]));
+    saveMutation.mutate(trimmed);
   };
 
   return (
@@ -310,35 +326,50 @@ export default function IntegrationSetupWizard() {
                       <ElevenLabsSetupGuide companyId={companyId} agentId={(integrations?.elevenlabs_agent_id as string) || undefined} />
                     )}
 
-                    {active.fields.map((field) => (
-                      <div key={field.key} className="space-y-2">
-                        <Label htmlFor={field.key}>
-                          {field.label}
-                          {field.required && <span className="ml-1 text-destructive">*</span>}
-                        </Label>
-                        <div className="relative">
-                          <Input
-                            id={field.key}
-                            type={field.type === 'password' && !showPasswords[field.key] ? 'password' : 'text'}
-                            placeholder={field.placeholder}
-                            value={formData[field.key] || ''}
-                            onChange={(e) => setFormData((prev) => ({ ...prev, [field.key]: e.target.value }))}
-                          />
-                          {field.type === 'password' && (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2"
-                              onClick={() => setShowPasswords((p) => ({ ...p, [field.key]: !p[field.key] }))}
-                            >
-                              {showPasswords[field.key] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </Button>
+                    {active.fields.map((field) => {
+                      const problem = fieldErrors[field.key];
+                      const visible = !!problem && (showErrors || touched[field.key]);
+                      return (
+                        <div key={field.key} className="space-y-2">
+                          <Label htmlFor={field.key}>
+                            {field.label}
+                            {field.required && <span className="ml-1 text-destructive">*</span>}
+                          </Label>
+                          <div className="relative">
+                            <Input
+                              id={field.key}
+                              type={field.type === 'password' && !showPasswords[field.key] ? 'password' : 'text'}
+                              placeholder={field.placeholder}
+                              value={formData[field.key] || ''}
+                              aria-invalid={visible}
+                              aria-describedby={visible ? `${field.key}-error` : undefined}
+                              className={cn(visible && 'border-destructive focus-visible:ring-destructive')}
+                              onChange={(e) => setFormData((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                              onBlur={() => setTouched((p) => ({ ...p, [field.key]: true }))}
+                            />
+                            {field.type === 'password' && (
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2"
+                                onClick={() => setShowPasswords((p) => ({ ...p, [field.key]: !p[field.key] }))}
+                              >
+                                {showPasswords[field.key] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              </Button>
+                            )}
+                          </div>
+                          {visible ? (
+                            <p id={`${field.key}-error`} role="alert" className="text-xs text-destructive">
+                              {problem}
+                            </p>
+                          ) : (
+                            field.helpText && <p className="text-xs text-muted-foreground">{field.helpText}</p>
                           )}
                         </div>
-                        {field.helpText && <p className="text-xs text-muted-foreground">{field.helpText}</p>}
-                      </div>
-                    ))}
+                      );
+                    })}
+
 
                     <div className="flex gap-3 pt-2">
                       <Button variant="outline" className="flex-1" onClick={() => setActive(null)}>
