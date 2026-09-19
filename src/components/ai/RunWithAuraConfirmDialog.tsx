@@ -74,9 +74,11 @@ export const RunWithAuraConfirmDialog: React.FC<Props> = ({ chain, onCancel, onC
             Review before Aura runs
           </DialogTitle>
           <DialogDescription>
-            {chain?.label
-              ? `Confirm what Aura will do for "${chain.label}" before it touches your business.`
-              : 'Confirm what Aura will do before it touches your business.'}
+            {chain?.actions && chain.actions.length > 0
+              ? `Aura will prepare ${chain.actions.length} draft${chain.actions.length === 1 ? '' : 's'} for "${chain.label}" (listed below). Nothing is sent to a customer until you approve it in the Approval Queue.`
+              : chain?.label
+                ? `Confirm what Aura will do for "${chain.label}" before it touches your business.`
+                : 'Confirm what Aura will do before it touches your business.'}
           </DialogDescription>
         </DialogHeader>
 

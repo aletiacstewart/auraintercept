@@ -9,4 +9,6 @@ The `WorkflowChainButtons` component renders **two buttons per card**:
 
 Whole-card click is intentionally removed to prevent accidental AI runs.
 
+**Wording standard (Sep 2026):** the section is titled "One-Click Jobs" (never "End-to-End Workflows"), the queue link reads "Approval Queue", each card shows a plain-English "You get: …" outcome line (`describeChainOutcome`, overridable per chain via `outcome`), and a first-visit guided intro (localStorage `aura-workflows-intro-seen`) opens the `HOW_TO_USE.workflows` modal once. Emphasize: Aura prepares drafts; nothing reaches a customer until approved in the Approval Queue.
+
 **Adding new chains**: in `src/lib/industryFieldOpsWorkflows.ts`, the `resolveTargetRoute(id)` helper auto-maps known chain ids to routes. To add a route for a new id, extend that function. Per-chain `targetRoute` overrides are honored (set the field directly on a `WorkflowChain` to bypass the resolver).

@@ -37,6 +37,11 @@ export interface HowToUseModalProps {
   triggerLabel?: string;
   /** Render as icon-only "?" button when true */
   iconOnly?: boolean;
+  /** Optional controlled open state (e.g. first-visit auto-prompt) */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Hide the trigger button (use with controlled open) */
+  hideTrigger?: boolean;
 }
 
 /**
@@ -59,26 +64,37 @@ export function HowToUseModal({
   className,
   triggerLabel = 'How to use',
   iconOnly = false,
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
 }: HowToUseModalProps) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (v: boolean) => {
+    if (!isControlled) setInternalOpen(v);
+    onOpenChange?.(v);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size={iconOnly ? 'icon' : 'sm'}
-          className={cn(
-            'border-primary/40 text-primary hover:bg-primary/10 hover:text-primary',
-            !iconOnly && 'w-full sm:w-auto',
-            className,
-          )}
-          aria-label={`How to use ${title}`}
-        >
-          <HelpCircle className={cn('h-4 w-4', !iconOnly && 'mr-1.5')} />
-          {!iconOnly && <span className="truncate">{triggerLabel}</span>}
-        </Button>
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            size={iconOnly ? 'icon' : 'sm'}
+            className={cn(
+              'border-primary/40 text-primary hover:bg-primary/10 hover:text-primary',
+              !iconOnly && 'w-full sm:w-auto',
+              className,
+            )}
+            aria-label={`How to use ${title}`}
+          >
+            <HelpCircle className={cn('h-4 w-4', !iconOnly && 'mr-1.5')} />
+            {!iconOnly && <span className="truncate">{triggerLabel}</span>}
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">

@@ -9,6 +9,10 @@ import { Badge } from '@/components/ui/badge';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
+
+const INTRO_SEEN_KEY = 'aura-workflows-intro-seen';
 
 export type WorkflowSideEffectChannel =
   | 'sms'
@@ -62,6 +66,39 @@ export interface WorkflowChain {
   /** Optional structured actions; when present, Run with Aura writes real rows
    *  into agent_proposed_actions instead of only prompting Aura inline. */
   actions?: WorkflowAction[];
+  /** Optional plain-English outcome line ("You get: …"). Auto-derived from actions when absent. */
+  outcome?: string;
+}
+
+const ACTION_OUTCOME_WORDS: Record<WorkflowAction['action_type'], string> = {
+  draft_sms: 'a text message draft',
+  draft_email: 'an email draft',
+  create_appointment: 'an appointment on your calendar',
+  draft_invoice: 'an invoice draft',
+  task: 'a to-do for your team',
+};
+
+/** Builds the plain-English "You get: …" line for a chain. */
+export function describeChainOutcome(chain: WorkflowChain): string {
+  if (chain.outcome) return chain.outcome;
+  if (chain.actions && chain.actions.length > 0) {
+    const seen = new Set<string>();
+    const parts: string[] = [];
+    for (const a of chain.actions) {
+      const word = ACTION_OUTCOME_WORDS[a.action_type];
+      if (word && !seen.has(word)) {
+        seen.add(word);
+        parts.push(word);
+      }
+    }
+    if (parts.length > 0) {
+      const list = parts.length === 1
+        ? parts[0]
+        : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+      return `You get: ${list} — ready for your approval.`;
+    }
+  }
+  return `Aura works through: ${chain.steps.join(' → ')}.`;
 }
 
 interface WorkflowChainButtonsProps {
@@ -70,10 +107,28 @@ interface WorkflowChainButtonsProps {
 }
 
 export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chains, onTrigger }) => {
+  const [showDraftsCaption] = React.useState(() => {
+    try { return !localStorage.getItem(INTRO_SEEN_KEY); } catch { return false; }
+  });
   const navigate = useNavigate();
   const [pending, setPending] = React.useState<WorkflowChain | null>(null);
+  const [introOpen, setIntroOpen] = React.useState(false);
   const { companyId } = useAuth();
   const qc = useQueryClient();
+
+  // First-visit guided intro: opens once per browser, never blocks the page.
+  React.useEffect(() => {
+    try {
+      if (!localStorage.getItem(INTRO_SEEN_KEY)) setIntroOpen(true);
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleIntroChange = (open: boolean) => {
+    setIntroOpen(open);
+    if (!open) {
+      try { localStorage.setItem(INTRO_SEEN_KEY, '1'); } catch { /* ignore */ }
+    }
+  };
 
   const { data: pendingCount = 0 } = useQuery({
     queryKey: ['workflow-pending-actions', companyId],
@@ -107,26 +162,43 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-sm font-medium text-primary">
-          <Zap className="h-4 w-4 text-primary" />
-          End-to-End Workflows
+      <div className="space-y-1">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2 text-sm font-medium text-primary">
+            <Zap className="h-4 w-4 text-primary" />
+            One-Click Jobs
+            <HowToUseModal
+              {...HOW_TO_USE.workflows}
+              triggerLabel="How one-click jobs work"
+              iconOnly
+              className="h-6 w-6"
+            />
+          </div>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10"
+            onClick={() => navigate('/dashboard/automation')}
+          >
+            <ShieldCheck className="h-3.5 w-3.5 mr-1" />
+            Approval Queue
+            {pendingCount > 0 && (
+              <Badge variant="secondary" className="ml-2 h-4 px-1.5 text-[10px]">
+                {pendingCount}
+              </Badge>
+            )}
+          </Button>
         </div>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-7 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10"
-          onClick={() => navigate('/dashboard/automation')}
-        >
-          <ShieldCheck className="h-3.5 w-3.5 mr-1" />
-          Review &amp; Approve Automation
-          {pendingCount > 0 && (
-            <Badge variant="secondary" className="ml-2 h-4 px-1.5 text-[10px]">
-              {pendingCount}
-            </Badge>
-          )}
-        </Button>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Each card runs a whole job for you. Aura prepares every step as a draft — nothing is sent to a customer until you approve it in the Approval Queue.
+        </p>
       </div>
+      <HowToUseModal
+        {...HOW_TO_USE.workflows}
+        open={introOpen}
+        onOpenChange={handleIntroChange}
+        hideTrigger
+      />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {chains.map((chain) => (
           <Card
@@ -151,6 +223,9 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
                   </React.Fragment>
                 ))}
               </div>
+              <p className="text-[11px] text-muted-foreground italic">
+                {describeChainOutcome(chain)}
+              </p>
               <div className="flex items-center gap-2 pt-1">
                 <Button
                   size="sm"
@@ -173,6 +248,11 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
                   </Button>
                 )}
               </div>
+              {showDraftsCaption && (
+                <p className="text-[10px] text-muted-foreground text-center">
+                  Drafts only — you approve before anything sends.
+                </p>
+              )}
             </CardContent>
           </Card>
         ))}
