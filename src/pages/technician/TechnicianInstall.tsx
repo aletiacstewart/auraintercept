@@ -286,7 +286,7 @@ const TechnicianInstall = () => {
                         <strong>Preview URL detected.</strong> The install link must use your published app URL,
                         otherwise phones will be redirected to a preview environment that requires an editor account.
                         {' '}
-                        <Link to="/settings" className="underline font-medium inline-flex items-center gap-1">
+                        <Link to="/dashboard/quick-setup" className="underline font-medium inline-flex items-center gap-1">
                           Set a published app URL <Settings className="h-3 w-3" />
                         </Link>{' '}
                         to fix this.

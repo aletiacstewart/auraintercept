@@ -37,8 +37,8 @@ import VideoPromptsPage from './VideoPromptsPage';
 // Route mapping for interactive navigation
 const NAVIGATION_ROUTES: Record<string, string> = {
   'Dashboard': '/dashboard',
-  'AI Agents Hub': '/dashboard/ai-operatives-hub',
-  'AI Operatives Hub': '/dashboard/ai-operatives-hub',
+  'AI Agents Hub': '/dashboard/ai-agents',
+  'AI Operatives Hub': '/dashboard/ai-agents',
   'Knowledge Base': '/dashboard/knowledge',
   'Appointments': '/dashboard/appointments',
   'Calendar': '/dashboard/calendar',
@@ -137,7 +137,7 @@ const guideCategories = [
           'Aura Pro (Beta Pricing: $1,988/mo, was $2,788): 16 Smart AI Agents · 5 Consoles — All Boost + Business Finance, Analytics Intelligence, Admin',
           'Aura Elite (Beta Pricing: $3,979/mo, was $5,576): All 24 Smart AI Agents (10 Operatives) · 7 Consoles + AI Operatives Hub + Advanced Analytics & Forecasting',
           'Employee limits: 10 (Core), 25 (Boost), 50 (Pro), Unlimited (Elite)',
-          'Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim) auto-activate on Pro and Elite based on selected industry',
+          'Industry Specialist Agents (Diagnostic, Permit, Site Survey, Insurance Claim, and more) are included on every plan and auto-activate based on your selected industry',
           'All tiers include API Access and Chat Widget'
         ],
         tips: ['Trial users get full Elite tier access', 'Annual billing saves ~20% vs monthly']
@@ -1158,14 +1158,14 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to Integrations → Social Media',
-          'Default: Manual Bridge — AI generates content, you copy and paste via deep links',
-          'Advanced: Own API Credentials — register your developer app per platform',
-          'Enter Client ID/Secret in tenant_integrations for automatic publishing via OAuth',
-          'Platform-level automatic posting (one-click connect for all tenants) is Coming Soon',
-          'Configure default hashtags and brand voice for AI content',
-          'Supports Meta (Facebook/Instagram), LinkedIn, TikTok, Google Business'
+          'Default: Copy & Post — AI generates content, you copy and paste via deep links (zero setup, every plan)',
+          'Automatic: Upload-Post — paste your Upload-Post API key and click Connect accounts',
+          'Upload-Post opens a branded page where you link Facebook, Instagram, LinkedIn, TikTok, YouTube and Google Business',
+          'Turn on "Publish through Upload-Post" and, if you want hands-off posting, "Post automatically"',
+          'Scheduled posts are picked up by a background job every 15 minutes',
+          'Configure default hashtags and brand voice for AI content'
         ],
-        tips: ['Manual Bridge requires zero API setup', 'Own API Credentials enable scheduled auto-publishing']
+        tips: ['Copy & Post requires zero setup', 'Upload-Post is optional and billed directly by Upload-Post to your own account']
       },
       {
         title: 'Social Analytics',

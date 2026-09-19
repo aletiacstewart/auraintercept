@@ -402,7 +402,7 @@ export default function SpecialistOperativesConsole() {
               <Lock className="h-4 w-4" />
               <AlertDescription>
                 Specialist Operatives require <strong>Aura Pro</strong> or <strong>Aura Elite</strong>.{' '}
-                <button onClick={() => navigate('/subscription')} className="underline font-medium">
+                <button onClick={() => navigate('/dashboard/subscription')} className="underline font-medium">
                   Upgrade your plan
                 </button>
               </AlertDescription>
@@ -460,7 +460,7 @@ export default function SpecialistOperativesConsole() {
                     <Lock className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
                     <h3 className="font-semibold mb-1">{SPECIALIST_LABELS[s.id]} Specialist</h3>
                     <p className="text-sm text-muted-foreground mb-4">{SPECIALIST_DESCRIPTIONS[s.id]}</p>
-                    <Button onClick={() => navigate('/subscription')}>Upgrade to Aura Pro</Button>
+                    <Button onClick={() => navigate('/dashboard/subscription')}>Upgrade to Aura Pro</Button>
                   </Card>
                 )}
               </TabsContent>

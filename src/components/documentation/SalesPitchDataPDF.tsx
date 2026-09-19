@@ -773,7 +773,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierDesc}>Best for: Solo operators, restaurants, single-location</Text>
         <Text style={styles.tierBullet}>- 10 Employee Accounts</Text>
         <Text style={styles.tierBullet}>- Primary pain: Booking automation + marketing</Text>
-        <Text style={styles.tierBullet}>- 4 AI Operatives, 3 Consoles</Text>
+        <Text style={styles.tierBullet}>- 8 Smart AI Agents (5 operatives), 3 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -784,7 +784,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierDesc}>Best for: HVAC, plumbing, field service teams</Text>
         <Text style={styles.tierBullet}>- 25 Employee Accounts</Text>
         <Text style={styles.tierBullet}>- Need dispatch + field operations</Text>
-        <Text style={styles.tierBullet}>- 6 AI Operatives, 5 Consoles</Text>
+        <Text style={styles.tierBullet}>- 12 Smart AI Agents (7 operatives), 5 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -796,7 +796,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>- 50 Employee Accounts</Text>
         <Text style={styles.tierBullet}>- Need campaign, outreach + social media</Text>
         <Text style={styles.tierBullet}>- Industry Specialist Agents (included on every plan, by industry)</Text>
-        <Text style={styles.tierBullet}>- 8 AI Operatives, 5 Consoles</Text>
+        <Text style={styles.tierBullet}>- 16 Smart AI Agents (10 operatives), 5 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -808,7 +808,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>- Unlimited Employee Accounts</Text>
         <Text style={styles.tierBullet}>- Need comprehensive analytics + predictive AI</Text>
         <Text style={styles.tierBullet}>- All 7 Consoles + AI Hub</Text>
-        <Text style={styles.tierBullet}>- All 24 AI Operatives: Full enterprise suite</Text>
+        <Text style={styles.tierBullet}>- All 24 Smart AI Agents (10 operatives): Full enterprise suite</Text>
       </View>
 
       <View style={styles.closingCard}>

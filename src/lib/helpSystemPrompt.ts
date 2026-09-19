@@ -50,7 +50,7 @@ ${renderTierSection()}
 
 ## Navigation Paths
 - Quick Setup: /dashboard/quick-setup
-- AI Operatives Hub: /dashboard/ai-operatives-hub (Aura Elite)
+- AI Operatives Hub: /dashboard/ai-agents (all plans)
 - AI Agents Config: /dashboard/ai-agents
 - Knowledge Base: /dashboard/knowledge
 - Customer Portal: /dashboard/ai-consoles/customer-portal

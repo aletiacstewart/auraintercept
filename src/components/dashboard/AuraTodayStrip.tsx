@@ -130,7 +130,7 @@ export function AuraTodayStrip({ companyId }: AuraTodayStripProps) {
       label: 'AI Activity (24h)',
       value: data?.aiActivity ?? 0,
       icon: Activity,
-      href: '/dashboard/ai-operatives-hub',
+      href: '/dashboard/ai-agents',
       kind: 'ai' as const,
       hint: 'Agent actions taken',
     },
