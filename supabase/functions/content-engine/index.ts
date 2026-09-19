@@ -92,16 +92,44 @@ serve(async (req) => {
 
     // ============ SUGGESTIONS FAST PATH ============
     if (channel === "suggestions") {
+      const [suggCompanyRes, suggAiProfileRes, suggServicesRes] = await Promise.all([
+        supabase.from("companies").select("name, service_categories").eq("id", companyId).single(),
+        supabase.from("company_ai_content_profiles").select("tone, brand_voice, target_audience, keywords, avoid_keywords, unique_selling_points, content_topics").eq("company_id", companyId).maybeSingle(),
+        supabase.from("services").select("name, description").eq("company_id", companyId).eq("is_active", true).limit(10),
+      ]);
+
+      const suggCompany = suggCompanyRes.data;
+      const suggProfile = suggAiProfileRes.data;
+      const suggServices = suggServicesRes.data || [];
+
+      const suggIndustryPack = await loadIndustryPackForCompany(supabase, companyId);
+
+      const suggSystemBase = `You are the marketing strategist for ${suggCompany?.name || "this business"}.
+
+=== BUSINESS CONTEXT ===
+Company: ${suggCompany?.name || "Unknown"}
+Industry: ${suggCompany?.service_categories?.join(", ") || "Service Business"}
+Target Audience: ${suggProfile?.target_audience || "General customers"}
+Services: ${suggServices.map(s => s.name).join(", ") || "Professional services"}
+Key USPs: ${(suggProfile?.unique_selling_points || []).join(", ") || "Quality and reliability"}
+Keywords to Use: ${(suggProfile?.keywords || []).join(", ") || "none specified"}
+Keywords to Avoid: ${(suggProfile?.avoid_keywords || []).join(", ") || "none"}
+
+=== TASK ===
+Generate 5 specific, actionable social media / marketing campaign topic ideas for THIS business, grounded in its industry and services above. Each idea should be a concrete post or campaign theme (a seasonable offer, a helpful tip, a customer story angle, etc.) — not generic marketing advice. Do NOT suggest topics unrelated to this business's industry. Return ONLY a valid JSON array of exactly 5 strings, no explanation, no markdown, no extra text.`;
+
+      const suggSystemPrompt = applyIndustryPackToPrompt(suggSystemBase, suggIndustryPack, 'social');
+
       const { response: suggestionRes, modelUsed: suggestionResModel, fellBackFromPrimary: suggestionResFellBack } = await callAIGatewayWithFallback({
           model: "google/gemini-2.5-flash-lite",
           messages: [
             {
               role: "system",
-              content: "You are a marketing expert. Generate 5 specific, actionable campaign topic ideas for a business. Return ONLY a valid JSON array of exactly 5 strings, no explanation, no markdown, no extra text.",
+              content: suggSystemPrompt,
             },
             {
               role: "user",
-              content: `Generate 5 campaign topic ideas based on this theme: "${topic}"`,
+              content: `Generate 5 campaign topic ideas${topic && topic !== 'general business' ? ` based on this theme: "${topic}"` : ' for this business'}`,
             },
           ],
         });
