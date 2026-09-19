@@ -20,9 +20,13 @@ interface AgentDiscoveryCardProps {
   agent: AgentType;
   members: DiscoveryMemberAgent[];
   canManage: boolean;
+  /** Connections this job needs that the company has not set up yet. */
+  missingIntegrations?: string[];
   onEnable: () => void;
   onToggleMember: (agentType: string, enabled: boolean) => void;
   onLearnMore: (agentType: string) => void;
+  /** Sends the user to the Connections page to set a missing service up. */
+  onConnect?: (integration: string) => void;
 }
 
 /**
