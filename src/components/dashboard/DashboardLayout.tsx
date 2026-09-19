@@ -140,7 +140,6 @@ const navGroups: NavGroup[] = [
       { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
       { label: 'Pipeline', icon: Kanban, href: '/dashboard/pipeline', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'performance' },
       { label: 'Analytics & Reports', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
-      { label: 'Specialist Operatives', icon: Sparkles, href: '/dashboard/ai-consoles/specialists', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config', requiredTier: 'performance' },
     ],
   },
   {
@@ -156,7 +155,6 @@ const navGroups: NavGroup[] = [
     label: 'Configuration',
     items: [
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
-      { label: 'AI Operatives Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Automation', icon: Bot, href: '/dashboard/automation', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
       { label: 'Install App', icon: Puzzle, href: '/technician/install', roles: ['employee'] },
