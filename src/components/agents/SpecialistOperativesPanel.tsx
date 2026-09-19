@@ -371,28 +371,21 @@ export function SpecialistOperativesPanel() {
   const inIndustry = isPlatformAdmin || industrySpecialists.has(activeTab);
 
   return (
-    <DashboardLayout>
-      <PageContainer>
         <div className="space-y-6">
-          <PageHeader
-            icon={Sparkles}
-            title="Specialist Operatives"
-            description="Specialists for diagnostics, permits, surveys, and claims."
-            featureColor="platform"
-            badge={
-              <Badge variant="outline" className="text-[10px]">
-                Aura Pro & Elite
-              </Badge>
-            }
-            action={
-              <div className="grid w-full min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
-                <HowToUseModal {...HOW_TO_USE.specialistOperativesConsole} />
-                <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/ai-agents')} className="w-full sm:w-auto">
-                  <span className="truncate">Manage Operatives</span>
-                </Button>
-              </div>
-            }
-          />
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 className="flex items-center gap-2 text-sm font-semibold">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Specialist Operatives
+                <Badge variant="outline" className="text-[10px]">Aura Pro &amp; Elite</Badge>
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Industry specialists for diagnostics, permits, surveys, and claims.
+              </p>
+            </div>
+            <HowToUseModal {...HOW_TO_USE.specialistOperativesConsole} />
+          </div>
+
 
           {!tierUnlocked && (
             <Alert>
