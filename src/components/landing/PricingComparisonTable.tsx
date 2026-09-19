@@ -53,6 +53,7 @@ const featureDescriptions: Record<string, string> = {
   'SMS Reminders': 'Text message reminders to reduce no-shows and keep customers informed.',
   'Calendar Sync': 'Sync appointments with Google Calendar or any iCal-compatible calendar.',
   'API Access': 'Full API access for custom integrations and automation workflows.',
+  'Upload-Post (Automated Social Posting)': 'Optional on every plan. Copy & Post is included with no setup; Upload-Post is only needed for automated, scheduled publishing using your own account and card.',
 };
 
 type FeatureValue = 'check' | 'x' | string;
@@ -178,6 +179,7 @@ const sections: FeatureSection[] = [
       { name: 'Google Calendar Sync', starter: 'Your Google acct · OAuth', connect: 'Your Google acct · OAuth', performance: 'Your Google acct · OAuth', command: 'Your Google acct · OAuth' },
       { name: 'Stripe (Payments)', starter: 'Your account · billed by Stripe', connect: 'Your account · billed by Stripe', performance: 'Your account · billed by Stripe', command: 'Your account · billed by Stripe' },
       { name: 'Social Media (FB/IG/LI/TikTok)', starter: 'Your business pages · billed by each network', connect: 'Your business pages · billed by each network', performance: 'Your business pages · billed by each network', command: 'Your business pages · billed by each network' },
+      { name: 'Upload-Post (Automated Social Posting)', starter: 'Optional · Your account', connect: 'Optional · Your account', performance: 'Optional · Your account', command: 'Optional · Your account' },
       { name: 'Embeddable Chat Widget', starter: 'Included — no usage limits', connect: 'Included — no usage limits', performance: 'Included — no usage limits', command: 'Included — no usage limits' },
     ],
   },

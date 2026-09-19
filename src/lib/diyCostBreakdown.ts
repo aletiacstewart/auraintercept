@@ -95,4 +95,4 @@ export const DIY_BREAKDOWN: DiyTierBreakdown[] = [
 ];
 
 export const DIY_DISCLAIMER =
-  "Estimates based on publicly listed 2025 pricing for comparable tools and U.S. market rates. Actual costs vary by vendor, volume, region, and feature mix. Aura's per-tier price excludes 3rd-party usage fees (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC) — those are billed directly by each provider on either path.";
+  "Estimates based on publicly listed 2025 pricing for comparable tools and U.S. market rates. Actual costs vary by vendor, volume, region, and feature mix. Aura's per-tier price excludes 3rd-party usage fees (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and optional Upload-Post automation) — those are billed directly by each provider on either path.";

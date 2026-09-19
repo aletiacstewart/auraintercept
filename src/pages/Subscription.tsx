@@ -74,6 +74,7 @@ const featureDescriptions: Record<string, string> = {
   'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Requires ElevenLabs for voice synthesis and SignalWire for telephony.',
   'ElevenLabs (Voice)': 'Required for Talk to Aura (Voice) features only (speech-based). NOT required for Message Aura (Text).',
   'SignalWire (SMS & Voice)': 'Required for SMS reminders and Talk to Aura (Voice) calls. NOT required for Message Aura (Text). 40% cheaper SMS than alternatives.',
+  'Upload-Post (Automated Social Posting)': 'Optional on every plan. Copy & Post is included with no setup; Upload-Post is only needed for automated, scheduled publishing using your own account and card.',
 };
 
 // 4-Tier configuration
@@ -260,6 +261,7 @@ const sections: FeatureSection[] = [
       { name: 'Stripe (Payments)', starter: 'Your account', connect: 'Your account', performance: 'Your account', command: 'Your account' },
       { name: 'Calendar Sync (Google / iCal)', starter: 'Connect yours', connect: 'Connect yours', performance: 'Connect yours', command: 'Connect yours' },
       { name: 'Social Media Accounts', starter: 'Connect yours', connect: 'Connect yours', performance: 'Connect yours', command: 'Connect yours' },
+      { name: 'Upload-Post (Automated Social Posting)', starter: 'Optional · Your account', connect: 'Optional · Your account', performance: 'Optional · Your account', command: 'Optional · Your account' },
     ],
   },
   {
