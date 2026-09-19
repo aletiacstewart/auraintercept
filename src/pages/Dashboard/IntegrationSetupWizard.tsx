@@ -48,6 +48,8 @@ export default function IntegrationSetupWizard() {
   const [active, setActive] = useState<IntegrationDef | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [showErrors, setShowErrors] = useState(false);
 
   const { data: integrations, isLoading } = useQuery({
     queryKey: ['integrations', companyId],
