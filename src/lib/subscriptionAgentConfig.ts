@@ -98,7 +98,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     label: 'Aura Pro',
     price: priceOf('performance'),
     originalPrice: originalPriceOf('performance'),
-    description: '24 AI Operatives with business management, analytics & admin (industry specialists included on every plan)',
+    description: '16 Smart AI Agents (10 operatives) with business management, analytics & admin (industry specialists included on every plan)',
   },
   command: {
     // Aura Elite — pricing derived from launchPricing.ts: All 10 consolidated operatives + industry specialists,
@@ -119,7 +119,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     label: 'Aura Elite',
     price: priceOf('command'),
     originalPrice: originalPriceOf('command'),
-    description: '24 AI Operatives — full suite with predictive analytics & AI Hub',
+    description: '24 Smart AI Agents (10 operatives) — full suite with predictive analytics & AI Hub',
   },
 };
 

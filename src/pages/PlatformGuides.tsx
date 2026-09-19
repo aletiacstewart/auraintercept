@@ -396,8 +396,8 @@ const guideCategories = [
         steps: [
           'Insights Agent: Natural language business queries',
           'Performance Agent: KPIs and operational metrics',
-          'Revenue Agent: Financial trends and analysis (Elite only)',
-          'Forecast Agent: Demand prediction and capacity planning (Elite only)',
+          'Revenue Agent: Financial trends and analysis (Pro and Elite)',
+          'Forecast Agent: Demand prediction and capacity planning (Pro and Elite)',
           'Insights + Performance require Elite tier',
           'Revenue + Forecast require Elite tier',
           'Access via Analytics & Reports Console'
@@ -536,7 +536,7 @@ const guideCategories = [
           'Tabs: Performance, Revenue, Insights, Forecast, KPIs, Social, Reminders, Export',
           'Performance: Operational metrics and trends',
           'Revenue: Financial analysis (Command for full features)',
-          'Forecast: Demand prediction (Elite only)',
+          'Forecast: Demand prediction (Pro and Elite)',
           'Export: CSV and PDF report generation',
           'Agents: Insights, Performance, Revenue, Forecast'
         ],
