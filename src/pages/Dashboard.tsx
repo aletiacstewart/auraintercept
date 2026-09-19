@@ -11,7 +11,7 @@ import { CompanyAdminDashboard } from '@/components/dashboard/CompanyAdminDashbo
 import { EmployeeDashboard } from '@/components/dashboard/EmployeeDashboard';
 import { WelcomeModal } from '@/components/onboarding/WelcomeModal';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useTutorialContext } from '@/components/tutorial/DashboardTutorial';
+import { useProductTour } from '@/components/onboarding/ProductTour';
 import { Button } from '@/components/ui/button';
 import { GraduationCap } from 'lucide-react';
 export default function Dashboard() {
@@ -128,8 +128,8 @@ export default function Dashboard() {
 }
 
 function TutorialStartBanner() {
-  const { start, isActive } = useTutorialContext();
-  if (isActive) return null;
+  const { start, hasCompleted } = useProductTour();
+  if (hasCompleted) return null;
   return (
     <div className="mb-4 p-3 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-between">
       <div className="flex items-center gap-2">

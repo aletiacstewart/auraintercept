@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import ReactMarkdown from 'react-markdown';
 import { HELP_SYSTEM_PROMPT } from '@/lib/helpSystemPrompt';
+import { useProductTour } from '@/components/onboarding/ProductTour';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -86,6 +87,7 @@ export function AIHelpCenter() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
+  const { start: startTour } = useProductTour();
 
   // Load search history from localStorage
   useEffect(() => {

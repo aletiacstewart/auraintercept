@@ -72,7 +72,7 @@ import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { MobileInstallBanner } from '@/components/dashboard/MobileInstallBanner';
 import { CurrentPlanChip } from '@/components/subscription/CurrentPlanChip';
 import { AIHelpCenter } from '@/components/help/AIHelpCenter';
-import { DashboardTutorialProvider } from '@/components/tutorial/DashboardTutorial';
+import { ProductTourProvider } from '@/components/onboarding/ProductTour';
 import { Clapperboard, Video, Send, Sparkles } from 'lucide-react';
 import { UserCog } from 'lucide-react';
 
@@ -202,7 +202,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
 
   return (
-    <DashboardTutorialProvider>
+    <ProductTourProvider>
     <div className="min-h-screen flex overflow-x-hidden w-full max-w-full" style={{ background: "radial-gradient(ellipse 120% 80% at 50% 0%, hsl(200,60%,6%) 0%, hsl(210,40%,4%) 50%, hsl(220,30%,3%) 100%)" }}>
       {/* Mobile backdrop */}
       {isMobile && mobileOpen && (
@@ -377,11 +377,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <AuraFloatingButton pageTitle={getCurrentPageTitle()} />
       )}
     </div>
-    </DashboardTutorialProvider>
+    </ProductTourProvider>
   );
 }
 
-/** Alias kept for backward compatibility — DashboardLayout now includes the tutorial provider */
+/** Alias kept for backward compatibility — DashboardLayout now includes the product tour provider */
 export function DashboardLayoutWithTutorial({ children }: { children: React.ReactNode }) {
   return <DashboardLayout>{children}</DashboardLayout>;
 }
