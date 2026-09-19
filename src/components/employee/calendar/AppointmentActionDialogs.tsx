@@ -195,7 +195,3 @@ export function AppointmentActionDialogs({
     </>
   );
 }
-
-export function initialRescheduleTime(appointment: Appointment) {
-  return format(new Date(appointment.datetime), 'HH:mm');
-}
