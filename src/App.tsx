@@ -96,7 +96,6 @@ const BusinessMgtOpsApp = lazy(() => import("./pages/BusinessMgtOpsApp"));
 const OnboardingForm = lazy(() => import("./pages/OnboardingForm"));
 const PublicOnboardingIntake = lazy(() => import("./pages/PublicOnboardingIntake"));
 const CustomerPortalAppInstall = lazy(() => import("./pages/CustomerPortalAppInstall"));
-const PlatformHealth = lazy(() => import("./pages/PlatformHealth"));
 const StatusPage = lazy(() => import("./pages/StatusPage"));
 const OAuthGoogleCalendar = lazy(() => import("./pages/OAuthGoogleCalendar"));
 const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
