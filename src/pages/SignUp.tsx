@@ -1081,6 +1081,9 @@ export default function SignUp() {
                     );
                   })}
                 </div>
+                <p className="text-[10px] text-center text-muted-foreground leading-relaxed">
+                  Every plan includes manual Social Media Copy &amp; Post with no setup. Upload-Post automation is optional on every plan and uses your own account, billed directly by Upload-Post (~$9–$99/mo).
+                </p>
 
                 {/* Selection Info */}
                 {selectedTier && (

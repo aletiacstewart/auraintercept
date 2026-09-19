@@ -290,7 +290,7 @@ export default function Integrations() {
           return (
             <Card className="guide-card guide-card-primary">
               <CardContent className="py-4">
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-card-foreground">Setup Progress</span>
@@ -303,7 +303,7 @@ export default function Integrations() {
                     </div>
                     <Progress value={percentage} className="h-2" />
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
                     {statuses.map((status) => (
                       <div
                         key={status.name}
