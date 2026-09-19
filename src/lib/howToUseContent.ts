@@ -7,6 +7,28 @@ import type { HowToUseModalProps } from '@/components/ui/HowToUseModal';
 type Content = Omit<HowToUseModalProps, 'className' | 'triggerLabel' | 'iconOnly'>;
 
 export const HOW_TO_USE: Record<string, Content> = {
+  workflows: {
+    title: 'One-Click Jobs',
+    runsAutomatically: [
+      'Each card is a whole job, not just one task — for example "new lead → text them → book the appointment → draft the quote".',
+      'Aura fills in your real details — customer name, phone number, your business name — so every draft is ready to use.',
+      'Every step is prepared as a draft and parked in your Approval Queue. Nothing is ever sent to a customer on its own.',
+    ],
+    whenYouStepIn: [
+      'Reviewing and approving the drafts in the Approval Queue — that is the only thing you must do.',
+      'Editing a draft before it goes out, if you want to change the wording or the price.',
+      'Clicking "Open Page" on a card if you would rather do that job by hand today.',
+    ],
+    steps: [
+      'Pick a card — it runs a whole job for you, start to finish.',
+      'Read the confirmation pop-up: it lists exactly what Aura will prepare before anything happens.',
+      'Click "Run now" — Aura drafts each step using your real customer and business details.',
+      'Open the Approval Queue (top of the page) and approve the drafts. Nothing reaches a customer until you do.',
+    ],
+    example:
+      'Sam gets a new website lead at 9 PM. He taps the "Lead → Invoice" card and confirms. By the time he finishes his coffee, Aura has drafted a friendly text to the lead, pencilled in an on-site visit, and prepared a quote. Sam opens the Approval Queue, taps approve on all three, and the customer wakes up to a booked appointment — Sam never typed a word.',
+  },
+
   knowledgeBase: {
     title: 'Knowledge Base',
     runsAutomatically: [

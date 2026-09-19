@@ -37,6 +37,11 @@ export interface HowToUseModalProps {
   triggerLabel?: string;
   /** Render as icon-only "?" button when true */
   iconOnly?: boolean;
+  /** Optional controlled open state (e.g. first-visit auto-prompt) */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Hide the trigger button (use with controlled open) */
+  hideTrigger?: boolean;
 }
 
 /**
