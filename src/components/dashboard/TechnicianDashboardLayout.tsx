@@ -30,6 +30,7 @@ import logo from '@/assets/aura-intercept-logo.png';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getNavLabels } from '@/lib/industryNavLabels';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
+import { NAVIGATION_BY_ROLE } from '@/lib/navigationConfig';
 interface TechnicianDashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -58,16 +59,17 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
     { icon: Settings, label: 'More', path: '/technician/settings' },
   ];
 
-  const sidebarNavItems = [
-    { icon: Home, label: 'Dashboard', path: '/technician' },
-    { icon: Bot, label: workerTitle, path: '/technician/ai-console' },
-    { icon: ClipboardList, label: `My ${jobPlural}`, path: '/technician/jobs' },
-    { icon: Calendar, label: 'Calendar', path: '/technician/calendar' },
-    { icon: History, label: `${navLabels.jobNoun} History`, path: '/technician/history' },
-    { icon: Clock, label: 'Availability', path: '/technician/availability' },
-    { icon: User, label: 'Profile', path: '/technician/profile' },
-    { icon: Smartphone, label: serviceConfig.installAppLabel || 'Install App', path: '/technician/install' },
-  ];
+  // Shared role menu (src/lib/navigationConfig.ts) with industry-aware labels.
+  const sidebarNavItems = NAVIGATION_BY_ROLE.technician[0].items.map((item) => {
+    const labelOverrides: Record<string, string> = {
+      '/technician/ai-console': workerTitle,
+      '/technician/jobs': `My ${jobPlural}`,
+      '/technician/history': `${navLabels.jobNoun} History`,
+      '/technician/install': serviceConfig.installAppLabel || 'Install App',
+    };
+    return { icon: item.icon, label: labelOverrides[item.href] ?? item.label, path: item.href };
+  });
+
 
   const handleSignOut = async () => {
     await signOut();

@@ -7,13 +7,14 @@ import { StatusEditor } from '@/components/admin/StatusEditor';
 import { PlatformBlogPanel } from '@/components/admin/PlatformBlogPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function PlatformHealth() {
+/** Platform health, public status page editor and platform blog in one place. */
+export default function SystemHealthAdmin() {
   return (
     <DashboardLayout>
       <PageContainer>
         <PageHeader
           icon={Activity}
-          title="Platform Health"
+          title="System Health"
           description="Real-time view of autonomous background operations across the platform."
         />
         <Tabs defaultValue="autonomy" className="space-y-4">

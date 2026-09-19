@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import ReactMarkdown from 'react-markdown';
 import { HELP_SYSTEM_PROMPT } from '@/lib/helpSystemPrompt';
+import { useProductTour } from '@/components/onboarding/ProductTour';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -86,6 +87,7 @@ export function AIHelpCenter() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
+  const { start: startTour } = useProductTour();
 
   // Load search history from localStorage
   useEffect(() => {
@@ -243,6 +245,22 @@ export function AIHelpCenter() {
             </div>
           </SheetTitle>
         </SheetHeader>
+
+        <div className="px-4 py-2 border-b">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full gap-2 text-xs"
+            onClick={() => {
+              setOpen(false);
+              setTimeout(() => startTour(), 300);
+            }}
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Replay product tour
+          </Button>
+        </div>
+
 
         <ScrollArea className="flex-1">
           <div className="p-4 space-y-4">
