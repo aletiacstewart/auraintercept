@@ -31,6 +31,7 @@ import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
 import { CampaignSeriesWizard } from '@/components/marketing/CampaignSeriesWizard';
 import { AuraEmptyState } from '@/components/ui/aura-empty-state';
+import { EmptyStateGuide } from '@/components/shared/EmptyStateGuide';
 
 export default function Campaigns() {
   const { companyId } = useAuth();
