@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
+import { useIndustryConfig } from '@/hooks/useIndustryConfig';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useCompanyProfile } from '@/hooks/useCompanyProfile';
 import { navItemAllowedByProfile } from '@/lib/profileConsoleMap';
@@ -48,6 +49,11 @@ export function DashboardSidebar({ collapsed = false }: { collapsed?: boolean })
   const { subscriptionTier, isAtLeastTier } = useSubscription();
   const { jobTypes, hasJobType } = useEmployeeJobRole();
   const { pack: industryPack } = useIndustryPack();
+  const {
+    loading: industryLoading,
+    label: industryLabel,
+    isFeatureEnabled,
+  } = useIndustryConfig();
   const { workspace } = useWorkspace();
   const { spec: profileSpec } = useCompanyProfile();
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
