@@ -139,7 +139,12 @@ export function AgentDiscoveryCard({
           <Button variant="outline" size="sm" onClick={() => onLearnMore(members[0]?.type)}>
             Learn More
           </Button>
-          <Button size="sm" disabled={allEnabled || !anyAvailable || !canManage} onClick={onEnable}>
+          <Button
+            size="sm"
+            disabled={allEnabled || !anyAvailable || !canManage || blockedByConnection}
+            title={blockedByConnection ? `Needs ${missingIntegrations.join(' and ')}` : undefined}
+            onClick={onEnable}
+          >
             {allEnabled ? 'Active' : 'Enable'}
           </Button>
         </div>
