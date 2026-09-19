@@ -117,7 +117,6 @@ const IntegrationDocs = lazy(() => import("./pages/IntegrationDocs"));
 const PlatformGuides = lazy(() => import("./pages/PlatformGuides"));
 const NotificationSettingsPage = lazy(() => import("./pages/NotificationSettingsPage"));
 const EmailLimits = lazy(() => import("./pages/settings/EmailLimits"));
-const TavilyLimits = lazy(() => import("./pages/settings/TavilyLimits"));
 const PublicBooking = lazy(() => import("./pages/PublicBooking"));
 
 // Suspense fallback for lazy routes — minimal, on-brand.
@@ -259,7 +258,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
                 <Route path="/dashboard/notification-settings" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
                 <Route path="/dashboard/email-limits" element={<ProtectedRoute><EmailLimits /></ProtectedRoute>} />
-                <Route path="/dashboard/tavily-limits" element={<ProtectedRoute><TavilyLimits /></ProtectedRoute>} />
+                <Route path="/dashboard/tavily-limits" element={<Navigate to="/dashboard/integrations" replace />} />
                 <Route path="/dashboard/export-docs" element={<Navigate to="/dashboard/platform-guides?tab=export" replace />} />
                 <Route path="/dashboard/video-prompts" element={<Navigate to="/dashboard/platform-guides?tab=video" replace />} />
                 <Route path="/dashboard/admin/feature-flags" element={<ProtectedRoute requiredRole="platform_admin"><FeatureFlagsAdmin /></ProtectedRoute>} />
