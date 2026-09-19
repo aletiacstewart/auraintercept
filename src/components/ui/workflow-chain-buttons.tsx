@@ -9,6 +9,10 @@ import { Badge } from '@/components/ui/badge';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { HowToUseModal } from '@/components/ui/HowToUseModal';
+import { HOW_TO_USE } from '@/lib/howToUseContent';
+
+const INTRO_SEEN_KEY = 'aura-workflows-intro-seen';
 
 export type WorkflowSideEffectChannel =
   | 'sms'
