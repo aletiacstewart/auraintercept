@@ -66,6 +66,39 @@ export interface WorkflowChain {
   /** Optional structured actions; when present, Run with Aura writes real rows
    *  into agent_proposed_actions instead of only prompting Aura inline. */
   actions?: WorkflowAction[];
+  /** Optional plain-English outcome line ("You get: …"). Auto-derived from actions when absent. */
+  outcome?: string;
+}
+
+const ACTION_OUTCOME_WORDS: Record<WorkflowAction['action_type'], string> = {
+  draft_sms: 'a text message draft',
+  draft_email: 'an email draft',
+  create_appointment: 'an appointment on your calendar',
+  draft_invoice: 'an invoice draft',
+  task: 'a to-do for your team',
+};
+
+/** Builds the plain-English "You get: …" line for a chain. */
+export function describeChainOutcome(chain: WorkflowChain): string {
+  if (chain.outcome) return chain.outcome;
+  if (chain.actions && chain.actions.length > 0) {
+    const seen = new Set<string>();
+    const parts: string[] = [];
+    for (const a of chain.actions) {
+      const word = ACTION_OUTCOME_WORDS[a.action_type];
+      if (word && !seen.has(word)) {
+        seen.add(word);
+        parts.push(word);
+      }
+    }
+    if (parts.length > 0) {
+      const list = parts.length === 1
+        ? parts[0]
+        : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+      return `You get: ${list} — ready for your approval.`;
+    }
+  }
+  return `Aura works through: ${chain.steps.join(' → ')}.`;
 }
 
 interface WorkflowChainButtonsProps {
