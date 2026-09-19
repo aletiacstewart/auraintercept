@@ -12,3 +12,5 @@ Industry Specialist Operatives (Diagnostic, Permit & Code, Site Survey, Insuranc
 - Both `SpecialistOperativesConsole` and `SpecialistOperativesLauncher` honor this via `tierAllowsSpecialists`
 
 **Why:** Specialists are vertical-specific value (e.g., a dental tenant needs Recall/Insurance specialists regardless of paying $197 or $1,997). Gating them by tier broke the industry-pack promise.
+
+**Per-industry assignment (2026-09-19):** Every active industry pack now has its own `extra_operatives` set (no pack is empty). Specialist visibility is scoped to the company's pack for everyone, including platform admins; admins only fall back to the full catalogue when their own pack lists none.

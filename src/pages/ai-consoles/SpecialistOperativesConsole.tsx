@@ -346,11 +346,15 @@ export default function SpecialistOperativesConsole() {
     [pack],
   );
 
-  // Show only specialists in the user's industry pack (platform admin sees all).
+  // Show only the specialists assigned to this company's industry pack.
+  // Platform admins fall back to the full catalogue only when their pack
+  // has none assigned, so they can still preview.
   const visibleSpecialists = useMemo(() => {
-    if (isPlatformAdmin) return SPECIALISTS;
-    return SPECIALISTS.filter((s) => industrySpecialists.has(s.id));
+    const scoped = SPECIALISTS.filter((s) => industrySpecialists.has(s.id));
+    if (scoped.length > 0) return scoped;
+    return isPlatformAdmin ? SPECIALISTS : scoped;
   }, [isPlatformAdmin, industrySpecialists]);
+
 
   const initialTab = searchParams.get('agent') as IndustrySpecialistOperative | null;
   const defaultTab: IndustrySpecialistOperative =
