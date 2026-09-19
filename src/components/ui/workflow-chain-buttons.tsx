@@ -159,26 +159,43 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-sm font-medium text-primary">
-          <Zap className="h-4 w-4 text-primary" />
-          End-to-End Workflows
+      <div className="space-y-1">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2 text-sm font-medium text-primary">
+            <Zap className="h-4 w-4 text-primary" />
+            One-Click Jobs
+            <HowToUseModal
+              {...HOW_TO_USE.workflows}
+              triggerLabel="How one-click jobs work"
+              iconOnly
+              className="h-6 w-6"
+            />
+          </div>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10"
+            onClick={() => navigate('/dashboard/automation')}
+          >
+            <ShieldCheck className="h-3.5 w-3.5 mr-1" />
+            Approval Queue
+            {pendingCount > 0 && (
+              <Badge variant="secondary" className="ml-2 h-4 px-1.5 text-[10px]">
+                {pendingCount}
+              </Badge>
+            )}
+          </Button>
         </div>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-7 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10"
-          onClick={() => navigate('/dashboard/automation')}
-        >
-          <ShieldCheck className="h-3.5 w-3.5 mr-1" />
-          Review &amp; Approve Automation
-          {pendingCount > 0 && (
-            <Badge variant="secondary" className="ml-2 h-4 px-1.5 text-[10px]">
-              {pendingCount}
-            </Badge>
-          )}
-        </Button>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Each card runs a whole job for you. Aura prepares every step as a draft — nothing is sent to a customer until you approve it in the Approval Queue.
+        </p>
       </div>
+      <HowToUseModal
+        {...HOW_TO_USE.workflows}
+        open={introOpen}
+        onOpenChange={handleIntroChange}
+        hideTrigger
+      />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {chains.map((chain) => (
           <Card
