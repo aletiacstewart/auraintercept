@@ -90,7 +90,7 @@ export function SpecialistOperativesLauncher({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate('/dashboard/ai-consoles/specialists')}
+          onClick={() => navigate('/dashboard/ai-agents?tab=discover')}
           className="text-xs"
         >
           Open all <ChevronRight className="h-3 w-3 ml-0.5" />
@@ -106,7 +106,7 @@ export function SpecialistOperativesLauncher({
             <button
               key={id}
               type="button"
-              onClick={() => navigate(`/dashboard/ai-consoles/specialists?agent=${id}`)}
+              onClick={() => navigate(`/dashboard/ai-agents?tab=discover&agent=${id}`)}
               className={cn(
                 'group text-left rounded-md border border-border/60 p-3 transition-colors',
                 'hover:border-primary/60 hover:bg-primary/5',
