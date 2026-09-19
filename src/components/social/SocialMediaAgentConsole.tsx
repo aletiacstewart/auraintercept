@@ -16,7 +16,6 @@ import { MultiChannelGenerator } from '@/components/content-engine/MultiChannelG
 import { ContentEngineDashboard } from '@/components/content-engine/ContentEngineDashboard';
 import { ContentEngineCalendar } from '@/components/content-engine/ContentEngineCalendar';
 import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
-import { IndustryTemplateSelector } from '@/components/social/IndustryTemplateSelector';
 import { UploadPostPanel } from '@/components/social/UploadPostPanel';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
@@ -236,10 +235,6 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                   >
                     View saved drafts & posts
                   </button>
-                  <span className="text-muted-foreground/40">·</span>
-                  <IndustryTemplateSelector
-                    onSelectTemplate={(template) => setInputValue(template)}
-                  />
                 </div>
               </div>
             ) : (
