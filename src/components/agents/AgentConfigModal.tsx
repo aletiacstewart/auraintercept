@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { CheckCircle2, ChevronLeft, ChevronRight, Circle } from 'lucide-react';
 import { AGENT_REGISTRY } from '@/lib/agentRegistry';
 import { AgentSettingsPanel } from '@/components/ai/agents/AgentSettingsPanel';
+import { AgentPromptLibrary } from '@/components/agents/AgentPromptLibrary';
 import { AgentTestConsole } from '@/components/ai/agents/AgentTestConsole';
 import { getAgentTypeForAgent } from '@/lib/agentTypes';
 import { cn } from '@/lib/utils';
@@ -38,6 +39,7 @@ export function AgentConfigModal({
   onSave,
 }: AgentConfigModalProps) {
   const [step, setStep] = useState(0);
+  const [presetPrompt, setPresetPrompt] = useState<{ value: string; nonce: number } | null>(null);
   const def = agentType ? AGENT_REGISTRY[agentType] : null;
   const jobType = useMemo(() => (agentType ? getAgentTypeForAgent(agentType) : undefined), [agentType]);
 
@@ -119,12 +121,21 @@ export function AgentConfigModal({
           )}
 
           {step === 2 && (
-            <AgentSettingsPanel
-              agentType={agentType}
-              configFields={def.configFields}
-              currentSettings={settings || {}}
-              onSave={onSave}
-            />
+            <div className="space-y-4">
+              <AgentPromptLibrary
+                jobTypeId={jobType?.id}
+                companyId={companyId}
+                disabled={!canManage}
+                onApply={(value) => setPresetPrompt({ value, nonce: Date.now() })}
+              />
+              <AgentSettingsPanel
+                agentType={agentType}
+                configFields={def.configFields}
+                currentSettings={settings || {}}
+                onSave={onSave}
+                presetPrompt={presetPrompt}
+              />
+            </div>
           )}
 
           {step === 3 && (

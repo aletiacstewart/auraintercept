@@ -3756,6 +3756,57 @@ export type Database = {
           },
         ]
       }
+      integration_health_logs: {
+        Row: {
+          checked_at: string
+          company_id: string
+          created_at: string
+          error_message: string | null
+          id: string
+          integration_name: string
+          last_sync: string | null
+          status: string
+          success_rate: number | null
+        }
+        Insert: {
+          checked_at?: string
+          company_id: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          integration_name: string
+          last_sync?: string | null
+          status: string
+          success_rate?: number | null
+        }
+        Update: {
+          checked_at?: string
+          company_id?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          integration_name?: string
+          last_sync?: string | null
+          status?: string
+          success_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_health_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_health_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_items: {
         Row: {
           barcode: string | null
