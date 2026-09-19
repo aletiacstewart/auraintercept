@@ -48,13 +48,7 @@ const EmployeeAppointments = lazy(() => import("./pages/EmployeeAppointments"));
 const Messages = lazy(() => import("./pages/Messages"));
 const EmailLogs = lazy(() => import("./pages/EmailLogs"));
 const SMSLogs = lazy(() => import("./pages/SMSLogs"));
-const Integrations = lazy(() => import("./pages/Integrations"));
-const VoiceIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.VoiceIntegration })));
-const SMSIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.SMSIntegration })));
-const EmailIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.EmailIntegration })));
-const CalendarIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.CalendarIntegration })));
-const SocialMediaIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.SocialMediaIntegration })));
-const TavilyIntegration = lazy(() => import("./pages/integrations").then(m => ({ default: m.TavilyIntegration })));
+const IntegrationSetupWizard = lazy(() => import("./pages/Dashboard/IntegrationSetupWizard"));
 const KnowledgeBase = lazy(() => import("./pages/KnowledgeBase"));
 const CustomerPortalConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.CustomerPortalConsole })));
 const FieldOpsConsole = lazy(() => import("./pages/ai-consoles").then(m => ({ default: m.FieldOpsConsole })));
@@ -86,7 +80,6 @@ const Campaigns = lazy(() => import("./pages/Campaigns"));
 const CampaignDetail = lazy(() => import("./pages/CampaignDetail"));
 const Leads = lazy(() => import("./pages/Leads"));
 const LeadsImport = lazy(() => import("./pages/LeadsImport"));
-const CRMIntegration = lazy(() => import("./pages/integrations/CRMIntegration"));
 const Help = lazy(() => import("./pages/Help"));
 const IndustryPacksAdmin = lazy(() => import("./pages/admin/IndustryPacksAdmin"));
 const SuperSwitcher = lazy(() => import("./pages/SuperSwitcher"));
@@ -210,14 +203,15 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/appointments" element={<Navigate to="/dashboard/appointments" replace />} />
                 
                 <Route path="/dashboard/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-                <Route path="/dashboard/3rd-party-overview" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
-                <Route path="/dashboard/integrations/voice" element={<ProtectedRoute><VoiceIntegration /></ProtectedRoute>} />
-                <Route path="/dashboard/integrations/sms" element={<ProtectedRoute><SMSIntegration /></ProtectedRoute>} />
-                <Route path="/dashboard/integrations/email" element={<ProtectedRoute><EmailIntegration /></ProtectedRoute>} />
-                <Route path="/dashboard/integrations/calendar" element={<ProtectedRoute><CalendarIntegration /></ProtectedRoute>} />
-                <Route path="/dashboard/integrations/social" element={<ProtectedRoute><SocialMediaIntegration /></ProtectedRoute>} />
-                <Route path="/dashboard/integrations/tavily" element={<ProtectedRoute><TavilyIntegration /></ProtectedRoute>} />
-                <Route path="/dashboard/integrations/crm" element={<ProtectedRoute><CRMIntegration /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations" element={<ProtectedRoute><IntegrationSetupWizard /></ProtectedRoute>} />
+                <Route path="/dashboard/3rd-party-overview" element={<Navigate to="/dashboard/integrations" replace />} />
+                <Route path="/dashboard/integrations/voice" element={<Navigate to="/dashboard/integrations?open=elevenlabs" replace />} />
+                <Route path="/dashboard/integrations/sms" element={<Navigate to="/dashboard/integrations?open=signalwire" replace />} />
+                <Route path="/dashboard/integrations/email" element={<Navigate to="/dashboard/integrations?open=resend" replace />} />
+                <Route path="/dashboard/integrations/calendar" element={<Navigate to="/dashboard/integrations?open=google_calendar" replace />} />
+                <Route path="/dashboard/integrations/social" element={<Navigate to="/dashboard/integrations?open=upload_post" replace />} />
+                <Route path="/dashboard/integrations/tavily" element={<Navigate to="/dashboard/integrations" replace />} />
+                <Route path="/dashboard/integrations/crm" element={<Navigate to="/dashboard/integrations?open=crm" replace />} />
                 <Route path="/dashboard/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agent" element={<Navigate to="/dashboard/ai-agents" replace />} />
                 <Route path="/dashboard/ai-consoles/customer-portal" element={<ProtectedRoute><CustomerPortalConsole /></ProtectedRoute>} />
