@@ -5026,6 +5026,48 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_analytics: {
+        Row: {
+          company_id: string
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_analytics_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_analytics_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       onboarding_invites: {
         Row: {
           company_name: string
