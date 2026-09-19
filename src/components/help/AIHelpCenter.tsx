@@ -244,6 +244,22 @@ export function AIHelpCenter() {
           </SheetTitle>
         </SheetHeader>
 
+        <div className="px-4 py-2 border-b">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full gap-2 text-xs"
+            onClick={() => {
+              setOpen(false);
+              setTimeout(() => startTour(), 300);
+            }}
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Replay product tour
+          </Button>
+        </div>
+
+
         <ScrollArea className="flex-1">
           <div className="p-4 space-y-4">
             {messages.length === 0 ? (
