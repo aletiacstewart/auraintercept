@@ -83,6 +83,8 @@ const Leads = lazy(() => import("./pages/Leads"));
 const LeadsImport = lazy(() => import("./pages/LeadsImport"));
 const Help = lazy(() => import("./pages/Help"));
 const IndustryPacksAdmin = lazy(() => import("./pages/admin/IndustryPacksAdmin"));
+const FeatureFlagsAdmin = lazy(() => import("./pages/admin/FeatureFlagsAdmin"));
+const SystemHealthAdmin = lazy(() => import("./pages/admin/SystemHealthAdmin"));
 const SuperSwitcher = lazy(() => import("./pages/SuperSwitcher"));
 const BusinessOperations = lazy(() => import("./pages/BusinessOperations"));
 const FieldOpsInstall = lazy(() => import("./pages/FieldOpsInstall"));
@@ -261,6 +263,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/tavily-limits" element={<ProtectedRoute><TavilyLimits /></ProtectedRoute>} />
                 <Route path="/dashboard/export-docs" element={<Navigate to="/dashboard/platform-guides?tab=export" replace />} />
                 <Route path="/dashboard/video-prompts" element={<Navigate to="/dashboard/platform-guides?tab=video" replace />} />
+                <Route path="/dashboard/admin/feature-flags" element={<ProtectedRoute requiredRole="platform_admin"><FeatureFlagsAdmin /></ProtectedRoute>} />
+                <Route path="/dashboard/admin/system-health" element={<ProtectedRoute requiredRole="platform_admin"><SystemHealthAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs/:id" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/super-switcher" element={<ProtectedRoute requiredRole="platform_admin"><SuperSwitcher /></ProtectedRoute>} />
@@ -276,7 +280,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/customer-portal-app-install" element={<ProtectedRoute><CustomerPortalAppInstall /></ProtectedRoute>} />
                 <Route path="/dashboard/integrations/embed" element={<ProtectedRoute><IntegrationDocs /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-guides" element={<ProtectedRoute requiredRole="platform_admin"><PlatformGuides /></ProtectedRoute>} />
-                <Route path="/dashboard/platform-health" element={<ProtectedRoute><PlatformHealth /></ProtectedRoute>} />
+                <Route path="/dashboard/platform-health" element={<Navigate to="/dashboard/admin/system-health" replace />} />
                 <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
                 <Route path="/dashboard/blog-management" element={<ProtectedRoute><BlogManagement /></ProtectedRoute>} />
                 
