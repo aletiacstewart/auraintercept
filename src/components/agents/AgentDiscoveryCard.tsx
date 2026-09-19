@@ -38,14 +38,17 @@ export function AgentDiscoveryCard({
   agent,
   members,
   canManage,
+  missingIntegrations = [],
   onEnable,
   onToggleMember,
   onLearnMore,
+  onConnect,
 }: AgentDiscoveryCardProps) {
   const [expanded, setExpanded] = useState(false);
   const enabledCount = members.filter((m) => m.is_enabled).length;
   const allEnabled = members.length > 0 && enabledCount === members.length;
   const anyAvailable = members.some((m) => m.available);
+  const blockedByConnection = missingIntegrations.length > 0;
 
   return (
     <Card className={cn('flex flex-col', allEnabled && 'border-primary/40')}>
