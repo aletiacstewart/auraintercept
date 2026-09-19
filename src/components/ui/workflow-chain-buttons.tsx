@@ -223,6 +223,9 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
                   </React.Fragment>
                 ))}
               </div>
+              <p className="text-[11px] text-muted-foreground italic">
+                {describeChainOutcome(chain)}
+              </p>
               <div className="flex items-center gap-2 pt-1">
                 <Button
                   size="sm"
@@ -245,6 +248,11 @@ export const WorkflowChainButtons: React.FC<WorkflowChainButtonsProps> = ({ chai
                   </Button>
                 )}
               </div>
+              {showDraftsCaption && (
+                <p className="text-[10px] text-muted-foreground text-center">
+                  Drafts only — you approve before anything sends.
+                </p>
+              )}
             </CardContent>
           </Card>
         ))}
