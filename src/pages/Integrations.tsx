@@ -40,6 +40,7 @@ import {
   Search,
   Lock,
   Unlock,
+  Share2,
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
@@ -183,6 +184,18 @@ export default function Integrations() {
     enabled: !!companyId,
   });
 
+  const { data: uploadPostStatus, isLoading: uploadPostLoading } = useQuery({
+    queryKey: ['upload-post-status', companyId],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke('upload-post', {
+        body: { action: 'status', companyId },
+      });
+      if (error) throw error;
+      return data as { configured?: boolean; accounts?: unknown[] } | null;
+    },
+    enabled: !!companyId,
+  });
+
   const saveMutation = useMutation({
     mutationFn: async (data: Record<string, string>) => {
       if (!companyId) throw new Error('No company ID');
@@ -269,6 +282,7 @@ export default function Integrations() {
             { name: 'Email', connected: !!integrations?.has_resend, icon: Mail, color: 'bg-emerald-500' },
             { name: 'SMS', connected: !!integrations?.has_signalwire, icon: Phone, color: 'bg-red-500' },
             { name: 'Voice', connected: isTTSConfigured, icon: Mic, color: 'bg-blue-500' },
+             { name: 'Upload-Post', connected: !!uploadPostStatus?.configured && (uploadPostStatus.accounts?.length ?? 0) > 0, icon: Share2, color: 'bg-pink-500' },
           ];
           const connectedCount = statuses.filter(s => s.connected).length;
           const percentage = Math.round((connectedCount / statuses.length) * 100);
@@ -374,7 +388,7 @@ export default function Integrations() {
                   <Link to="/dashboard/integrations/email">Email Setup</Link>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/dashboard/integrations/social">Social Media</Link>
+                  <Link to="/dashboard/integrations/social">Upload-Post</Link>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/dashboard/integrations/crm">Lead Capture &amp; Scoring</Link>
@@ -392,6 +406,44 @@ export default function Integrations() {
 
         {/* Integration Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card className="border-border/50 relative transition-all">
+            <div className="absolute top-3 right-3 flex flex-col gap-1 items-end">
+              <Badge variant="outline" className="text-muted-foreground border-border/50 text-[10px]">
+                <Unlock className="w-2.5 h-2.5 mr-1" />
+                Optional · All plans
+              </Badge>
+              {!!uploadPostStatus?.configured && (uploadPostStatus.accounts?.length ?? 0) > 0 && (
+                <Badge className="bg-green-500/10 text-green-600 border-green-500/30 text-[10px]">
+                  <Check className="w-2.5 h-2.5 mr-1" />
+                  Connected
+                </Badge>
+              )}
+            </div>
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-pink-500">
+                  <Share2 className="w-5 h-5 text-white" />
+                </div>
+                <CardTitle className="text-base">Upload-Post</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <p className="text-sm text-muted-foreground mb-1">Automated, scheduled publishing across your connected social platforms.</p>
+              <p className="text-xs text-foreground/80 mb-3 p-2 rounded bg-muted/50 border border-border/30">
+                Copy &amp; Post is included on every plan with no setup. Automation uses your own Upload-Post account and card, billed directly by Upload-Post (~$9–$99/mo).
+              </p>
+              {uploadPostLoading ? (
+                <Skeleton className="h-9 w-full" />
+              ) : (
+                <Button variant={uploadPostStatus?.configured ? 'outline' : 'secondary'} size="sm" className="w-full" asChild>
+                  <Link to="/dashboard/integrations/social">
+                    {uploadPostStatus?.configured ? 'Manage Connection' : 'Set Up Upload-Post'}
+                    <ArrowRight className="w-3 h-3 ml-1" />
+                  </Link>
+                </Button>
+              )}
+            </CardContent>
+          </Card>
           {INTEGRATIONS.map((integration) => {
             const isConnected = getConnectionStatus(integration);
             const Icon = integration.icon;

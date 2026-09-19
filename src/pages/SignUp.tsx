@@ -1143,7 +1143,7 @@ export default function SignUp() {
                           { icon: <Mail className="w-2.5 h-2.5 text-cyan-400" />, name: 'Resend (Email)', cost: 'Your account · billed by Resend', limit: 'Free 3,000/mo · Pro $20 (50k) · Scale $90+ · then ~$0.90 per 1,000', note: 'Required', color: 'text-cyan-400' },
                           { icon: <Calendar className="w-2.5 h-2.5 text-cyan-400" />, name: 'Google Calendar', cost: 'Your Google account · OAuth', limit: 'OAuth · bidirectional · multi-team-member · iCal supported', note: 'All tiers', color: 'text-cyan-400' },
                           { icon: <DollarSign className="w-2.5 h-2.5 text-amber-400" />, name: 'Stripe (your account)', cost: 'Your account · billed by Stripe', limit: '2.9% + $0.30/txn · payouts to your bank · invoiced directly by Stripe', note: 'Required if collecting payments', color: 'text-amber-400' },
-                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Social Media', cost: 'Your business pages + OAuth', limit: 'Any platform fees billed directly by each network', note: 'Required if posting', color: 'text-pink-400' },
+                          { icon: <Send className="w-2.5 h-2.5 text-pink-400" />, name: 'Upload-Post (Social)', cost: 'Your account · billed by Upload-Post', limit: 'Optional automation · ~$9–$99/mo · up to 6 platforms per social set · manual Copy & Post included on every plan', note: 'Optional on all tiers', color: 'text-pink-400' },
                           { icon: <Search className="w-2.5 h-2.5 text-orange-400" />, name: 'Tavily', cost: 'Your account · billed by Tavily', limit: 'Free 1,000 credits/mo · then $0.008/credit · Project plans from ~$30/mo', note: 'Required', color: 'text-orange-400' },
                         ].map(({ icon, name, cost, limit, note, color }) => (
                           <div key={name} className="py-1 border-b border-border/20 last:border-0">
@@ -1466,7 +1466,7 @@ export default function SignUp() {
                             <BetaCodeInput applied={betaCode} onApplied={setBetaCode} />
                             {betaCode && (
                               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                60-Day Live Trial · <span className="font-semibold text-emerald-400">$0 onboarding during Beta</span> (waived automatically). Regular onboarding fee = 1 month of your plan (Core $497 · Boost $994 · Pro $1,988 · Elite $3,979), invoiced on day 31, non-refundable. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, social) is pay-as-you-go and billed directly by each vendor to your own credit card — <span className="font-semibold">including during the trial</span>.
+                                60-Day Live Trial · <span className="font-semibold text-emerald-400">$0 onboarding during Beta</span> (waived automatically). Regular onboarding fee = 1 month of your plan (Core $497 · Boost $994 · Pro $1,988 · Elite $3,979), invoiced on day 31, non-refundable. 3rd-party usage (SignalWire voice/SMS, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and optional Upload-Post social automation) is billed directly by each vendor to your own credit card — <span className="font-semibold">including during the trial</span>.
                               </p>
                             )}
                           </div>
@@ -1496,7 +1496,7 @@ export default function SignUp() {
                                 className="mt-0.5"
                               />
                               <label htmlFor="ack-costs" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                                I acknowledge that <span className="font-medium text-foreground">every 3rd-party service</span> (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, Social) requires my own account with a valid credit card on file, and that <span className="font-medium text-foreground">each provider bills me directly through automatic billing on my card</span>, separately from my Aura plan fee — <span className="font-medium text-foreground">including during the 60-Day Live Demo</span>. If I cancel Aura, I am responsible for <span className="font-medium text-foreground">canceling each 3rd-party account separately</span>; Aura cannot close them on my behalf.
+                                I acknowledge that <span className="font-medium text-foreground">every 3rd-party service</span> (SignalWire, ElevenLabs, Resend, Tavily, Stripe, A2P 10DLC, and optional Upload-Post social automation) requires my own account with a valid credit card on file, and that <span className="font-medium text-foreground">each provider bills me directly through automatic billing on my card</span>, separately from my Aura plan fee — <span className="font-medium text-foreground">including during the 60-Day Live Demo</span>. If I cancel Aura, I am responsible for <span className="font-medium text-foreground">canceling each 3rd-party account separately</span>; Aura cannot close them on my behalf.
                               </label>
                             </div>
                             <div className="flex items-start space-x-2">
@@ -1549,7 +1549,7 @@ export default function SignUp() {
                                   </span>
                                 </label>
                                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                                   The <span className="font-semibold text-foreground">first 30 days of your 60-Day Live Trial</span> are your onboarding window — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Onboarding fee is $0 during Beta</span> (waived automatically). Regular onboarding fee equals one month of your plan: Core $497 · Boost $994 · Pro $1,988 · Elite $3,979.
+                                   The <span className="font-semibold text-foreground">first 30 days of your 60-Day Live Trial</span> are your onboarding window — covers account configuration, AI agent setup, knowledge-base build-out, 3rd-party activation (SignalWire, ElevenLabs, Resend, and optional Upload-Post), A2P 10DLC compliance filing, and your initial training session. <span className="font-semibold text-primary">Onboarding fee is $0 during Beta</span> (waived automatically). Regular onboarding fee equals one month of your plan: Core $497 · Boost $994 · Pro $1,988 · Elite $3,979.
                                  </p>
                                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 italic">
                                    Non-refundable.
