@@ -328,7 +328,7 @@ function SpecialistChat({ specialist, industryKey }: { specialist: SpecialistDef
   );
 }
 
-export default function SpecialistOperativesConsole() {
+export function SpecialistOperativesPanel() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { userRole } = useAuth();
