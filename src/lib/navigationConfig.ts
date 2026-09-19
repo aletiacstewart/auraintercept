@@ -45,6 +45,7 @@ import {
   Receipt,
 } from 'lucide-react';
 import type { SubscriptionTier } from '@/lib/subscriptionAgentConfig';
+import type { FeatureKey } from '@/lib/industryConfig';
 
 export type NavRole = 'platform_admin' | 'company_admin' | 'employee' | 'technician' | 'customer';
 
@@ -62,6 +63,12 @@ export interface NavItem {
   external?: boolean;
   featureColor?: string;
   requiredTier?: SubscriptionTier;
+  /**
+   * Business-type gate. When set, the item only appears if the company's
+   * industry pack lists this feature. Core items (dashboard, agents, settings,
+   * connections, team, billing, help) deliberately carry no gate.
+   */
+  requiredFeature?: FeatureKey;
   tourId?: string;
   submenu?: NavSubItem[];
 }
