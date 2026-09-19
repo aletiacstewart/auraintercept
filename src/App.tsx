@@ -99,14 +99,8 @@ const Leads = lazy(() => import("./pages/Leads"));
 const LeadsImport = lazy(() => import("./pages/LeadsImport"));
 const CRMIntegration = lazy(() => import("./pages/integrations/CRMIntegration"));
 const Help = lazy(() => import("./pages/Help"));
-const Architecture = lazy(() => import("./pages/Architecture"));
-const PlatformBrief = lazy(() => import("./pages/dashboard/PlatformBrief"));
-const Calculators = lazy(() => import("./pages/Calculators"));
-const CyberSentryMockup = lazy(() => import("./pages/CyberSentryMockup"));
 const IndustryPacksAdmin = lazy(() => import("./pages/admin/IndustryPacksAdmin"));
-const PackCoverage = lazy(() => import("./pages/admin/PackCoverage"));
 const SuperSwitcher = lazy(() => import("./pages/SuperSwitcher"));
-const CyberSentryPortalMockup = lazy(() => import("./pages/CyberSentryPortalMockup"));
 const BusinessOperations = lazy(() => import("./pages/BusinessOperations"));
 const FieldOpsInstall = lazy(() => import("./pages/FieldOpsInstall"));
 const DispatchFieldOpsInstall = lazy(() => import("./pages/DispatchFieldOpsInstall"));
@@ -117,7 +111,6 @@ const BusinessMgtOpsApp = lazy(() => import("./pages/BusinessMgtOpsApp"));
 const OnboardingForm = lazy(() => import("./pages/OnboardingForm"));
 const PublicOnboardingIntake = lazy(() => import("./pages/PublicOnboardingIntake"));
 const CustomerPortalAppInstall = lazy(() => import("./pages/CustomerPortalAppInstall"));
-const PlatformIssues = lazy(() => import("./pages/PlatformIssues"));
 const PlatformHealth = lazy(() => import("./pages/PlatformHealth"));
 const StatusPage = lazy(() => import("./pages/StatusPage"));
 const OAuthGoogleCalendar = lazy(() => import("./pages/OAuthGoogleCalendar"));
@@ -141,7 +134,6 @@ const PlatformGuides = lazy(() => import("./pages/PlatformGuides"));
 const NotificationSettingsPage = lazy(() => import("./pages/NotificationSettingsPage"));
 const EmailLimits = lazy(() => import("./pages/settings/EmailLimits"));
 const TavilyLimits = lazy(() => import("./pages/settings/TavilyLimits"));
-const DesignPreview = lazy(() => import("./pages/DesignPreview"));
 const PublicBooking = lazy(() => import("./pages/PublicBooking"));
 
 // Suspense fallback for lazy routes — minimal, on-brand.
@@ -211,7 +203,6 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/customer-auth" element={<CustomerAuth />} />
                 <Route path="/talk-to-aura" element={<Navigate to="/contact" replace />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/design-preview" element={<ProtectedRoute requiredRole="platform_admin"><DesignPreview /></ProtectedRoute>} />
                 <Route path="/about" element={<Navigate to="/" replace />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
@@ -282,16 +273,10 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/notification-settings" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
                 <Route path="/dashboard/email-limits" element={<ProtectedRoute><EmailLimits /></ProtectedRoute>} />
                 <Route path="/dashboard/tavily-limits" element={<ProtectedRoute><TavilyLimits /></ProtectedRoute>} />
-                <Route path="/dashboard/architecture" element={<ProtectedRoute requiredRole="platform_admin"><Architecture /></ProtectedRoute>} />
-                <Route path="/dashboard/platform-brief" element={<ProtectedRoute requiredRole="platform_admin"><PlatformBrief /></ProtectedRoute>} />
-                <Route path="/dashboard/calculators" element={<ProtectedRoute requiredRole="platform_admin"><Calculators /></ProtectedRoute>} />
                 <Route path="/dashboard/export-docs" element={<Navigate to="/dashboard/platform-guides?tab=export" replace />} />
                 <Route path="/dashboard/video-prompts" element={<Navigate to="/dashboard/platform-guides?tab=video" replace />} />
-                <Route path="/dashboard/cyber-sentry-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryMockup /></ProtectedRoute>} />
-                <Route path="/dashboard/cyber-sentry-portal-mockup" element={<ProtectedRoute requiredRole="platform_admin"><CyberSentryPortalMockup /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs/:id" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
-                <Route path="/dashboard/pack-coverage" element={<ProtectedRoute requiredRole="platform_admin"><PackCoverage /></ProtectedRoute>} />
                 <Route path="/dashboard/super-switcher" element={<ProtectedRoute requiredRole="platform_admin"><SuperSwitcher /></ProtectedRoute>} />
                 <Route path="/super-switcher" element={<ProtectedRoute requiredRole="platform_admin"><SuperSwitcher /></ProtectedRoute>} />
                 <Route path="/dashboard/audit-report" element={<ProtectedRoute requiredRole="platform_admin"><AuditReport /></ProtectedRoute>} />
@@ -304,10 +289,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/business-mgt-ops-install" element={<ProtectedRoute><BusinessMgtOpsInstall /></ProtectedRoute>} />
                 <Route path="/dashboard/customer-portal-app-install" element={<ProtectedRoute><CustomerPortalAppInstall /></ProtectedRoute>} />
                 <Route path="/dashboard/integrations/embed" element={<ProtectedRoute><IntegrationDocs /></ProtectedRoute>} />
-                <Route path="/dashboard/platform-guides" element={<ProtectedRoute><PlatformGuides /></ProtectedRoute>} />
-                <Route path="/dashboard/platform-issues" element={<ProtectedRoute><PlatformIssues /></ProtectedRoute>} />
+                <Route path="/dashboard/platform-guides" element={<ProtectedRoute requiredRole="platform_admin"><PlatformGuides /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-health" element={<ProtectedRoute><PlatformHealth /></ProtectedRoute>} />
-                <Route path="/dashboard/ai-agent-demo" element={<Navigate to="/dashboard/architecture?tab=demo" replace />} />
                 <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
                 <Route path="/dashboard/blog-management" element={<ProtectedRoute><BlogManagement /></ProtectedRoute>} />
                 

@@ -181,15 +181,6 @@ const adminSteps: TutorialStep[] = [
     route: '/dashboard',
     position: 'right',
   },
-  {
-    id: 'calculators',
-    title: 'Cost Calculators',
-    description: 'Estimate your monthly platform costs based on appointment volume, communication channels (SMS, email, voice), and average transaction values before you commit.',
-    tip: 'Use the calculator to compare costs across tiers and find the right plan for your business size.',
-    targetSelector: '[data-tour-id="nav-calculators"]',
-    route: '/dashboard',
-    position: 'right',
-  },
 
   // Integrations
   {
@@ -271,35 +262,10 @@ const platformAdminSteps: TutorialStep[] = [
     position: 'right',
   },
   {
-    id: 'platform-issues',
-    title: 'Platform Issues',
-    description: 'Monitor and manage bug reports submitted by company admins and employees across the platform. Triage, track status, and resolve issues from a centralized dashboard.',
-    targetSelector: '[data-tour-id="nav-platform-issues"]',
-    route: '/dashboard',
-    position: 'right',
-  },
-  {
     id: 'platform-guides',
     title: 'Platform Guides',
     description: 'Comprehensive documentation for all subscription tiers and 24 AI Operatives. Manage and publish guide content that all users see in their Help section.',
     targetSelector: '[data-tour-id="nav-platform-guides"]',
-    route: '/dashboard',
-    position: 'right',
-  },
-  {
-    id: 'ai-agent-demo',
-    title: 'AI Agent Flow Demo',
-    description: 'An animated 10-scene visualization of the Aura AI Operative network — perfect for client presentations and sales demos. Shows how all 10 Operatives route, hand off, and collaborate across every console.',
-    tryIt: 'Click AI Agent Demo to launch the full-screen animated demo. Use Auto-Play for a hands-free walkthrough.',
-    targetSelector: '[data-tour-id="nav-ai-agent-demo"]',
-    route: '/dashboard',
-    position: 'right',
-  },
-  {
-    id: 'architecture',
-    title: 'Platform Architecture',
-    description: 'A technical diagram of the platform\'s AI Operative network, data flows, and integration points. Useful for technical discussions and understanding how operatives communicate.',
-    targetSelector: '[data-tour-id="nav-architecture"]',
     route: '/dashboard',
     position: 'right',
   },
