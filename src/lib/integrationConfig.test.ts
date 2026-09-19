@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { INTEGRATIONS, validateIntegrationField } from '../../src/lib/integrationConfig';
+import { INTEGRATIONS, validateIntegrationField } from './integrationConfig';
 
 /**
  * Setup-flow safety net: every credential field must reject an obviously wrong
