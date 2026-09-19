@@ -91,7 +91,7 @@ export const DEFAULT_MILESTONES: Omit<Milestone, 'isComplete'>[] = [
     description: 'Enable voice calls',
     targetDay: 5, 
     phase: 'setup', 
-    href: '/dashboard/3rd-party-overview',
+    href: '/dashboard/integrations',
     icon: <Phone className="h-4 w-4" />
   },
   { 
@@ -100,7 +100,7 @@ export const DEFAULT_MILESTONES: Omit<Milestone, 'isComplete'>[] = [
     description: 'AI voice synthesis',
     targetDay: 6, 
     phase: 'setup', 
-    href: '/dashboard/3rd-party-overview',
+    href: '/dashboard/integrations',
     icon: <Mic className="h-4 w-4" />
   },
   { 
