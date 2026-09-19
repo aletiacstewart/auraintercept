@@ -119,12 +119,21 @@ export function AgentConfigModal({
           )}
 
           {step === 2 && (
-            <AgentSettingsPanel
-              agentType={agentType}
-              configFields={def.configFields}
-              currentSettings={settings || {}}
-              onSave={onSave}
-            />
+            <div className="space-y-4">
+              <AgentPromptLibrary
+                jobTypeId={jobType?.id}
+                companyId={companyId}
+                disabled={!canManage}
+                onApply={(value) => setPresetPrompt({ value, nonce: Date.now() })}
+              />
+              <AgentSettingsPanel
+                agentType={agentType}
+                configFields={def.configFields}
+                currentSettings={settings || {}}
+                onSave={onSave}
+                presetPrompt={presetPrompt}
+              />
+            </div>
           )}
 
           {step === 3 && (
