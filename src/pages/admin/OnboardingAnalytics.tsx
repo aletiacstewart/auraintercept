@@ -6,6 +6,7 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Rocket } from 'lucide-react';
 import {
   Bar,
   BarChart,
@@ -107,6 +108,7 @@ export default function OnboardingAnalytics() {
     <DashboardLayout>
       <PageContainer>
         <PageHeader
+          icon={Rocket}
           title="Onboarding"
           description="How new companies get through First Steps, and where they stall."
         />
