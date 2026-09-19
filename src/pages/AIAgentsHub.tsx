@@ -194,6 +194,7 @@ export default function AIAgentsHub() {
     }
     for (const m of toEnable) {
       await toggleAgent(m.type, true);
+      void track.agentEnabled({ userId: user?.id, companyId }, m.type);
     }
     await refetch();
     toast.success(`${toEnable.length} agent${toEnable.length > 1 ? 's' : ''} turned on.`);
