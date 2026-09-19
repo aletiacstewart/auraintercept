@@ -94,16 +94,16 @@ export const PAGE_ROUTES: Record<string, string> = {
   // Analytics & Reports Section (now part of Business Operations)
   'ask aura': '/dashboard/ai-consoles/business-mgt-ops',
   'aura': '/dashboard/ai-consoles/business-mgt-ops',
-  'analytics': '/dashboard/ai-consoles/analytics',
-  'analytics and reports': '/dashboard/ai-consoles/analytics',
-  'analytics reports': '/dashboard/ai-consoles/analytics',
+  'analytics': '/dashboard/analytics',
+  'analytics and reports': '/dashboard/analytics',
+  'analytics reports': '/dashboard/analytics',
   'subscription analytics': '/dashboard/subscription-analytics',
   
   // Business Mobile Consoles Section
   'business mgt ops console': '/dashboard/ai-consoles/business-mgt-ops',
   'business management ops': '/dashboard/ai-consoles/business-mgt-ops',
-  'analytics & reports ops': '/dashboard/ai-consoles/analytics',
-  'analytics and reports ops': '/dashboard/ai-consoles/analytics',
+  'analytics & reports ops': '/dashboard/analytics',
+  'analytics and reports ops': '/dashboard/analytics',
   'marketing & sales ops': '/dashboard/ai-consoles/marketing-sales',
   'marketing and sales ops': '/dashboard/ai-consoles/marketing-sales',
   'marketing ops': '/dashboard/ai-consoles/marketing-sales',

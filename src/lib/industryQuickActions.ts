@@ -49,7 +49,7 @@ const CLUSTER_QUICK_ACTIONS: Record<IndustryPack['cluster'], QuickAction[]> = {
       route: '/dashboard/quotes?new=1' },
     { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
-      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+      route: '/dashboard/analytics?tab=revenue&range=this-week' },
   ],
 
   outdoor: [
@@ -70,7 +70,7 @@ const CLUSTER_QUICK_ACTIONS: Record<IndustryPack['cluster'], QuickAction[]> = {
       route: '/dashboard/quotes?new=1' },
     { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
-      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+      route: '/dashboard/analytics?tab=revenue&range=this-week' },
   ],
 
   repair: [
@@ -91,7 +91,7 @@ const CLUSTER_QUICK_ACTIONS: Record<IndustryPack['cluster'], QuickAction[]> = {
       route: '/dashboard/quotes?new=1' },
     { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
-      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+      route: '/dashboard/analytics?tab=revenue&range=this-week' },
   ],
 
   booking: [
@@ -112,7 +112,7 @@ const CLUSTER_QUICK_ACTIONS: Record<IndustryPack['cluster'], QuickAction[]> = {
       route: '/dashboard/quotes?new=1' },
     { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
-      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+      route: '/dashboard/analytics?tab=revenue&range=this-week' },
   ],
 
   home_health: [
@@ -130,7 +130,7 @@ const CLUSTER_QUICK_ACTIONS: Record<IndustryPack['cluster'], QuickAction[]> = {
       route: '/dashboard/invoices?status=overdue' },
     { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
-      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+      route: '/dashboard/analytics?tab=revenue&range=this-week' },
   ],
 };
 
@@ -157,7 +157,7 @@ const INDUSTRY_QUICK_ACTIONS: Record<string, QuickAction[]> = {
       route: '/dashboard/quotes?new=1' },
     { key: 'weekRevenue', icon: DollarSign, label: 'Show me this week’s commissions',
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
-      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+      route: '/dashboard/analytics?tab=revenue&range=this-week' },
   ],
 
   salon: [
@@ -178,7 +178,7 @@ const INDUSTRY_QUICK_ACTIONS: Record<string, QuickAction[]> = {
       route: '/dashboard/quotes?new=1' },
     { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
-      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+      route: '/dashboard/analytics?tab=revenue&range=this-week' },
   ],
 
   veterinary: [
@@ -196,7 +196,7 @@ const INDUSTRY_QUICK_ACTIONS: Record<string, QuickAction[]> = {
       route: '/dashboard/invoices?status=overdue' },
     { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
-      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+      route: '/dashboard/analytics?tab=revenue&range=this-week' },
   ],
 
   medical_practice: [
@@ -214,7 +214,7 @@ const INDUSTRY_QUICK_ACTIONS: Record<string, QuickAction[]> = {
       route: '/dashboard/invoices?status=overdue' },
     { key: 'weekRevenue', icon: DollarSign, label: "Show me this week's revenue",
       description: 'Opens Revenue Analysis scoped to this week with charts and totals.',
-      route: '/dashboard/ai-consoles/revenue-analysis?range=this-week' },
+      route: '/dashboard/analytics?tab=revenue&range=this-week' },
   ],
 };
 

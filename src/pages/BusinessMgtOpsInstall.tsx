@@ -68,7 +68,7 @@ export default function BusinessMgtOpsInstall() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => navigate('/dashboard/ai-consoles/analytics')}
+              onClick={() => navigate('/dashboard/analytics')}
               className="gap-2"
             >
               <Briefcase className="h-4 w-4" />
