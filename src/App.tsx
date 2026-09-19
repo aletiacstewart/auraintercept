@@ -264,6 +264,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/video-prompts" element={<Navigate to="/dashboard/platform-guides?tab=video" replace />} />
                 <Route path="/dashboard/admin/feature-flags" element={<ProtectedRoute requiredRole="platform_admin"><FeatureFlagsAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/system-health" element={<ProtectedRoute requiredRole="platform_admin"><SystemHealthAdmin /></ProtectedRoute>} />
+                <Route path="/dashboard/admin/onboarding" element={<ProtectedRoute requiredRole="platform_admin"><OnboardingAnalyticsAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/admin/industry-packs/:id" element={<ProtectedRoute requiredRole="platform_admin"><IndustryPacksAdmin /></ProtectedRoute>} />
                 <Route path="/dashboard/super-switcher" element={<ProtectedRoute requiredRole="platform_admin"><SuperSwitcher /></ProtectedRoute>} />
