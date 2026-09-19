@@ -694,7 +694,7 @@ export function MultiChannelGenerator() {
             </div>
             <Textarea
               id="topic"
-              placeholder="e.g., Spring AC Maintenance Special - 20% off tune-ups"
+              placeholder="e.g., Promote a service, share a customer success story, announce an offer, or post a helpful tip"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               className="min-h-[100px]"
