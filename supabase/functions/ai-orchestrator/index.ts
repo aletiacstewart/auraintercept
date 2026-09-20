@@ -68,11 +68,16 @@ serve(async (req) => {
     const { action, companyId, agentType, eventType, payload, contextId } = await req.json();
 
     // === AUTH ===
-    // Internal callers (cron, edge-to-edge) pass x-internal-secret matching ORCHESTRATOR_SECRET.
+    // Internal callers (edge-to-edge) pass x-internal-secret matching ORCHESTRATOR_SECRET.
+    // Database triggers and cron jobs pass x-cron-secret.
     // All other callers must present a valid user JWT whose company_id matches `companyId`.
     const internalSecret = Deno.env.get('ORCHESTRATOR_SECRET');
     const providedInternal = req.headers.get('x-internal-secret');
-    const isInternal = !!internalSecret && providedInternal === internalSecret;
+    let isInternal = !!internalSecret && providedInternal === internalSecret;
+    if (!isInternal && req.headers.get('x-cron-secret')) {
+      isInternal = (await verifyCronSecret(req)).ok;
+    }
+
 
     if (!isInternal) {
       const authHeader = req.headers.get('Authorization') || '';
