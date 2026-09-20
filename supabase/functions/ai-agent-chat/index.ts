@@ -3458,96 +3458,18 @@ serve(async (req) => {
 
     console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, IP: ${clientIP}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
 
-    // === SUBSCRIPTION TIER GATING ===
-    // 10-OPERATIVE CONSOLIDATED MODEL — 4 TIERS (Starter / Connect / Performance / Command)
-    // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
-    const TIER_AGENTS: Record<string, string[]> = {
-      free: [],
-      // Aura Core ($497/mo · $0 onboarding during Beta — was $697/mo + $497 onboarding): 8 agents — AI receptionist, customer journey, outreach, creative
-      starter: [
-        'triage', 'customer_journey',   // Customer Portal
-        'outreach',                     // Marketing & Sales
-        'creative_content',             // Creative Content
-        'web_presence',                 // Creative & Web Presence
-      ],
-      // Aura Boost ($994/mo · $0 onboarding during Beta — was $1,394/mo + $994 onboarding): 12 agents — adds field ops (dispatch + field navigation)
-      connect: [
-        'triage', 'customer_journey',   // Customer Portal
-        'outreach',                     // Marketing & Sales
-        'creative_content',             // Creative Content
-        'web_presence',                 // Creative & Web Presence
-        'dispatch', 'field_navigation', // Field Operations
-      ],
-      // Aura Pro ($1,988/mo · $0 onboarding during Beta — was $2,788/mo + $1,988 onboarding): 16 agents — adds campaign, outreach, social
-      performance: [
-        'triage', 'customer_journey',              // Customer Portal
-        'dispatch', 'field_navigation',            // Field Operations
-        'outreach',                                // Marketing & Sales
-        'creative_content', 'web_presence',        // Creative & Web Presence
-        'business_finance', 'admin',               // Business Operations
-        'analytics_intelligence',                  // Analytics & Reports
-      ],
-      // Aura Elite ($3,979/mo · $0 onboarding during Beta — was $5,576/mo + $3,979 onboarding): All 24 agents (10 operative groups) + enterprise features
-      command: [
-        'triage', 'customer_journey',              // Customer Portal
-        'dispatch', 'field_navigation',            // Field Operations
-        'admin', 'business_finance',               // Business Operations
-        'outreach',                                // Marketing & Sales
-        'creative_content', 'web_presence',        // Creative & Web Presence
-        'analytics_intelligence',                  // Analytics & Reports
-      ],
-    };
+    // === AGENT REGISTRY / SERVICE DISCOVERY ===
+    // Identity, legacy aliases, tier gating, prompts, tools and capability
+    // discovery all come from the shared registry (_shared/agent-registry.ts).
+    // Tier definitions live in _shared/agent-definitions.ts — keep in sync with
+    // src/lib/agentCatalog.ts (parity test enforces it).
+    const agentRegistry = createAgentRegistry({
+      getPrompt: (type) => AGENT_PROMPTS[type],
+      getTools: (toolKey) => AGENT_TOOLS[toolKey],
+    });
 
-    // INDUSTRY SPECIALIST OPERATIVES — Pro/Elite tier, gated AND opted-in via industry pack
-    // Allowed only when the company's industry_template_pack lists them in extra_operatives
-    const INDUSTRY_SPECIALIST_OPERATIVES = [
-      'diagnostic', 'permit_code', 'site_survey', 'insurance_claim',
-      'listing_writer', 'offer_drafter', 'comp_analyst',
-      'style_consultant', 'loyalty_coach',
-      'menu_writer', 'reservation_optimizer',
-      'task_triager', 'calendar_optimizer',
-      'review_responder',
-    ];
-    // Specialist operatives ship with EVERY plan (including free trial). Activation is
-    // driven by the industry pack (extra_operatives), not by subscription tier.
-    // Keep in sync with src/lib/subscriptionAgentConfig.ts (SPECIALIST_MIN_TIER = 'free').
-    const SPECIALIST_MIN_TIER: Record<string, string> = Object.fromEntries(
-      INDUSTRY_SPECIALIST_OPERATIVES.map((op) => [op, 'free'])
-    );
-
-    // Legacy tier name → canonical tier mapping
-    const LEGACY_TIER_MAP: Record<string, string> = {
-      scheduling: 'starter', express: 'starter', aura_flow: 'starter', halo: 'starter', core: 'starter', aura_starter: 'starter', aura_core: 'starter',
-      growth: 'connect', business: 'connect', aura_connect: 'connect', aura_growth: 'connect', aura_boost: 'connect',
-      single_point: 'performance', field_ops: 'performance', multi_track: 'performance', aura_pro: 'performance',
-      // Self-maps
-      starter: 'starter', connect: 'connect', performance: 'performance', command: 'command', aura_elite: 'command',
-    };
-
-    // Legacy agent name → consolidated operative mapping
-    const LEGACY_AGENT_MAP: Record<string, string> = {
-      receptionist: 'triage', emergency: 'triage', intake: 'triage', faq: 'triage',
-      booking: 'customer_journey', followup: 'customer_journey', review: 'customer_journey',
-      route: 'field_navigation', eta: 'field_navigation', checkin: 'field_navigation',
-      quoting: 'business_finance', invoice: 'business_finance', inventory: 'business_finance',
-      estimate: 'business_finance', payments: 'business_finance',
-      campaign: 'outreach', lead: 'outreach', marketing: 'outreach',
-      insights: 'analytics_intelligence', revenue: 'analytics_intelligence', forecast: 'analytics_intelligence',
-      performance: 'analytics_intelligence', analytics: 'analytics_intelligence',
-      creative: 'creative_content', social_content: 'creative_content', social_scheduler: 'creative_content', social_analytics: 'creative_content',
-    };
-
-    // Normalize the agent type from legacy to consolidated
-    const normalizedAgentType = LEGACY_AGENT_MAP[agentType] || agentType;
-
-    // Helper to determine required tier for an agent
-    const getRequiredTierForAgent = (agent: string): string | null => {
-      const normalized = LEGACY_AGENT_MAP[agent] || agent;
-      if (TIER_AGENTS.connect.includes(normalized)) return 'connect';
-      if (TIER_AGENTS.performance.includes(normalized)) return 'performance';
-      if (TIER_AGENTS.command.includes(normalized)) return 'command';
-      return null;
-    };
+    // Normalize the agent type from legacy alias to canonical operative
+    const normalizedAgentType = agentRegistry.normalize(agentType);
 
     // Fetch company's subscription tier and brand settings
     const { data: companyTierData, error: tierError } = await supabase
