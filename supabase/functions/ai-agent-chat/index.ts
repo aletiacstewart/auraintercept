@@ -4147,7 +4147,60 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     let responseText = choice?.message?.content || '';
     let handoffTo: string | null = null;
     let handoffReason: string | null = null;
+    let outgoingAgentContext: AgentContext | null = null;
     const toolCalls: Array<{ name: string; arguments: any; result: string }> = [];
+
+    /**
+     * Scan this turn's tool results for record IDs the agent just created
+     * (e.g. an appointment), so the hand-off can carry them forward.
+     */
+    const collectIdsFromToolCalls = (): { appointmentId: string | null; customerId: string | null; jobId: string | null } => {
+      let appointmentId: string | null = null;
+      let customerId: string | null = null;
+      let jobId: string | null = null;
+      for (const tc of toolCalls) {
+        let parsed: any = null;
+        try { parsed = JSON.parse(tc.result); } catch { continue; }
+        if (!parsed || typeof parsed !== 'object') continue;
+        const candidates = [parsed, parsed.appointment, parsed.data, parsed.job, parsed.customer].filter(Boolean);
+        for (const c of candidates) {
+          if (!appointmentId) appointmentId = c.appointment_id || c.appointmentId || (tc.name?.includes('appointment') && c.id) || null;
+          if (!customerId) customerId = c.customer_id || c.customerId || null;
+          if (!jobId) jobId = c.job_id || c.jobId || null;
+        }
+      }
+      return { appointmentId, customerId, jobId };
+    };
+
+    /**
+     * Build + validate the structured context for a hand-off.
+     * Returns null (with a reason) when required data is still missing.
+     */
+    const prepareHandoffContext = (target: string, reason: string, args: any) => {
+      const ids = collectIdsFromToolCalls();
+      const ctx = buildAgentContext({
+        contextId,
+        companyId,
+        fromAgent: agentType,
+        toAgent: LEGACY_AGENT_MAP[target] || target,
+        reason,
+        appointmentId: args?.appointment_id || ids.appointmentId || incomingAgentContext?.appointmentId || null,
+        customerId: args?.customer_id || ids.customerId || incomingAgentContext?.customerId || null,
+        jobId: args?.job_id || ids.jobId || incomingAgentContext?.jobId || null,
+        workflowId: args?.workflow_id || incomingAgentContext?.workflowId || null,
+        customer: {
+          ...(incomingAgentContext?.customer || {}),
+          ...(customerInfo || {}),
+          ...(args?.customer_intent ? { issue: args.customer_intent } : {}),
+        },
+        metadata: {
+          ...(incomingAgentContext?.metadata || {}),
+          ...(args?.urgency ? { urgency: args.urgency } : {}),
+        },
+      });
+      const validation = validateAgentContext(ctx);
+      return { ctx, validation };
+    };
 
     // Process tool calls
     if (choice?.message?.tool_calls) {
