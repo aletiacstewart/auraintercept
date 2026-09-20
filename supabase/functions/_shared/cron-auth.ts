@@ -23,19 +23,21 @@ function timingSafeEq(a: string, b: string): boolean {
   return mismatch === 0;
 }
 
+/**
+ * The DB row is the source of truth (it is what the cron SQL and DB triggers
+ * bake in). The CRON_SECRET env var is only a fallback for local dev or when
+ * the row is unreadable.
+ */
 async function loadSecret(): Promise<string | null> {
   if (cachedSecret) return cachedSecret;
 
-  // Env override wins if set (useful for local dev / one-off testing).
   const envSecret = Deno.env.get("CRON_SECRET");
-  if (envSecret && envSecret.length > 0) {
-    cachedSecret = envSecret;
-    return cachedSecret;
-  }
-
   const url = Deno.env.get("SUPABASE_URL");
   const serviceRole = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !serviceRole) return null;
+  if (!url || !serviceRole) {
+    if (envSecret) cachedSecret = envSecret;
+    return cachedSecret;
+  }
 
   try {
     const client = createClient(url, serviceRole, {
@@ -48,13 +50,15 @@ async function loadSecret(): Promise<string | null> {
       .maybeSingle();
     if (error || !data?.secret) {
       console.error("[cron-auth] failed to load shared secret:", error);
-      return null;
+      cachedSecret = envSecret || null;
+      return cachedSecret;
     }
     cachedSecret = data.secret as string;
     return cachedSecret;
   } catch (e) {
     console.error("[cron-auth] threw while loading shared secret:", e);
-    return null;
+    cachedSecret = envSecret || null;
+    return cachedSecret;
   }
 }
 

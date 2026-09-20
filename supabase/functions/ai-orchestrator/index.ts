@@ -8,6 +8,8 @@ import {
   validateAgentContext,
 } from "../_shared/agent-context.ts";
 import { createLookupRegistry } from "../_shared/agent-registry.ts";
+import { createEventBus, MAX_EVENT_ATTEMPTS, nextAttemptDelayMs } from "../_shared/event-bus.ts";
+import { normalizeEventName } from "../_shared/event-subscriptions.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -49,47 +51,9 @@ const AGENT_TYPES = {
   analytics_intelligence: { name: 'Analytics Intelligence Agent', category: 'analytics', phase: 5 },
 };
 
-// Event routing rules — which agents should receive which events.
-//
-// NOTE: EVENT_ROUTING intentionally covers only the 10 consolidated operatives.
-// The 14 industry specialist operatives (see INDUSTRY_SPECIALIST_OPERATIVES in
-// src/lib/subscriptionAgentConfig.ts) are request/response-only: they are
-// activated per industry pack and invoked by consolidated operatives via the
-// ai-agent-chat tool interface (e.g. `handoff_to_specialist`). They do not
-// subscribe to lifecycle events, so they must not appear here.
-const EVENT_ROUTING: Record<string, string[]> = {
-  // Customer Portal events
-  'triage_complete': ['customer_journey', 'dispatch', 'outreach'],
-  'appointment_booked': ['dispatch', 'field_navigation', 'customer_journey', 'business_finance'],
-  'appointment_cancelled': ['dispatch', 'customer_journey'],
-  'tech_assigned': ['field_navigation'],
-  'route_optimized': ['field_navigation', 'dispatch'],
-  'eta_updated': ['field_navigation'],
-  'tech_arrived': ['business_finance', 'field_navigation'],
-  'job_complete': ['business_finance', 'customer_journey', 'outreach'],
-  'quote_sent': ['business_finance'],
-  'quote_approved': ['business_finance'],
-  'payment_received': ['customer_journey', 'analytics_intelligence', 'outreach'],
-  'followup_sent': ['customer_journey'],
-  'review_received': ['analytics_intelligence', 'outreach'],
-  'churn_risk_detected': ['outreach'],
-  'inventory_low': ['dispatch', 'business_finance', 'admin'],
-  'seasonal_trigger': ['outreach'],
-  // Outreach & Sales events
-  'campaign_created': ['outreach'],
-  'lead_qualified': ['outreach', 'customer_journey'],
-  'lead_scored': ['outreach', 'customer_journey'],
-  // Creative Content events
-  'content_generated': ['web_presence'],
-  'post_published': ['analytics_intelligence'],
-  'content_published': ['web_presence'],
-  // Web Presence events
-  'blog_published': ['web_presence', 'creative_content'],
-  'seo_scan_complete': ['web_presence', 'analytics_intelligence'],
-  'content_engine_output': ['creative_content', 'outreach', 'web_presence'],
-  // Business lifecycle events
-  'invoice_paid': ['customer_journey', 'analytics_intelligence', 'outreach'],
-};
+// Event routing now lives in _shared/event-subscriptions.ts (declarative, shared
+// with the app). The 14 industry specialists stay request/response-only and do
+// not subscribe to lifecycle events.
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -104,11 +68,16 @@ serve(async (req) => {
     const { action, companyId, agentType, eventType, payload, contextId } = await req.json();
 
     // === AUTH ===
-    // Internal callers (cron, edge-to-edge) pass x-internal-secret matching ORCHESTRATOR_SECRET.
+    // Internal callers (edge-to-edge) pass x-internal-secret matching ORCHESTRATOR_SECRET.
+    // Database triggers and cron jobs pass x-cron-secret.
     // All other callers must present a valid user JWT whose company_id matches `companyId`.
     const internalSecret = Deno.env.get('ORCHESTRATOR_SECRET');
     const providedInternal = req.headers.get('x-internal-secret');
-    const isInternal = !!internalSecret && providedInternal === internalSecret;
+    let isInternal = !!internalSecret && providedInternal === internalSecret;
+    if (!isInternal && req.headers.get('x-cron-secret')) {
+      isInternal = (await verifyCronSecret(req)).ok;
+    }
+
 
     if (!isInternal) {
       const authHeader = req.headers.get('Authorization') || '';
@@ -207,76 +176,55 @@ async function handleEmitEvent(
   payload: any,
   contextId?: string
 ) {
-  console.log(`[Orchestrator] Emitting event: ${eventType} from ${sourceAgent}`);
-  
-  // Get target agents for this event type
-  const targetAgents = EVENT_ROUTING[eventType] || [];
+  const canonicalEvent = normalizeEventName(eventType);
+  console.log(`[Orchestrator] Emitting event: ${canonicalEvent} from ${sourceAgent}`);
 
   // Pipeline side-effect: keep customer_pipeline in sync with lifecycle events.
   // Runs alongside normal event fanout — no new operative required.
   try {
-    await upsertPipelineForEvent(supabase, companyId, eventType, payload);
+    await upsertPipelineForEvent(supabase, companyId, canonicalEvent, payload);
   } catch (pipelineErr) {
     console.error('[Orchestrator] pipeline upsert failed:', pipelineErr);
   }
-  
-  // Get enabled agents for this company
+
+  // Only agents the company has switched on receive events.
   const { data: configs } = await supabase
     .from('ai_agent_configs')
     .select('agent_type')
     .eq('company_id', companyId)
     .eq('is_enabled', true);
-  
+
   const enabledAgents = new Set(configs?.map((c: any) => c.agent_type) || []);
-  
-  // Filter to only enabled target agents — normalize legacy IDs to 10-operative names for DB lookup
-  const activeTargets = targetAgents.filter(agent => {
-    const normalized = normalizeAgentName(agent);
-    return enabledAgents.has(agent) || enabledAgents.has(normalized);
-  });
-  
-  // Create events for each target
-  const events: any[] = activeTargets.map(targetAgent => ({
-    company_id: companyId,
-    source_agent: sourceAgent,
-    target_agent: targetAgent,
-    event_type: eventType,
-    payload: { ...payload, context_id: contextId },
-    status: 'pending',
-  }));
-  
-  // Also create a broadcast event (no specific target)
-  events.push({
-    company_id: companyId,
-    source_agent: sourceAgent,
-    target_agent: null as any,
-    event_type: eventType,
-    payload: { ...payload, context_id: contextId },
-    status: 'processed', // Broadcast events are immediately marked processed
-  });
-  
-  const { data, error } = await supabase
-    .from('ai_agent_events')
-    .insert(events)
-    .select();
-  
-  if (error) throw error;
-  
+
+  const bus = createEventBus(supabase);
+  const result = await bus.emit(
+    {
+      name: canonicalEvent,
+      companyId,
+      sourceAgent,
+      payload,
+      contextId: contextId || null,
+    },
+    (agent) => enabledAgents.has(agent) || enabledAgents.has(normalizeAgentName(agent)),
+  );
+
   // Log the event emission
   await supabase.from('ai_agent_logs').insert({
     company_id: companyId,
     agent_type: sourceAgent,
     context_id: contextId,
     action: 'emit_event',
-    input_data: { event_type: eventType },
-    output_data: { targets: activeTargets, event_count: events.length },
-    success: true,
+    input_data: { event_type: canonicalEvent },
+    output_data: { targets: result.targets, event_count: result.eventsCreated },
+    success: !result.error,
   });
-  
-  return new Response(JSON.stringify({ 
-    success: true, 
-    events_created: data?.length || 0,
-    target_agents: activeTargets 
+
+  return new Response(JSON.stringify({
+    success: !result.error,
+    events_created: result.eventsCreated,
+    target_agents: result.targets,
+    event_type: canonicalEvent,
+    ...(result.error ? { error: result.error } : {}),
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
@@ -598,95 +546,111 @@ async function handleListAgents(supabase: any, companyId: string) {
 }
 
 // Process pending events by routing them to the real ai-agent-chat function
+/**
+ * Delivery worker for the event bus. Runs every 2 minutes.
+ * Each event gets up to MAX_EVENT_ATTEMPTS tries with a growing back-off;
+ * after that it is parked as `failed` so it shows in the Activity screen.
+ */
 async function handleProcessPendingEvents(supabase: any, companyId?: string) {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  
+  const nowIso = new Date().toISOString();
+
   let query = supabase
     .from('ai_agent_events')
     .select('*')
     .eq('status', 'pending')
+    .or(`next_attempt_at.is.null,next_attempt_at.lte.${nowIso}`)
     .order('created_at', { ascending: true })
     .limit(100);
-  
+
   if (companyId) {
     query = query.eq('company_id', companyId);
   }
-  
+
   const { data: events, error } = await query;
-  
+
   if (error) throw error;
-  
+
   const processed: string[] = [];
+  const retried: string[] = [];
   const failed: string[] = [];
-  
+
   for (const event of events || []) {
-    try {
-      // Mark as processing
+    const attempt = (event.attempt_count ?? 0) + 1;
+
+    /** Park or reschedule a failed delivery. */
+    const recordFailure = async (message: string) => {
+      const giveUp = attempt >= MAX_EVENT_ATTEMPTS;
       await supabase
         .from('ai_agent_events')
-        .update({ status: 'processing' })
-        .eq('id', event.id);
-      
-      console.log(`[Orchestrator] Processing event ${event.id}: ${event.event_type} -> ${event.target_agent}`);
-      
-      // Route to the real ai-agent-chat function for the target agent
-      if (event.target_agent) {
-        try {
-          const eventMessage = `[System Event: ${event.event_type}] ${JSON.stringify(event.payload || {})}`;
-          
-          const agentResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${supabaseServiceKey}`,
-            },
-            body: JSON.stringify({
-              companyId: event.company_id,
-              agentType: event.target_agent,
-              message: eventMessage,
-              conversationHistory: [],
-              systemEvent: true,
-            }),
-          });
-          
-          if (!agentResponse.ok) {
-            const errText = await agentResponse.text();
-            console.error(`[Orchestrator] Agent ${event.target_agent} returned error:`, errText);
-          } else {
-            console.log(`[Orchestrator] Event ${event.id} routed to ${event.target_agent} successfully`);
-          }
-        } catch (routeErr) {
-          console.error(`[Orchestrator] Failed to route event to ${event.target_agent}:`, routeErr);
-        }
-      }
-      
-      await supabase
-        .from('ai_agent_events')
-        .update({ 
-          status: 'processed',
-          processed_at: new Date().toISOString(),
+        .update({
+          status: giveUp ? 'failed' : 'pending',
+          attempt_count: attempt,
+          error_message: message,
+          next_attempt_at: giveUp
+            ? null
+            : new Date(Date.now() + nextAttemptDelayMs(attempt)).toISOString(),
         })
         .eq('id', event.id);
-      
+      (giveUp ? failed : retried).push(event.id);
+    };
+
+    try {
+      await supabase
+        .from('ai_agent_events')
+        .update({ status: 'processing', attempt_count: attempt })
+        .eq('id', event.id);
+
+      console.log(`[Orchestrator] Processing event ${event.id} (attempt ${attempt}): ${event.event_type} -> ${event.target_agent}`);
+
+      if (event.target_agent) {
+        const eventMessage = `[System Event: ${event.event_type}] ${JSON.stringify(event.payload || {})}`;
+
+        const agentResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({
+            companyId: event.company_id,
+            agentType: event.target_agent,
+            message: eventMessage,
+            conversationHistory: [],
+            systemEvent: true,
+            agentContext: (event.payload || {}).agent_context ?? undefined,
+          }),
+        });
+
+        if (!agentResponse.ok) {
+          const errText = await agentResponse.text();
+          console.error(`[Orchestrator] Agent ${event.target_agent} returned error:`, errText);
+          await recordFailure(`${event.target_agent}: ${errText.slice(0, 300)}`);
+          continue;
+        }
+        console.log(`[Orchestrator] Event ${event.id} delivered to ${event.target_agent}`);
+      }
+
+      await supabase
+        .from('ai_agent_events')
+        .update({
+          status: 'processed',
+          processed_at: new Date().toISOString(),
+          next_attempt_at: null,
+        })
+        .eq('id', event.id);
+
       processed.push(event.id);
     } catch (err: any) {
       console.error(`[Orchestrator] Failed to process event ${event.id}:`, err);
-      
-      await supabase
-        .from('ai_agent_events')
-        .update({ 
-          status: 'failed',
-          error_message: err?.message || 'Unknown error',
-        })
-        .eq('id', event.id);
-      
-      failed.push(event.id);
+      await recordFailure(err?.message || 'Unknown error');
     }
   }
-  
-  return new Response(JSON.stringify({ 
+
+  return new Response(JSON.stringify({
     processed: processed.length,
+    retrying: retried.length,
     failed: failed.length,
     total: events?.length || 0,
   }), {
@@ -837,16 +801,17 @@ async function handleTestAgent(
 // business_finance and read via ai-agent-chat tools.
 // ---------------------------------------------------------------------------
 
+// Keyed by canonical dotted event names (see _shared/event-subscriptions.ts).
 const PIPELINE_EVENT_STAGE_MAP: Record<string, string | null> = {
-  lead_qualified: 'contacted',
-  lead_scored: 'contacted',
-  quote_sent: 'quoted',
-  quote_approved: 'quoted',
-  payment_received: 'won',
-  invoice_paid: 'won',
-  job_complete: 'won',
-  review_received: null, // touch last_activity_at only
-  churn_risk_detected: null, // sets next_action, no stage change
+  'lead.qualified': 'contacted',
+  'lead.scored': 'contacted',
+  'quote.sent': 'quoted',
+  'quote.approved': 'quoted',
+  'payment.received': 'won',
+  'invoice.paid': 'won',
+  'job.completed': 'won',
+  'review.received': null, // touch last_activity_at only
+  'churn_risk.detected': null, // sets next_action, no stage change
 };
 
 async function upsertPipelineForEvent(

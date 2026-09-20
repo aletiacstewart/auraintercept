@@ -294,6 +294,7 @@ export type Database = {
       ai_agent_events: {
         Row: {
           action_description: string | null
+          attempt_count: number
           company_id: string
           confidence_score: number | null
           created_at: string | null
@@ -301,6 +302,7 @@ export type Database = {
           error_message: string | null
           event_type: string
           id: string
+          next_attempt_at: string | null
           override_reason: string | null
           payload: Json
           processed_at: string | null
@@ -313,6 +315,7 @@ export type Database = {
         }
         Insert: {
           action_description?: string | null
+          attempt_count?: number
           company_id: string
           confidence_score?: number | null
           created_at?: string | null
@@ -320,6 +323,7 @@ export type Database = {
           error_message?: string | null
           event_type: string
           id?: string
+          next_attempt_at?: string | null
           override_reason?: string | null
           payload?: Json
           processed_at?: string | null
@@ -332,6 +336,7 @@ export type Database = {
         }
         Update: {
           action_description?: string | null
+          attempt_count?: number
           company_id?: string
           confidence_score?: number | null
           created_at?: string | null
@@ -339,6 +344,7 @@ export type Database = {
           error_message?: string | null
           event_type?: string
           id?: string
+          next_attempt_at?: string | null
           override_reason?: string | null
           payload?: Json
           processed_at?: string | null
