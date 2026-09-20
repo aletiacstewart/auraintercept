@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useIndustryPack } from '@/hooks/useIndustryPack';
 import { getIndustryServiceConsoleConfig } from '@/lib/industryAgentMap';
+import type { AgentContext } from '@/types/agentContext';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -173,6 +174,9 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
             isHandoff: true,
             handoffFrom: currentAgent,
             handoffReason: data.handoff_reason,
+            // Structured hand-off package (appointment/customer IDs, contact
+            // details, metadata) so the receiving agent doesn't re-ask.
+            agentContext: (data.agent_context as AgentContext | null) ?? null,
             language,
             conversationHistory: [...messages, { role: 'user', content: userMessage }, assistantMsg].map(m => ({
               role: m.role,

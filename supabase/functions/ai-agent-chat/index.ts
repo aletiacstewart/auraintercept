@@ -2,6 +2,15 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildReceptionistPromptAddon } from "../_shared/receptionist-scripts.ts";
 import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
+import {
+  AgentContext,
+  buildAgentContext,
+  describeAgentContext,
+  describeMissingContext,
+  parseAgentContext,
+  serializeAgentContext,
+  validateAgentContext,
+} from "../_shared/agent-context.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -1244,6 +1253,8 @@ const AGENT_TOOLS: Record<string, any[]> = {
           properties: {
             target_agent: { type: 'string', enum: ['dispatch', 'quoting', 'triage', 'followup'] },
             reason: { type: 'string' },
+            appointment_id: { type: 'string', description: 'ID of the appointment you just created, if any. Required when handing off to dispatch.' },
+            customer_id: { type: 'string', description: 'ID of the customer record, if known.' },
           },
           required: ['target_agent', 'reason'],
         },
@@ -3392,7 +3403,7 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel, model: requestModel, language: requestLanguage } = await req.json();
+    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, agentContext: rawIncomingAgentContext, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel, model: requestModel, language: requestLanguage } = await req.json();
 
     // Resolve language: explicit request → company default → 'en'.
     let resolvedLanguage: 'en' | 'es' | 'auto' = 'en';
@@ -3881,43 +3892,20 @@ serve(async (req) => {
       basePrompt = incomingSystemPrompt; // Use the phone-optimized prompt which already includes the base + phone rules + history
     }
     
-    // Add handoff-specific instructions with customer info
+    // Add handoff-specific instructions from the structured AgentContext.
+    // Legacy callers that send only `customerInfo` are folded into the same shape.
+    const incomingAgentContext: AgentContext | null = parseAgentContext(rawIncomingAgentContext);
     let handoffInstructions = '';
     if (isHandoff && handoffFrom) {
-      handoffInstructions = `
-IMPORTANT: You are receiving a handoff from the ${handoffFrom} agent.
-Reason for handoff: ${incomingHandoffReason || 'Customer needs your specialized assistance'}
-`;
-      // Include customer info if provided
-      if (customerInfo) {
-        handoffInstructions += `\nCUSTOMER INFORMATION ALREADY COLLECTED:`;
-        if (customerInfo.name) handoffInstructions += `\n- Name: ${customerInfo.name}`;
-        if (customerInfo.phone) handoffInstructions += `\n- Phone: ${customerInfo.phone}`;
-        if (customerInfo.address) handoffInstructions += `\n- Address: ${customerInfo.address}`;
-        if (customerInfo.email) handoffInstructions += `\n- Email: ${customerInfo.email}`;
-        if (customerInfo.issue) handoffInstructions += `\n- Issue: ${customerInfo.issue}`;
-        
-        const hasAllInfo = customerInfo.name && customerInfo.phone && customerInfo.address;
-        if (hasAllInfo) {
-          handoffInstructions += `\n\nYou ALREADY HAVE all required customer info. DO NOT ask for name, phone, or address again!
-Instead: Greet them by name, confirm the issue, and proceed to help them immediately.`;
-        } else {
-          const missing: string[] = [];
-          if (!customerInfo.name) missing.push('name');
-          if (!customerInfo.phone) missing.push('phone number');
-          if (!customerInfo.address) missing.push('address');
-          handoffInstructions += `\n\nYou still need: ${missing.join(', ')}. Only ask for what's missing.`;
-        }
-      }
-      
-      handoffInstructions += `
-
-YOUR FIRST MESSAGE MUST:
-1. Greet the customer by name if you have it
-2. Acknowledge their specific issue
-3. Tell them exactly what you're doing to help
-4. If you have their address, confirm it and proceed
-5. Only ask for missing information`;
+      const ctx = incomingAgentContext ?? buildAgentContext({
+        contextId,
+        companyId,
+        fromAgent: handoffFrom,
+        toAgent: agentType,
+        reason: incomingHandoffReason || 'Customer needs your specialized assistance',
+        customer: customerInfo || null,
+      });
+      handoffInstructions = `\n${describeAgentContext(ctx)}`;
     }
 
     const dateTimeContext = getDateTimeContext();
@@ -4159,7 +4147,60 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     let responseText = choice?.message?.content || '';
     let handoffTo: string | null = null;
     let handoffReason: string | null = null;
+    let outgoingAgentContext: AgentContext | null = null;
     const toolCalls: Array<{ name: string; arguments: any; result: string }> = [];
+
+    /**
+     * Scan this turn's tool results for record IDs the agent just created
+     * (e.g. an appointment), so the hand-off can carry them forward.
+     */
+    const collectIdsFromToolCalls = (): { appointmentId: string | null; customerId: string | null; jobId: string | null } => {
+      let appointmentId: string | null = null;
+      let customerId: string | null = null;
+      let jobId: string | null = null;
+      for (const tc of toolCalls) {
+        let parsed: any = null;
+        try { parsed = JSON.parse(tc.result); } catch { continue; }
+        if (!parsed || typeof parsed !== 'object') continue;
+        const candidates = [parsed, parsed.appointment, parsed.data, parsed.job, parsed.customer].filter(Boolean);
+        for (const c of candidates) {
+          if (!appointmentId) appointmentId = c.appointment_id || c.appointmentId || (tc.name?.includes('appointment') && c.id) || null;
+          if (!customerId) customerId = c.customer_id || c.customerId || null;
+          if (!jobId) jobId = c.job_id || c.jobId || null;
+        }
+      }
+      return { appointmentId, customerId, jobId };
+    };
+
+    /**
+     * Build + validate the structured context for a hand-off.
+     * Returns null (with a reason) when required data is still missing.
+     */
+    const prepareHandoffContext = (target: string, reason: string, args: any) => {
+      const ids = collectIdsFromToolCalls();
+      const ctx = buildAgentContext({
+        contextId,
+        companyId,
+        fromAgent: agentType,
+        toAgent: LEGACY_AGENT_MAP[target] || target,
+        reason,
+        appointmentId: args?.appointment_id || ids.appointmentId || incomingAgentContext?.appointmentId || null,
+        customerId: args?.customer_id || ids.customerId || incomingAgentContext?.customerId || null,
+        jobId: args?.job_id || ids.jobId || incomingAgentContext?.jobId || null,
+        workflowId: args?.workflow_id || incomingAgentContext?.workflowId || null,
+        customer: {
+          ...(incomingAgentContext?.customer || {}),
+          ...(customerInfo || {}),
+          ...(args?.customer_intent ? { issue: args.customer_intent } : {}),
+        },
+        metadata: {
+          ...(incomingAgentContext?.metadata || {}),
+          ...(args?.urgency ? { urgency: args.urgency } : {}),
+        },
+      });
+      const validation = validateAgentContext(ctx);
+      return { ctx, validation };
+    };
 
     // Process tool calls
     if (choice?.message?.tool_calls) {
@@ -4202,13 +4243,25 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             });
             // Don't set handoffTo, so the conversation continues with current agent
           } else {
-            handoffTo = target;
-            handoffReason = reason;
-            toolCalls.push({
-              name: 'handoff_to_agent',
-              arguments: { ...(args as any), target_agent: target, reason },
-              result: `Handing off to ${target}: ${reason}`,
-            });
+            const { ctx, validation } = prepareHandoffContext(target, reason, args);
+            if (!validation.ok) {
+              // Don't hand off with incomplete data — tell the agent what's still needed.
+              console.log(`[AI Agent Chat] Handoff to ${target} blocked, missing: ${validation.missing.join(', ')}`);
+              toolCalls.push({
+                name: 'handoff_to_agent',
+                arguments: { ...(args as any), target_agent: target, reason },
+                result: `Cannot hand off to ${target} yet. Still needed before handoff: ${describeMissingContext(validation)}. Collect or create these first, then hand off.`,
+              });
+            } else {
+              handoffTo = target;
+              handoffReason = reason;
+              outgoingAgentContext = ctx;
+              toolCalls.push({
+                name: 'handoff_to_agent',
+                arguments: { ...(args as any), target_agent: target, reason },
+                result: `Handing off to ${target}: ${reason}`,
+              });
+            }
           }
         } else {
           // Execute the tool
@@ -4316,13 +4369,24 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
                   result: `Cannot hand off to ${targetAgent}: This feature requires the ${requiredTier} subscription tier.`,
                 });
               } else {
-                handoffTo = targetAgent;
-                handoffReason = args.reason;
-                toolCalls.push({
-                  name: 'handoff_to_agent',
-                  arguments: args,
-                  result: `Handing off to ${targetAgent}: ${args.reason}`,
-                });
+                const { ctx, validation } = prepareHandoffContext(targetAgent, args.reason, args);
+                if (!validation.ok) {
+                  console.log(`[AI Agent Chat] Handoff to ${targetAgent} blocked in loop, missing: ${validation.missing.join(', ')}`);
+                  toolCalls.push({
+                    name: 'handoff_to_agent',
+                    arguments: args,
+                    result: `Cannot hand off to ${targetAgent} yet. Still needed before handoff: ${describeMissingContext(validation)}. Collect or create these first, then hand off.`,
+                  });
+                } else {
+                  handoffTo = targetAgent;
+                  handoffReason = args.reason;
+                  outgoingAgentContext = ctx;
+                  toolCalls.push({
+                    name: 'handoff_to_agent',
+                    arguments: args,
+                    result: `Handing off to ${targetAgent}: ${args.reason}`,
+                  });
+                }
               }
             } else {
               const result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
@@ -4442,6 +4506,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
           response: responseText, 
           tool_calls: toolCalls,
           handoff_reason: handoffReason,
+          agent_context: outgoingAgentContext ? serializeAgentContext(outgoingAgentContext) : null,
           context_id: contextId,
         },
         status: handoffTo ? 'pending' : 'processed',
@@ -4453,15 +4518,17 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     if (handoffTo && contextId) {
       const { data: context } = await supabase
         .from('ai_agent_context')
-        .select('handoff_history')
+        .select('handoff_history, context_data')
         .eq('id', contextId)
         .single();
       
+      const serializedContext = outgoingAgentContext ? serializeAgentContext(outgoingAgentContext) : null;
       const handoffEntry = {
         from_agent: agentType,
         to_agent: handoffTo,
         reason: handoffReason,
         timestamp: new Date().toISOString(),
+        agent_context: serializedContext,
       };
       
       await supabase
@@ -4469,10 +4536,15 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
         .update({
           active_agent: handoffTo,
           handoff_history: [...(context?.handoff_history || []), handoffEntry],
+          context_data: {
+            ...((context?.context_data as Record<string, unknown>) || {}),
+            ...(serializedContext ? { agent_context: serializedContext } : {}),
+          },
           updated_at: new Date().toISOString(),
         })
         .eq('id', contextId);
     }
+
 
     // Generate next steps for customer based on handoff target
     let nextSteps: any = null;
@@ -4500,6 +4572,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       event_type: eventType,
       handoff_to: handoffTo,
       handoff_reason: handoffReason,
+      agent_context: outgoingAgentContext ? serializeAgentContext(outgoingAgentContext) : null,
       tool_calls: toolCalls,
       tool_ui: toolUi,
       context_id: contextId,
