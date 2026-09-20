@@ -3892,43 +3892,20 @@ serve(async (req) => {
       basePrompt = incomingSystemPrompt; // Use the phone-optimized prompt which already includes the base + phone rules + history
     }
     
-    // Add handoff-specific instructions with customer info
+    // Add handoff-specific instructions from the structured AgentContext.
+    // Legacy callers that send only `customerInfo` are folded into the same shape.
+    const incomingAgentContext: AgentContext | null = parseAgentContext(rawIncomingAgentContext);
     let handoffInstructions = '';
     if (isHandoff && handoffFrom) {
-      handoffInstructions = `
-IMPORTANT: You are receiving a handoff from the ${handoffFrom} agent.
-Reason for handoff: ${incomingHandoffReason || 'Customer needs your specialized assistance'}
-`;
-      // Include customer info if provided
-      if (customerInfo) {
-        handoffInstructions += `\nCUSTOMER INFORMATION ALREADY COLLECTED:`;
-        if (customerInfo.name) handoffInstructions += `\n- Name: ${customerInfo.name}`;
-        if (customerInfo.phone) handoffInstructions += `\n- Phone: ${customerInfo.phone}`;
-        if (customerInfo.address) handoffInstructions += `\n- Address: ${customerInfo.address}`;
-        if (customerInfo.email) handoffInstructions += `\n- Email: ${customerInfo.email}`;
-        if (customerInfo.issue) handoffInstructions += `\n- Issue: ${customerInfo.issue}`;
-        
-        const hasAllInfo = customerInfo.name && customerInfo.phone && customerInfo.address;
-        if (hasAllInfo) {
-          handoffInstructions += `\n\nYou ALREADY HAVE all required customer info. DO NOT ask for name, phone, or address again!
-Instead: Greet them by name, confirm the issue, and proceed to help them immediately.`;
-        } else {
-          const missing: string[] = [];
-          if (!customerInfo.name) missing.push('name');
-          if (!customerInfo.phone) missing.push('phone number');
-          if (!customerInfo.address) missing.push('address');
-          handoffInstructions += `\n\nYou still need: ${missing.join(', ')}. Only ask for what's missing.`;
-        }
-      }
-      
-      handoffInstructions += `
-
-YOUR FIRST MESSAGE MUST:
-1. Greet the customer by name if you have it
-2. Acknowledge their specific issue
-3. Tell them exactly what you're doing to help
-4. If you have their address, confirm it and proceed
-5. Only ask for missing information`;
+      const ctx = incomingAgentContext ?? buildAgentContext({
+        contextId,
+        companyId,
+        fromAgent: handoffFrom,
+        toAgent: agentType,
+        reason: incomingHandoffReason || 'Customer needs your specialized assistance',
+        customer: customerInfo || null,
+      });
+      handoffInstructions = `\n${describeAgentContext(ctx)}`;
     }
 
     const dateTimeContext = getDateTimeContext();
