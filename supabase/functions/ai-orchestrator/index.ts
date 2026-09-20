@@ -8,6 +8,8 @@ import {
   validateAgentContext,
 } from "../_shared/agent-context.ts";
 import { createLookupRegistry } from "../_shared/agent-registry.ts";
+import { createEventBus, MAX_EVENT_ATTEMPTS, nextAttemptDelayMs } from "../_shared/event-bus.ts";
+import { normalizeEventName } from "../_shared/event-subscriptions.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -49,47 +51,9 @@ const AGENT_TYPES = {
   analytics_intelligence: { name: 'Analytics Intelligence Agent', category: 'analytics', phase: 5 },
 };
 
-// Event routing rules — which agents should receive which events.
-//
-// NOTE: EVENT_ROUTING intentionally covers only the 10 consolidated operatives.
-// The 14 industry specialist operatives (see INDUSTRY_SPECIALIST_OPERATIVES in
-// src/lib/subscriptionAgentConfig.ts) are request/response-only: they are
-// activated per industry pack and invoked by consolidated operatives via the
-// ai-agent-chat tool interface (e.g. `handoff_to_specialist`). They do not
-// subscribe to lifecycle events, so they must not appear here.
-const EVENT_ROUTING: Record<string, string[]> = {
-  // Customer Portal events
-  'triage_complete': ['customer_journey', 'dispatch', 'outreach'],
-  'appointment_booked': ['dispatch', 'field_navigation', 'customer_journey', 'business_finance'],
-  'appointment_cancelled': ['dispatch', 'customer_journey'],
-  'tech_assigned': ['field_navigation'],
-  'route_optimized': ['field_navigation', 'dispatch'],
-  'eta_updated': ['field_navigation'],
-  'tech_arrived': ['business_finance', 'field_navigation'],
-  'job_complete': ['business_finance', 'customer_journey', 'outreach'],
-  'quote_sent': ['business_finance'],
-  'quote_approved': ['business_finance'],
-  'payment_received': ['customer_journey', 'analytics_intelligence', 'outreach'],
-  'followup_sent': ['customer_journey'],
-  'review_received': ['analytics_intelligence', 'outreach'],
-  'churn_risk_detected': ['outreach'],
-  'inventory_low': ['dispatch', 'business_finance', 'admin'],
-  'seasonal_trigger': ['outreach'],
-  // Outreach & Sales events
-  'campaign_created': ['outreach'],
-  'lead_qualified': ['outreach', 'customer_journey'],
-  'lead_scored': ['outreach', 'customer_journey'],
-  // Creative Content events
-  'content_generated': ['web_presence'],
-  'post_published': ['analytics_intelligence'],
-  'content_published': ['web_presence'],
-  // Web Presence events
-  'blog_published': ['web_presence', 'creative_content'],
-  'seo_scan_complete': ['web_presence', 'analytics_intelligence'],
-  'content_engine_output': ['creative_content', 'outreach', 'web_presence'],
-  // Business lifecycle events
-  'invoice_paid': ['customer_journey', 'analytics_intelligence', 'outreach'],
-};
+// Event routing now lives in _shared/event-subscriptions.ts (declarative, shared
+// with the app). The 14 industry specialists stay request/response-only and do
+// not subscribe to lifecycle events.
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
