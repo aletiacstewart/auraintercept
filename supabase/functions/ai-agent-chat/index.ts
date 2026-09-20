@@ -11,6 +11,8 @@ import {
   serializeAgentContext,
   validateAgentContext,
 } from "../_shared/agent-context.ts";
+import { createAgentRegistry } from "../_shared/agent-registry.ts";
+import { LEGACY_TIER_MAP, meetsTier } from "../_shared/agent-definitions.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
