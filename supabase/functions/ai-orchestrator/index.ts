@@ -532,14 +532,16 @@ async function handleHandoff(
     source_agent: context.active_agent,
     target_agent: toAgent,
     event_type: 'agent_handoff',
-    payload: { context_id: contextId, ...payload },
+    payload: { context_id: contextId, ...payload, agent_context: serializedAgentContext },
     status: 'pending',
   });
   
   return new Response(JSON.stringify({ 
     success: true, 
     context: data,
-    handoff: handoffEntry 
+    handoff: handoffEntry,
+    agent_context: serializedAgentContext,
+    context_validation: contextValidation,
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
