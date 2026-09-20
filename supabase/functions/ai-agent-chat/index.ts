@@ -3494,10 +3494,6 @@ serve(async (req) => {
     const trialEndsAt = companyTierData?.trial_ends_at;
     const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
 
-    // Determine allowed agents based on the company's selected tier.
-    // Trial users get the agents of their selected plan, not full Elite access.
-    const allowedAgents = TIER_AGENTS[subscriptionTier] || [];
-
     // === INDUSTRY TEMPLATE PACK ===
     // Fetch the company's industry pack (drives prompt deltas + specialist agent gating)
     let industryPack: any = null;
@@ -3513,10 +3509,6 @@ serve(async (req) => {
     const packExtraOperatives: string[] = Array.isArray(industryPack?.extra_operatives) ? industryPack.extra_operatives : [];
     const packMinTiers: Record<string, string> = (industryPack?.min_tier_per_extra && typeof industryPack.min_tier_per_extra === 'object') ? industryPack.min_tier_per_extra : {};
 
-    // Tier ordering for comparison (lowest → highest)
-    const TIER_ORDER: Record<string, number> = { free: 0, starter: 1, connect: 2, performance: 3, command: 4 };
-    const meetsTier = (current: string, required: string) =>
-      (TIER_ORDER[current] ?? 0) >= (TIER_ORDER[required] ?? 0);
 
     const isSpecialist = agentRegistry.find(agentType)?.isSpecialist === true;
 
