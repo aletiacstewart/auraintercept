@@ -438,9 +438,36 @@ async function handleHandoff(
     : [];
   const cappedTranscript = existingTranscript.slice(-50);
 
+  // Structured hand-off context: use the caller's when supplied, otherwise
+  // derive one from the shared context row. Validated with the same helper
+  // ai-agent-chat uses so both paths agree on what a hand-off must carry.
+  const incomingCtx = parseAgentContext(payload.agent_context)
+    ?? parseAgentContext((context.context_data || {}).agent_context);
+  const agentContext = buildAgentContext({
+    contextId,
+    companyId,
+    fromAgent: context.active_agent || 'unknown',
+    toAgent,
+    reason: payload.reason || 'Agent handoff',
+    appointmentId: payload.appointment_id ?? incomingCtx?.appointmentId ?? context.appointment_id ?? null,
+    customerId: payload.customer_id ?? incomingCtx?.customerId ?? null,
+    jobId: payload.job_id ?? incomingCtx?.jobId ?? null,
+    workflowId: payload.workflow_id ?? incomingCtx?.workflowId ?? null,
+    customer: {
+      ...(incomingCtx?.customer || {}),
+      name: context.customer_name ?? incomingCtx?.customer?.name ?? null,
+      phone: context.customer_phone ?? incomingCtx?.customer?.phone ?? null,
+      email: normalizedEmail || incomingCtx?.customer?.email || null,
+    },
+    metadata: { ...(incomingCtx?.metadata || {}), ...(payload.metadata || {}) },
+  });
+  const contextValidation = validateAgentContext(agentContext);
+  const serializedAgentContext = serializeAgentContext(agentContext);
+
   const hydratedContextData = {
     ...(context.context_data || {}),
     ...(payload.additional_context || {}),
+    agent_context: serializedAgentContext,
     transcript: cappedTranscript,
     history: {
       recent_calls: recentCalls,
@@ -464,6 +491,9 @@ async function handleHandoff(
     reason: payload.reason || 'Agent handoff',
     timestamp: new Date().toISOString(),
     context_snapshot: payload.context_snapshot || {},
+    agent_context: serializedAgentContext,
+    context_complete: contextValidation.ok,
+    context_missing: contextValidation.missing,
     carried_keys: carriedKeys,
     summary: `Carrying ${recentCalls.length} call(s), ${recentSms.length} sms, ${cappedTranscript.length} chat turn(s).`,
   };
