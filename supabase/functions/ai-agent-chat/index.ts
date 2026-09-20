@@ -4030,41 +4030,11 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       { role: 'user', content: message },
     ];
 
-    // Get tools for this agent type
-    // Normalize consolidated 10-operative agent IDs to their AGENT_TOOLS keys
-    const TOOL_KEY_MAP: Record<string, string> = {
-      // Legacy social agents → social tools
-      social_content: 'social',
-      social_scheduler: 'social',
-      social_analytics: 'social',
-      // creative alias → same toolset as creative_content (uses social tools)
-      creative: 'social',
-      creative_content: 'social',
-      // Legacy analytics aliases → analytics_intelligence tools
-      analytics: 'analytics_intelligence',
-      insights: 'analytics_intelligence',
-      performance: 'analytics_intelligence',
-      revenue: 'analytics_intelligence',
-      forecast: 'analytics_intelligence',
-      // Legacy campaign/lead/marketing aliases → outreach tools
-      campaign: 'outreach',
-      lead: 'outreach',
-      marketing: 'outreach',
-      // Legacy field ops aliases → field_navigation tools
-      route: 'field_navigation',
-      eta: 'field_navigation',
-      checkin: 'field_navigation',
-      // Legacy quoting/invoice/inventory aliases → business_finance tools
-      quoting: 'business_finance',
-      invoice: 'business_finance',
-      inventory: 'business_finance',
-      // Legacy booking/followup/review aliases → customer_journey (full union)
-      booking: 'customer_journey',
-      followup: 'customer_journey',
-      review: 'customer_journey',
-    };
-    const toolKey = TOOL_KEY_MAP[agentType] || agentType;
-    const tools = AGENT_TOOLS[toolKey] || [
+    // Get tools for this agent type — the registry knows which AGENT_TOOLS key
+    // each canonical agent and legacy alias maps to.
+    const tools = (resolvedAgent?.tools() as any[] | undefined)?.length
+      ? (resolvedAgent!.tools() as any[])
+      : AGENT_TOOLS[agentType] || [
       {
         type: 'function',
         function: {
