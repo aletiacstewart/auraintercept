@@ -84,13 +84,14 @@ Deno.serve(async (req) => {
     const isVirtual = deliveryType === 'virtual';
     const isAtBusiness = deliveryType === 'in_person_business';
 
-    // Emit real business events to the agent orchestrator for tech
-    // assignment + job completion. Fire-and-forget; downstream operatives
-    // in EVENT_ROUTING (field_navigation for tech_assigned; business_finance,
-    // customer_journey, outreach for job_complete) react to these.
+    // Emit real business events onto the agent event bus for tech
+    // assignment + job completion. Fire-and-forget; subscribers are declared
+    // in _shared/event-subscriptions.ts (field_navigation for
+    // technician.assigned; business_finance, customer_journey, outreach for
+    // job.completed).
     const ORCHESTRATOR_EVENT_MAP: Record<string, string> = {
-      assigned: 'tech_assigned',
-      completed: 'job_complete',
+      assigned: 'technician.assigned',
+      completed: 'job.completed',
     };
     const orchestratorEvent = ORCHESTRATOR_EVENT_MAP[notificationType];
     if (orchestratorEvent && appointment?.company_id) {
