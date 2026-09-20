@@ -50,6 +50,24 @@ export type Database = {
         }
         Relationships: []
       }
+      _trigger_debug: {
+        Row: {
+          created_at: string | null
+          id: number
+          note: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          note?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          note?: string | null
+        }
+        Relationships: []
+      }
       agent_performance_metrics: {
         Row: {
           agent_type: string
