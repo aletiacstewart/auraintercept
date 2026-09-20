@@ -2,6 +2,15 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildReceptionistPromptAddon } from "../_shared/receptionist-scripts.ts";
 import { callAIGatewayWithFallback } from "../_shared/ai-gateway.ts";
+import {
+  AgentContext,
+  buildAgentContext,
+  describeAgentContext,
+  describeMissingContext,
+  parseAgentContext,
+  serializeAgentContext,
+  validateAgentContext,
+} from "../_shared/agent-context.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -1244,6 +1253,8 @@ const AGENT_TOOLS: Record<string, any[]> = {
           properties: {
             target_agent: { type: 'string', enum: ['dispatch', 'quoting', 'triage', 'followup'] },
             reason: { type: 'string' },
+            appointment_id: { type: 'string', description: 'ID of the appointment you just created, if any. Required when handing off to dispatch.' },
+            customer_id: { type: 'string', description: 'ID of the customer record, if known.' },
           },
           required: ['target_agent', 'reason'],
         },
