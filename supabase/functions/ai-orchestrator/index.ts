@@ -207,76 +207,55 @@ async function handleEmitEvent(
   payload: any,
   contextId?: string
 ) {
-  console.log(`[Orchestrator] Emitting event: ${eventType} from ${sourceAgent}`);
-  
-  // Get target agents for this event type
-  const targetAgents = EVENT_ROUTING[eventType] || [];
+  const canonicalEvent = normalizeEventName(eventType);
+  console.log(`[Orchestrator] Emitting event: ${canonicalEvent} from ${sourceAgent}`);
 
   // Pipeline side-effect: keep customer_pipeline in sync with lifecycle events.
   // Runs alongside normal event fanout — no new operative required.
   try {
-    await upsertPipelineForEvent(supabase, companyId, eventType, payload);
+    await upsertPipelineForEvent(supabase, companyId, canonicalEvent, payload);
   } catch (pipelineErr) {
     console.error('[Orchestrator] pipeline upsert failed:', pipelineErr);
   }
-  
-  // Get enabled agents for this company
+
+  // Only agents the company has switched on receive events.
   const { data: configs } = await supabase
     .from('ai_agent_configs')
     .select('agent_type')
     .eq('company_id', companyId)
     .eq('is_enabled', true);
-  
+
   const enabledAgents = new Set(configs?.map((c: any) => c.agent_type) || []);
-  
-  // Filter to only enabled target agents — normalize legacy IDs to 10-operative names for DB lookup
-  const activeTargets = targetAgents.filter(agent => {
-    const normalized = normalizeAgentName(agent);
-    return enabledAgents.has(agent) || enabledAgents.has(normalized);
-  });
-  
-  // Create events for each target
-  const events: any[] = activeTargets.map(targetAgent => ({
-    company_id: companyId,
-    source_agent: sourceAgent,
-    target_agent: targetAgent,
-    event_type: eventType,
-    payload: { ...payload, context_id: contextId },
-    status: 'pending',
-  }));
-  
-  // Also create a broadcast event (no specific target)
-  events.push({
-    company_id: companyId,
-    source_agent: sourceAgent,
-    target_agent: null as any,
-    event_type: eventType,
-    payload: { ...payload, context_id: contextId },
-    status: 'processed', // Broadcast events are immediately marked processed
-  });
-  
-  const { data, error } = await supabase
-    .from('ai_agent_events')
-    .insert(events)
-    .select();
-  
-  if (error) throw error;
-  
+
+  const bus = createEventBus(supabase);
+  const result = await bus.emit(
+    {
+      name: canonicalEvent,
+      companyId,
+      sourceAgent,
+      payload,
+      contextId: contextId || null,
+    },
+    (agent) => enabledAgents.has(agent) || enabledAgents.has(normalizeAgentName(agent)),
+  );
+
   // Log the event emission
   await supabase.from('ai_agent_logs').insert({
     company_id: companyId,
     agent_type: sourceAgent,
     context_id: contextId,
     action: 'emit_event',
-    input_data: { event_type: eventType },
-    output_data: { targets: activeTargets, event_count: events.length },
-    success: true,
+    input_data: { event_type: canonicalEvent },
+    output_data: { targets: result.targets, event_count: result.eventsCreated },
+    success: !result.error,
   });
-  
-  return new Response(JSON.stringify({ 
-    success: true, 
-    events_created: data?.length || 0,
-    target_agents: activeTargets 
+
+  return new Response(JSON.stringify({
+    success: !result.error,
+    events_created: result.eventsCreated,
+    target_agents: result.targets,
+    event_type: canonicalEvent,
+    ...(result.error ? { error: result.error } : {}),
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
