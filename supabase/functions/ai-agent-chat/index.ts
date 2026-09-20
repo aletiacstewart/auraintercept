@@ -3596,11 +3596,7 @@ serve(async (req) => {
     const meetsTier = (current: string, required: string) =>
       (TIER_ORDER[current] ?? 0) >= (TIER_ORDER[required] ?? 0);
 
-    // Specialist agents are allowed when:
-    //  (a) the agent is in INDUSTRY_SPECIALIST_OPERATIVES,
-    //  (b) the company's industry pack opts in via extra_operatives,
-    //  (c) the company meets the per-pack minimum tier (defaults to performance), OR is in trial.
-    const isSpecialist = INDUSTRY_SPECIALIST_OPERATIVES.includes(normalizedAgentType);
+    const isSpecialist = agentRegistry.find(agentType)?.isSpecialist === true;
 
     // Platform admins bypass the industry-pack gate so they can test any specialist
     // from the Specialist Operatives Console regardless of the company's industry.
@@ -3617,30 +3613,32 @@ serve(async (req) => {
       }
     }
 
-    const specialistAllowed =
-      isSpecialist &&
-      (isPlatformAdmin || packExtraOperatives.includes(normalizedAgentType)) &&
-      (inTrial || isPlatformAdmin || meetsTier(subscriptionTier, packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'));
+    // One gating decision for this request; reused for every handoff target.
+    const gateOptions = {
+      tier: subscriptionTier,
+      packExtraOperatives,
+      packMinTiers,
+      isPlatformAdmin,
+      inTrial: Boolean(inTrial),
+    };
 
-    // Validate agent access using normalized agent type
-    if (!allowedAgents.includes(normalizedAgentType) && !specialistAllowed) {
-      const requiredTier = getRequiredTierForAgent(agentType);
-      const reason = isSpecialist
-        ? (packExtraOperatives.includes(normalizedAgentType)
-            ? `requires ${packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'} tier`
-            : `not enabled for the ${industryPack?.label || 'current'} industry pack`)
-        : `requires the ${requiredTier} subscription tier`;
-      console.log(`[AI Agent Chat] Agent locked: ${agentType} (normalized: ${normalizedAgentType}) requires ${requiredTier}, company has ${subscriptionTier}`);
-      return new Response(JSON.stringify({ 
+    const resolution = agentRegistry.resolve(agentType, gateOptions);
+    if (!resolution.allowed) {
+      const reason = resolution.agent?.isSpecialist && resolution.requiredTier === null
+        ? `is not enabled for the ${industryPack?.label || 'current'} industry pack`
+        : resolution.reason;
+      console.log(`[AI Agent Chat] Agent locked: ${agentType} (normalized: ${normalizedAgentType}) — ${reason}, company has ${subscriptionTier}`);
+      return new Response(JSON.stringify({
         error: 'agent_locked',
         message: `The ${agentType} agent ${reason}.`,
-        required_tier: requiredTier || (packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || null),
-        current_tier: subscriptionTier
+        required_tier: resolution.requiredTier,
+        current_tier: subscriptionTier,
       }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    const resolvedAgent = resolution.agent;
 
     // === CUSTOMER COMPANY ASSOCIATION VALIDATION ===
     // For customer-facing requests (not internal admin agents), validate and manage company associations
