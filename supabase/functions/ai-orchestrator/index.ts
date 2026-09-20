@@ -541,95 +541,111 @@ async function handleListAgents(supabase: any, companyId: string) {
 }
 
 // Process pending events by routing them to the real ai-agent-chat function
+/**
+ * Delivery worker for the event bus. Runs every 2 minutes.
+ * Each event gets up to MAX_EVENT_ATTEMPTS tries with a growing back-off;
+ * after that it is parked as `failed` so it shows in the Activity screen.
+ */
 async function handleProcessPendingEvents(supabase: any, companyId?: string) {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  
+  const nowIso = new Date().toISOString();
+
   let query = supabase
     .from('ai_agent_events')
     .select('*')
     .eq('status', 'pending')
+    .or(`next_attempt_at.is.null,next_attempt_at.lte.${nowIso}`)
     .order('created_at', { ascending: true })
     .limit(100);
-  
+
   if (companyId) {
     query = query.eq('company_id', companyId);
   }
-  
+
   const { data: events, error } = await query;
-  
+
   if (error) throw error;
-  
+
   const processed: string[] = [];
+  const retried: string[] = [];
   const failed: string[] = [];
-  
+
   for (const event of events || []) {
-    try {
-      // Mark as processing
+    const attempt = (event.attempt_count ?? 0) + 1;
+
+    /** Park or reschedule a failed delivery. */
+    const recordFailure = async (message: string) => {
+      const giveUp = attempt >= MAX_EVENT_ATTEMPTS;
       await supabase
         .from('ai_agent_events')
-        .update({ status: 'processing' })
-        .eq('id', event.id);
-      
-      console.log(`[Orchestrator] Processing event ${event.id}: ${event.event_type} -> ${event.target_agent}`);
-      
-      // Route to the real ai-agent-chat function for the target agent
-      if (event.target_agent) {
-        try {
-          const eventMessage = `[System Event: ${event.event_type}] ${JSON.stringify(event.payload || {})}`;
-          
-          const agentResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${supabaseServiceKey}`,
-            },
-            body: JSON.stringify({
-              companyId: event.company_id,
-              agentType: event.target_agent,
-              message: eventMessage,
-              conversationHistory: [],
-              systemEvent: true,
-            }),
-          });
-          
-          if (!agentResponse.ok) {
-            const errText = await agentResponse.text();
-            console.error(`[Orchestrator] Agent ${event.target_agent} returned error:`, errText);
-          } else {
-            console.log(`[Orchestrator] Event ${event.id} routed to ${event.target_agent} successfully`);
-          }
-        } catch (routeErr) {
-          console.error(`[Orchestrator] Failed to route event to ${event.target_agent}:`, routeErr);
-        }
-      }
-      
-      await supabase
-        .from('ai_agent_events')
-        .update({ 
-          status: 'processed',
-          processed_at: new Date().toISOString(),
+        .update({
+          status: giveUp ? 'failed' : 'pending',
+          attempt_count: attempt,
+          error_message: message,
+          next_attempt_at: giveUp
+            ? null
+            : new Date(Date.now() + nextAttemptDelayMs(attempt)).toISOString(),
         })
         .eq('id', event.id);
-      
+      (giveUp ? failed : retried).push(event.id);
+    };
+
+    try {
+      await supabase
+        .from('ai_agent_events')
+        .update({ status: 'processing', attempt_count: attempt })
+        .eq('id', event.id);
+
+      console.log(`[Orchestrator] Processing event ${event.id} (attempt ${attempt}): ${event.event_type} -> ${event.target_agent}`);
+
+      if (event.target_agent) {
+        const eventMessage = `[System Event: ${event.event_type}] ${JSON.stringify(event.payload || {})}`;
+
+        const agentResponse = await fetch(`${supabaseUrl}/functions/v1/ai-agent-chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({
+            companyId: event.company_id,
+            agentType: event.target_agent,
+            message: eventMessage,
+            conversationHistory: [],
+            systemEvent: true,
+            agentContext: (event.payload || {}).agent_context ?? undefined,
+          }),
+        });
+
+        if (!agentResponse.ok) {
+          const errText = await agentResponse.text();
+          console.error(`[Orchestrator] Agent ${event.target_agent} returned error:`, errText);
+          await recordFailure(`${event.target_agent}: ${errText.slice(0, 300)}`);
+          continue;
+        }
+        console.log(`[Orchestrator] Event ${event.id} delivered to ${event.target_agent}`);
+      }
+
+      await supabase
+        .from('ai_agent_events')
+        .update({
+          status: 'processed',
+          processed_at: new Date().toISOString(),
+          next_attempt_at: null,
+        })
+        .eq('id', event.id);
+
       processed.push(event.id);
     } catch (err: any) {
       console.error(`[Orchestrator] Failed to process event ${event.id}:`, err);
-      
-      await supabase
-        .from('ai_agent_events')
-        .update({ 
-          status: 'failed',
-          error_message: err?.message || 'Unknown error',
-        })
-        .eq('id', event.id);
-      
-      failed.push(event.id);
+      await recordFailure(err?.message || 'Unknown error');
     }
   }
-  
-  return new Response(JSON.stringify({ 
+
+  return new Response(JSON.stringify({
     processed: processed.length,
+    retrying: retried.length,
     failed: failed.length,
     total: events?.length || 0,
   }), {
