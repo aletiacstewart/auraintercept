@@ -3403,7 +3403,7 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel, model: requestModel, language: requestLanguage } = await req.json();
+    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, agentContext: rawIncomingAgentContext, isInternalRequest, pageContext, systemPrompt: incomingSystemPrompt, channel, model: requestModel, language: requestLanguage } = await req.json();
 
     // Resolve language: explicit request → company default → 'en'.
     let resolvedLanguage: 'en' | 'es' | 'auto' = 'en';
