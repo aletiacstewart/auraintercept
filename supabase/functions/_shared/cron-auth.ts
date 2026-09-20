@@ -50,13 +50,15 @@ async function loadSecret(): Promise<string | null> {
       .maybeSingle();
     if (error || !data?.secret) {
       console.error("[cron-auth] failed to load shared secret:", error);
-      return null;
+      cachedSecret = envSecret || null;
+      return cachedSecret;
     }
     cachedSecret = data.secret as string;
     return cachedSecret;
   } catch (e) {
     console.error("[cron-auth] threw while loading shared secret:", e);
-    return null;
+    cachedSecret = envSecret || null;
+    return cachedSecret;
   }
 }
 
