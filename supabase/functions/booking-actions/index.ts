@@ -642,34 +642,10 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
     }).catch(err => console.error('Failed to send staff notification:', err));
   }
 
-  // Emit real appointment_booked event to the agent orchestrator so
-  // business_finance, customer_journey, dispatch, and field_navigation
-  // can react to actual bookings. Fire-and-forget — never block the
-  // booking response on the orchestrator.
-  if (appointment?.id) {
-    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    fetch(`${supabaseUrl}/functions/v1/ai-orchestrator`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${serviceRoleKey}`,
-      },
-      body: JSON.stringify({
-        action: 'emit_event',
-        companyId,
-        agentType: 'booking_system',
-        eventType: 'appointment_booked',
-        payload: {
-          appointment_id: appointment.id,
-          customer_id: (appointment as any).customer_id ?? null,
-          customer_name,
-          service_type: appointment.service_type,
-          scheduled_at: appointment.datetime,
-          total_amount: (appointment as any).total_amount ?? null,
-        },
-      }),
-    }).catch(err => console.error('Failed to emit appointment_booked event:', err));
-  }
+  // The `appointment.created` event is emitted by the database trigger
+  // `trg_emit_appointment_created`, so every booking path (portal, voice,
+  // agent, staff) reaches the event bus exactly once. Nothing to emit here.
+
 
   return { 
     success: true, 
