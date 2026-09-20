@@ -4243,13 +4243,25 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             });
             // Don't set handoffTo, so the conversation continues with current agent
           } else {
-            handoffTo = target;
-            handoffReason = reason;
-            toolCalls.push({
-              name: 'handoff_to_agent',
-              arguments: { ...(args as any), target_agent: target, reason },
-              result: `Handing off to ${target}: ${reason}`,
-            });
+            const { ctx, validation } = prepareHandoffContext(target, reason, args);
+            if (!validation.ok) {
+              // Don't hand off with incomplete data — tell the agent what's still needed.
+              console.log(`[AI Agent Chat] Handoff to ${target} blocked, missing: ${validation.missing.join(', ')}`);
+              toolCalls.push({
+                name: 'handoff_to_agent',
+                arguments: { ...(args as any), target_agent: target, reason },
+                result: `Cannot hand off to ${target} yet. Still needed before handoff: ${describeMissingContext(validation)}. Collect or create these first, then hand off.`,
+              });
+            } else {
+              handoffTo = target;
+              handoffReason = reason;
+              outgoingAgentContext = ctx;
+              toolCalls.push({
+                name: 'handoff_to_agent',
+                arguments: { ...(args as any), target_agent: target, reason },
+                result: `Handing off to ${target}: ${reason}`,
+              });
+            }
           }
         } else {
           // Execute the tool
