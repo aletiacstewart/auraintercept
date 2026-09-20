@@ -837,16 +837,17 @@ async function handleTestAgent(
 // business_finance and read via ai-agent-chat tools.
 // ---------------------------------------------------------------------------
 
+// Keyed by canonical dotted event names (see _shared/event-subscriptions.ts).
 const PIPELINE_EVENT_STAGE_MAP: Record<string, string | null> = {
-  lead_qualified: 'contacted',
-  lead_scored: 'contacted',
-  quote_sent: 'quoted',
-  quote_approved: 'quoted',
-  payment_received: 'won',
-  invoice_paid: 'won',
-  job_complete: 'won',
-  review_received: null, // touch last_activity_at only
-  churn_risk_detected: null, // sets next_action, no stage change
+  'lead.qualified': 'contacted',
+  'lead.scored': 'contacted',
+  'quote.sent': 'quoted',
+  'quote.approved': 'quoted',
+  'payment.received': 'won',
+  'invoice.paid': 'won',
+  'job.completed': 'won',
+  'review.received': null, // touch last_activity_at only
+  'churn_risk.detected': null, // sets next_action, no stage change
 };
 
 async function upsertPipelineForEvent(
