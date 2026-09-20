@@ -11,6 +11,8 @@ import {
   serializeAgentContext,
   validateAgentContext,
 } from "../_shared/agent-context.ts";
+import { createAgentRegistry } from "../_shared/agent-registry.ts";
+import { LEGACY_TIER_MAP } from "../_shared/agent-definitions.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -3458,96 +3460,18 @@ serve(async (req) => {
 
     console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, IP: ${clientIP}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
 
-    // === SUBSCRIPTION TIER GATING ===
-    // 10-OPERATIVE CONSOLIDATED MODEL — 4 TIERS (Starter / Connect / Performance / Command)
-    // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
-    const TIER_AGENTS: Record<string, string[]> = {
-      free: [],
-      // Aura Core ($497/mo · $0 onboarding during Beta — was $697/mo + $497 onboarding): 8 agents — AI receptionist, customer journey, outreach, creative
-      starter: [
-        'triage', 'customer_journey',   // Customer Portal
-        'outreach',                     // Marketing & Sales
-        'creative_content',             // Creative Content
-        'web_presence',                 // Creative & Web Presence
-      ],
-      // Aura Boost ($994/mo · $0 onboarding during Beta — was $1,394/mo + $994 onboarding): 12 agents — adds field ops (dispatch + field navigation)
-      connect: [
-        'triage', 'customer_journey',   // Customer Portal
-        'outreach',                     // Marketing & Sales
-        'creative_content',             // Creative Content
-        'web_presence',                 // Creative & Web Presence
-        'dispatch', 'field_navigation', // Field Operations
-      ],
-      // Aura Pro ($1,988/mo · $0 onboarding during Beta — was $2,788/mo + $1,988 onboarding): 16 agents — adds campaign, outreach, social
-      performance: [
-        'triage', 'customer_journey',              // Customer Portal
-        'dispatch', 'field_navigation',            // Field Operations
-        'outreach',                                // Marketing & Sales
-        'creative_content', 'web_presence',        // Creative & Web Presence
-        'business_finance', 'admin',               // Business Operations
-        'analytics_intelligence',                  // Analytics & Reports
-      ],
-      // Aura Elite ($3,979/mo · $0 onboarding during Beta — was $5,576/mo + $3,979 onboarding): All 24 agents (10 operative groups) + enterprise features
-      command: [
-        'triage', 'customer_journey',              // Customer Portal
-        'dispatch', 'field_navigation',            // Field Operations
-        'admin', 'business_finance',               // Business Operations
-        'outreach',                                // Marketing & Sales
-        'creative_content', 'web_presence',        // Creative & Web Presence
-        'analytics_intelligence',                  // Analytics & Reports
-      ],
-    };
+    // === AGENT REGISTRY / SERVICE DISCOVERY ===
+    // Identity, legacy aliases, tier gating, prompts, tools and capability
+    // discovery all come from the shared registry (_shared/agent-registry.ts).
+    // Tier definitions live in _shared/agent-definitions.ts — keep in sync with
+    // src/lib/agentCatalog.ts (parity test enforces it).
+    const agentRegistry = createAgentRegistry({
+      getPrompt: (type) => AGENT_PROMPTS[type],
+      getTools: (toolKey) => AGENT_TOOLS[toolKey],
+    });
 
-    // INDUSTRY SPECIALIST OPERATIVES — Pro/Elite tier, gated AND opted-in via industry pack
-    // Allowed only when the company's industry_template_pack lists them in extra_operatives
-    const INDUSTRY_SPECIALIST_OPERATIVES = [
-      'diagnostic', 'permit_code', 'site_survey', 'insurance_claim',
-      'listing_writer', 'offer_drafter', 'comp_analyst',
-      'style_consultant', 'loyalty_coach',
-      'menu_writer', 'reservation_optimizer',
-      'task_triager', 'calendar_optimizer',
-      'review_responder',
-    ];
-    // Specialist operatives ship with EVERY plan (including free trial). Activation is
-    // driven by the industry pack (extra_operatives), not by subscription tier.
-    // Keep in sync with src/lib/subscriptionAgentConfig.ts (SPECIALIST_MIN_TIER = 'free').
-    const SPECIALIST_MIN_TIER: Record<string, string> = Object.fromEntries(
-      INDUSTRY_SPECIALIST_OPERATIVES.map((op) => [op, 'free'])
-    );
-
-    // Legacy tier name → canonical tier mapping
-    const LEGACY_TIER_MAP: Record<string, string> = {
-      scheduling: 'starter', express: 'starter', aura_flow: 'starter', halo: 'starter', core: 'starter', aura_starter: 'starter', aura_core: 'starter',
-      growth: 'connect', business: 'connect', aura_connect: 'connect', aura_growth: 'connect', aura_boost: 'connect',
-      single_point: 'performance', field_ops: 'performance', multi_track: 'performance', aura_pro: 'performance',
-      // Self-maps
-      starter: 'starter', connect: 'connect', performance: 'performance', command: 'command', aura_elite: 'command',
-    };
-
-    // Legacy agent name → consolidated operative mapping
-    const LEGACY_AGENT_MAP: Record<string, string> = {
-      receptionist: 'triage', emergency: 'triage', intake: 'triage', faq: 'triage',
-      booking: 'customer_journey', followup: 'customer_journey', review: 'customer_journey',
-      route: 'field_navigation', eta: 'field_navigation', checkin: 'field_navigation',
-      quoting: 'business_finance', invoice: 'business_finance', inventory: 'business_finance',
-      estimate: 'business_finance', payments: 'business_finance',
-      campaign: 'outreach', lead: 'outreach', marketing: 'outreach',
-      insights: 'analytics_intelligence', revenue: 'analytics_intelligence', forecast: 'analytics_intelligence',
-      performance: 'analytics_intelligence', analytics: 'analytics_intelligence',
-      creative: 'creative_content', social_content: 'creative_content', social_scheduler: 'creative_content', social_analytics: 'creative_content',
-    };
-
-    // Normalize the agent type from legacy to consolidated
-    const normalizedAgentType = LEGACY_AGENT_MAP[agentType] || agentType;
-
-    // Helper to determine required tier for an agent
-    const getRequiredTierForAgent = (agent: string): string | null => {
-      const normalized = LEGACY_AGENT_MAP[agent] || agent;
-      if (TIER_AGENTS.connect.includes(normalized)) return 'connect';
-      if (TIER_AGENTS.performance.includes(normalized)) return 'performance';
-      if (TIER_AGENTS.command.includes(normalized)) return 'command';
-      return null;
-    };
+    // Normalize the agent type from legacy alias to canonical operative
+    const normalizedAgentType = agentRegistry.normalize(agentType);
 
     // Fetch company's subscription tier and brand settings
     const { data: companyTierData, error: tierError } = await supabase
@@ -3572,10 +3496,6 @@ serve(async (req) => {
     const trialEndsAt = companyTierData?.trial_ends_at;
     const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
 
-    // Determine allowed agents based on the company's selected tier.
-    // Trial users get the agents of their selected plan, not full Elite access.
-    const allowedAgents = TIER_AGENTS[subscriptionTier] || [];
-
     // === INDUSTRY TEMPLATE PACK ===
     // Fetch the company's industry pack (drives prompt deltas + specialist agent gating)
     let industryPack: any = null;
@@ -3591,16 +3511,8 @@ serve(async (req) => {
     const packExtraOperatives: string[] = Array.isArray(industryPack?.extra_operatives) ? industryPack.extra_operatives : [];
     const packMinTiers: Record<string, string> = (industryPack?.min_tier_per_extra && typeof industryPack.min_tier_per_extra === 'object') ? industryPack.min_tier_per_extra : {};
 
-    // Tier ordering for comparison (lowest → highest)
-    const TIER_ORDER: Record<string, number> = { free: 0, starter: 1, connect: 2, performance: 3, command: 4 };
-    const meetsTier = (current: string, required: string) =>
-      (TIER_ORDER[current] ?? 0) >= (TIER_ORDER[required] ?? 0);
 
-    // Specialist agents are allowed when:
-    //  (a) the agent is in INDUSTRY_SPECIALIST_OPERATIVES,
-    //  (b) the company's industry pack opts in via extra_operatives,
-    //  (c) the company meets the per-pack minimum tier (defaults to performance), OR is in trial.
-    const isSpecialist = INDUSTRY_SPECIALIST_OPERATIVES.includes(normalizedAgentType);
+    const isSpecialist = agentRegistry.find(agentType)?.isSpecialist === true;
 
     // Platform admins bypass the industry-pack gate so they can test any specialist
     // from the Specialist Operatives Console regardless of the company's industry.
@@ -3617,30 +3529,32 @@ serve(async (req) => {
       }
     }
 
-    const specialistAllowed =
-      isSpecialist &&
-      (isPlatformAdmin || packExtraOperatives.includes(normalizedAgentType)) &&
-      (inTrial || isPlatformAdmin || meetsTier(subscriptionTier, packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'));
+    // One gating decision for this request; reused for every handoff target.
+    const gateOptions = {
+      tier: subscriptionTier,
+      packExtraOperatives,
+      packMinTiers,
+      isPlatformAdmin,
+      inTrial: Boolean(inTrial),
+    };
 
-    // Validate agent access using normalized agent type
-    if (!allowedAgents.includes(normalizedAgentType) && !specialistAllowed) {
-      const requiredTier = getRequiredTierForAgent(agentType);
-      const reason = isSpecialist
-        ? (packExtraOperatives.includes(normalizedAgentType)
-            ? `requires ${packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || 'performance'} tier`
-            : `not enabled for the ${industryPack?.label || 'current'} industry pack`)
-        : `requires the ${requiredTier} subscription tier`;
-      console.log(`[AI Agent Chat] Agent locked: ${agentType} (normalized: ${normalizedAgentType}) requires ${requiredTier}, company has ${subscriptionTier}`);
-      return new Response(JSON.stringify({ 
+    const resolution = agentRegistry.resolve(agentType, gateOptions);
+    if (!resolution.allowed) {
+      const reason = resolution.agent?.isSpecialist && resolution.requiredTier === null
+        ? `is not enabled for the ${industryPack?.label || 'current'} industry pack`
+        : resolution.reason;
+      console.log(`[AI Agent Chat] Agent locked: ${agentType} (normalized: ${normalizedAgentType}) — ${reason}, company has ${subscriptionTier}`);
+      return new Response(JSON.stringify({
         error: 'agent_locked',
         message: `The ${agentType} agent ${reason}.`,
-        required_tier: requiredTier || (packMinTiers[normalizedAgentType] || SPECIALIST_MIN_TIER[normalizedAgentType] || null),
-        current_tier: subscriptionTier
+        required_tier: resolution.requiredTier,
+        current_tier: subscriptionTier,
       }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    const resolvedAgent = resolution.agent;
 
     // === CUSTOMER COMPANY ASSOCIATION VALIDATION ===
     // For customer-facing requests (not internal admin agents), validate and manage company associations
@@ -3789,34 +3703,16 @@ serve(async (req) => {
       contextData = context?.context_data || {};
     }
 
-    // Build the system prompt with handoff context
-    let basePrompt = AGENT_PROMPTS[normalizedAgentType]
+    // Build the system prompt with handoff context. The registry returns the
+    // operative's prompt, or a specialist's base primer, or a generic fallback.
+    let basePrompt = resolvedAgent?.systemPrompt()
+      || AGENT_PROMPTS[normalizedAgentType]
       || AGENT_PROMPTS[agentType]
       || `You are a helpful AI assistant for a service business.`;
-    
+
     // === INDUSTRY PROMPT DELTA ===
     // Append the industry-specific delta for this agent (and the universal delta if present).
-    // Specialists fall back to a generic specialist primer when no delta is configured.
     const promptDeltas: Record<string, string> = (industryPack?.agent_prompt_deltas && typeof industryPack.agent_prompt_deltas === 'object') ? industryPack.agent_prompt_deltas : {};
-    const SPECIALIST_BASE_PROMPTS: Record<string, string> = {
-      diagnostic: 'You are a Diagnostic specialist. Given symptoms, photos, brand, and model, suggest the most likely cause and recommended fix or parts list. Always recommend a tech visit if uncertain.',
-      permit_code: 'You are a Permit & Code specialist. Help determine whether a job requires a permit, what local code applies, and outline the permit-pull steps.',
-      site_survey: 'You are a Site Survey & Quote specialist. Walk customers through pre-install survey requirements (measurements, photos, access, utilities) and produce a takeoff-ready scope.',
-      insurance_claim: 'You are an Insurance Claim specialist. Help document damage with photos, dates, cause-of-loss, and produce claim-ready summaries for the carrier.',
-      listing_writer: 'You are a Listing Writer specialist for a real-estate business. Given property facts (beds, baths, sqft, lot, features, neighborhood), draft compelling, MLS-safe listing descriptions, attention-grabbing headlines, and 3–5 feature bullets. Never invent facts not provided. Match the brand voice when available.',
-      offer_drafter: 'You are an Offer Drafter specialist for a real-estate business. Compose offer letters, counter-offers, and contingency language. Surface key terms (price, EMD, financing, inspection, close date, contingencies) clearly. Always remind the user to have an attorney/broker review before sending.',
-      comp_analyst: 'You are a Comparable Sales (Comp) Analyst. Given a subject property and a list of nearby sales/rentals, summarize price-per-sqft, days-on-market, and pricing position (under/at/over market). Recommend a list-price range with rationale. Never fabricate comps that were not provided.',
-      style_consultant: 'You are a Style Consultant for a beauty/wellness business. Based on the client photo, hair/skin notes, and visit history, suggest cuts, colors, or treatments that fit their face shape, lifestyle, and previous services. Always include a maintenance plan and a polite upsell.',
-      loyalty_coach: 'You are a Loyalty Coach for a beauty/wellness business. Identify clients at risk of lapsing (no visit in 8+ weeks vs. their normal cadence) and draft warm, personalized rebook outreach with a specific suggested service and time window. Never sound transactional.',
-      menu_writer: 'You are a Menu Writer for a restaurant. Draft menu item copy, daily specials, and dietary callouts (GF, V, VG, contains-nuts) in the brand voice. Keep descriptions under 25 words and lead with the most appetizing detail. Never invent ingredients not provided.',
-      reservation_optimizer: 'You are a Reservation Optimizer for a restaurant. Given today\'s reservation grid, table inventory, and turn-times, suggest specific reshuffles that increase covers, reduce gaps, and avoid double-seating. Always state the impact (e.g. "+4 covers, no guests moved").',
-      task_triager: 'You are a Task Triager for a personal-assistant/concierge business. Sort inbound client tasks by urgency, owner, and due date. Output a prioritized list with a one-line rationale per task and a recommended next action.',
-      calendar_optimizer: 'You are a Calendar Optimizer. Given a calendar with appointments, locations, and travel times, suggest specific slot consolidations and travel-aware fixes (e.g. "move the 2pm Westside visit to Thursday next to the other two Westside stops"). Quantify the time saved.',
-      review_responder: 'You are a Review Responder. Draft on-brand responses to new customer reviews across Google, Yelp, and Facebook. Always thank the reviewer by name, address specifics they mentioned, and never argue with negative reviews — acknowledge, apologize where appropriate, and offer a direct contact path. Keep responses under 60 words.',
-    };
-    if (isSpecialist && SPECIALIST_BASE_PROMPTS[normalizedAgentType] && (!AGENT_PROMPTS[normalizedAgentType] && !AGENT_PROMPTS[agentType])) {
-      basePrompt = SPECIALIST_BASE_PROMPTS[normalizedAgentType];
-    }
     // Map canonical agent names to the short keys used in industry pack deltas.
     // E.g. "field_navigation" should pick up the pack's "route" delta for
     // recurring-route verticals (landscape, pest_control, pool_spa).
@@ -4030,41 +3926,11 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       { role: 'user', content: message },
     ];
 
-    // Get tools for this agent type
-    // Normalize consolidated 10-operative agent IDs to their AGENT_TOOLS keys
-    const TOOL_KEY_MAP: Record<string, string> = {
-      // Legacy social agents → social tools
-      social_content: 'social',
-      social_scheduler: 'social',
-      social_analytics: 'social',
-      // creative alias → same toolset as creative_content (uses social tools)
-      creative: 'social',
-      creative_content: 'social',
-      // Legacy analytics aliases → analytics_intelligence tools
-      analytics: 'analytics_intelligence',
-      insights: 'analytics_intelligence',
-      performance: 'analytics_intelligence',
-      revenue: 'analytics_intelligence',
-      forecast: 'analytics_intelligence',
-      // Legacy campaign/lead/marketing aliases → outreach tools
-      campaign: 'outreach',
-      lead: 'outreach',
-      marketing: 'outreach',
-      // Legacy field ops aliases → field_navigation tools
-      route: 'field_navigation',
-      eta: 'field_navigation',
-      checkin: 'field_navigation',
-      // Legacy quoting/invoice/inventory aliases → business_finance tools
-      quoting: 'business_finance',
-      invoice: 'business_finance',
-      inventory: 'business_finance',
-      // Legacy booking/followup/review aliases → customer_journey (full union)
-      booking: 'customer_journey',
-      followup: 'customer_journey',
-      review: 'customer_journey',
-    };
-    const toolKey = TOOL_KEY_MAP[agentType] || agentType;
-    const tools = AGENT_TOOLS[toolKey] || [
+    // Get tools for this agent type — the registry knows which AGENT_TOOLS key
+    // each canonical agent and legacy alias maps to.
+    const tools = (resolvedAgent?.tools() as any[] | undefined)?.length
+      ? (resolvedAgent!.tools() as any[])
+      : AGENT_TOOLS[agentType] || [
       {
         type: 'function',
         function: {
@@ -4182,7 +4048,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
         contextId,
         companyId,
         fromAgent: agentType,
-        toAgent: LEGACY_AGENT_MAP[target] || target,
+        toAgent: agentRegistry.normalize(target),
         reason,
         appointmentId: args?.appointment_id || ids.appointmentId || incomingAgentContext?.appointmentId || null,
         customerId: args?.customer_id || ids.customerId || incomingAgentContext?.customerId || null,
@@ -4230,10 +4096,10 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             }
           }
 
-          // Subscription tier gating for handoff target (normalize legacy agent names first)
-          const normalizedTarget = LEGACY_AGENT_MAP[target] || target;
-          if (!allowedAgents.includes(normalizedTarget)) {
-            const requiredTier = getRequiredTierForAgent(target);
+          // Tier / industry-pack gating for the handoff target, via the registry
+          const targetResolution = agentRegistry.resolve(target, gateOptions);
+          if (!targetResolution.allowed) {
+            const requiredTier = targetResolution.requiredTier;
             console.log(`[AI Agent Chat] Handoff blocked: ${target} requires ${requiredTier}, company has ${subscriptionTier}`);
             // Block the handoff and provide a graceful message
             toolCalls.push({
@@ -4358,10 +4224,10 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             if (funcName === 'handoff_to_agent') {
               const targetAgent = args.target_agent;
               
-              // Subscription tier gating for handoff target in follow-up calls (normalize legacy names)
-              const normalizedTargetAgent = LEGACY_AGENT_MAP[targetAgent] || targetAgent;
-              if (!allowedAgents.includes(normalizedTargetAgent)) {
-                const requiredTier = getRequiredTierForAgent(targetAgent);
+              // Tier / industry-pack gating for the handoff target, via the registry
+              const targetResolution = agentRegistry.resolve(targetAgent, gateOptions);
+              if (!targetResolution.allowed) {
+                const requiredTier = targetResolution.requiredTier;
                 console.log(`[AI Agent Chat] Handoff blocked in loop: ${targetAgent} requires ${requiredTier}`);
                 toolCalls.push({
                   name: 'handoff_to_agent',
