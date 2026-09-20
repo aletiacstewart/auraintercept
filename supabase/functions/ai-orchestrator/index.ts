@@ -9,6 +9,10 @@ const corsHeaders = {
 
 // Legacy agent name → 10-operative consolidated name map
 const LEGACY_TO_OPERATIVE_MAP: Record<string, string> = {
+  receptionist: 'triage',
+  emergency: 'triage',
+  intake: 'triage',
+  faq: 'triage',
   campaign: 'outreach',
   lead: 'outreach',
   marketing: 'outreach',
@@ -18,6 +22,8 @@ const LEGACY_TO_OPERATIVE_MAP: Record<string, string> = {
   quoting: 'business_finance',
   invoice: 'business_finance',
   inventory: 'business_finance',
+  estimate: 'business_finance',
+  payments: 'business_finance',
   insights: 'analytics_intelligence',
   performance: 'analytics_intelligence',
   revenue: 'analytics_intelligence',

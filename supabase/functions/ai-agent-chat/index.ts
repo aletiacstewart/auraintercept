@@ -3515,9 +3515,11 @@ serve(async (req) => {
 
     // Legacy agent name → consolidated operative mapping
     const LEGACY_AGENT_MAP: Record<string, string> = {
+      receptionist: 'triage', emergency: 'triage', intake: 'triage', faq: 'triage',
       booking: 'customer_journey', followup: 'customer_journey', review: 'customer_journey',
       route: 'field_navigation', eta: 'field_navigation', checkin: 'field_navigation',
       quoting: 'business_finance', invoice: 'business_finance', inventory: 'business_finance',
+      estimate: 'business_finance', payments: 'business_finance',
       campaign: 'outreach', lead: 'outreach', marketing: 'outreach',
       insights: 'analytics_intelligence', revenue: 'analytics_intelligence', forecast: 'analytics_intelligence',
       performance: 'analytics_intelligence', analytics: 'analytics_intelligence',
