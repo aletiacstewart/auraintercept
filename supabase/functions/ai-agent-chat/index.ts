@@ -4506,6 +4506,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
           response: responseText, 
           tool_calls: toolCalls,
           handoff_reason: handoffReason,
+          agent_context: outgoingAgentContext ? serializeAgentContext(outgoingAgentContext) : null,
           context_id: contextId,
         },
         status: handoffTo ? 'pending' : 'processed',
@@ -4517,15 +4518,17 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     if (handoffTo && contextId) {
       const { data: context } = await supabase
         .from('ai_agent_context')
-        .select('handoff_history')
+        .select('handoff_history, context_data')
         .eq('id', contextId)
         .single();
       
+      const serializedContext = outgoingAgentContext ? serializeAgentContext(outgoingAgentContext) : null;
       const handoffEntry = {
         from_agent: agentType,
         to_agent: handoffTo,
         reason: handoffReason,
         timestamp: new Date().toISOString(),
+        agent_context: serializedContext,
       };
       
       await supabase
@@ -4533,10 +4536,15 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
         .update({
           active_agent: handoffTo,
           handoff_history: [...(context?.handoff_history || []), handoffEntry],
+          context_data: {
+            ...((context?.context_data as Record<string, unknown>) || {}),
+            ...(serializedContext ? { agent_context: serializedContext } : {}),
+          },
           updated_at: new Date().toISOString(),
         })
         .eq('id', contextId);
     }
+
 
     // Generate next steps for customer based on handoff target
     let nextSteps: any = null;
@@ -4564,6 +4572,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       event_type: eventType,
       handoff_to: handoffTo,
       handoff_reason: handoffReason,
+      agent_context: outgoingAgentContext ? serializeAgentContext(outgoingAgentContext) : null,
       tool_calls: toolCalls,
       tool_ui: toolUi,
       context_id: contextId,
