@@ -4369,13 +4369,24 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
                   result: `Cannot hand off to ${targetAgent}: This feature requires the ${requiredTier} subscription tier.`,
                 });
               } else {
-                handoffTo = targetAgent;
-                handoffReason = args.reason;
-                toolCalls.push({
-                  name: 'handoff_to_agent',
-                  arguments: args,
-                  result: `Handing off to ${targetAgent}: ${args.reason}`,
-                });
+                const { ctx, validation } = prepareHandoffContext(targetAgent, args.reason, args);
+                if (!validation.ok) {
+                  console.log(`[AI Agent Chat] Handoff to ${targetAgent} blocked in loop, missing: ${validation.missing.join(', ')}`);
+                  toolCalls.push({
+                    name: 'handoff_to_agent',
+                    arguments: args,
+                    result: `Cannot hand off to ${targetAgent} yet. Still needed before handoff: ${describeMissingContext(validation)}. Collect or create these first, then hand off.`,
+                  });
+                } else {
+                  handoffTo = targetAgent;
+                  handoffReason = args.reason;
+                  outgoingAgentContext = ctx;
+                  toolCalls.push({
+                    name: 'handoff_to_agent',
+                    arguments: args,
+                    result: `Handing off to ${targetAgent}: ${args.reason}`,
+                  });
+                }
               }
             } else {
               const result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
