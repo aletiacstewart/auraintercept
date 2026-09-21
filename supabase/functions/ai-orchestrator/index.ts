@@ -12,6 +12,9 @@ import { createEventBus, MAX_EVENT_ATTEMPTS, nextAttemptDelayMs } from "../_shar
 import { normalizeEventName } from "../_shared/event-subscriptions.ts";
 import { createWorkflowEngine } from "../_shared/workflow-engine.ts";
 import { listWorkflowDefinitions } from "../_shared/workflow-definitions.ts";
+import { rollUpAgentMetrics } from "../_shared/agent-metrics.ts";
+import { evaluateAlerts, raiseAlerts } from "../_shared/agent-alerts.ts";
+
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -724,15 +727,29 @@ async function handleProcessPendingEvents(supabase: any, companyId?: string) {
     console.error('[Workflow] Worker pass failed:', wfErr);
   }
 
+  // Observability rollup + alert evaluation share the same worker pass.
+  let metricsRows = 0;
+  let alertsRaised = 0;
+  try {
+    metricsRows = await rollUpAgentMetrics(supabase, { companyId });
+    const fired = await evaluateAlerts(supabase, { companyId });
+    if (fired.length) alertsRaised = await raiseAlerts(supabase, fired);
+  } catch (mErr) {
+    console.error('[Metrics] Rollup pass failed:', mErr);
+  }
+
   return new Response(JSON.stringify({
     processed: processed.length,
     retrying: retried.length,
     failed: failed.length,
     total: events?.length || 0,
     workflows_advanced: workflowsAdvanced,
+    metrics_rows: metricsRows,
+    alerts_raised: alertsRaised,
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
+
 }
 
 // Test an agent by routing the message through the real ai-agent-chat pipeline

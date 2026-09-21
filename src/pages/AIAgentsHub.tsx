@@ -50,6 +50,7 @@ import { AgentWorkflowMonitor } from '@/components/ai/agents/AgentWorkflowMonito
 import { WorkflowRunsPanel } from '@/components/agents/WorkflowRunsPanel';
 import { BatchAgentActivation } from '@/components/ai/agents/BatchAgentActivation';
 import { AgentAnalyticsDashboard } from '@/components/ai/agents/AgentAnalyticsDashboard';
+import { AgentHealthPanel } from '@/components/agents/AgentHealthPanel';
 import { ConversationHistoryBrowser } from '@/components/ai/agents/ConversationHistoryBrowser';
 import { OperativeDependencyGraph } from '@/components/ai/agents/OperativeDependencyGraph';
 import { AgentReviewQueue } from '@/components/ai/agents/AgentReviewQueue';
@@ -417,6 +418,7 @@ export default function AIAgentsHub() {
                   View detailed report
                 </Button>
               </div>
+              {companyId && <AgentHealthPanel companyId={companyId} />}
               {companyId && <AgentAnalyticsDashboard companyId={companyId} />}
             </TabsContent>
 

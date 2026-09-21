@@ -13,6 +13,8 @@ import {
 } from "../_shared/agent-context.ts";
 import { createAgentRegistry } from "../_shared/agent-registry.ts";
 import { LEGACY_TIER_MAP } from "../_shared/agent-definitions.ts";
+import { startTrace, type RequestTracer } from "../_shared/tracing.ts";
+
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -3395,7 +3397,11 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Distributed tracing: one trace per request, spans for model/tool/handoff work.
+  let tracer: RequestTracer | null = null;
+
   try {
+
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
@@ -3428,7 +3434,19 @@ serve(async (req) => {
       : resolvedLanguage === 'es'
         ? `\n\nLANGUAGE REQUIREMENT: Respond ONLY in Spanish (Español). All replies, confirmations, and questions must be in natural, professional Spanish regardless of the language used in earlier messages or system text. Keep brand names ("Aura Intercept", agent names) in English.`
         : `\n\nLANGUAGE REQUIREMENT: Respond in clear, professional English unless the customer explicitly requests another language.`;
-    
+
+    // A handoff or workflow run carries its trace id forward so the whole
+    // journey shows up as one trace.
+    const incomingTraceId = (rawIncomingAgentContext as any)?.metadata?.traceId ?? null;
+    tracer = startTrace(supabase, {
+      companyId: companyId ?? null,
+      agentType: agentType ?? null,
+      traceId: incomingTraceId,
+      channel: channel || (isInternalRequest ? 'internal' : 'chat'),
+      contextId: contextId ?? null,
+    });
+
+
     // Use the requested model for internal requests (e.g. phone via voice-handler), default to flash
     const selectedModel = (isInternalRequest && requestModel) || 'google/gemini-2.5-flash';
     
@@ -3964,7 +3982,9 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     // Call Lovable AI Gateway
     // Use the shared gateway wrapper so 429/5xx transparently fall back to
     // the next model in the same family before we return an error.
+    const modelSpan = tracer.span('agent.model', { agent: agentType, model: selectedModel });
     const gatewayCall = await callAIGatewayWithFallback({
+
       model: selectedModel,
       messages,
       tools: isPhoneChannel ? dedupedTools.filter((t: any) => {
@@ -3977,6 +3997,12 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       max_tokens: isPhoneChannel ? 150 : 1000,
     });
     let response = gatewayCall.response;
+    modelSpan.end(gatewayCall.response.ok ? 'ok' : 'error', {
+      model_used: gatewayCall.modelUsed,
+      fell_back: gatewayCall.fellBackFromPrimary,
+      error: gatewayCall.response.ok ? undefined : `gateway status ${gatewayCall.response.status}`,
+    });
+
     if (gatewayCall.fellBackFromPrimary) {
       console.log(
         `[ai-agent-chat] fell back from ${selectedModel} to ${gatewayCall.modelUsed}`,
@@ -4121,7 +4147,13 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             } else {
               handoffTo = target;
               handoffReason = reason;
-              outgoingAgentContext = ctx;
+              // Carry the trace id so the receiving agent joins this trace.
+              outgoingAgentContext = {
+                ...ctx,
+                metadata: { ...((ctx as any).metadata || {}), traceId: tracer.traceId },
+              } as typeof ctx;
+              tracer.span(`handoff.${target}`, { agent: agentType, reason }).end('ok');
+
               toolCalls.push({
                 name: 'handoff_to_agent',
                 arguments: { ...(args as any), target_agent: target, reason },
@@ -4130,8 +4162,17 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             }
           }
         } else {
-          // Execute the tool
-          const result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
+          // Execute the tool (traced: tool failures show as error spans)
+          const toolSpan = tracer.span(`tool.${funcName}`, { agent: agentType });
+          let result: any;
+          try {
+            result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
+            toolSpan.end(result?.error ? 'error' : 'ok', { error: result?.error });
+          } catch (toolErr: any) {
+            toolSpan.end('error', { error: toolErr?.message ?? String(toolErr) });
+            throw toolErr;
+          }
+
           toolCalls.push({
             name: funcName,
             arguments: args,
@@ -4255,7 +4296,16 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
                 }
               }
             } else {
-              const result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
+              const loopToolSpan = tracer.span(`tool.${funcName}`, { agent: agentType, loop: true });
+              let result: any;
+              try {
+                result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
+                loopToolSpan.end(result?.error ? 'error' : 'ok', { error: result?.error });
+              } catch (toolErr: any) {
+                loopToolSpan.end('error', { error: toolErr?.message ?? String(toolErr) });
+                throw toolErr;
+              }
+
               toolCalls.push({
                 name: funcName,
                 arguments: args,
@@ -4317,12 +4367,16 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       eventType = `${agentType}_action`;
     }
 
-    // Log the interaction
+    // Log the interaction, stamped with the trace it belongs to
     await supabase.from('ai_agent_logs').insert({
       company_id: companyId,
       agent_type: agentType,
       context_id: contextId,
       action: 'ai_chat',
+      trace_id: tracer?.traceId ?? null,
+      parent_span_id: tracer?.rootSpanId ?? null,
+      span_name: 'ai_chat',
+      status: 'ok',
       input_data: { message, conversation_length: conversationHistory.length },
       output_data: { 
         response: responseText, 
@@ -4331,6 +4385,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       },
       success: true,
     });
+
 
     // Track subscription usage for AI requests
     const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM format
@@ -4433,6 +4488,11 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       }
     }
 
+    await tracer.finish('ok', {
+      handoff_to: handoffTo ?? undefined,
+      tool_calls: toolCalls.length,
+    });
+
     return new Response(JSON.stringify({
       response: responseText,
       event_type: eventType,
@@ -4443,12 +4503,14 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       tool_ui: toolUi,
       context_id: contextId,
       next_steps: nextSteps,
+      trace_id: tracer.traceId,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error: any) {
     console.error('[AI Agent Chat] Error:', error);
+    await tracer?.finish('error', { error: error?.message || 'Failed to process request' });
     return new Response(JSON.stringify({ 
       error: error.message || 'Failed to process request' 
     }), {
@@ -4456,6 +4518,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+
 });
 
 function isEmergencyRequest(text: string) {

@@ -57,10 +57,13 @@ export type Database = {
           company_id: string
           created_at: string
           date: string
+          error_count: number
           handoff_count: number | null
           id: string
+          p95_response_time_ms: number | null
           requests_handled: number | null
           success_rate: number | null
+          updated_at: string
         }
         Insert: {
           agent_type: string
@@ -68,10 +71,13 @@ export type Database = {
           company_id: string
           created_at?: string
           date: string
+          error_count?: number
           handoff_count?: number | null
           id?: string
+          p95_response_time_ms?: number | null
           requests_handled?: number | null
           success_rate?: number | null
+          updated_at?: string
         }
         Update: {
           agent_type?: string
@@ -79,10 +85,13 @@ export type Database = {
           company_id?: string
           created_at?: string
           date?: string
+          error_count?: number
           handoff_count?: number | null
           id?: string
+          p95_response_time_ms?: number | null
           requests_handled?: number | null
           success_rate?: number | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -391,7 +400,12 @@ export type Database = {
           id: string
           input_data: Json | null
           output_data: Json | null
+          parent_span_id: string | null
+          span_id: string | null
+          span_name: string | null
+          status: string | null
           success: boolean | null
+          trace_id: string | null
         }
         Insert: {
           action: string
@@ -404,7 +418,12 @@ export type Database = {
           id?: string
           input_data?: Json | null
           output_data?: Json | null
+          parent_span_id?: string | null
+          span_id?: string | null
+          span_name?: string | null
+          status?: string | null
           success?: boolean | null
+          trace_id?: string | null
         }
         Update: {
           action?: string
@@ -417,7 +436,12 @@ export type Database = {
           id?: string
           input_data?: Json | null
           output_data?: Json | null
+          parent_span_id?: string | null
+          span_id?: string | null
+          span_name?: string | null
+          status?: string | null
           success?: boolean | null
+          trace_id?: string | null
         }
         Relationships: [
           {
