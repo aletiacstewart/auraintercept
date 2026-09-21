@@ -3405,6 +3405,8 @@ serve(async (req) => {
 
   // Distributed tracing: one trace per request, spans for model/tool/handoff work.
   let tracer: RequestTracer | null = null;
+  // Queued events this session claimed; released back to pending if the run fails.
+  const claimedEventIds: string[] = [];
 
   try {
 
