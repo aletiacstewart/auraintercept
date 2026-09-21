@@ -16,7 +16,7 @@ import { LEGACY_TIER_MAP } from "../_shared/agent-definitions.ts";
 import { startTrace, type RequestTracer } from "../_shared/tracing.ts";
 import { createEventBus } from "../_shared/event-bus.ts";
 import {
-  TOOL_EVENT_MAP,
+  eventNameForTool,
   extractEventPayload,
   toolResultIsSuccess,
 } from "../_shared/agent-tool-events.ts";
