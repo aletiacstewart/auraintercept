@@ -4285,7 +4285,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
         customer: {
           ...(incomingAgentContext?.customer || {}),
           ...(customerInfo || {}),
-          ...(args?.customer_intent ? { issue: args.customer_intent } : {}),
+          ...gatherCustomerDetails(args),
         },
         metadata: {
           ...(incomingAgentContext?.metadata || {}),
