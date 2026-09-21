@@ -153,6 +153,34 @@ serve(async (req) => {
       
       case 'test_agent':
         return await handleTestAgent(supabase, companyId, agentType, payload);
+
+      // --- Workflow orchestrator (Phase 4) ---
+      case 'start_workflow':
+        return await handleStartWorkflow(supabase, companyId, payload);
+
+      case 'advance_workflow':
+        return await handleAdvanceWorkflow(supabase, payload);
+
+      case 'process_workflow_runs':
+      {
+        const cronAuth = await verifyCronSecret(req);
+        if (!cronAuth.ok) {
+          return new Response(JSON.stringify({ error: cronAuth.error }), {
+            status: cronAuth.status ?? 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        return await handleProcessWorkflowRuns(supabase, companyId);
+      }
+
+      case 'retry_step':
+        return await handleRetryStep(supabase, payload);
+
+      case 'cancel_workflow':
+        return await handleCancelWorkflow(supabase, payload);
+
+      case 'list_workflow_runs':
+        return await handleListWorkflowRuns(supabase, companyId);
       
       default:
         return new Response(JSON.stringify({ error: 'Unknown action' }), {
