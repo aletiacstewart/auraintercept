@@ -64,23 +64,26 @@ export const WORKFLOW_DEFINITIONS: Record<string, WorkflowDefinition> = {
         label: 'Book the appointment',
         agent: 'customer_journey',
         instruction:
-          'Book the service for {{customer.name}} at {{customer.address}} for: {{customer.issue}}. Use the book_appointment tool and report the appointment id.',
+          'Book the service now for {{customer.name}}, phone {{customer.phone}}, email {{customer.email}}, address {{customer.address}}, for: {{customer.issue}}. This is an automated workflow — do not ask questions and do not wait for a reply. Call create_appointment immediately using the next available business slot (tomorrow 9am if you have nothing better) and report the appointment id.',
         required: true,
+        requiresToolCall: 'create_appointment',
+        expects: ['appointmentId'],
       },
       {
         key: 'dispatch',
         label: 'Assign a technician',
         agent: 'dispatch',
         instruction:
-          'Assign the best available technician to appointment {{appointmentId}} for {{customer.name}} at {{customer.address}}. Report who was assigned.',
+          'Assign the best available technician to appointment {{appointmentId}} for {{customer.name}} at {{customer.address}}. This is an automated workflow — do not ask questions. Check availability and call assign_technician with the appointment id above, then report who was assigned.',
         required: true,
+        requiresToolCall: 'assign_technician',
       },
       {
         key: 'field_navigation',
         label: 'Plan the route',
         agent: 'field_navigation',
         instruction:
-          'Plan the route and estimated arrival time for appointment {{appointmentId}} at {{customer.address}}. Report the ETA.',
+          'Plan the route and estimated arrival time for appointment {{appointmentId}} at {{customer.address}}. This is an automated workflow — do not ask questions; use the appointment id above and report the ETA.',
         required: false,
         onFailure: 'skip',
       },
@@ -89,7 +92,7 @@ export const WORKFLOW_DEFINITIONS: Record<string, WorkflowDefinition> = {
         label: 'Notify the customer',
         agent: 'customer_journey',
         instruction:
-          'Prepare a confirmation text for {{customer.name}} at {{customer.phone}} covering appointment {{appointmentId}}: the service, the date and time, and who is coming. Submit it as a draft for approval — do not send it directly.',
+          'Prepare a confirmation text for {{customer.name}} at {{customer.phone}} covering appointment {{appointmentId}}: the service ({{customer.issue}}), the date and time, and who is coming. This is an automated workflow — do not ask questions. Submit it as a draft for approval; do not send it directly.',
         required: true,
       },
     ],
