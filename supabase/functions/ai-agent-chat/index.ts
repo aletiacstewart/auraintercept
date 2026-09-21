@@ -4312,14 +4312,17 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
         } else {
           // Execute the tool (traced: tool failures show as error spans)
           const toolSpan = tracer.span(`tool.${funcName}`, { agent: agentType });
+          const toolStartedAt = Date.now();
           let result: any;
           try {
             result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
             toolSpan.end(result?.error ? 'error' : 'ok', { error: result?.error });
+            emitToolEvent(funcName, result);
           } catch (toolErr: any) {
             toolSpan.end('error', { error: toolErr?.message ?? String(toolErr) });
-            throw toolErr;
+            result = await handleToolError(funcName, args, toolErr, toolStartedAt);
           }
+
 
           toolCalls.push({
             name: funcName,
@@ -4445,14 +4448,17 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
               }
             } else {
               const loopToolSpan = tracer.span(`tool.${funcName}`, { agent: agentType, loop: true });
+              const loopToolStartedAt = Date.now();
               let result: any;
               try {
                 result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
                 loopToolSpan.end(result?.error ? 'error' : 'ok', { error: result?.error });
+                emitToolEvent(funcName, result);
               } catch (toolErr: any) {
                 loopToolSpan.end('error', { error: toolErr?.message ?? String(toolErr) });
-                throw toolErr;
+                result = await handleToolError(funcName, args, toolErr, loopToolStartedAt);
               }
+
 
               toolCalls.push({
                 name: funcName,
