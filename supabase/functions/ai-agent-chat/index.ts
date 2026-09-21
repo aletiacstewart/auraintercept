@@ -4218,6 +4218,58 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
      * Build + validate the structured context for a hand-off.
      * Returns null (with a reason) when required data is still missing.
      */
+    /**
+     * Pull customer details out of whatever the model gave us: named tool
+     * arguments, the free-text `context` string the prompt asks for
+     * ("Customer Name: Dana, Phone: 555-1234"), and anything a previous
+     * collect_customer_info call already captured in this same turn.
+     */
+    const gatherCustomerDetails = (args: any): Record<string, string> => {
+      const out: Record<string, string> = {};
+      const set = (key: string, value: unknown) => {
+        const v = typeof value === 'string' ? value.trim() : value == null ? '' : String(value);
+        if (v && !out[key]) out[key] = v;
+      };
+
+      set('name', args?.customer_name ?? args?.name);
+      set('phone', args?.customer_phone ?? args?.phone);
+      set('email', args?.customer_email ?? args?.email);
+      set('address', args?.service_address ?? args?.address);
+      set('issue', args?.customer_intent ?? args?.issue ?? args?.service_type);
+
+      // Free-text context block, e.g. "Customer Name: John Smith, Phone: 555-1234, Issue: AC"
+      const blob = typeof args?.context === 'string' ? args.context : '';
+      if (blob) {
+        const grab = (label: RegExp) => blob.match(label)?.[1]?.trim().replace(/[,;]$/, '');
+        set('name', grab(/(?:customer\s*)?name\s*[:=]\s*([^,;\n]+)/i));
+        set('phone', grab(/phone\s*[:=]\s*([^,;\n]+)/i));
+        set('email', grab(/email\s*[:=]\s*([^,;\n]+)/i));
+        set('address', grab(/address\s*[:=]\s*([^,;\n]+)/i));
+        set('issue', grab(/(?:issue|service|problem)\s*[:=]\s*([^,;\n]+)/i));
+      }
+
+      // Anything an earlier tool in this same turn already collected.
+      for (const call of toolCalls) {
+        const r: any = (call as any)?.result;
+        const collected = r && typeof r === 'object' ? (r.collected ?? r.customer ?? null) : null;
+        if (collected && typeof collected === 'object') {
+          set('name', collected.name ?? collected.customer_name);
+          set('phone', collected.phone ?? collected.customer_phone);
+          set('email', collected.email ?? collected.customer_email);
+          set('address', collected.address ?? collected.service_address);
+          set('issue', collected.issue ?? collected.service_type);
+        }
+        const a: any = (call as any)?.arguments;
+        if (a && typeof a === 'object') {
+          set('name', a.customer_name ?? a.name);
+          set('phone', a.customer_phone ?? a.phone);
+          set('email', a.customer_email ?? a.email);
+          set('address', a.service_address ?? a.address);
+        }
+      }
+      return out;
+    };
+
     const prepareHandoffContext = (target: string, reason: string, args: any) => {
       const ids = collectIdsFromToolCalls();
       const ctx = buildAgentContext({
@@ -4233,7 +4285,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
         customer: {
           ...(incomingAgentContext?.customer || {}),
           ...(customerInfo || {}),
-          ...(args?.customer_intent ? { issue: args.customer_intent } : {}),
+          ...gatherCustomerDetails(args),
         },
         metadata: {
           ...(incomingAgentContext?.metadata || {}),
@@ -5024,6 +5076,30 @@ async function executeAgentTool(
 ): Promise<any> {
   console.log(`[AI Agent] Executing tool: ${toolName} for ${agentType}`);
 
+  // Some agents declare older tool names for the same capability. Route them to
+  // the live implementation instead of letting them fall through unhandled.
+  const TOOL_ALIASES: Record<string, { tool: string; args?: (a: any) => any }> = {
+    start_job: { tool: 'update_job_status', args: (a) => ({ ...a, status: 'in_progress' }) },
+    complete_job: { tool: 'update_job_status', args: (a) => ({ ...a, status: 'completed' }) },
+    get_performance_metrics: { tool: 'analyze_metrics' },
+    get_revenue_analysis: { tool: 'analyze_metrics' },
+    get_customer_insights: { tool: 'analyze_metrics' },
+    forecast_trends: { tool: 'forecast_demand' },
+    optimize_route: { tool: 'get_my_jobs' },
+  };
+  const alias = TOOL_ALIASES[toolName];
+  if (alias) {
+    console.log(`[AI Agent] Routing ${toolName} -> ${alias.tool}`);
+    return await executeAgentTool(
+      supabase,
+      companyId,
+      agentType,
+      alias.tool,
+      alias.args ? alias.args(args) : args,
+      userId,
+    );
+  }
+
   // Tool execution - routes to real database queries, APIs, and notification systems
   switch (toolName) {
     case 'get_smart_link': {
@@ -5435,7 +5511,8 @@ async function executeAgentTool(
       // Create the appointment with the properly parsed datetime
       let { data: appointment, error } = await supabase
         .from('appointments')
-        .insert({ ...baseInsert, intake_data: normalizedIntake })
+        // The column is NOT NULL, so an empty object stands in for "nothing collected".
+        .insert({ ...baseInsert, intake_data: normalizedIntake ?? {} })
         .select()
         .single();
 
@@ -5462,7 +5539,7 @@ async function executeAgentTool(
           // Retry once without intake_data so the booking still succeeds.
           const retry = await supabase
             .from('appointments')
-            .insert({ ...baseInsert, intake_data: null })
+            .insert({ ...baseInsert, intake_data: {} })
             .select()
             .single();
           if (retry.error) {
@@ -8311,11 +8388,10 @@ async function executeAgentTool(
           .insert({
             company_id: companyId,
             platform,
-            content: fullContent,
+            generated_content: fullContent,
             hashtags,
             image_url: imageUrl,
             status: scheduledFor ? 'approved' : 'pending',
-            source: 'ai_chat',
           })
           .select()
           .single();
@@ -8726,10 +8802,189 @@ async function executeAgentTool(
       };
     }
 
-    default:
+    case 'reschedule_appointment': {
+      const apptId = args.appointment_id;
+      const newTime = args.new_datetime || args.new_time || args.datetime;
+      if (!apptId || !newTime) {
+        return { success: false, error: 'I need the appointment ID and the new date and time to reschedule.' };
+      }
+      const { data: existing } = await supabase
+        .from('appointments')
+        .select('id, customer_name, datetime, status')
+        .eq('id', apptId)
+        .eq('company_id', companyId)
+        .maybeSingle();
+      if (!existing) {
+        return { success: false, error: 'I could not find that appointment for this business.' };
+      }
+      const { error: updErr } = await supabase
+        .from('appointments')
+        .update({ datetime: new Date(newTime).toISOString(), status: 'proposed' })
+        .eq('id', apptId)
+        .eq('company_id', companyId);
+      if (updErr) return { success: false, error: `Could not reschedule: ${updErr.message}` };
       return {
         success: true,
-        message: `Tool ${toolName} executed with args: ${JSON.stringify(args)}`,
+        appointment_id: apptId,
+        customer_name: existing.customer_name,
+        previous_datetime: existing.datetime,
+        new_datetime: new Date(newTime).toISOString(),
+        message: `Appointment moved to ${new Date(newTime).toLocaleString()}.`,
+      };
+    }
+
+    case 'cancel_appointment': {
+      const apptId = args.appointment_id;
+      if (!apptId) {
+        return { success: false, error: 'I need the appointment ID to cancel it.' };
+      }
+      const { data: existing } = await supabase
+        .from('appointments')
+        .select('id, customer_name, datetime')
+        .eq('id', apptId)
+        .eq('company_id', companyId)
+        .maybeSingle();
+      if (!existing) {
+        return { success: false, error: 'I could not find that appointment for this business.' };
+      }
+      const { error: cancelErr } = await supabase
+        .from('appointments')
+        .update({ status: 'cancelled', notes: args.reason ? `Cancelled: ${args.reason}` : undefined })
+        .eq('id', apptId)
+        .eq('company_id', companyId);
+      if (cancelErr) return { success: false, error: `Could not cancel: ${cancelErr.message}` };
+      return {
+        success: true,
+        appointment_id: apptId,
+        customer_name: existing.customer_name,
+        message: 'Appointment cancelled.',
+      };
+    }
+
+    case 'record_feedback': {
+      const rating = Number(args.rating ?? 0) || null;
+      const { data: fb, error: fbErr } = await supabase
+        .from('customer_feedback')
+        .insert({
+          company_id: companyId,
+          appointment_id: args.appointment_id ?? null,
+          customer_name: args.customer_name ?? null,
+          customer_phone: args.customer_phone ?? null,
+          customer_email: args.customer_email ?? null,
+          rating,
+          sentiment: rating ? (rating >= 4 ? 'positive' : rating <= 2 ? 'negative' : 'neutral') : null,
+          feedback_note: args.feedback ?? args.notes ?? args.comment ?? null,
+          service_type: args.service_type ?? null,
+          source: 'ai_agent',
+        })
+        .select('id')
+        .single();
+      if (fbErr) return { success: false, error: `Could not save the feedback: ${fbErr.message}` };
+      return { success: true, feedback_id: fb.id, rating, message: 'Feedback saved to the customer record.' };
+    }
+
+    case 'escalate_issue': {
+      const title = args.title || args.issue || 'Customer issue escalated by an AI operative';
+      const { data: issue, error: issErr } = await supabase
+        .from('platform_issues')
+        .insert({
+          company_id: companyId,
+          issue_type: 'user_reported',
+          severity: args.severity === 'critical' || args.severity === 'high' || args.severity === 'low' ? args.severity : 'medium',
+          status: 'new',
+          title,
+          description: args.description ?? args.details ?? args.reason ?? null,
+          metadata: { agent_type: agentType, customer_name: args.customer_name ?? null, appointment_id: args.appointment_id ?? null },
+        })
+        .select('id')
+        .single();
+      if (issErr) return { success: false, error: `Could not escalate: ${issErr.message}` };
+      return { success: true, issue_id: issue.id, message: 'Escalated to the team — it now shows on the issues board.' };
+    }
+
+    case 'send_followup': {
+      if (!args.lead_id) {
+        return { success: false, error: 'I need the lead or customer record ID to schedule a follow-up.' };
+      }
+      const when = args.scheduled_at || args.send_at
+        ? new Date(args.scheduled_at || args.send_at).toISOString()
+        : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      const { data: fu, error: fuErr } = await supabase
+        .from('lead_follow_ups')
+        .insert({
+          company_id: companyId,
+          lead_id: args.lead_id,
+          scheduled_at: when,
+          follow_up_type: args.channel || args.follow_up_type || 'sms',
+          message_template: args.message ?? args.template ?? null,
+          status: 'scheduled',
+        })
+        .select('id')
+        .single();
+      if (fuErr) return { success: false, error: `Could not schedule the follow-up: ${fuErr.message}` };
+      return { success: true, follow_up_id: fu.id, scheduled_at: when, message: `Follow-up scheduled for ${new Date(when).toLocaleString()}.` };
+    }
+
+    case 'get_customer_segments': {
+      const { data: segs, error: segErr } = await supabase
+        .from('customer_segments')
+        .select('id, name, customer_count, criteria')
+        .eq('company_id', companyId)
+        .order('created_at', { ascending: false })
+        .limit(25);
+      if (segErr) return { success: false, error: segErr.message };
+      return { success: true, count: segs?.length ?? 0, segments: segs ?? [] };
+    }
+
+    case 'collect_customer_info': {
+      const collected = {
+        name: args.name ?? args.customer_name ?? null,
+        phone: args.phone ?? args.customer_phone ?? null,
+        email: args.email ?? args.customer_email ?? null,
+        address: args.address ?? args.service_address ?? null,
+        issue: args.issue ?? args.service_type ?? null,
+      };
+      const missing = Object.entries(collected).filter(([k, v]) => !v && k !== 'email').map(([k]) => k);
+      return {
+        success: true,
+        collected,
+        missing,
+        message: missing.length
+          ? `Still needed: ${missing.join(', ')}.`
+          : 'All required details collected — ready to book or hand off.',
+      };
+    }
+
+    case 'respond_to_review': {
+      const draft = args.response || args.draft || null;
+      if (!draft) {
+        return { success: false, error: 'Write the reply text first, then pass it as "response".' };
+      }
+      return {
+        success: true,
+        draft_response: draft,
+        message: 'Reply drafted. It needs a human to post it on the review site — this platform cannot post it for you.',
+      };
+    }
+
+    case 'generate_promo_code': {
+      const prefix = String(args.prefix || args.campaign || 'SAVE').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'SAVE';
+      const code = `${prefix}${Math.random().toString(36).toUpperCase().slice(2, 6)}`;
+      return {
+        success: true,
+        promo_code: code,
+        discount: args.discount ?? args.value ?? null,
+        message: `Promo code ${code} generated. Add it to a campaign to start using it.`,
+      };
+    }
+
+    default:
+      // Never fabricate success for a tool that has no implementation — the
+      // model must be told so it can explain the limit or pick another tool.
+      console.error(`[AI Agent] Unimplemented tool requested: ${toolName}`);
+      return {
+        success: false,
+        error: `The "${toolName}" action is not available yet. Tell the user plainly what you cannot do and offer the closest thing you can do.`,
       };
   }
 }
