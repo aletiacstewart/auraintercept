@@ -433,6 +433,7 @@ export default function AIAgentsHub() {
 
             {/* ---------------- Activity ---------------- */}
             <TabsContent value="activity" className="space-y-4 mt-6">
+              {companyId && <WorkflowRunsPanel companyId={companyId} />}
               {companyId && <AgentWorkflowMonitor companyId={companyId} />}
               {canManageAgents && (
                 <BatchAgentActivation
