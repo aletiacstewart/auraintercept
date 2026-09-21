@@ -417,6 +417,7 @@ export default function AIAgentsHub() {
                   View detailed report
                 </Button>
               </div>
+              {companyId && <AgentHealthPanel companyId={companyId} />}
               {companyId && <AgentAnalyticsDashboard companyId={companyId} />}
             </TabsContent>
 
