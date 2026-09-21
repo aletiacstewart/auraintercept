@@ -217,6 +217,35 @@ async function handleEmitEvent(
     console.error('[Orchestrator] pipeline upsert failed:', pipelineErr);
   }
 
+  // When the workflow orchestrator flag is on, a new appointment starts one
+  // ordered New Service Request run instead of three independent notifications.
+  if (canonicalEvent === 'appointment.created') {
+    try {
+      if (await isFlagEnabled(supabase, companyId, 'workflow_orchestrator')) {
+        const started = await workflowEngine(supabase).startWorkflow('new_service_request', companyId, {
+          appointmentId: payload?.appointment_id ?? null,
+          customer: {
+            name: payload?.customer_name ?? null,
+            phone: payload?.customer_phone ?? null,
+            email: payload?.customer_email ?? null,
+            address: payload?.address ?? null,
+            issue: payload?.service_type ?? null,
+          },
+          metadata: { scheduled_at: payload?.scheduled_at ?? null },
+        });
+        return new Response(JSON.stringify({
+          success: started.ok,
+          workflow_run_id: started.runId ?? null,
+          event_type: canonicalEvent,
+          mode: 'workflow',
+          ...(started.error ? { error: started.error } : {}),
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+    } catch (flagErr) {
+      console.error('[Orchestrator] workflow flag check failed:', flagErr);
+    }
+  }
+
   // Only agents the company has switched on receive events.
   const { data: configs } = await supabase
     .from('ai_agent_configs')
