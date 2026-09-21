@@ -26,6 +26,14 @@ export interface WorkflowStepDefinition {
   required?: boolean;
   /** What to do when the step exhausts its retries. Default: escalate. */
   onFailure?: WorkflowStepFailure;
+  /**
+   * Context paths that must exist after the step ran (e.g. 'appointmentId').
+   * If one is missing the step counts as failed — an agent that only replies
+   * with questions never passes for done.
+   */
+  expects?: string[];
+  /** Tool the agent must actually have called for the step to count. */
+  requiresToolCall?: string;
 }
 
 export interface WorkflowDefinition {
