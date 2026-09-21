@@ -4361,12 +4361,16 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       eventType = `${agentType}_action`;
     }
 
-    // Log the interaction
+    // Log the interaction, stamped with the trace it belongs to
     await supabase.from('ai_agent_logs').insert({
       company_id: companyId,
       agent_type: agentType,
       context_id: contextId,
       action: 'ai_chat',
+      trace_id: tracer?.traceId ?? null,
+      parent_span_id: tracer?.rootSpanId ?? null,
+      span_name: 'ai_chat',
+      status: 'ok',
       input_data: { message, conversation_length: conversationHistory.length },
       output_data: { 
         response: responseText, 
@@ -4375,6 +4379,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       },
       success: true,
     });
+
 
     // Track subscription usage for AI requests
     const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM format
