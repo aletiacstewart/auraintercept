@@ -13,7 +13,11 @@
 export const AGENT_EVENTS = [
   'appointment.created',
   'appointment.scheduled',
+  'appointment.rescheduled',
   'appointment.cancelled',
+  'invoice.created',
+  'quote.created',
+  'tool.failed',
   'technician.assigned',
   'job.started',
   'job.completed',
@@ -49,7 +53,11 @@ export const LEGACY_EVENT_ALIASES: Record<string, AgentEventName> = {
   appointment_booked: 'appointment.created',
   appointment_created: 'appointment.created',
   appointment_scheduled: 'appointment.scheduled',
+  appointment_rescheduled: 'appointment.rescheduled',
   appointment_cancelled: 'appointment.cancelled',
+  invoice_created: 'invoice.created',
+  quote_created: 'quote.created',
+  tool_failed: 'tool.failed',
   tech_assigned: 'technician.assigned',
   technician_assigned: 'technician.assigned',
   tech_arrived: 'job.started',
@@ -158,6 +166,15 @@ export const EVENT_SUBSCRIPTIONS: EventSubscription[] = [
 
   // Admin
   { agentType: 'admin', event: 'inventory.low', reason: 'flags the shortage to the owner' },
+  { agentType: 'admin', event: 'tool.failed', reason: 'flags an action that failed so someone can finish it' },
+
+  // Rescheduled work and money paperwork
+  { agentType: 'dispatch', event: 'appointment.rescheduled', reason: 'moves the job on the day plan' },
+  { agentType: 'field_navigation', event: 'appointment.rescheduled', reason: 'replans the route for the new time' },
+  { agentType: 'customer_journey', event: 'appointment.rescheduled', reason: 'confirms the new time with the customer' },
+  { agentType: 'customer_journey', event: 'invoice.created', reason: 'sends the invoice to the customer' },
+  { agentType: 'business_finance', event: 'invoice.created', reason: 'tracks the invoice to payment' },
+  { agentType: 'business_finance', event: 'quote.created', reason: 'follows the quote through to a decision' },
 ];
 
 /** Agents subscribed to an event (accepts legacy names). */
