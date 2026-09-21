@@ -19,6 +19,7 @@ import {
   Compass,
   Eye,
   Info,
+  LineChart,
   MessageSquare,
   Sparkles,
 } from 'lucide-react';
@@ -51,6 +52,9 @@ import { WorkflowRunsPanel } from '@/components/agents/WorkflowRunsPanel';
 import { BatchAgentActivation } from '@/components/ai/agents/BatchAgentActivation';
 import { AgentAnalyticsDashboard } from '@/components/ai/agents/AgentAnalyticsDashboard';
 import { AgentHealthPanel } from '@/components/agents/AgentHealthPanel';
+import { AgentTraces } from '@/components/agents/AgentTraces';
+import { AgentAlerts } from '@/components/agents/AgentAlerts';
+import { AgentEventFeed } from '@/components/agents/AgentEventFeed';
 import { ConversationHistoryBrowser } from '@/components/ai/agents/ConversationHistoryBrowser';
 import { OperativeDependencyGraph } from '@/components/ai/agents/OperativeDependencyGraph';
 import { AgentReviewQueue } from '@/components/ai/agents/AgentReviewQueue';
