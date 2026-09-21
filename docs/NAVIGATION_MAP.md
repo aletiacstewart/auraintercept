@@ -21,7 +21,7 @@ Routes are declared in `src/App.tsx`; the menus come from `src/lib/navigationCon
 /dashboard                      overview + First Steps checklist
 /dashboard/appointments         schedule
 /dashboard/leads /customers /quotes /invoices
-/dashboard/agents               agent hub (Discover, My Agents, Performance, Approvals, Activity, Conversations)
+/dashboard/agents               agent hub (Discover, My Agents, Performance, Observability, Approvals, Activity, Conversations)
 /dashboard/analytics            one analytics surface (?tab=overview|revenue|customers|forecast|performance|reports|intake)
 /dashboard/integrations         Connections + Health tabs
 /dashboard/team /billing /settings
