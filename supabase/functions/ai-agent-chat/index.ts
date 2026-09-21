@@ -3775,7 +3775,6 @@ serve(async (req) => {
     // Claim a few pending events so a live session reacts immediately instead of
     // waiting for the background worker. Claim flips them to 'processing' and is
     // conditioned on them still being 'pending', so the worker cannot double-handle.
-    const claimedEventIds: string[] = [];
     let eventContext = '';
     if (companyId && normalizedAgentType) {
       try {
@@ -4644,6 +4643,18 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       }
     }
 
+    // The session handled the events it claimed.
+    if (claimedEventIds.length > 0) {
+      try {
+        await supabase
+          .from('ai_agent_events')
+          .update({ status: 'processed', processed_at: new Date().toISOString() })
+          .in('id', claimedEventIds);
+      } catch (eventErr) {
+        console.error('[AI Agent Chat] Failed to mark events processed:', eventErr);
+      }
+    }
+
     await tracer.finish('ok', {
       handoff_to: handoffTo ?? undefined,
       tool_calls: toolCalls.length,
@@ -4666,6 +4677,17 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
 
   } catch (error: any) {
     console.error('[AI Agent Chat] Error:', error);
+    // Release claimed events so the background worker still delivers them.
+    if (claimedEventIds.length > 0) {
+      try {
+        await supabase
+          .from('ai_agent_events')
+          .update({ status: 'pending' })
+          .in('id', claimedEventIds);
+      } catch (eventErr) {
+        console.error('[AI Agent Chat] Failed to release claimed events:', eventErr);
+      }
+    }
     await tracer?.finish('error', { error: error?.message || 'Failed to process request' });
     return new Response(JSON.stringify({ 
       error: error.message || 'Failed to process request' 
