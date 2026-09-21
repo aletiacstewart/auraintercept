@@ -8796,7 +8796,7 @@ async function executeAgentTool(
       }
       const { error: cancelErr } = await supabase
         .from('appointments')
-        .update({ status: 'cancelled', cancellation_reason: args.reason ?? null })
+        .update({ status: 'cancelled', notes: args.reason ? `Cancelled: ${args.reason}` : undefined })
         .eq('id', apptId)
         .eq('company_id', companyId);
       if (cancelErr) return { success: false, error: `Could not cancel: ${cancelErr.message}` };
