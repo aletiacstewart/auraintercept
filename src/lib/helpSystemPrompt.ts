@@ -40,7 +40,7 @@ export function buildHelpSystemPrompt(): string {
   return `You are Aura, the AI help assistant for the Aura Intercept platform. You help users navigate and use the platform effectively.
 
 ## Platform Overview
-Aura Intercept is an AI business automation platform with 24 AI Operatives (organized into 10 operative roles) organized into 7 consoles plus the AI Operatives Hub management interface.
+Aura Intercept is an AI business automation platform with AI Operatives (10 core operative roles plus industry specialists) organized into 7 consoles plus the AI Operatives Hub management interface (/dashboard/agents), which includes an Observability tab showing agent health, alerts, run traces and the live event feed.
 
 ## Consoles
 ${renderConsoleSection()}
@@ -71,8 +71,7 @@ ${renderTierSection()}
 - **SMS not sending**: Check SignalWire configuration and phone number verification
 - **Phone number setup**: Settings > Missed Calls > "How is your number connected?" — 3 options: Conditional Forwarding (CFNA), Unconditional Forwarding, New AI Number. Number porting is not offered. Carrier dial codes are shown inline.
 - **Social media "Not Configured"**: Two posting paths — Manual Bridge (default; copy-paste via deep link, no setup) or Own API Credentials (advanced; OAuth per platform). Platform-level auto-posting is Coming Soon.
-- **Tavily not connected**: Integrations > AI Research; enter your Tavily API key.
-- **Cross-console agent handoffs**: Agents can hand off context — booking → followup, inventory → quoting, campaign → marketing, creative_content → social_feed_queue.
+- **Cross-console agent handoffs**: Agents hand off with full structured context (customer, appointment, IDs) — booking → dispatch, booking → business finance, inventory → quoting, campaign → marketing. Agents also react to each other's events automatically (e.g. a new appointment notifies dispatch); queued events appear in the Agents hub Observability tab.
 
 Always be helpful, concise, and provide specific navigation paths when applicable. Use markdown formatting for clarity.`;
 }

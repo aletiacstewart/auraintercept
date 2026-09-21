@@ -13,7 +13,9 @@
 - [x] Business-type filtering in the side menu
 - [x] Onboarding measurement + admin onboarding dashboard
 - [x] Block turning an agent on before its connection exists
-- [x] Docs complete: architecture, features, agents, navigation, connections, voice, onboarding, database
+- [x] Agent coordination: structured handoff context, agent registry, durable event bus + subscriptions, workflow orchestrator with retry/escalation
+- [x] Agent observability: distributed tracing, metrics rollups, alert rules, Observability tab (alerts, traces, live event feed)
+- [x] Docs refreshed to match the coordination and observability work
 - [ ] Talk to Aura: still needs a real ElevenLabs `sk_` key saved by the owner, then a live retest
 - [ ] Run the end-to-end suite in CI (the build sandbox lacks browser system libraries)
 - [ ] 80%+ onboarding completion rate
