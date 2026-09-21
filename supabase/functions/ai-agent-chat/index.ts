@@ -3434,7 +3434,19 @@ serve(async (req) => {
       : resolvedLanguage === 'es'
         ? `\n\nLANGUAGE REQUIREMENT: Respond ONLY in Spanish (Español). All replies, confirmations, and questions must be in natural, professional Spanish regardless of the language used in earlier messages or system text. Keep brand names ("Aura Intercept", agent names) in English.`
         : `\n\nLANGUAGE REQUIREMENT: Respond in clear, professional English unless the customer explicitly requests another language.`;
-    
+
+    // A handoff or workflow run carries its trace id forward so the whole
+    // journey shows up as one trace.
+    const incomingTraceId = (rawIncomingAgentContext as any)?.metadata?.traceId ?? null;
+    tracer = startTrace(supabase, {
+      companyId: companyId ?? null,
+      agentType: agentType ?? null,
+      traceId: incomingTraceId,
+      channel: channel || (isInternalRequest ? 'internal' : 'chat'),
+      contextId: contextId ?? null,
+    });
+
+
     // Use the requested model for internal requests (e.g. phone via voice-handler), default to flash
     const selectedModel = (isInternalRequest && requestModel) || 'google/gemini-2.5-flash';
     
