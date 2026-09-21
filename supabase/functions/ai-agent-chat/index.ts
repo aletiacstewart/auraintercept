@@ -5539,7 +5539,7 @@ async function executeAgentTool(
           // Retry once without intake_data so the booking still succeeds.
           const retry = await supabase
             .from('appointments')
-            .insert({ ...baseInsert, intake_data: null })
+            .insert({ ...baseInsert, intake_data: {} })
             .select()
             .single();
           if (retry.error) {
