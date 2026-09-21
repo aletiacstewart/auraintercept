@@ -5511,7 +5511,8 @@ async function executeAgentTool(
       // Create the appointment with the properly parsed datetime
       let { data: appointment, error } = await supabase
         .from('appointments')
-        .insert({ ...baseInsert, intake_data: normalizedIntake })
+        // The column is NOT NULL, so an empty object stands in for "nothing collected".
+        .insert({ ...baseInsert, intake_data: normalizedIntake ?? {} })
         .select()
         .single();
 
