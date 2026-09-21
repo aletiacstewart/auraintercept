@@ -4488,6 +4488,11 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       }
     }
 
+    await tracer.finish('ok', {
+      handoff_to: handoffTo ?? undefined,
+      tool_calls: toolCalls.length,
+    });
+
     return new Response(JSON.stringify({
       response: responseText,
       event_type: eventType,
@@ -4498,12 +4503,14 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       tool_ui: toolUi,
       context_id: contextId,
       next_steps: nextSteps,
+      trace_id: tracer.traceId,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error: any) {
     console.error('[AI Agent Chat] Error:', error);
+    await tracer?.finish('error', { error: error?.message || 'Failed to process request' });
     return new Response(JSON.stringify({ 
       error: error.message || 'Failed to process request' 
     }), {
@@ -4511,6 +4518,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+
 });
 
 function isEmergencyRequest(text: string) {
