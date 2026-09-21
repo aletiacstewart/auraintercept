@@ -1,6 +1,6 @@
 # Agent guide
 
-Agents are grouped into five plain-English job types (`src/lib/agentTypes.ts`). Every agent routes through the `ai-agent-chat` edge function, and `ai-orchestrator` records the run.
+Agents are grouped into five plain-English job types (`src/lib/agentTypes.ts`). Every agent routes through the `ai-agent-chat` edge function; the agent registry resolves names, tiers, prompts and tools, and `ai-orchestrator` records the run. Agents coordinate through validated handoffs and a durable event bus — see `docs/AGENT_ARCHITECTURE.md`.
 
 ## The five job types
 
@@ -21,6 +21,7 @@ Anything outside these appears under "Everything else" in the hub, plus industry
 - **Discover** — job-type cards, expandable to the agents inside.
 - **My Agents** — what is switched on, with status.
 - **Performance** — volume, resolution and hand-off metrics.
+- **Observability** — per-agent health (error rate, latency, last seen), open alerts, a trace waterfall for individual runs, and the live cross-agent event feed. Alerts can be acknowledged or resolved in place.
 - **Approvals / Activity / Conversations** — what agents proposed, ran and said.
 
 ## Ready-made prompts

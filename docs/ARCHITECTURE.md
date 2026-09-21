@@ -18,20 +18,29 @@
    Postgres + RLS          Edge functions            Storage buckets            Cron jobs
    (companies, leads,      (supabase/functions)      (documents, media)         (nightly health,
     appointments, ...)      ai-agent-chat,                                       reminders,
-                            ai-orchestrator,                                     scheduled posts)
+    ai_agent_events,        ai-orchestrator,                                   scheduled posts,
+    workflow_runs, ...)     ai-agent-health,                                   agent worker)
                             integration probes
                                               |
-                      Third parties: Google Calendar, SignalWire, Resend,
-                      ElevenLabs, Stripe, Upload-Post, Lovable AI Gateway
+                       Third parties: Google Calendar, SignalWire, Resend,
+                       ElevenLabs, Stripe, Upload-Post, Lovable AI Gateway
 ```
+
+## Agent layer
+
+- **Registry** (`supabase/functions/_shared/agent-registry.ts`) is the source of truth for all 38 agent IDs (10 core operatives, 24 legacy aliases, 14 industry specialists): tiers, prompts, tools, capabilities. It replaced the hardcoded `LEGACY_AGENT_MAP` / `TIER_AGENTS` maps.
+- **Structured handoffs** (`_shared/agent-context.ts`): agents pass a validated `AgentContext` object on handoff — never a raw text summary. A handoff missing required fields (e.g. dispatch needs an appointment plus name and phone) is refused with a plain-language error.
+- **Event bus** (`_shared/event-bus.ts` + `_shared/event-subscriptions.ts`): tools emit durable events into `ai_agent_events` (e.g. `appointment.created`, `technician.assigned`, `job.completed`); subscribing agents pick them up at session start or via the background agent worker. Payloads carry record IDs only — no contact details.
+- **Workflow orchestrator** (`_shared/workflow-engine.ts` + `workflow_runs`): multi-step sequences such as NewServiceRequest (triage → booking → dispatch → field navigation → customer notification) with 3x retry and escalation on failure. Gated by the `workflow_orchestrator` feature flag.
+- **Observability** (`_shared/tracing.ts`, `agent-metrics.ts`, `agent-alerts.ts`): every agent call and tool call is a traced span; daily metrics roll up into `agent_performance_metrics`; alert rules (error rate > 5%, tool p95 > 1s, agent silent 24h) open `platform_issues` rows and notify staff. `ai-agent-health` exposes per-agent status.
 
 ## Data flow
 
 1. A customer books (public page, phone call, text, or web chat).
 2. The relevant edge function writes to Postgres under row-level security scoped to `company_id`.
 3. Database triggers create the follow-on work: job assignment, reminders, notifications.
-4. AI agents read the same rows through `ai-agent-chat`, and `ai-orchestrator` records what they did.
-5. The dashboard reads via React Query; the analytics page aggregates the same tables.
+4. AI agents read the same rows through `ai-agent-chat`; successful tool calls emit events that other agents react to, and the orchestrator advances any active workflow runs.
+5. The dashboard reads via React Query; the analytics page and the Agents hub Observability tab aggregate the same tables.
 
 ## Integration points
 
