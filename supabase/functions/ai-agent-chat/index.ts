@@ -3824,9 +3824,10 @@ serve(async (req) => {
     const eventBus = createEventBus(supabase);
 
     /** Announce a successful tool action to subscribed agents. */
-    const emitToolEvent = (toolName: string, result: unknown) => {
-      const eventName = TOOL_EVENT_MAP[toolName];
-      if (!eventName || !companyId || !toolResultIsSuccess(result)) return;
+    const emitToolEvent = (toolName: string, args: unknown, result: unknown) => {
+      if (!companyId || !toolResultIsSuccess(result)) return;
+      const eventName = eventNameForTool(toolName, args, result);
+      if (!eventName) return;
       eventBus.emitDetached({
         name: eventName,
         companyId,
