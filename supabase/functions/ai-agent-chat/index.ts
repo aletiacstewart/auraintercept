@@ -4218,6 +4218,58 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
      * Build + validate the structured context for a hand-off.
      * Returns null (with a reason) when required data is still missing.
      */
+    /**
+     * Pull customer details out of whatever the model gave us: named tool
+     * arguments, the free-text `context` string the prompt asks for
+     * ("Customer Name: Dana, Phone: 555-1234"), and anything a previous
+     * collect_customer_info call already captured in this same turn.
+     */
+    const gatherCustomerDetails = (args: any): Record<string, string> => {
+      const out: Record<string, string> = {};
+      const set = (key: string, value: unknown) => {
+        const v = typeof value === 'string' ? value.trim() : value == null ? '' : String(value);
+        if (v && !out[key]) out[key] = v;
+      };
+
+      set('name', args?.customer_name ?? args?.name);
+      set('phone', args?.customer_phone ?? args?.phone);
+      set('email', args?.customer_email ?? args?.email);
+      set('address', args?.service_address ?? args?.address);
+      set('issue', args?.customer_intent ?? args?.issue ?? args?.service_type);
+
+      // Free-text context block, e.g. "Customer Name: John Smith, Phone: 555-1234, Issue: AC"
+      const blob = typeof args?.context === 'string' ? args.context : '';
+      if (blob) {
+        const grab = (label: RegExp) => blob.match(label)?.[1]?.trim().replace(/[,;]$/, '');
+        set('name', grab(/(?:customer\s*)?name\s*[:=]\s*([^,;\n]+)/i));
+        set('phone', grab(/phone\s*[:=]\s*([^,;\n]+)/i));
+        set('email', grab(/email\s*[:=]\s*([^,;\n]+)/i));
+        set('address', grab(/address\s*[:=]\s*([^,;\n]+)/i));
+        set('issue', grab(/(?:issue|service|problem)\s*[:=]\s*([^,;\n]+)/i));
+      }
+
+      // Anything an earlier tool in this same turn already collected.
+      for (const call of toolCalls) {
+        const r: any = (call as any)?.result;
+        const collected = r && typeof r === 'object' ? (r.collected ?? r.customer ?? null) : null;
+        if (collected && typeof collected === 'object') {
+          set('name', collected.name ?? collected.customer_name);
+          set('phone', collected.phone ?? collected.customer_phone);
+          set('email', collected.email ?? collected.customer_email);
+          set('address', collected.address ?? collected.service_address);
+          set('issue', collected.issue ?? collected.service_type);
+        }
+        const a: any = (call as any)?.arguments;
+        if (a && typeof a === 'object') {
+          set('name', a.customer_name ?? a.name);
+          set('phone', a.customer_phone ?? a.phone);
+          set('email', a.customer_email ?? a.email);
+          set('address', a.service_address ?? a.address);
+        }
+      }
+      return out;
+    };
+
     const prepareHandoffContext = (target: string, reason: string, args: any) => {
       const ids = collectIdsFromToolCalls();
       const ctx = buildAgentContext({
