@@ -3982,7 +3982,9 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     // Call Lovable AI Gateway
     // Use the shared gateway wrapper so 429/5xx transparently fall back to
     // the next model in the same family before we return an error.
+    const modelSpan = tracer.span('agent.model', { agent: agentType, model: selectedModel });
     const gatewayCall = await callAIGatewayWithFallback({
+
       model: selectedModel,
       messages,
       tools: isPhoneChannel ? dedupedTools.filter((t: any) => {
@@ -3995,6 +3997,12 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
       max_tokens: isPhoneChannel ? 150 : 1000,
     });
     let response = gatewayCall.response;
+    modelSpan.end(gatewayCall.response.ok ? 'ok' : 'error', {
+      model_used: gatewayCall.modelUsed,
+      fell_back: gatewayCall.fellBackFromPrimary,
+      error: gatewayCall.response.ok ? undefined : `gateway status ${gatewayCall.response.status}`,
+    });
+
     if (gatewayCall.fellBackFromPrimary) {
       console.log(
         `[ai-agent-chat] fell back from ${selectedModel} to ${gatewayCall.modelUsed}`,
