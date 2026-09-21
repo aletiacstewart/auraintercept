@@ -8038,6 +8038,78 @@ export type Database = {
           },
         ]
       }
+      workflow_runs: {
+        Row: {
+          attempt_count: number
+          company_id: string
+          completed_at: string | null
+          context: Json
+          created_at: string
+          current_step: number
+          error_message: string | null
+          escalated_at: string | null
+          id: string
+          next_attempt_at: string | null
+          started_by: string | null
+          status: string
+          steps: Json
+          title: string | null
+          updated_at: string
+          workflow_key: string
+        }
+        Insert: {
+          attempt_count?: number
+          company_id: string
+          completed_at?: string | null
+          context?: Json
+          created_at?: string
+          current_step?: number
+          error_message?: string | null
+          escalated_at?: string | null
+          id?: string
+          next_attempt_at?: string | null
+          started_by?: string | null
+          status?: string
+          steps?: Json
+          title?: string | null
+          updated_at?: string
+          workflow_key: string
+        }
+        Update: {
+          attempt_count?: number
+          company_id?: string
+          completed_at?: string | null
+          context?: Json
+          created_at?: string
+          current_step?: number
+          error_message?: string | null
+          escalated_at?: string | null
+          id?: string
+          next_attempt_at?: string | null
+          started_by?: string | null
+          status?: string
+          steps?: Json
+          title?: string | null
+          updated_at?: string
+          workflow_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_runs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       companies_public: {

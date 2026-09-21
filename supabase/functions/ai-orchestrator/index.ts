@@ -10,6 +10,8 @@ import {
 import { createLookupRegistry } from "../_shared/agent-registry.ts";
 import { createEventBus, MAX_EVENT_ATTEMPTS, nextAttemptDelayMs } from "../_shared/event-bus.ts";
 import { normalizeEventName } from "../_shared/event-subscriptions.ts";
+import { createWorkflowEngine } from "../_shared/workflow-engine.ts";
+import { listWorkflowDefinitions } from "../_shared/workflow-definitions.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -151,6 +153,34 @@ serve(async (req) => {
       
       case 'test_agent':
         return await handleTestAgent(supabase, companyId, agentType, payload);
+
+      // --- Workflow orchestrator (Phase 4) ---
+      case 'start_workflow':
+        return await handleStartWorkflow(supabase, companyId, payload);
+
+      case 'advance_workflow':
+        return await handleAdvanceWorkflow(supabase, payload);
+
+      case 'process_workflow_runs':
+      {
+        const cronAuth = await verifyCronSecret(req);
+        if (!cronAuth.ok) {
+          return new Response(JSON.stringify({ error: cronAuth.error }), {
+            status: cronAuth.status ?? 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        return await handleProcessWorkflowRuns(supabase, companyId);
+      }
+
+      case 'retry_step':
+        return await handleRetryStep(supabase, payload);
+
+      case 'cancel_workflow':
+        return await handleCancelWorkflow(supabase, payload);
+
+      case 'list_workflow_runs':
+        return await handleListWorkflowRuns(supabase, companyId);
       
       default:
         return new Response(JSON.stringify({ error: 'Unknown action' }), {
@@ -185,6 +215,35 @@ async function handleEmitEvent(
     await upsertPipelineForEvent(supabase, companyId, canonicalEvent, payload);
   } catch (pipelineErr) {
     console.error('[Orchestrator] pipeline upsert failed:', pipelineErr);
+  }
+
+  // When the workflow orchestrator flag is on, a new appointment starts one
+  // ordered New Service Request run instead of three independent notifications.
+  if (canonicalEvent === 'appointment.created') {
+    try {
+      if (await isFlagEnabled(supabase, companyId, 'workflow_orchestrator')) {
+        const started = await workflowEngine(supabase).startWorkflow('new_service_request', companyId, {
+          appointmentId: payload?.appointment_id ?? null,
+          customer: {
+            name: payload?.customer_name ?? null,
+            phone: payload?.customer_phone ?? null,
+            email: payload?.customer_email ?? null,
+            address: payload?.address ?? null,
+            issue: payload?.service_type ?? null,
+          },
+          metadata: { scheduled_at: payload?.scheduled_at ?? null },
+        });
+        return new Response(JSON.stringify({
+          success: started.ok,
+          workflow_run_id: started.runId ?? null,
+          event_type: canonicalEvent,
+          mode: 'workflow',
+          ...(started.error ? { error: started.error } : {}),
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+    } catch (flagErr) {
+      console.error('[Orchestrator] workflow flag check failed:', flagErr);
+    }
   }
 
   // Only agents the company has switched on receive events.
@@ -648,11 +707,29 @@ async function handleProcessPendingEvents(supabase: any, companyId?: string) {
     }
   }
 
+  // Multi-step workflow runs advance on the same worker pass — no extra job.
+  let workflowsAdvanced = 0;
+  try {
+    const engine = workflowEngine(supabase);
+    const dueRuns = await engine.dueRuns(companyId);
+    for (const run of dueRuns) {
+      try {
+        await engine.advanceWorkflow(run.id);
+        workflowsAdvanced += 1;
+      } catch (wfErr) {
+        console.error(`[Workflow] Worker failed on run ${run.id}:`, wfErr);
+      }
+    }
+  } catch (wfErr) {
+    console.error('[Workflow] Worker pass failed:', wfErr);
+  }
+
   return new Response(JSON.stringify({
     processed: processed.length,
     retrying: retried.length,
     failed: failed.length,
     total: events?.length || 0,
+    workflows_advanced: workflowsAdvanced,
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
@@ -891,4 +968,97 @@ async function upsertPipelineForEvent(
       ...patch,
     });
   }
+}
+
+// ---------------------------------------------------------------------------
+// Workflow orchestrator (Phase 4): named multi-step agent sequences.
+// ---------------------------------------------------------------------------
+
+/** Build a workflow engine bound to the service-role client. */
+function workflowEngine(supabase: any) {
+  return createWorkflowEngine({
+    supabase,
+    supabaseUrl: Deno.env.get('SUPABASE_URL')!,
+    serviceKey: Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  });
+}
+
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
+/** Is a feature flag on for this company (company row wins over the global row)? */
+async function isFlagEnabled(supabase: any, companyId: string, flagName: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('feature_flags')
+    .select('enabled, company_id')
+    .eq('flag_name', flagName)
+    .or(`company_id.eq.${companyId},company_id.is.null`);
+  if (!data?.length) return false;
+  const scoped = data.find((row: any) => row.company_id === companyId);
+  return !!(scoped ?? data[0])?.enabled;
+}
+
+async function handleStartWorkflow(supabase: any, companyId: string, payload: any) {
+  const key = payload?.workflow_key || payload?.workflowKey;
+  if (!key) return jsonResponse({ error: 'workflow_key is required' }, 400);
+  const result = await workflowEngine(supabase).startWorkflow(
+    key,
+    companyId,
+    payload?.context || {},
+    payload?.started_by ?? null,
+  );
+  return jsonResponse(result, result.ok ? 200 : 400);
+}
+
+async function handleAdvanceWorkflow(supabase: any, payload: any) {
+  const runId = payload?.run_id || payload?.runId;
+  if (!runId) return jsonResponse({ error: 'run_id is required' }, 400);
+  const result = await workflowEngine(supabase).advanceWorkflow(runId);
+  return jsonResponse({ run_id: runId, ...result });
+}
+
+/** Background worker: advance every run that is due. */
+async function handleProcessWorkflowRuns(supabase: any, companyId?: string) {
+  const engine = workflowEngine(supabase);
+  const runs = await engine.dueRuns(companyId);
+  const outcomes: Record<string, string> = {};
+  for (const run of runs) {
+    try {
+      const result = await engine.advanceWorkflow(run.id);
+      outcomes[run.id] = result.status;
+    } catch (err: any) {
+      console.error(`[Workflow] Worker failed on run ${run.id}:`, err);
+      outcomes[run.id] = 'error';
+    }
+  }
+  return jsonResponse({ advanced: runs.length, outcomes });
+}
+
+async function handleRetryStep(supabase: any, payload: any) {
+  const runId = payload?.run_id || payload?.runId;
+  if (!runId) return jsonResponse({ error: 'run_id is required' }, 400);
+  const result = await workflowEngine(supabase).retryStep(runId);
+  return jsonResponse(result, result.ok ? 200 : 400);
+}
+
+async function handleCancelWorkflow(supabase: any, payload: any) {
+  const runId = payload?.run_id || payload?.runId;
+  if (!runId) return jsonResponse({ error: 'run_id is required' }, 400);
+  const result = await workflowEngine(supabase).cancelWorkflow(runId, payload?.reason);
+  return jsonResponse(result);
+}
+
+async function handleListWorkflowRuns(supabase: any, companyId: string) {
+  const { data, error } = await supabase
+    .from('workflow_runs')
+    .select('*')
+    .eq('company_id', companyId)
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) return jsonResponse({ error: error.message }, 500);
+  return jsonResponse({ runs: data || [], definitions: listWorkflowDefinitions() });
 }
