@@ -4319,7 +4319,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
           try {
             result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
             toolSpan.end(result?.error ? 'error' : 'ok', { error: result?.error });
-            emitToolEvent(funcName, result);
+            emitToolEvent(funcName, args, result);
           } catch (toolErr: any) {
             toolSpan.end('error', { error: toolErr?.message ?? String(toolErr) });
             result = await handleToolError(funcName, args, toolErr, toolStartedAt);
@@ -4455,7 +4455,7 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
               try {
                 result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
                 loopToolSpan.end(result?.error ? 'error' : 'ok', { error: result?.error });
-                emitToolEvent(funcName, result);
+                emitToolEvent(funcName, args, result);
               } catch (toolErr: any) {
                 loopToolSpan.end('error', { error: toolErr?.message ?? String(toolErr) });
                 result = await handleToolError(funcName, args, toolErr, loopToolStartedAt);
