@@ -8808,6 +8808,123 @@ async function executeAgentTool(
       };
     }
 
+    case 'record_feedback': {
+      const rating = Number(args.rating ?? 0) || null;
+      const { data: fb, error: fbErr } = await supabase
+        .from('customer_feedback')
+        .insert({
+          company_id: companyId,
+          appointment_id: args.appointment_id ?? null,
+          customer_name: args.customer_name ?? null,
+          customer_phone: args.customer_phone ?? null,
+          customer_email: args.customer_email ?? null,
+          rating,
+          sentiment: rating ? (rating >= 4 ? 'positive' : rating <= 2 ? 'negative' : 'neutral') : null,
+          feedback_note: args.feedback ?? args.notes ?? args.comment ?? null,
+          service_type: args.service_type ?? null,
+          source: 'ai_agent',
+        })
+        .select('id')
+        .single();
+      if (fbErr) return { success: false, error: `Could not save the feedback: ${fbErr.message}` };
+      return { success: true, feedback_id: fb.id, rating, message: 'Feedback saved to the customer record.' };
+    }
+
+    case 'escalate_issue': {
+      const title = args.title || args.issue || 'Customer issue escalated by an AI operative';
+      const { data: issue, error: issErr } = await supabase
+        .from('platform_issues')
+        .insert({
+          company_id: companyId,
+          issue_type: 'user_reported',
+          severity: args.severity === 'critical' || args.severity === 'high' || args.severity === 'low' ? args.severity : 'medium',
+          status: 'new',
+          title,
+          description: args.description ?? args.details ?? args.reason ?? null,
+          metadata: { agent_type: agentType, customer_name: args.customer_name ?? null, appointment_id: args.appointment_id ?? null },
+        })
+        .select('id')
+        .single();
+      if (issErr) return { success: false, error: `Could not escalate: ${issErr.message}` };
+      return { success: true, issue_id: issue.id, message: 'Escalated to the team — it now shows on the issues board.' };
+    }
+
+    case 'send_followup': {
+      if (!args.lead_id) {
+        return { success: false, error: 'I need the lead or customer record ID to schedule a follow-up.' };
+      }
+      const when = args.scheduled_at || args.send_at
+        ? new Date(args.scheduled_at || args.send_at).toISOString()
+        : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      const { data: fu, error: fuErr } = await supabase
+        .from('lead_follow_ups')
+        .insert({
+          company_id: companyId,
+          lead_id: args.lead_id,
+          scheduled_at: when,
+          follow_up_type: args.channel || args.follow_up_type || 'sms',
+          message_template: args.message ?? args.template ?? null,
+          status: 'scheduled',
+        })
+        .select('id')
+        .single();
+      if (fuErr) return { success: false, error: `Could not schedule the follow-up: ${fuErr.message}` };
+      return { success: true, follow_up_id: fu.id, scheduled_at: when, message: `Follow-up scheduled for ${new Date(when).toLocaleString()}.` };
+    }
+
+    case 'get_customer_segments': {
+      const { data: segs, error: segErr } = await supabase
+        .from('customer_segments')
+        .select('id, name, customer_count, criteria')
+        .eq('company_id', companyId)
+        .order('created_at', { ascending: false })
+        .limit(25);
+      if (segErr) return { success: false, error: segErr.message };
+      return { success: true, count: segs?.length ?? 0, segments: segs ?? [] };
+    }
+
+    case 'collect_customer_info': {
+      const collected = {
+        name: args.name ?? args.customer_name ?? null,
+        phone: args.phone ?? args.customer_phone ?? null,
+        email: args.email ?? args.customer_email ?? null,
+        address: args.address ?? args.service_address ?? null,
+        issue: args.issue ?? args.service_type ?? null,
+      };
+      const missing = Object.entries(collected).filter(([k, v]) => !v && k !== 'email').map(([k]) => k);
+      return {
+        success: true,
+        collected,
+        missing,
+        message: missing.length
+          ? `Still needed: ${missing.join(', ')}.`
+          : 'All required details collected — ready to book or hand off.',
+      };
+    }
+
+    case 'respond_to_review': {
+      const draft = args.response || args.draft || null;
+      if (!draft) {
+        return { success: false, error: 'Write the reply text first, then pass it as "response".' };
+      }
+      return {
+        success: true,
+        draft_response: draft,
+        message: 'Reply drafted. It needs a human to post it on the review site — this platform cannot post it for you.',
+      };
+    }
+
+    case 'generate_promo_code': {
+      const prefix = String(args.prefix || args.campaign || 'SAVE').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'SAVE';
+      const code = `${prefix}${Math.random().toString(36).toUpperCase().slice(2, 6)}`;
+      return {
+        success: true,
+        promo_code: code,
+        discount: args.discount ?? args.value ?? null,
+        message: `Promo code ${code} generated. Add it to a campaign to start using it.`,
+      };
+    }
+
     default:
       // Never fabricate success for a tool that has no implementation — the
       // model must be told so it can explain the limit or pick another tool.

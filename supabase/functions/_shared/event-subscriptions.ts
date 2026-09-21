@@ -86,6 +86,12 @@ export const LEGACY_EVENT_ALIASES: Record<string, AgentEventName> = {
   agent_handoff: 'agent.handoff',
   content_engine_output: 'content.generated',
   seasonal_trigger: 'campaign.created',
+  // Billing events coming from Stripe / dunning. They describe money moving,
+  // so they map onto the payment events the operatives already listen for.
+  payment_recovered: 'payment.received',
+  payment_failed: 'payment.received',
+  subscription_canceled: 'churn_risk.detected',
+  subscription_suspended: 'churn_risk.detected',
 };
 
 /** Resolve any event name (legacy or canonical) to its canonical form. */
