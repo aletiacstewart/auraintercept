@@ -707,11 +707,29 @@ async function handleProcessPendingEvents(supabase: any, companyId?: string) {
     }
   }
 
+  // Multi-step workflow runs advance on the same worker pass — no extra job.
+  let workflowsAdvanced = 0;
+  try {
+    const engine = workflowEngine(supabase);
+    const dueRuns = await engine.dueRuns(companyId);
+    for (const run of dueRuns) {
+      try {
+        await engine.advanceWorkflow(run.id);
+        workflowsAdvanced += 1;
+      } catch (wfErr) {
+        console.error(`[Workflow] Worker failed on run ${run.id}:`, wfErr);
+      }
+    }
+  } catch (wfErr) {
+    console.error('[Workflow] Worker pass failed:', wfErr);
+  }
+
   return new Response(JSON.stringify({
     processed: processed.length,
     retrying: retried.length,
     failed: failed.length,
     total: events?.length || 0,
+    workflows_advanced: workflowsAdvanced,
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
