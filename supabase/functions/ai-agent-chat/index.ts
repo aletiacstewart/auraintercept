@@ -4680,7 +4680,11 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
     // Release claimed events so the background worker still delivers them.
     if (claimedEventIds.length > 0) {
       try {
-        await supabase
+        const releaseClient = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+        );
+        await releaseClient
           .from('ai_agent_events')
           .update({ status: 'pending' })
           .in('id', claimedEventIds);
