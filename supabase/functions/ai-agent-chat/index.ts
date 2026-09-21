@@ -5024,6 +5024,30 @@ async function executeAgentTool(
 ): Promise<any> {
   console.log(`[AI Agent] Executing tool: ${toolName} for ${agentType}`);
 
+  // Some agents declare older tool names for the same capability. Route them to
+  // the live implementation instead of letting them fall through unhandled.
+  const TOOL_ALIASES: Record<string, { tool: string; args?: (a: any) => any }> = {
+    start_job: { tool: 'update_job_status', args: (a) => ({ ...a, status: 'in_progress' }) },
+    complete_job: { tool: 'update_job_status', args: (a) => ({ ...a, status: 'completed' }) },
+    get_performance_metrics: { tool: 'analyze_metrics' },
+    get_revenue_analysis: { tool: 'analyze_metrics' },
+    get_customer_insights: { tool: 'analyze_metrics' },
+    forecast_trends: { tool: 'forecast_demand' },
+    optimize_route: { tool: 'get_my_jobs' },
+  };
+  const alias = TOOL_ALIASES[toolName];
+  if (alias) {
+    console.log(`[AI Agent] Routing ${toolName} -> ${alias.tool}`);
+    return await executeAgentTool(
+      supabase,
+      companyId,
+      agentType,
+      alias.tool,
+      alias.args ? alias.args(args) : args,
+      userId,
+    );
+  }
+
   // Tool execution - routes to real database queries, APIs, and notification systems
   switch (toolName) {
     case 'get_smart_link': {
@@ -8311,11 +8335,10 @@ async function executeAgentTool(
           .insert({
             company_id: companyId,
             platform,
-            content: fullContent,
+            generated_content: fullContent,
             hashtags,
             image_url: imageUrl,
             status: scheduledFor ? 'approved' : 'pending',
-            source: 'ai_chat',
           })
           .select()
           .single();
@@ -8726,10 +8749,72 @@ async function executeAgentTool(
       };
     }
 
-    default:
+    case 'reschedule_appointment': {
+      const apptId = args.appointment_id;
+      const newTime = args.new_datetime || args.new_time || args.datetime;
+      if (!apptId || !newTime) {
+        return { success: false, error: 'I need the appointment ID and the new date and time to reschedule.' };
+      }
+      const { data: existing } = await supabase
+        .from('appointments')
+        .select('id, customer_name, datetime, status')
+        .eq('id', apptId)
+        .eq('company_id', companyId)
+        .maybeSingle();
+      if (!existing) {
+        return { success: false, error: 'I could not find that appointment for this business.' };
+      }
+      const { error: updErr } = await supabase
+        .from('appointments')
+        .update({ datetime: new Date(newTime).toISOString(), status: 'proposed' })
+        .eq('id', apptId)
+        .eq('company_id', companyId);
+      if (updErr) return { success: false, error: `Could not reschedule: ${updErr.message}` };
       return {
         success: true,
-        message: `Tool ${toolName} executed with args: ${JSON.stringify(args)}`,
+        appointment_id: apptId,
+        customer_name: existing.customer_name,
+        previous_datetime: existing.datetime,
+        new_datetime: new Date(newTime).toISOString(),
+        message: `Appointment moved to ${new Date(newTime).toLocaleString()}.`,
+      };
+    }
+
+    case 'cancel_appointment': {
+      const apptId = args.appointment_id;
+      if (!apptId) {
+        return { success: false, error: 'I need the appointment ID to cancel it.' };
+      }
+      const { data: existing } = await supabase
+        .from('appointments')
+        .select('id, customer_name, datetime')
+        .eq('id', apptId)
+        .eq('company_id', companyId)
+        .maybeSingle();
+      if (!existing) {
+        return { success: false, error: 'I could not find that appointment for this business.' };
+      }
+      const { error: cancelErr } = await supabase
+        .from('appointments')
+        .update({ status: 'cancelled', cancellation_reason: args.reason ?? null })
+        .eq('id', apptId)
+        .eq('company_id', companyId);
+      if (cancelErr) return { success: false, error: `Could not cancel: ${cancelErr.message}` };
+      return {
+        success: true,
+        appointment_id: apptId,
+        customer_name: existing.customer_name,
+        message: 'Appointment cancelled.',
+      };
+    }
+
+    default:
+      // Never fabricate success for a tool that has no implementation — the
+      // model must be told so it can explain the limit or pick another tool.
+      console.error(`[AI Agent] Unimplemented tool requested: ${toolName}`);
+      return {
+        success: false,
+        error: `The "${toolName}" action is not available yet. Tell the user plainly what you cannot do and offer the closest thing you can do.`,
       };
   }
 }
