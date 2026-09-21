@@ -310,6 +310,10 @@ export default function AIAgentsHub() {
                 <BarChart3 className="h-3.5 w-3.5" />
                 Performance
               </TabsTrigger>
+              <TabsTrigger value="observability" className="flex items-center gap-1.5">
+                <LineChart className="h-3.5 w-3.5" />
+                Observability
+              </TabsTrigger>
               <TabsTrigger value="approvals" className="flex items-center gap-1.5">
                 <Eye className="h-3.5 w-3.5" />
                 Approvals
