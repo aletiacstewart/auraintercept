@@ -434,6 +434,23 @@ export class WorkflowEngine {
         if (technicianId) extracted.technicianId = technicianId;
       }
     }
+    // A step only counts as done when the agent actually acted.
+    if (stepDef.requiresToolCall) {
+      const called = toolCalls.some((c) => (c?.name || c?.tool || c?.function?.name) === stepDef.requiresToolCall);
+      if (!called) {
+        throw new Error(
+          `The ${stepDef.label.toLowerCase()} step did not go through: the agent replied without doing it ("${summary.slice(0, 160)}").`,
+        );
+      }
+    }
+    for (const path of stepDef.expects ?? []) {
+      const fromStep = extracted[path];
+      const fromContext = path.split('.').reduce<any>((acc, key) => (acc == null ? acc : acc[key]), context as any);
+      if (!fromStep && !fromContext) {
+        throw new Error(`The ${stepDef.label.toLowerCase()} step finished without producing ${path}.`);
+      }
+    }
+
     return { summary, extracted };
   }
 }
