@@ -3717,15 +3717,156 @@ serve(async (req) => {
     }
 
     // Get context if provided
-    let contextData = {};
+    let contextData: Record<string, any> = {};
     if (contextId) {
       const { data: context } = await supabase
         .from('ai_agent_context')
         .select('*')
         .eq('id', contextId)
         .single();
-      contextData = context?.context_data || {};
+      contextData = (context?.context_data as Record<string, any>) || {};
     }
+
+    // Render the stored context as named fields instead of a raw JSON blob.
+    let contextBlock = '';
+    if (contextData && Object.keys(contextData).length > 0) {
+      const ac = (contextData.agent_context || {}) as Record<string, any>;
+      const cust = (ac.customer || {}) as Record<string, any>;
+      const lines: string[] = [];
+      const name = cust.name || contextData.customer_name;
+      const phone = cust.phone || contextData.customer_phone;
+      const email = cust.email || contextData.customer_email;
+      const address = cust.address || contextData.service_address;
+      if (name) {
+        let line = `Customer: ${name}`;
+        if (phone) line += ` (${phone})`;
+        if (email) line += ` <${email}>`;
+        lines.push(line);
+      } else if (phone) {
+        lines.push(`Customer phone: ${phone}`);
+      }
+      if (address) lines.push(`Service address: ${address}`);
+      const appointmentId = ac.appointmentId || contextData.appointment_id;
+      if (appointmentId) lines.push(`Appointment ID: ${appointmentId}`);
+      if (contextData.appointment_type || contextData.service_type) {
+        lines.push(`Service: ${contextData.appointment_type || contextData.service_type}`);
+      }
+      if (contextData.appointment_date || contextData.scheduled_at) {
+        lines.push(`Scheduled: ${contextData.appointment_date || contextData.scheduled_at}`);
+      }
+      if (ac.customerId || contextData.customer_id) lines.push(`Customer ID: ${ac.customerId || contextData.customer_id}`);
+      if (ac.jobId || contextData.job_id) lines.push(`Job ID: ${ac.jobId || contextData.job_id}`);
+      if (contextData.invoice_id) {
+        lines.push(`Invoice ID: ${contextData.invoice_id}${contextData.invoice_status ? ` (${contextData.invoice_status})` : ''}`);
+      }
+      if (Array.isArray(contextData.services) && contextData.services.length > 0) {
+        lines.push(`Services discussed: ${contextData.services.map((s: any) => s?.name || s).join(', ')}`);
+      }
+      if (cust.issue || contextData.issue) lines.push(`Issue: ${cust.issue || contextData.issue}`);
+
+      if (lines.length > 0) {
+        contextBlock = `\nINFORMATION ALREADY COLLECTED:\n${lines.join('\n')}\nUse this instead of asking for it again.\n`;
+      }
+    }
+
+    // === QUEUED EVENTS FOR THIS AGENT ===
+    // Claim a few pending events so a live session reacts immediately instead of
+    // waiting for the background worker. Claim flips them to 'processing' and is
+    // conditioned on them still being 'pending', so the worker cannot double-handle.
+    const claimedEventIds: string[] = [];
+    let eventContext = '';
+    if (companyId && normalizedAgentType) {
+      try {
+        const { data: pendingEvents } = await supabase
+          .from('ai_agent_events')
+          .select('id, event_type, payload')
+          .eq('company_id', companyId)
+          .eq('target_agent', normalizedAgentType)
+          .eq('status', 'pending')
+          .order('created_at', { ascending: true })
+          .limit(5);
+
+        if (pendingEvents && pendingEvents.length > 0) {
+          const ids = pendingEvents.map((e: any) => e.id);
+          const { data: claimed } = await supabase
+            .from('ai_agent_events')
+            .update({ status: 'processing' })
+            .in('id', ids)
+            .eq('status', 'pending')
+            .select('id');
+
+          const claimedSet = new Set((claimed || []).map((r: any) => r.id));
+          const usable = pendingEvents.filter((e: any) => claimedSet.has(e.id));
+          claimedEventIds.push(...usable.map((e: any) => e.id));
+
+          if (usable.length > 0) {
+            const rendered = usable.map((event: any) => {
+              const p = (event.payload || {}) as Record<string, any>;
+              const refs: string[] = [];
+              if (p.appointment_id) refs.push(`appointment ${p.appointment_id}`);
+              if (p.job_id) refs.push(`job ${p.job_id}`);
+              if (p.technician_id) refs.push(`technician ${p.technician_id}`);
+              if (p.invoice_id) refs.push(`invoice ${p.invoice_id}`);
+              if (p.quote_id) refs.push(`quote ${p.quote_id}`);
+              if (p.customer_id) refs.push(`customer ${p.customer_id}`);
+              return `- ${event.event_type}${refs.length ? ` (${refs.join(', ')})` : ''}`;
+            }).join('\n');
+            eventContext = `\nQUEUED EVENTS YOU SHOULD ACT ON (from other agents):\n${rendered}\nUse their record IDs directly and address them in this reply.\n`;
+          }
+        }
+      } catch (eventErr) {
+        console.error('[AI Agent Chat] Failed to claim queued events:', eventErr);
+      }
+    }
+
+    // Emits lifecycle events when tools succeed (durable, never blocks the reply).
+    const eventBus = createEventBus(supabase);
+
+    /** Announce a successful tool action to subscribed agents. */
+    const emitToolEvent = (toolName: string, result: unknown) => {
+      const eventName = TOOL_EVENT_MAP[toolName];
+      if (!eventName || !companyId || !toolResultIsSuccess(result)) return;
+      eventBus.emitDetached({
+        name: eventName,
+        companyId,
+        sourceAgent: normalizedAgentType || agentType,
+        payload: extractEventPayload(toolName, result, contextId),
+        contextId: contextId ?? null,
+      });
+    };
+
+    /**
+     * A thrown tool never kills the reply: log it, announce it, and hand the
+     * error back to the model as a tool result so it keeps working.
+     */
+    const handleToolError = async (toolName: string, args: unknown, err: any, startedAt: number) => {
+      const messageText = err?.message || String(err);
+      try {
+        await supabase.from('ai_agent_logs').insert({
+          company_id: companyId,
+          agent_type: agentType,
+          context_id: contextId,
+          action: 'tool_failed',
+          input_data: { tool: toolName, arguments: args },
+          error_message: messageText,
+          duration_ms: Date.now() - startedAt,
+          success: false,
+        });
+      } catch (logErr) {
+        console.error('[AI Agent Chat] Failed to log tool failure:', logErr);
+      }
+      if (companyId) {
+        eventBus.emitDetached({
+          name: 'tool.failed',
+          companyId,
+          sourceAgent: normalizedAgentType || agentType,
+          payload: { tool: toolName, error: messageText },
+          contextId: contextId ?? null,
+        });
+      }
+      return { success: false, error: `Tool failed: ${messageText}` };
+    };
+
 
     // Build the system prompt with handoff context. The registry returns the
     // operative's prompt, or a specialist's base primer, or a generic fallback.
