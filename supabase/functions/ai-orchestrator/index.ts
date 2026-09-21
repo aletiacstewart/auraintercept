@@ -10,6 +10,8 @@ import {
 import { createLookupRegistry } from "../_shared/agent-registry.ts";
 import { createEventBus, MAX_EVENT_ATTEMPTS, nextAttemptDelayMs } from "../_shared/event-bus.ts";
 import { normalizeEventName } from "../_shared/event-subscriptions.ts";
+import { createWorkflowEngine } from "../_shared/workflow-engine.ts";
+import { listWorkflowDefinitions } from "../_shared/workflow-definitions.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
