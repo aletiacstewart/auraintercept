@@ -4156,8 +4156,17 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             }
           }
         } else {
-          // Execute the tool
-          const result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
+          // Execute the tool (traced: tool failures show as error spans)
+          const toolSpan = tracer.span(`tool.${funcName}`, { agent: agentType });
+          let result: any;
+          try {
+            result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
+            toolSpan.end(result?.error ? 'error' : 'ok', { error: result?.error });
+          } catch (toolErr: any) {
+            toolSpan.end('error', { error: toolErr?.message ?? String(toolErr) });
+            throw toolErr;
+          }
+
           toolCalls.push({
             name: funcName,
             arguments: args,
