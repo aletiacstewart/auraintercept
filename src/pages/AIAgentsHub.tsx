@@ -47,6 +47,7 @@ import { AgentConfigModal } from '@/components/agents/AgentConfigModal';
 import { AgentTestModal } from '@/components/agents/AgentTestModal';
 import { SpecialistOperativesPanel } from '@/components/agents/SpecialistOperativesPanel';
 import { AgentWorkflowMonitor } from '@/components/ai/agents/AgentWorkflowMonitor';
+import { WorkflowRunsPanel } from '@/components/agents/WorkflowRunsPanel';
 import { BatchAgentActivation } from '@/components/ai/agents/BatchAgentActivation';
 import { AgentAnalyticsDashboard } from '@/components/ai/agents/AgentAnalyticsDashboard';
 import { ConversationHistoryBrowser } from '@/components/ai/agents/ConversationHistoryBrowser';
