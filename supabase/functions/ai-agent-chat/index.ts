@@ -4147,7 +4147,13 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             } else {
               handoffTo = target;
               handoffReason = reason;
-              outgoingAgentContext = ctx;
+              // Carry the trace id so the receiving agent joins this trace.
+              outgoingAgentContext = {
+                ...ctx,
+                metadata: { ...((ctx as any).metadata || {}), traceId: tracer.traceId },
+              } as typeof ctx;
+              tracer.span(`handoff.${target}`, { agent: agentType, reason }).end('ok');
+
               toolCalls.push({
                 name: 'handoff_to_agent',
                 arguments: { ...(args as any), target_agent: target, reason },
