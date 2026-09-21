@@ -4063,7 +4063,8 @@ ${managerContext}
 
 ${knowledgeBaseContext}
 
-Current Context: ${JSON.stringify(contextData)}
+${contextBlock}
+${eventContext}
 
 ${settings.greeting_message && !isInternalAgent ? `Custom Greeting: ${settings.greeting_message}` : ''}
 ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_instructions}` : ''}
