@@ -922,3 +922,96 @@ async function upsertPipelineForEvent(
     });
   }
 }
+
+// ---------------------------------------------------------------------------
+// Workflow orchestrator (Phase 4): named multi-step agent sequences.
+// ---------------------------------------------------------------------------
+
+/** Build a workflow engine bound to the service-role client. */
+function workflowEngine(supabase: any) {
+  return createWorkflowEngine({
+    supabase,
+    supabaseUrl: Deno.env.get('SUPABASE_URL')!,
+    serviceKey: Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  });
+}
+
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
+/** Is a feature flag on for this company (company row wins over the global row)? */
+async function isFlagEnabled(supabase: any, companyId: string, flagName: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('feature_flags')
+    .select('enabled, company_id')
+    .eq('flag_name', flagName)
+    .or(`company_id.eq.${companyId},company_id.is.null`);
+  if (!data?.length) return false;
+  const scoped = data.find((row: any) => row.company_id === companyId);
+  return !!(scoped ?? data[0])?.enabled;
+}
+
+async function handleStartWorkflow(supabase: any, companyId: string, payload: any) {
+  const key = payload?.workflow_key || payload?.workflowKey;
+  if (!key) return jsonResponse({ error: 'workflow_key is required' }, 400);
+  const result = await workflowEngine(supabase).startWorkflow(
+    key,
+    companyId,
+    payload?.context || {},
+    payload?.started_by ?? null,
+  );
+  return jsonResponse(result, result.ok ? 200 : 400);
+}
+
+async function handleAdvanceWorkflow(supabase: any, payload: any) {
+  const runId = payload?.run_id || payload?.runId;
+  if (!runId) return jsonResponse({ error: 'run_id is required' }, 400);
+  const result = await workflowEngine(supabase).advanceWorkflow(runId);
+  return jsonResponse({ run_id: runId, ...result });
+}
+
+/** Background worker: advance every run that is due. */
+async function handleProcessWorkflowRuns(supabase: any, companyId?: string) {
+  const engine = workflowEngine(supabase);
+  const runs = await engine.dueRuns(companyId);
+  const outcomes: Record<string, string> = {};
+  for (const run of runs) {
+    try {
+      const result = await engine.advanceWorkflow(run.id);
+      outcomes[run.id] = result.status;
+    } catch (err: any) {
+      console.error(`[Workflow] Worker failed on run ${run.id}:`, err);
+      outcomes[run.id] = 'error';
+    }
+  }
+  return jsonResponse({ advanced: runs.length, outcomes });
+}
+
+async function handleRetryStep(supabase: any, payload: any) {
+  const runId = payload?.run_id || payload?.runId;
+  if (!runId) return jsonResponse({ error: 'run_id is required' }, 400);
+  const result = await workflowEngine(supabase).retryStep(runId);
+  return jsonResponse(result, result.ok ? 200 : 400);
+}
+
+async function handleCancelWorkflow(supabase: any, payload: any) {
+  const runId = payload?.run_id || payload?.runId;
+  if (!runId) return jsonResponse({ error: 'run_id is required' }, 400);
+  const result = await workflowEngine(supabase).cancelWorkflow(runId, payload?.reason);
+  return jsonResponse(result);
+}
+
+async function handleListWorkflowRuns(supabase: any, companyId: string) {
+  const { data, error } = await supabase
+    .from('workflow_runs')
+    .select('*')
+    .eq('company_id', companyId)
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) return jsonResponse({ error: error.message }, 500);
+  return jsonResponse({ runs: data || [], definitions: listWorkflowDefinitions() });
+}
