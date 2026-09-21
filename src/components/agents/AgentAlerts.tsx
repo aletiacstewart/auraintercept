@@ -69,7 +69,7 @@ export function AgentAlerts({ companyId }: { companyId: string }) {
       }
       const { error } = await supabase
         .from('platform_issues')
-        .update(patch)
+        .update(patch as any)
         .eq('id', id);
       if (error) throw error;
       toast.success(status === 'resolved' ? 'Alert resolved' : 'Alert acknowledged');

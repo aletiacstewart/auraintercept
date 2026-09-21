@@ -430,6 +430,22 @@ export default function AIAgentsHub() {
               {companyId && <AgentAnalyticsDashboard companyId={companyId} />}
             </TabsContent>
 
+            {/* ---------------- Observability ---------------- */}
+            <TabsContent value="observability" className="space-y-4 mt-6">
+              {companyId ? (
+                <>
+                  <AgentAlerts companyId={companyId} />
+                  <AgentTraces companyId={companyId} />
+                  <AgentEventFeed companyId={companyId} />
+                </>
+              ) : (
+                <Card className="p-12 text-center">
+                  <LineChart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold">Loading…</h3>
+                </Card>
+              )}
+            </TabsContent>
+
             {/* ---------------- Approvals ---------------- */}
             <TabsContent value="approvals" className="space-y-4 mt-6">
               {companyId ? (
