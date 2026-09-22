@@ -60,7 +60,15 @@ serve(async (req) => {
       recipientRole = 'all'
     }: NotificationRequest = await req.json();
 
+    if (!companyId || !notificationType || !title || !message) {
+      return new Response(
+        JSON.stringify({ error: 'companyId, notificationType, title and message are required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
     console.log(`Processing ${notificationType} notification for company ${companyId}`);
+
 
     const authResult = await authorizeInternalRequest(req, companyId);
     if (!authResult.ok) {
