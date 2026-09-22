@@ -116,11 +116,15 @@ async function maybeNotifyThreshold(
       },
       body: JSON.stringify({
         companyId,
+        notificationType: 'job_update',
         title: 'Email cap warning',
-        body: crossed.join(' · '),
-        category: 'billing',
-        severity: dailyPct >= 1 || monthlyPct >= 1 ? 'high' : 'medium',
+        message: crossed.join(' · '),
+        metadata: {
+          category: 'billing',
+          severity: dailyPct >= 1 || monthlyPct >= 1 ? 'high' : 'medium',
+        },
       }),
+
     }).catch(() => {});
   } catch { /* noop */ }
 }

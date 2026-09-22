@@ -34,7 +34,43 @@ Deno.serve(async (req) => {
       throw new Error('Invalid JSON body');
     }
 
-    const { companyId, customerPhone, customerName, message: rawMessage, appointmentId, source } = payload;
+    let { companyId, customerPhone, customerName, message: rawMessage } = payload;
+    const { appointmentId, source, type } = payload;
+
+    // Callers such as booking-actions, the customer portal and the calendar UI
+    // only pass { appointmentId, type }. Resolve the rest from the appointment.
+    if (appointmentId && (!companyId || !customerPhone || !rawMessage)) {
+      const { data: appt } = await supabase
+        .from('appointments')
+        .select('company_id, customer_name, customer_phone, service_type, datetime')
+        .eq('id', appointmentId)
+        .maybeSingle();
+
+      if (appt) {
+        companyId = companyId || appt.company_id;
+        customerPhone = customerPhone || appt.customer_phone;
+        customerName = customerName || appt.customer_name;
+
+        if (!rawMessage) {
+          const { data: companyRow } = await supabase
+            .from('companies')
+            .select('name')
+            .eq('id', appt.company_id)
+            .maybeSingle();
+          const businessName = companyRow?.name || 'our team';
+          const when = appt.datetime ? new Date(appt.datetime).toLocaleString() : '';
+          const service = appt.service_type ? ` (${appt.service_type})` : '';
+
+          if (type === 'cancellation') {
+            rawMessage = `Hi ${appt.customer_name || 'there'}, your appointment with ${businessName}${service} on ${when} has been cancelled. Reply to this message if you'd like to rebook.`;
+          } else if (type === 'reschedule') {
+            rawMessage = `Hi ${appt.customer_name || 'there'}, your appointment with ${businessName}${service} has been rescheduled to ${when}. Reply here if that time doesn't work.`;
+          } else {
+            rawMessage = `Hi ${appt.customer_name || 'there'}, your appointment with ${businessName}${service} is confirmed for ${when}. Reply here if you need to change it.`;
+          }
+        }
+      }
+    }
 
     if (!companyId) throw new Error('companyId is required');
     if (!customerPhone) throw new Error('customerPhone is required');
@@ -50,6 +86,7 @@ Deno.serve(async (req) => {
     // Apply industry-aware terminology (no-op if message has no placeholders)
     const pack = await loadIndustryPackForCompany(supabase, companyId);
     const message = applyTerminology(rawMessage, pack);
+
 
     const normalizedPhone = normalizeE164US(customerPhone) || normalizePhoneNumber(customerPhone);
 
