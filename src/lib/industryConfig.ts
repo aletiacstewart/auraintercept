@@ -38,35 +38,36 @@ export interface IndustryQuickstart {
 
 export const CLUSTER_QUICKSTARTS: Record<IndustryCluster, IndustryQuickstart> = {
   trades: {
-    features_enabled: ['scheduling', 'field_ops', 'quotes', 'invoicing', 'inventory', 'payments', 'sms', 'customer_portal'],
+    features_enabled: ['scheduling', 'field_ops', 'quotes', 'invoicing', 'inventory', 'payments', 'sms', 'customer_portal', 'marketing', 'reviews'],
     recommended_agents: ['booking', 'field_navigation', 'customer_followup'],
     required_integrations: ['calendar', 'sms', 'voice'],
     onboarding_message: 'Service businesses run on fast booking, clean dispatch and same-day quotes.',
     sample_workflow: 'Customer calls -> Aura books it -> Tech dispatched -> Customer texted -> Invoice sent',
   },
   outdoor: {
-    features_enabled: ['scheduling', 'field_ops', 'quotes', 'payments', 'sms', 'customer_portal'],
+    features_enabled: ['scheduling', 'field_ops', 'quotes', 'invoicing', 'payments', 'sms', 'customer_portal', 'marketing', 'reviews'],
     recommended_agents: ['booking', 'field_navigation', 'customer_followup'],
     required_integrations: ['calendar', 'sms', 'voice'],
     onboarding_message: 'Outdoor work starts with a site visit, so Aura focuses on estimates, crew scheduling and follow-up.',
     sample_workflow: 'Enquiry -> Site visit booked -> Estimate sent -> Crew scheduled -> Follow-up for the next season',
   },
   repair: {
-    features_enabled: ['scheduling', 'field_ops', 'quotes', 'invoicing', 'inventory', 'payments', 'sms'],
+    features_enabled: ['scheduling', 'field_ops', 'quotes', 'invoicing', 'inventory', 'payments', 'sms', 'customer_portal', 'marketing', 'reviews'],
     recommended_agents: ['booking', 'field_navigation', 'business_finance'],
     required_integrations: ['calendar', 'sms', 'voice'],
     onboarding_message: 'Repair shops need quick intake, parts tracking and on-site invoicing.',
     sample_workflow: 'Customer calls -> Job booked -> Parts checked -> Repair completed -> Paid on site',
   },
+
   booking: {
-    features_enabled: ['scheduling', 'customer_portal', 'sms', 'payments', 'marketing', 'reviews'],
+    features_enabled: ['scheduling', 'customer_portal', 'sms', 'payments', 'marketing', 'reviews', 'quotes', 'invoicing'],
     recommended_agents: ['booking', 'customer_service', 'outreach'],
     required_integrations: ['calendar', 'sms'],
     onboarding_message: 'Appointment businesses live on a full calendar, easy rebooking and steady reviews.',
     sample_workflow: 'Client books online -> Auto-confirmed -> Reminder sent -> Visit completed -> Review request',
   },
   home_health: {
-    features_enabled: ['scheduling', 'field_ops', 'customer_portal', 'sms', 'invoicing', 'payments'],
+    features_enabled: ['scheduling', 'field_ops', 'customer_portal', 'sms', 'invoicing', 'payments', 'marketing', 'reviews'],
     recommended_agents: ['booking', 'customer_service', 'customer_followup'],
     required_integrations: ['calendar', 'sms', 'voice'],
     onboarding_message: 'Care providers need reliable visit scheduling, caregiver coordination and clear family updates.',

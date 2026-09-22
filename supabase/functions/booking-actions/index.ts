@@ -610,7 +610,8 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
   if (appointment?.id && customer_phone) {
     fetch(`${supabaseUrl}/functions/v1/send-appointment-sms`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}` },
+
       body: JSON.stringify({ appointmentId: appointment.id, type: 'confirmation' })
     }).catch(err => console.error('Failed to send confirmation SMS:', err));
   }
